@@ -158,5 +158,85 @@
   ],
   "close": "\"Could we do a 15-minute screen share this week, where I show you the three things on your own site and we decide whether a proper plan is worth it?\"",
   "followup": "Same day. Thank her for her time, recap the three points we discussed, give the booking link for the 15-minute check, and say there is no obligation. Do not attach prices unless she asked."
+ },
+ "evidence": [
+  {
+   "file": "home-desktop.png",
+   "title": "Website home, desktop",
+   "tag": "A",
+   "source": "URL",
+   "note": "What it shows"
+  },
+  {
+   "file": "home-mobile.png",
+   "title": "Website home, mobile",
+   "tag": "A",
+   "source": "URL",
+   "note": "What it shows",
+   "mobile": true
+  },
+  {
+   "file": "sources/google-maps-listing.png",
+   "title": "Google listing",
+   "tag": "A",
+   "source": "google.com/maps",
+   "note": "What it shows"
+  },
+  {
+   "file": "sources/companies-house-search.png",
+   "title": "Companies House",
+   "tag": "A",
+   "source": "URL",
+   "note": "What it shows"
+  }
+ ],
+ "not_captured": [
+  "Anything blocked or not checked, and why"
+ ],
+ "first_touch": {
+  "rules": [
+   "She is an inbound lead, so reply fast: call, then send a message within minutes (speed matters; set your own target).",
+   "Use the channel she used or gave on the form. Check what the form said about being contacted, and by which channel.",
+   "Identify yourself and the company, say where you got her details, and give a simple way to stop.",
+   "Each follow-up must add something new. Never send \"just checking in\".",
+   "No prices in the first message unless she asked."
+  ],
+  "whatsapp": "Draft in your own words; see the Moments and Memories example.",
+  "voicemail": "Draft in your own words; see the Moments and Memories example.",
+  "email_subject": "Draft in your own words; see the Moments and Memories example.",
+  "email_body": "Draft in your own words; see the Moments and Memories example.",
+  "cadence": [
+   [
+    "Day 0 (within minutes of each other)",
+    "Call. If no answer, leave the voicemail, then send the WhatsApp or email above.",
+    "H"
+   ],
+   [
+    "Day 2",
+    "Different angle: one useful tip about her Google listing or tap-to-call, with a screenshot. Check the signed-in listing first.",
+    "H"
+   ],
+   [
+    "Day 5",
+    "Proof: a short example from the portfolio, plus the Starter plan in two lines. Try the call at a different time of day.",
+    "H"
+   ],
+   [
+    "Day 9 to 10",
+    "Last message: \"I'll leave it here. The free check is open whenever you want it.\" Then stop.",
+    "H"
+   ],
+   [
+    "After any reply",
+    "Move to the booked 15-minute check. Update the CRM and correct this brief.",
+    "H"
+   ]
+  ],
+  "compliance": [
+   "Record the lead source, date and what the form said about contact (a person checks the form wording).",
+   "Check her number against TPS before calling, and the consent for email and WhatsApp (sole traders are treated like individuals for marketing messages; confirm the rule on the ICO site).",
+   "WhatsApp business messages outside 24 hours of her last message need an approved template (R: marketingskills sms/whatsapp notes).",
+   "If she says stop, stop on every channel and log it."
+  ]
  }
 }

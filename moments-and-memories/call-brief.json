@@ -190,5 +190,103 @@
   ],
   "close": "\"Could we do a 15-minute screen share this week, where I show you the three things on your own site and we decide whether a proper plan is worth it?\"",
   "followup": "Same day. Thank her for her time, recap the three points we discussed, give the booking link for the 15-minute check, and say there is no obligation. Do not attach prices unless she asked."
+ },
+ "evidence": [
+  {
+   "file": "sources/website-home-desktop-top-2026-10-13.png",
+   "title": "Website home, desktop",
+   "tag": "A",
+   "source": "themomentsandmemories.co.uk",
+   "note": "Top of page. Two buttons, \"Contact us\" and \"Explore Our Services\"; no quote, call or WhatsApp button."
+  },
+  {
+   "file": "sources/website-home-mobile-top-2026-10-13.png",
+   "title": "Website home, mobile",
+   "tag": "A",
+   "source": "same page, 390px wide",
+   "note": "Top of page on a phone. Elsewhere the page scrolls sideways (410px wide in a 390px screen).",
+   "mobile": true
+  },
+  {
+   "file": "service-desktop.png",
+   "title": "Service page",
+   "tag": "A",
+   "source": "/service/",
+   "note": "One long page for all services; no prices."
+  },
+  {
+   "file": "contact-desktop.png",
+   "title": "Contact page and form",
+   "tag": "A",
+   "source": "/contact-us/",
+   "note": "Four fields, no event date or type, 180-character message limit."
+  },
+  {
+   "file": "sources/google-maps-listing-2026-10-13.png",
+   "title": "Google Maps listing (signed out)",
+   "tag": "A",
+   "source": "google.com/maps",
+   "note": "Listing exists; no address, hours, rating or reviews visible in this view."
+  },
+  {
+   "file": "sources/companies-house-search-2026-10-13.png",
+   "title": "Companies House search",
+   "tag": "A",
+   "source": "find-and-update.company-information.service.gov.uk",
+   "note": "No active company with her name at Borehamwood. Fits a sole trader; not proof."
+  }
+ ],
+ "not_captured": [
+  "Facebook and Instagram pages (search page errored or was blocked)",
+  "Google rating and reviews (need a signed-in view)",
+  "Google Search results for her business name (blocked by a robot check)",
+  "Yell and Trustpilot (blocked or errored)",
+  "Her own prices (none published) and any past clients' reviews elsewhere"
+ ],
+ "first_touch": {
+  "rules": [
+   "She is an inbound lead, so reply fast: call, then send a message within minutes (speed matters; set your own target).",
+   "Use the channel she used or gave on the form. Check what the form said about being contacted, and by which channel.",
+   "Identify yourself and the company, say where you got her details, and give a simple way to stop.",
+   "Each follow-up must add something new. Never send \"just checking in\".",
+   "No prices in the first message unless she asked."
+  ],
+  "whatsapp": "Hi Lisa, it's [name] at Maximus Mediascape. Thanks for your enquiry about digital marketing and lead generation. I had a quick look at your website and have two or three simple ideas. When is a good time for a 5-minute call? If you'd rather I didn't message, just reply STOP.",
+  "voicemail": "Hi Lisa, it's [name] from Maximus Mediascape, returning your enquiry about digital marketing. I had a look at your website and have a couple of quick ideas. I'll send you a short message with them. Again, [name], Maximus Mediascape, [number].",
+  "email_subject": "Your enquiry: a few quick ideas for Moments and Memories",
+  "email_body": "Hi Lisa,\n\nThanks for getting in touch about digital marketing and lead generation. Before writing I looked at your website and noticed three small things that may be costing you enquiries:\n\n1. Visitors on a phone cannot tap to call or WhatsApp you.\n2. In Google, your pages show only your web address as the title.\n3. There is no way to see which visits turn into enquiries.\n\nI can walk you through them in a free 15-minute check, no obligation. Would [day] or [day] suit?\n\n[name], Maximus Mediascape, [phone]\n\nYou are getting this because you sent us your details through our form on [date]. Reply \"remove\" and I will not contact you again. [postal address]",
+  "cadence": [
+   [
+    "Day 0 (within minutes of each other)",
+    "Call. If no answer, leave the voicemail, then send the WhatsApp or email above.",
+    "H"
+   ],
+   [
+    "Day 2",
+    "Different angle: one useful tip about her Google listing or tap-to-call, with a screenshot. Check the signed-in listing first.",
+    "H"
+   ],
+   [
+    "Day 5",
+    "Proof: a short example from the portfolio, plus the Starter plan in two lines. Try the call at a different time of day.",
+    "H"
+   ],
+   [
+    "Day 9 to 10",
+    "Last message: \"I'll leave it here. The free check is open whenever you want it.\" Then stop.",
+    "H"
+   ],
+   [
+    "After any reply",
+    "Move to the booked 15-minute check. Update the CRM and correct this brief.",
+    "H"
+   ]
+  ],
+  "compliance": [
+   "Record the lead source, date and what the form said about contact (a person checks the form wording).",
+   "Check her number against TPS before calling, and the consent for email and WhatsApp (sole traders are treated like individuals for marketing messages; confirm the rule on the ICO site).",
+   "WhatsApp business messages outside 24 hours of her last message need an approved template (R: marketingskills sms/whatsapp notes).",
+   "If she says stop, stop on every channel and log it."
+  ]
  }
 }
