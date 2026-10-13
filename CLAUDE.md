@@ -9,17 +9,17 @@ At the start of every chat in this repo, before creating any branch, folder or f
 The user will give: **client name**, **site URL**, and **scope** (e.g. SEO, performance, accessibility, content, UX).
 
 1. Create a slug from the client name (lowercase, hyphens), e.g. `moments-and-memories`.
-2. Branch from `main`: `audit/<client-slug>`. Follow-up rounds: `audit/<client-slug>-<yyyy>-q<n>`.
-3. Copy `audits/_template/` to `audits/<client-slug>/`.
+2. Branch from `main`: `<client-slug>`. Follow-up rounds: `<client-slug>-<yyyy>-q<n>`.
+3. Copy `_template/` to `<client-slug>/`.
 4. Fill in `README.md` (client, URL, date, scope, status), then write findings in `findings.md`.
 
 ## Rules
-- Work only inside `audits/<client-slug>/` on that client's branch. Never touch another client's folder.
+- Work only inside `<client-slug>/` on that client's branch. Never touch another client's folder.
 - Keep screenshots and exports in `assets/` and reference them from `findings.md`.
-- Commit small and often with messages like `audit(<client-slug>): <what changed>`.
+- Commit small and often with messages like `<client-slug>: <what changed>`.
 - Do not push to any branch other than the one designated for the session unless the user gives permission.
 - Do not open a PR unless asked. When an audit is delivered, it is merged into `main` (via PR, when the user asks) so `main` holds every client's folder.
-- `main` contains this file, `audits/_template/`, and one folder per client: `audits/<client-slug>/`.
+- `main` contains this file, `_template/`, and one folder per client: `<client-slug>/`.
 
 ## Findings format (`findings.md`)
 - **Summary**: 3-5 lines and an overall rating.
