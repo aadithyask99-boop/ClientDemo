@@ -69,7 +69,7 @@ Not included in Starter: domain, hosting and email running costs, paid ads, exte
 - Her real address and service area (the footer says London EC1V; she is in Borehamwood).
 - Whether she wants a rebuild (Starter) or fixes to the existing site (Redesign and Optimisation).
 - Domain, hosting and email: does she control her Hostinger account, and who pays what?
-- **Compliance:** she is self-employed, so likely a sole trader. Marketing emails to sole traders generally need consent, and TPS applies to marketing calls. She asked to be contacted through our lead form, which helps, but keep a record of that and check the number against the TPS before calling (see section 7).
+- **Compliance (R, to verify):** the rules below come from the compliance notes in the marketingskills open-source repo, not from a legal source. Check them on the ICO website before relying on them. She is self-employed, so likely a sole trader. Marketing emails to sole traders generally need consent, and TPS applies to marketing calls. She asked to be contacted through our lead form, which helps, but keep a record of that and check the number against the TPS before calling (see section 7).
 
 ## 7. Open-source and reference material for structuring the brief
 Checked 2026-10-13. Licences verified as MIT for the first two.
