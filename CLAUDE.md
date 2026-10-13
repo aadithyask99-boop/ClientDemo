@@ -23,7 +23,7 @@ The user will give: **client name**, **site URL**, and **scope** (e.g. SEO, perf
 - `main` contains this file, `_template/`, and one folder per client: `<client-slug>/`.
 
 ## Branding
-All client-facing visuals follow the Maximus Mediascape brand in `_template/brand/brand.css`: red `#e10600`, cream `#f5efe8`, ink `#17090a`, Bebas Neue headings, Mulish body, Boska italic accents. Reuse the tokens; do not invent new colours or fonts.
+All client-facing visuals follow the Maximus Mediascape brand in `_template/brand/brand.css`: red `#e10600`, cream `#f5efe8`, ink `#17090a`, Bebas Neue headings, Mulish body; no italics, one size per heading level, no decorative stars or stickers. Reuse the tokens; do not invent new colours or fonts.
 
 ## Evidence labels
 Mark each claim **A** (observed in the audit), **R** (from research, with a link) or **H** (hypothesis). Say plainly when research is thin. Never present a hypothesis as fact.

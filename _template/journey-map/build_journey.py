@@ -62,9 +62,7 @@ body{{margin:0;width:{W}px;background:var(--cream);color:var(--ink);font:14px/1.
 .band{{background:var(--red);color:var(--cream);padding:34px {PAD}px 30px;position:relative;overflow:hidden}}
 .band .logo{{height:44px;display:block;margin-bottom:18px}}
 .band h1{{font:400 76px/.95 var(--display);margin:0;letter-spacing:.5px;text-transform:uppercase}}
-.band h1 em{{font:italic 500 62px var(--accent);text-transform:none;letter-spacing:0}}
 .band .sub{{margin-top:12px;font-size:16px;max-width:1200px}}
-.band .star{{position:absolute;right:70px;top:40px;width:130px;height:130px;opacity:.95}}
 .band .badge{{position:absolute;right:230px;top:60px;background:var(--royal);color:var(--cream);font:400 30px/1 var(--display);padding:30px 24px;border-radius:50% 46% 52% 44%;transform:rotate(-8deg)}}
 .wrap{{padding:26px {PAD}px 0}}
 table{{border-collapse:collapse;width:100%;table-layout:fixed;background:#fff}}
@@ -81,12 +79,12 @@ i{{font-style:normal;color:#5d5149}}
 .key{{font-size:13px;margin:8px 0 18px}} .key span{{margin-right:22px;font-weight:700}}
 .legend{{font-size:12.5px;color:#5d5149;padding:14px 0 18px}}
 footer{{background:var(--ink);color:var(--cream);padding:22px {PAD}px;display:flex;justify-content:space-between;align-items:baseline}}
-footer b{{font:400 44px var(--display);letter-spacing:1px}} footer span{{font:italic 500 18px var(--accent)}}
+footer b{{font:400 44px var(--display);letter-spacing:1px}} footer span{{font:600 16px var(--body)}}
 </style></head><body>
 <div class="band">{logo}
-<h1>{html.escape(data['title'])}: <em>{html.escape(data['client'])}</em></h1>
+<h1>{html.escape(data['title'])}: {html.escape(data['client'])}</h1>
 <div class="sub">{html.escape(data['subtitle'])}</div>
-<svg class="star" viewBox="0 0 100 100"><g stroke="#064a2a" stroke-width="16" stroke-linecap="round"><path d="M50 8v84M13 29l74 42M13 71l74-42"/></g></svg></div>
+</div>
 <div class="wrap">
 <table><thead><tr><th class="row"></th>{head}</tr></thead></table>
 <div class="emo"><svg width="{inner}" height="200" viewBox="0 0 {inner} 200">

@@ -8,4 +8,4 @@
    python3 _template/journey-map/build_journey.py <client-slug>/journey.json
    ```
    Output goes to `<client-slug>/assets/customer-journey-map.html` and `.png`.
-4. Brand tokens live in `_template/brand/brand.css` (red `#e10600`, cream `#f5efe8`, ink `#17090a`; Bebas Neue, Mulish, Boska). Do not hard-code other colours or fonts.
+4. Brand tokens live in `_template/brand/brand.css` (red `#e10600`, cream `#f5efe8`, ink `#17090a`; Bebas Neue and Mulish only, no italics). Do not hard-code other colours or fonts.
