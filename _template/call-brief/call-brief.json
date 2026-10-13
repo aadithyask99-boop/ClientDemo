@@ -1,0 +1,162 @@
+{
+ "client": "Client Name",
+ "contact_name": "Contact name. Contact details live in the CRM, not here.",
+ "date": "YYYY-MM-DD",
+ "verified_by": "__________",
+ "why": "Where the lead came from, what they asked for in their own words, and whether it is inbound or cold.",
+ "score": {
+  "label": "Hot / Warm / Cold (H)",
+  "why": "Reason, using the local-business rubric. Say what is not confirmed."
+ },
+ "snapshot": [
+  [
+   "Website",
+   "Platform, pages, notable issues",
+   "A / R / H / N",
+   "file path or URL"
+  ],
+  [
+   "Google listing",
+   "What exists and what is missing",
+   "A",
+   "screenshot path"
+  ],
+  [
+   "Company registration",
+   "Companies House result, or sole trader",
+   "A",
+   "screenshot path"
+  ],
+  [
+   "Social",
+   "Facebook, Instagram, LinkedIn: found, or not checked",
+   "A / N",
+   ""
+  ],
+  [
+   "Reviews",
+   "Where, how many, rating",
+   "A / N",
+   ""
+  ],
+  [
+   "Analytics",
+   "Detected tools",
+   "A",
+   "tech scan file"
+  ]
+ ],
+ "headlines": [
+  [
+   "Finding 1",
+   "Why it matters to them",
+   "A",
+   "findings.md ID"
+  ],
+  [
+   "Finding 2",
+   "",
+   "A",
+   ""
+  ],
+  [
+   "Finding 3",
+   "",
+   "A",
+   ""
+  ]
+ ],
+ "angle": "One sentence connecting their situation to what we offer.",
+ "offer": [
+  "Entry offer",
+  "Main plan and price (check current)",
+  "Later plan"
+ ],
+ "dont_say": [
+  "Anything not verified",
+  "Personal details",
+  "Promises about results"
+ ],
+ "verify_first": [
+  "Anything marked N above",
+  "TPS check and consent record",
+  "Prices still current"
+ ],
+ "script": {
+  "goal": "One clear next step for this call.",
+  "opener": "Who you are, why you are calling (inbound or cold), permission, one question.",
+  "questions": [
+   {
+    "group": "Her business",
+    "items": [
+     "Which services bring in most of your work: kids' parties, marquees, cocktail bars, weddings?",
+     "What are your busiest months, and what are you booking now (Christmas, New Year)?",
+     "Which areas do you really cover?",
+     "About how many enquiries do you get a month, and which ones pay best?"
+    ]
+   },
+   {
+    "group": "How enquiries arrive",
+    "items": [
+     "How do people find you today?",
+     "When an enquiry comes in, how do you reply and how fast?",
+     "About how many turn into bookings?",
+     "Do you get reviews, and where?"
+    ]
+   },
+   {
+    "group": "Goals and budget",
+    "items": [
+     "What does growth mean for you in numbers (bookings a month)?",
+     "What have you tried so far (ads, social, directories)?",
+     "What would feel comfortable as a one-off amount, or a monthly one?",
+     "Who else decides?"
+    ]
+   },
+   {
+    "group": "Website and tools",
+    "items": [
+     "Who built the website, and who has the hosting and domain logins?",
+     "Do you see how many people visit, or where they come from?",
+     "Are you on Facebook or Instagram for the business?",
+     "Do you have photos from real events and any reviews we could use?"
+    ]
+   },
+   {
+    "group": "Practical",
+    "items": [
+     "Which address should customers see?",
+     "Do you have set prices or packages, and public liability insurance?"
+    ]
+   }
+  ],
+  "objections": [
+   [
+    "I can't afford an agency.",
+    "That's why we have a one-off Starter: fixed price, split in two, and you own the site. We can start with just the basics. (Confirm the price first.)"
+   ],
+   [
+    "I already have a website.",
+    "You do, and it's a good base. The gaps are small: tap-to-call, titles, reviews and tracking. We can look together at whether to fix it or rebuild."
+   ],
+   [
+    "I'll do it myself.",
+    "Great. I can send you the list of what we found so you can compare, free of charge."
+   ],
+   [
+    "Just send me an email.",
+    "Happy to. So I send the right thing: is it more enquiries you need, or less time chasing them?"
+   ],
+   [
+    "It's a busy time of year.",
+    "Understood. A 15-minute check is enough for now. When is a better week?"
+   ],
+   [
+    "How did you get my number?",
+    "From the form you filled in on [date and source]. I can remove it if you'd prefer."
+   ]
+  ],
+  "close": "\"Could we do a 15-minute screen share this week, where I show you the three things on your own site and we decide whether a proper plan is worth it?\"",
+  "followup": "Same day. Thank her for her time, recap the three points we discussed, give the booking link for the 15-minute check, and say there is no obligation. Do not attach prices unless she asked."
+ }
+}

@@ -16,4 +16,5 @@
 - `wireframes.md`: low-fidelity wireframes to present to the client
 - `gap-analysis-and-solution.md`: confirmed offer and prices, competitor tools, gaps, how we bridge them, structure for the call brief
 - `journey.json`: data behind the journey map (rebuild with `_template/journey-map/build_journey.py`)
+- `call-brief.json`: data behind the two-page call brief (`assets/call-brief.pdf`; rebuild with `_template/call-brief/build_brief.py`)
 - `assets/`: screenshots, jev-seo report (`jev-seo-*`), Lighthouse reports (`lighthouse/`), Pa11y results (`pa11y/`)

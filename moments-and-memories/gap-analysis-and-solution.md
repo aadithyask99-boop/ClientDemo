@@ -15,7 +15,7 @@ Source: [sitemap](https://maximusmediascape.com/sitemap_index.xml), [Starter pla
 
 Not included in Starter: domain, hosting and email running costs, paid ads, extensive copywriting or photography, shops or booking systems (quoted separately).
 
-**Fit with Lisa:** she said she can't afford big retainers. Starter is a one-off fixed price, and its list matches most of our audit findings. Care is a possible second step. Growth, with ad spend on top, is probably too much to lead with (H).
+**Fit with Lisa:** the lead text mentions a small startup that can't afford big retainers, but it is unclear whether Lisa wrote it or it is campaign copy (confirm on the call). Starter is a one-off fixed price, and its list matches most of our audit findings. Care is a possible second step. Growth, with ad spend on top, is probably too much to lead with (H).
 
 ### Audit findings mapped to what we sell
 | Finding | Covered by | Note |
@@ -65,7 +65,7 @@ Not included in Starter: domain, hosting and email running costs, paid ads, exte
 4. **After launch:** Care (£599 a month plus VAT) for visibility, reviews and posts. Growth when she has budget for ads.
 
 ## 6. Risks and things to confirm
-- Budget and timing (H): she asked about "aggressive growth" without a retainer. Don't oversell Growth.
+- Budget and timing (H): her budget is unknown. The "aggressive growth, no big retainer" wording may be campaign copy, not hers. Don't oversell Growth.
 - Her real address and service area (the footer says London EC1V; she is in Borehamwood).
 - Whether she wants a rebuild (Starter) or fixes to the existing site (Redesign and Optimisation).
 - Domain, hosting and email: does she control her Hostinger account, and who pays what?

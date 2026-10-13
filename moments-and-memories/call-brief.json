@@ -1,0 +1,194 @@
+{
+ "client": "Moments and Memories",
+ "contact_name": "Lisa Henderson (self-employed). Contact details are in the CRM, not here.",
+ "date": "2026-10-13",
+ "verified_by": "__________",
+ "why": "Inbound lead from our lead-gen campaign. Her form answers: city Borehamwood; company \"Self employed. Moments and memories.\"; what she wants to own: \"My Market Share (Digital Marketing & Lead Gen)\". She asked for contact, so this is not a cold call. Note: the lines \"small startup, can't afford big retainers, need aggressive growth\" came with the lead text. Confirm whether Lisa wrote them or they are campaign copy.",
+ "score": {
+  "label": "Warm (H)",
+  "why": "Weak online presentation and no tracking (A). Whether the business is active, her budget and her goals are not confirmed (N). Using the marketingskills local-business rubric."
+ },
+ "snapshot": [
+  [
+   "Website",
+   "WordPress and Elementor on Hostinger. Three real pages (Home, Service, Contact us). Sample and template pages are public.",
+   "A",
+   "assets/tech-scan/*.json, findings.md"
+  ],
+  [
+   "Services on site",
+   "Kids' parties and bouncy castles, marquees and decor, cocktail bars and catering, luxury extras.",
+   "A",
+   "assets/home-desktop.png"
+  ],
+  [
+   "Google listing",
+   "Exists: \"The moments and memories\", category Event management company, website and phone shown, owner text dated 18 May 2026 (same wording as the website). In the signed-out view: no address, hours, rating or review count shown, and the map pin sat in central Europe. May be a limited view.",
+   "A",
+   "assets/sources/google-maps-listing-2026-10-13.png"
+  ],
+  [
+   "Company registration",
+   "Companies House search: no active company named Moments and Memories at Borehamwood. Similar names are dissolved or in other towns; Moments 2 Memories Limited (Nuneaton, incorporated 30 Jun 2026) looks unrelated. Fits a sole trader (form says self-employed). Not proof.",
+   "A",
+   "assets/sources/companies-house-search-2026-10-13.png"
+  ],
+  [
+   "Address",
+   "Website footer says 124 City Road, London EC1V 2NX. Her form says Borehamwood. They conflict.",
+   "A",
+   "findings.md M-04"
+  ],
+  [
+   "LinkedIn",
+   "None, per the team.",
+   "A",
+   "team"
+  ],
+  [
+   "Facebook and Instagram",
+   "Not found. The Facebook search page returned an error and Instagram refused the request, so this is not checked, not proven absent.",
+   "N",
+   "needs signed-in browser or manual look"
+  ],
+  [
+   "Reviews",
+   "None on her website. Google rating and review count not visible in the limited view.",
+   "N",
+   "check signed in"
+  ],
+  [
+   "Analytics",
+   "No analytics or tracking tags on the homepage.",
+   "A",
+   "assets/tech-scan/*.json"
+  ]
+ ],
+ "headlines": [
+  [
+   "Phone and email are plain text; no tap-to-call or WhatsApp; the form does not ask for event type or date.",
+   "People on phones cannot reach her in one tap, and she cannot quote from the enquiries she gets.",
+   "A",
+   "findings.md M-05"
+  ],
+  [
+   "Google shows just the domain as the page title, with no descriptions and no main heading.",
+   "Her pages look anonymous in search results and say nothing about the service or area.",
+   "A",
+   "findings.md M-01 to M-03"
+  ],
+  [
+   "No analytics on the site.",
+   "She cannot see which visits become enquiries or which source works.",
+   "A",
+   "findings.md M-15"
+  ],
+  [
+   "No reviews, prices or real event photos on the site.",
+   "Customers comparing suppliers have little to judge her by.",
+   "A",
+   "findings.md M-06"
+  ]
+ ],
+ "angle": "A few small fixes (tap-to-call, clear titles, reviews, tracking) would make her site easier to find, trust and ask, and tracking would show what it produces.",
+ "offer": [
+  "Free 15-minute website check (entry offer)",
+  "Starter from £999 plus VAT, one-off, paid 50/50. About 2 months, up to 5 pages, includes analytics, WhatsApp and click-to-call, Google listing set-up, reviews kit",
+  "Care £599 a month plus VAT (visibility, posts, reporting)",
+  "Growth £999 a month plus VAT; ad spend extra (at least £300, £500 recommended)",
+  "Source: our own site, checked 2026-10-13. Confirm still current before quoting."
+ ],
+ "dont_say": [
+  "Her personal phone or email in notes or emails to others",
+  "That she has no Google listing (she has one) or that it has no reviews (not verified)",
+  "That she asked for cheap or aggressive growth, unless she confirms it",
+  "Anything about competitors' results or revenue (we only saw their websites)",
+  "Promises about rankings, leads or growth numbers",
+  "That we saw her website traffic (we have no access to it)"
+ ],
+ "verify_first": [
+  "Signed-in Google listing: rating, reviews, address, hours",
+  "Facebook and Instagram pages (blocked in the first pass)",
+  "Whether the \"can't afford retainers\" line is hers",
+  "TPS check on her number; record the lead source, date and consent",
+  "Plan prices still match maximusmediascape.com",
+  "Decide: rebuild (Starter) or fix the existing site (Redesign, quoted)"
+ ],
+ "script": {
+  "goal": "Book the free 15-minute website check (screen share) and learn her real budget, goals and enquiry numbers. Not to sell on this call.",
+  "opener": "\"Hi Lisa, it's [name] from Maximus Mediascape. You filled in our form about digital marketing and lead generation, so I'm following up. Is now an OK time for five minutes? ... Before calling I had a look at your website and Google listing, and there are two or three small things I think could help. First, can I ask what you're hoping marketing will do for the business?\"",
+  "questions": [
+   {
+    "group": "Her business",
+    "items": [
+     "Which services bring in most of your work: kids' parties, marquees, cocktail bars, weddings?",
+     "What are your busiest months, and what are you booking now (Christmas, New Year)?",
+     "Which areas do you really cover?",
+     "About how many enquiries do you get a month, and which ones pay best?"
+    ]
+   },
+   {
+    "group": "How enquiries arrive",
+    "items": [
+     "How do people find you today?",
+     "When an enquiry comes in, how do you reply and how fast?",
+     "About how many turn into bookings?",
+     "Do you get reviews, and where?"
+    ]
+   },
+   {
+    "group": "Goals and budget",
+    "items": [
+     "What does growth mean for you in numbers (bookings a month)?",
+     "What have you tried so far (ads, social, directories)?",
+     "What would feel comfortable as a one-off amount, or a monthly one?",
+     "Who else decides?"
+    ]
+   },
+   {
+    "group": "Website and tools",
+    "items": [
+     "Who built the website, and who has the hosting and domain logins?",
+     "Do you see how many people visit, or where they come from?",
+     "Are you on Facebook or Instagram for the business?",
+     "Do you have photos from real events and any reviews we could use?"
+    ]
+   },
+   {
+    "group": "Practical",
+    "items": [
+     "Which address should customers see?",
+     "Do you have set prices or packages, and public liability insurance?"
+    ]
+   }
+  ],
+  "objections": [
+   [
+    "I can't afford an agency.",
+    "That's why we have a one-off Starter: fixed price, split in two, and you own the site. We can start with just the basics. (Confirm the price first.)"
+   ],
+   [
+    "I already have a website.",
+    "You do, and it's a good base. The gaps are small: tap-to-call, titles, reviews and tracking. We can look together at whether to fix it or rebuild."
+   ],
+   [
+    "I'll do it myself.",
+    "Great. I can send you the list of what we found so you can compare, free of charge."
+   ],
+   [
+    "Just send me an email.",
+    "Happy to. So I send the right thing: is it more enquiries you need, or less time chasing them?"
+   ],
+   [
+    "It's a busy time of year.",
+    "Understood. A 15-minute check is enough for now. When is a better week?"
+   ],
+   [
+    "How did you get my number?",
+    "From the form you filled in on [date and source]. I can remove it if you'd prefer."
+   ]
+  ],
+  "close": "\"Could we do a 15-minute screen share this week, where I show you the three things on your own site and we decide whether a proper plan is worth it?\"",
+  "followup": "Same day. Thank her for her time, recap the three points we discussed, give the booking link for the 15-minute check, and say there is no obligation. Do not attach prices unless she asked."
+ }
+}
