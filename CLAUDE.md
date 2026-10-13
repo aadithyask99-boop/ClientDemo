@@ -12,11 +12,12 @@ Do nothing else until the client name is confirmed.
 
 ## Process for a new lead
 1. Branch from `main`: `<client-slug>` (lowercase, hyphens). Copy `_template/` to `<client-slug>/`.
-2. **Collect evidence with tools, not memory.** Follow `_template/research-report/README.md` (tools, commands, what to capture). Save every screenshot and tool output in `<client-slug>/assets/`.
-3. **Two-step browsing.** Step 1: the built-in headless browser. For anything blocked, logged in, or empty, step 2: the browser plugin or the user's own signed-in Chrome, if available. If neither works, mark it **N** (not checked) and say why. Never fill the gap from memory.
-4. **Write the report** in `<client-slug>/research-report.md` from `_template/research-report/research-report.md`, then build the PDF with `_template/research-report/build_report.py`.
-5. **Verify before handing over.** Check every statement against a saved file. Search the draft for strong words ("no", "none", "always", "most", "cannot") and confirm each. Say plainly what is not verified.
-6. Optional extras, only when asked: customer journey map (`_template/journey-map/`), call plan and first messages (`_template/call-brief/`).
+2. **Set up the tools** in a new chat with `bash _template/research-report/setup.sh` (installs jev-seo, marketingskills, wappalyzer-next, Lighthouse, Pa11y, Playwright; they do not carry over between chats).
+3. **Collect evidence with tools, not memory.** Follow `_template/research-report/README.md` (tools, commands, what to capture). Save every screenshot and tool output in `<client-slug>/assets/`.
+4. **Two-step browsing.** Step 1: the built-in headless browser. For anything blocked, logged in, or empty, step 2: the browser plugin or the user's own signed-in Chrome, if available. If neither works, mark it **N** (not checked) and say why. Never fill the gap from memory.
+5. **Write the report** in `<client-slug>/research-report.md` from `_template/research-report/research-report.md`, then build the PDF with `_template/research-report/build_report.py`.
+6. **Verify before handing over.** Check every statement against a saved file. Search the draft for strong words ("no", "none", "always", "most", "cannot") and confirm each. Say plainly what is not verified.
+7. Optional extras, only when asked: customer journey map (`_template/journey-map/`), call plan and first messages (`_template/call-brief/`).
 
 ## Rules
 - Work only inside `<client-slug>/` on that client's branch. Never touch another client's folder.
