@@ -12,8 +12,6 @@
 - `findings.md`: the audit and recommendations
 - `customer-journey.md`: customer journey map for party/event hire, with research and evidence levels
 - `competitor-research.md`: what 6 similar sites do and what to borrow
-- `sitemap.md`: revised sitemap and user journeys
-- `wireframes.md`: low-fidelity wireframes to present to the client
 - `gap-analysis-and-solution.md`: confirmed offer and prices, competitor tools, gaps, how we bridge them, structure for the call brief
 - `journey.json`: data behind the journey map (rebuild with `_template/journey-map/build_journey.py`)
 - `call-brief.json`: data behind the two-page call brief (`assets/call-brief.pdf`; rebuild with `_template/call-brief/build_brief.py`)

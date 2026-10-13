@@ -30,7 +30,7 @@ Not included in Starter: domain, hosting and email running costs, paid ads, exte
 | M-10, M-11, M-12: performance, sample pages, tags | Starter: speed checks, launch checklist | |
 | Growth over time: reviews, local pages, ads | Care, then Growth | Later |
 
-**Scope check:** our proposed sitemap has about 10 pages, but Starter covers up to 5. Suggested split (H): **Phase 1 (5 pages):** Home, Services (one page with four sections), Gallery and reviews, Get a quote with a thank-you step, About and contact. **Phase 2:** separate pages for each service and area (quoted, or through Growth local pages). Confirm with the team before promising anything.
+**Scope check:** a full new site for her could need about 10 pages, but Starter covers up to 5. Suggested split (H): **Phase 1 (5 pages):** Home, Services (one page with four sections), Gallery and reviews, Get a quote with a thank-you step, About and contact. **Phase 2:** separate pages for each service and area (quoted, or through Growth local pages). Confirm with the team before promising anything.
 
 ## 2. What competitors use (A, detected with wappalyzer-next fast scan on 2026-10-13, cross-checked with page HTML)
 | Site | Platform and tools detected |

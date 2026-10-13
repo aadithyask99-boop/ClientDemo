@@ -191,13 +191,10 @@ Not included in Starter: domain, hosting and email running costs, paid ads, exte
 
 **How the findings map to Starter** [H]: analytics, tap-to-call, WhatsApp, a better form, titles and headings, local markup, a Google listing set-up, legal pages, mobile and contrast fixes and the reviews kit are all covered. Real photos, prices and written copy need her input.
 
-**Scope:** my proposed sitemap has about 10 pages, but Starter covers 5. A sensible split is a first phase of Home, Services (one page), Gallery and reviews, Get a quote, and About and contact, then separate service and area pages later [H].
+**Scope:** a full new site for her could need about 10 pages, but Starter covers 5. A sensible split is a first phase of Home, Services (one page), Gallery and reviews, Get a quote, and About and contact, then separate service and area pages later [H].
 
 ![Customer journey map](assets/customer-journey-map.png)
 
-![Revised sitemap and user journeys](assets/sitemap-journey.png)
-
-The low-fidelity wireframes are in `wireframes.md` and `assets/wireframe-*.png`.
 
 ## 8. Qualification
 
@@ -233,4 +230,4 @@ The low-fidelity wireframes are in `wireframes.md` and `assets/wireframe-*.png`.
 
 <!--MANIFEST-->
 
-**Open-source tools used:** [jev-seo](https://github.com/AgriciDaniel/jev-seo) (MIT), [marketingskills](https://github.com/coreyhaines31/marketingskills) (MIT), [wappalyzer-next](https://github.com/s0md3v/wappalyzer-next) (GPL-3.0), Lighthouse, Pa11y. **Our offer:** [Starter plan](https://maximusmediascape.com/our-services/starter-plan/), [Care and Growth plans](https://maximusmediascape.com/our-services/care-and-growth-plans/). Other documents: `findings.md`, `competitor-research.md`, `gap-analysis-and-solution.md`, `customer-journey.md`, `sitemap.md`, `wireframes.md`, `call-brief.json` (call plan and script).
+**Open-source tools used:** [jev-seo](https://github.com/AgriciDaniel/jev-seo) (MIT), [marketingskills](https://github.com/coreyhaines31/marketingskills) (MIT), [wappalyzer-next](https://github.com/s0md3v/wappalyzer-next) (GPL-3.0), Lighthouse, Pa11y. **Our offer:** [Starter plan](https://maximusmediascape.com/our-services/starter-plan/), [Care and Growth plans](https://maximusmediascape.com/our-services/care-and-growth-plans/). Other documents: `findings.md`, `competitor-research.md`, `gap-analysis-and-solution.md`, `customer-journey.md`, `call-brief.json` (call plan and script).

@@ -47,4 +47,4 @@ Among the sites reviewed, each covers one slice: marquees, bouncy castles, or en
 ## To validate with Lisa
 - Her real service area, address and who she competes with day to day.
 - Her prices or price ranges, deposit terms and how fast she can reply.
-- Which services bring in the most work, so the sitemap puts them first.
+- Which services bring in the most work, so we know what to lead with.
