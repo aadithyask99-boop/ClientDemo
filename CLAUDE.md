@@ -2,6 +2,9 @@
 
 This repo holds website audits for multiple clients. Each audit is done in its own chat and on its own branch.
 
+## First rule: always ask for the client name
+At the start of every chat in this repo, before creating any branch, folder or files, ask the user for the **client name** (and the site URL and scope if not given). Do not guess or reuse a previous client's name. Do nothing audit-related until the client name is confirmed.
+
 ## Starting a new audit
 The user will give: **client name**, **site URL**, and **scope** (e.g. SEO, performance, accessibility, content, UX).
 
