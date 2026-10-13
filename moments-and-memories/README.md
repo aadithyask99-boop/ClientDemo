@@ -10,4 +10,5 @@
 
 ## Files
 - `findings.md`: the audit and recommendations
+- `customer-journey.md`: customer journey map for party/event hire, with research and evidence levels
 - `assets/`: screenshots, jev-seo report (`jev-seo-*`), Lighthouse reports (`lighthouse/`), Pa11y results (`pa11y/`)
