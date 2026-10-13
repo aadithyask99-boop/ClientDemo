@@ -9,7 +9,7 @@ Editable version: `assets/customer-journey-map.html`.
 **Stages:** Trigger, Research, Compare, Enquire, Quote, Book, Event day, After.
 
 ## Where Moments and Memories loses people
-1. **Research:** the site is hard to find. Titles are only the domain, there are no descriptions, and no Google Business Profile or local markup was found (M-01 to M-04).
+1. **Research:** the site is hard to find. Titles are only the domain, there are no descriptions, and no local markup was found (M-01 to M-04). Whether she has a Google Business Profile is **not yet checked**.
 2. **Compare:** the site gives no reason to choose it: no reviews, prices, real photos or safety/insurance information, and it is hard to read on a phone (M-06 to M-08, M-14).
 3. **Enquire:** there is no tap-to-call or WhatsApp, and the form asks for nothing that lets Lisa quote (M-05).
 

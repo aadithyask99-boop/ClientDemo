@@ -42,7 +42,7 @@
       "label": "Search and ask around",
       "does": "Googles \"bouncy castle / marquee / cocktail bar hire + area\", checks Maps, asks Facebook groups and friends.",
       "touchpoints": "Google Search and Maps, Facebook/Instagram, word of mouth, directories like Add to Event [R]",
-      "pain": "Moments and Memories title is only the domain, no meta descriptions, no H1, no local markup or Google Business Profile found (M-01 to M-04). [A]",
+      "pain": "Moments and Memories title is only the domain, no meta descriptions, no H1, no local markup (M-01 to M-04). [A] Google Business Profile not yet checked. [H]",
       "opportunity": "Service + area page titles, Google Business Profile, one page per service, local landing pages."
     },
     {
