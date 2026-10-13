@@ -26,21 +26,23 @@ Not included in Starter: domain, hosting and email running costs, paid ads, exte
 | M-06: no reviews, prices, proof | Starter: reviews kit. Photos, copy and prices from Lisa | She supplies real photos and prices (not included: extensive copy or photography) |
 | M-07, M-14: mobile scroll, contrast | Starter: mobile-optimised build, speed and launch checks | |
 | M-08, M-09: visuals, content | Starter: bespoke design. Copy depth is limited | Heavy copywriting is quoted separately |
+| M-15: no analytics or tracking | Starter: analytics and Search Console. Call, WhatsApp and form tracking comes with Growth, or can be added | Lead with this: she cannot see what the site produces |
 | M-10, M-11, M-12: performance, sample pages, tags | Starter: speed checks, launch checklist | |
 | Growth over time: reviews, local pages, ads | Care, then Growth | Later |
 
 **Scope check:** our proposed sitemap has about 10 pages, but Starter covers up to 5. Suggested split (H): **Phase 1 (5 pages):** Home, Services (one page with four sections), Gallery and reviews, Get a quote with a thank-you step, About and contact. **Phase 2:** separate pages for each service and area (quoted, or through Growth local pages). Confirm with the team before promising anything.
 
-## 2. What competitors use (A, homepage fingerprint, 2026-10-13)
-| Site | Platform and tools seen |
+## 2. What competitors use (A, detected with wappalyzer-next fast scan on 2026-10-13, cross-checked with page HTML)
+| Site | Platform and tools detected |
 |---|---|
-| Party in Your Garden | WordPress, Elementor, Yoast or Rank Math, Google Tag Manager and GA4, cookie consent, Google reviews widget, WhatsApp links, LiteSpeed cache, LocalBusiness data. An online quote tool |
-| Watford Marquees | WordPress, Elementor, Yoast or Rank Math, Tag Manager and GA4, reCAPTCHA, Google reviews widget, WhatsApp links, LocalBusiness data |
-| Active Softplay | Custom site with GA4, Facebook Pixel, WhatsApp links, LocalBusiness data and a shopping cart. Its listing URL suggests hire-booking software (BookingOnline), not confirmed on the page |
-| Funtime Bounce | Very light page, GA4, prices per product |
-| Add to Event, Eventsense | Marketplaces with GA4, Trustpilot or review widgets, request-a-quote flows |
+| **Moments and Memories (Lisa)** | WordPress 6.8.11, Elementor, Elementor Header and Footer Builder, Hostinger hosting and CDN, LiteSpeed Cache, PHP 8.2, jQuery, particles.js. **No analytics or tracking tags found** (no Google Analytics, Tag Manager, Facebook Pixel or Clarity in the homepage HTML) |
+| Party in Your Garden | WordPress 7.1.3, Elementor, Rank Math SEO, Cloudflare, WP Rocket, CookieYes consent, Google Tag Manager, Fluent Forms, Vimeo, Google reviews. Online quote tool |
+| Watford Marquees | WordPress 7.1.2, Astra theme, Elementor and Essential Addons, Rank Math SEO, WPForms, Hotjar, MonsterInsights (Google Analytics), Tag Manager, NitroPack speed service, Hostinger and LiteSpeed |
+| Active Softplay | Microsoft ASP.NET with Telerik UI, Bootstrap, Cloudflare, Cloudinary, shopping cart, Google Analytics and Tag Manager, WhatsApp Business Chat |
+| Funtime Bounce | Cloudflare with bot management, Google Analytics and Tag Manager, PWA. Very light page |
+| Maximus Mediascape (for reference) | Astro on Vercel, Google Analytics, Tag Manager, Facebook Pixel, Microsoft Clarity |
 
-**What this tells us:** the strongest competitor runs the **same stack as Lisa** (WordPress and Elementor). Their advantage is **not technology**. It is what they put on the page: quote and WhatsApp everywhere, prices, proof, local wording, plus tracking. That makes the gap cheap to close.
+**What this tells us:** the strongest competitors run the **same kind of stack as Lisa** (WordPress and Elementor, often on Hostinger). Their advantage is **not technology**. It is what they put on the page (quote and WhatsApp everywhere, prices, proof, local wording) and that they **measure it**: all of them run analytics, and two use heatmap or tag tools. Lisa has none, so she cannot tell which visits become enquiries. Her WordPress is also on an older release line (6.8) than two competitors (7.1). Verify in her dashboard before saying so.
 
 ## 3. What competitors lack (A, small sample; H where marked)
 - **No all-in-one story.** Each covers one slice (marquees, bouncy castles, or entertainment hire). None of the sites reviewed presented kids' parties, marquees, cocktail bars and weddings together. Possible positioning for Lisa, but only if she proves it (H).
@@ -77,7 +79,9 @@ Checked 2026-10-13. Licences verified as MIT for the first two.
 | [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketingskills) (MIT, already in use) | `prospecting` (account brief template, local-business qualification checklist and lead scoring, compliance incl. UK PECR), `sales-enablement` (cold-call scripts, objection library, battle cards), `competitor-profiling`, `site-architecture` | Read and applied. Best fit for the brief |
 | [AgriciDaniel/jev-seo](https://github.com/AgriciDaniel/jev-seo) (MIT, used) | SEO crawl evidence for the brief | Used |
 | Lighthouse and Pa11y | Speed, accessibility evidence | Used |
-| Wappalyzer-lineage tech detection: [s0md3v/wappalyzer-next](https://github.com/s0md3v/wappalyzer-next), [enthec/webappanalyzer](https://github.com/enthec/webappanalyzer), [projectdiscovery/wappalyzergo](https://github.com/projectdiscovery/wappalyzergo) | Detect a lead's or competitor's platform automatically | Repositories exist; **not tested**. Wappalyzer's open-source status is disputed in the sources I found ([overview](https://seomator.com/blog/wappalyzer-alternatives)), so check before relying on it. Our manual fingerprint above did the job for now |
+| [s0md3v/wappalyzer-next](https://github.com/s0md3v/wappalyzer-next) | Detect a lead's or competitor's platform and tools | **Tested, works** (fast mode). See test results below |
+| [projectdiscovery/wappalyzergo](https://github.com/projectdiscovery/wappalyzergo) | Same, as a Go library | **Tested, works**, but needs code and finds less |
+| [enthec/webappanalyzer](https://github.com/enthec/webappanalyzer) | The fingerprint data these tools build on | Active data set, not a tool you run |
 | Open-source call-brief template | | **Not found.** Search results were vendor blogs. We are building our own |
 
 ### Proposed structure for the call brief (one page, plus a script)
@@ -93,3 +97,18 @@ Adapted from the account-brief template and the cold-call guidance in marketings
 9. **Call plan:** four beats opener (who, why, permission, question), goal (book the next step, not sell), close.
 10. **Follow-up:** email draft and a place to log the outcome.
 11. **Compliance line:** source, date, lawful basis, TPS and consent check.
+
+## 8. Test of the three technology-detection projects (2026-10-13)
+Run against six sites (Lisa, four competitors, and maximusmediascape.com).
+
+| Project | Licence | Activity | Result |
+|---|---|---|---|
+| **wappalyzer-next** (Python command line) | GPL-3.0 | Last release 2.0.4 on 2026-10-01 | **Recommended.** Fast mode scanned all six sites in about 36 seconds and found 6 to 24 technologies each, including analytics, forms, SEO plugins, hosting, cookie tools and heatmaps. Full (browser) mode **failed in this container** ("Failed to initialise Chromium"), a likely browser-version mismatch here that I did not fix, so it is untested |
+| **wappalyzergo** (Go library) | **MIT** | Fingerprints updated weekly (latest 2026-10-11) | Works and shows exact versions (WordPress, PHP, Elementor), but it reads the raw page only, so it found fewer tools (for example no analytics on sites where the fast scan found them). Needs a small Go program to use |
+| **webappanalyzer** (data) | GPL-3.0 | Latest merge 2026-09-16, very active | It is the fingerprint database, not a program |
+
+**Caveats**
+- **Licences:** two of the three are GPL-3.0. Using them as separate tools for internal research is straightforward. Building them into something we distribute or sell has copyleft implications, so check with whoever advises you on licences first. The MIT Go library has no such issue. This is not legal advice.
+- **Accuracy:** tools like this read what a site shows publicly. Treat results as leads to confirm, not proof, and always tell the client how we know.
+- **Independence:** the Wappalyzer name and project history are disputed in the sources I found ([overview](https://seomator.com/blog/wappalyzer-alternatives)), so I looked at the repositories directly and ran them.
+- **How we'd use it in the brief:** one command on the lead's homepage gives platform, hosting, analytics, forms and consent tools, which fills the "business snapshot" and gives evidence for headlines such as "no tracking on your site".
