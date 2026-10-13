@@ -18,8 +18,8 @@ The user will give: **client name**, **site URL**, and **scope** (e.g. SEO, perf
 - Keep screenshots and exports in `assets/` and reference them from `findings.md`.
 - Commit small and often with messages like `audit(<client-slug>): <what changed>`.
 - Do not push to any branch other than the one designated for the session unless the user gives permission.
-- Do not open a PR unless asked. When an audit is delivered, the user decides whether to merge to `main` or tag it (`audit/<client-slug>/v1`).
-- `main` holds only shared material: this file and `audits/_template/`.
+- Do not open a PR unless asked. When an audit is delivered, it is merged into `main` (via PR, when the user asks) so `main` holds every client's folder.
+- `main` contains this file, `audits/_template/`, and one folder per client: `audits/<client-slug>/`.
 
 ## Findings format (`findings.md`)
 - **Summary**: 3-5 lines and an overall rating.
