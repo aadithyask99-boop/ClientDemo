@@ -1,0 +1,19 @@
+/* Maximus Mediascape brand tokens (taken from maximusmediascape.com).
+   Fonts load from Google Fonts (Bebas Neue, Mulish) and Fontshare (Boska). */
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Mulish:wght@400;600;700;800&display=swap");
+@import url("https://api.fontshare.com/v2/css?f[]=boska@400,500,700&display=swap");
+:root{
+  --red:#e10600;      /* primary, hero bands, accents */
+  --cream:#f5efe8;    /* page background */
+  --ink:#17090a;      /* text, dark bands */
+  --butter:#f6d98f;   /* highlight */
+  --royal:#064a2a;    /* positive / target state */
+  --dot:#a9b4ff;      /* lavender chip */
+  --pink:#ffd3e6;     /* sticker */
+  --mint:#cdebd6;     /* sticker, opportunity tint */
+  --blush:#ffd0cb;    /* pain-point tint */
+  --mute:#a0948a;
+  --display:"Bebas Neue",Impact,"Arial Narrow",sans-serif;
+  --body:"Mulish",system-ui,sans-serif;
+  --accent:"Boska",Georgia,"Times New Roman",serif;
+}
