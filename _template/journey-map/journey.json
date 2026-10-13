@@ -1,0 +1,27 @@
+{
+  "client": "Client Name",
+  "title": "Customer journey map",
+  "subtitle": "Persona: who is buying, where they book from and what they compare.",
+  "date": "YYYY-MM-DD",
+  "source_note": "Evidence: A = observed in our audit of the live site, R = from web research, H = hypothesis to validate. The feeling curve is a judgement, not measured data.",
+  "emotion": {
+    "today": [4, 3, 2, 1.5, 2.5, 3, 3.5, 3.5],
+    "target": [4, 4, 4, 4.5, 4, 4.5, 5, 5],
+    "observed_until": 3,
+    "callout": "Biggest drop-off risk"
+  },
+  "stages": [
+    {"name": "1 Trigger", "label": "Something to celebrate / a need appears",
+     "does": "What the customer does at this stage.",
+     "touchpoints": "Where they meet the business.",
+     "pain": "What goes wrong today. Tag evidence [A], [R] or [H].",
+     "opportunity": "What to do about it."},
+    {"name": "2 Research", "label": "Search and ask around", "does": "", "touchpoints": "", "pain": "", "opportunity": ""},
+    {"name": "3 Compare", "label": "Shortlist suppliers", "does": "", "touchpoints": "", "pain": "", "opportunity": ""},
+    {"name": "4 Enquire", "label": "Get in touch", "does": "", "touchpoints": "", "pain": "", "opportunity": ""},
+    {"name": "5 Quote", "label": "Compare quotes", "does": "", "touchpoints": "", "pain": "", "opportunity": ""},
+    {"name": "6 Book", "label": "Confirm and pay", "does": "", "touchpoints": "", "pain": "", "opportunity": ""},
+    {"name": "7 Deliver", "label": "Service day", "does": "", "touchpoints": "", "pain": "", "opportunity": ""},
+    {"name": "8 After", "label": "Review, refer, rebook", "does": "", "touchpoints": "", "pain": "", "opportunity": ""}
+  ]
+}

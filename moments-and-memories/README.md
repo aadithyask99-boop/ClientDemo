@@ -11,4 +11,5 @@
 ## Files
 - `findings.md`: the audit and recommendations
 - `customer-journey.md`: customer journey map for party/event hire, with research and evidence levels
+- `journey.json`: data behind the journey map (rebuild with `_template/journey-map/build_journey.py`)
 - `assets/`: screenshots, jev-seo report (`jev-seo-*`), Lighthouse reports (`lighthouse/`), Pa11y results (`pa11y/`)
