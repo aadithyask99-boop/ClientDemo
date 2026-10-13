@@ -1,0 +1,1688 @@
+{
+ "schema_version": "1.0",
+ "tool": {
+  "name": "jev-seo",
+  "version": "0.1.1"
+ },
+ "run": {
+  "started_at": "2026-10-13T13:23:31+00:00",
+  "finished_at": "2026-10-13T13:23:45+00:00",
+  "timings_s": {
+   "crawl": 13.2,
+   "checks": 0.0,
+   "dataforseo": 0.0,
+   "jev": 0.0,
+   "pagespeed": 1.0
+  },
+  "options": {
+   "url": "https://themomentsandmemories.co.uk/",
+   "max_pages": 60,
+   "max_depth": 5,
+   "time_budget": 240,
+   "render": "auto",
+   "jev_pages": 60,
+   "jev_budget": 0.25,
+   "no_jev": true,
+   "psi_pages": 3,
+   "no_psi": false,
+   "full": false,
+   "location_code": 2840,
+   "language": "en",
+   "dfs_budget": 1.0,
+   "reuse_dfs": null,
+   "formats": "pdf,xlsx,md"
+  }
+ },
+ "site": {
+  "input_url": "https://themomentsandmemories.co.uk/",
+  "start_url": "https://themomentsandmemories.co.uk/",
+  "final_url": "https://themomentsandmemories.co.uk/",
+  "origin": "https://themomentsandmemories.co.uk",
+  "domain": "themomentsandmemories.co.uk",
+  "https": true,
+  "robots": {
+   "url": "https://themomentsandmemories.co.uk/robots.txt",
+   "status": 200,
+   "present": true,
+   "bytes": 128,
+   "sitemaps": [
+    "https://themomentsandmemories.co.uk/wp-sitemap.xml"
+   ],
+   "crawl_delay": null,
+   "disallow_all": false,
+   "search_bots": {
+    "Googlebot": true,
+    "Bingbot": true
+   },
+   "ai_bots": {
+    "GPTBot": true,
+    "OAI-SearchBot": true,
+    "ChatGPT-User": true,
+    "ClaudeBot": true,
+    "Claude-SearchBot": true,
+    "PerplexityBot": true,
+    "Google-Extended": true,
+    "Applebot-Extended": true,
+    "CCBot": true,
+    "Bytespider": true
+   },
+   "ai_bots_named": []
+  },
+  "sitemaps": {
+   "files": [
+    {
+     "url": "https://themomentsandmemories.co.uk/wp-sitemap.xml",
+     "status": 200,
+     "urls": 0,
+     "error": null,
+     "lastmod": 0,
+     "type": "sitemapindex",
+     "children": 6
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/wp-sitemap-posts-post-1.xml",
+     "status": 200,
+     "urls": 1,
+     "error": null,
+     "lastmod": 1,
+     "type": "urlset"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/wp-sitemap-posts-page-1.xml",
+     "status": 200,
+     "urls": 3,
+     "error": null,
+     "lastmod": 3,
+     "type": "urlset"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/wp-sitemap-posts-elementor-hf-1.xml",
+     "status": 200,
+     "urls": 1,
+     "error": null,
+     "lastmod": 1,
+     "type": "urlset"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/wp-sitemap-posts-wpr_templates-1.xml",
+     "status": 200,
+     "urls": 1,
+     "error": null,
+     "lastmod": 1,
+     "type": "urlset"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/wp-sitemap-taxonomies-category-1.xml",
+     "status": 200,
+     "urls": 1,
+     "error": null,
+     "lastmod": 0,
+     "type": "urlset"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/wp-sitemap-users-1.xml",
+     "status": 200,
+     "urls": 1,
+     "error": null,
+     "lastmod": 0,
+     "type": "urlset"
+    }
+   ],
+   "urls": [
+    "https://themomentsandmemories.co.uk/hello-world",
+    "https://themomentsandmemories.co.uk/",
+    "https://themomentsandmemories.co.uk/service",
+    "https://themomentsandmemories.co.uk/contact-us",
+    "https://themomentsandmemories.co.uk/elementor-hf/header",
+    "https://themomentsandmemories.co.uk/?wpr_templates=user-header-header",
+    "https://themomentsandmemories.co.uk/category/uncategorized",
+    "https://themomentsandmemories.co.uk/author/hazsnap2gmail-com"
+   ],
+   "total_urls": 8
+  },
+  "probes": {
+   "http_to_https": true,
+   "http_redirect_status": 301,
+   "host_variant": {
+    "host": "www.themomentsandmemories.co.uk",
+    "status": 200,
+    "redirect_status": 301,
+    "redirects_to_canonical_host": true
+   },
+   "not_found_status": 404,
+   "llms_txt": true
+  },
+  "link_status": {
+   "https://themomentsandmemories.co.uk/": 200,
+   "https://themomentsandmemories.co.uk/service": 200,
+   "https://themomentsandmemories.co.uk/contact-us": 200,
+   "https://themomentsandmemories.co.uk/hello-world": 200,
+   "https://themomentsandmemories.co.uk/elementor-hf/header": 301,
+   "https://themomentsandmemories.co.uk/category/uncategorized": 200,
+   "https://themomentsandmemories.co.uk/author/hazsnap2gmail-com": 200,
+   "https://themomentsandmemories.co.uk/?wpr_templates=user-header-header": 301,
+   "https://themomentsandmemories.co.uk/hello-world?replytocom=1": 200
+  },
+  "external_status": {
+   "https://wordpress.org/": 200,
+   "https://gravatar.com/": 200
+  },
+  "external_total": 2,
+  "blocked_by_robots": [],
+  "render": {
+   "mode": "auto",
+   "browser_available": false,
+   "homepage_rendered": false
+  },
+  "requests": 35,
+  "limits": {
+   "max_pages": 60,
+   "max_depth": 5,
+   "time_budget_s": 240,
+   "hit_page_cap": false,
+   "hit_time_budget": false
+  }
+ },
+ "pages": [
+  {
+   "url": "https://themomentsandmemories.co.uk/",
+   "fetched_at": "2026-10-13T13:23:41+00:00",
+   "fetch_ms": 221,
+   "status": 200,
+   "final_url": "https://themomentsandmemories.co.uk/",
+   "redirect_chain": [],
+   "content_type": "text/html",
+   "bytes": 106576,
+   "ttfb_ms": 174,
+   "x_robots": null,
+   "headers": {
+    "content-security-policy": "upgrade-insecure-requests"
+   },
+   "rendered": false,
+   "js_dependent": false,
+   "raw_word_count": 432,
+   "title": "themomentsandmemories.co.uk",
+   "title_count": 2,
+   "meta_description": null,
+   "meta_robots": "max-image-preview:large",
+   "canonical": "https://themomentsandmemories.co.uk/",
+   "lang": "en-US",
+   "viewport": "width=device-width, initial-scale=1.0, viewport-fit=cover",
+   "charset": true,
+   "og": {
+    "title": null,
+    "description": null,
+    "image": null,
+    "type": null,
+    "url": null
+   },
+   "twitter_card": null,
+   "favicon": false,
+   "hreflang": [],
+   "h1": [],
+   "h2": [
+    "Celebrate Life\u2019s Moments with Style \u2728",
+    "Welcome to Moments & Memories",
+    "Creating Unforgettable Celebrations",
+    "Our Celebration Services",
+    "Why Choose Moments & Memories ?",
+    "Let\u2019s Make Your Celebration Unforgettable"
+   ],
+   "h3": [
+    "Services",
+    "Subscribe to our Newsletter",
+    "Get in touch",
+    "Address",
+    "Email Address",
+    "Call Us"
+   ],
+   "outline": [
+    "h2: Celebrate Life\u2019s Moments with Style \u2728",
+    "h2: Welcome to Moments & Memories",
+    "h2: Creating Unforgettable Celebrations",
+    "h3: Services",
+    "h2: Our Celebration Services",
+    "h2: Why Choose Moments & Memories ?",
+    "h3: Subscribe to our Newsletter",
+    "h3: Get in touch",
+    "h2: Let\u2019s Make Your Celebration Unforgettable",
+    "h3: Address",
+    "h3: Email Address",
+    "h3: Call Us"
+   ],
+   "heading_skips": 0,
+   "word_count": 432,
+   "text_excerpt": "Menu Skip to main content Celebrate Life\u2019s Moments with Style \u2728 From glamorous cocktail parties and marquee events to fun-filled birthdays and unforgettable weddings, we bring magic, elegance, and joy to every celebration. Contact us Explore Our Services Welcome to Moments & Memories At Making Memories, we believe every celebration deserves to feel magical. Whether it\u2019s a milestone birthday, engagement, wedding, or just a reason to gather loved ones, we craft experiences filled with joy, laughter, and unforgettable moments. Our passion lies in turning your vision into a celebration that reflects your style and creates memories to treasure forever. Creating Unforgettable Celebrations What makes us stand out is our ability to blend elegance with fun. From bouncy castles and themed d\u00e9cor to cocktail bars and luxury marquees, we provide everything you need under one roof to make your event truly extraordinary. Services Our Celebration Services We offer a wide range of services designed to bring magic, fun, and sophistication to your events. From playful setups for kids to glamorous evenings for adults, our team ensures every detail is perfect, leaving you free to enjoy the moment. Elegant Marquee & Event Styling Transform your venue into a stunning setting with our elegant marquees and themed d\u00e9cor. Perfect for weddings, engagements, and milestone celebrations, we create a sophisticated atmosphere tailored to your vision. Fun-Filled Activities & Entertainment From bouncy castles and skating parties to adorable animal encounters, we bring the fun factor to children\u2019s and family events. We create experiences that keep everyone smiling from start to finish. Cocktail Bars & Catering Delight your guests with stylish cocktail bars, exquisite catering, and show-stopping spit roasts. Our food and drink options add a touch of class and indulgence to every celebration. Luxury Extras & Special Touches Make your celebration truly unforgettable with limousine hires, themed decorations, and unique add-ons. These extra details bring glamour, excitement, and personality to your event. Why Choose Moments & Memories ? Full-service event planning with everything under one roof. Tailored celebrations designed to reflect your personality and style. A perfect blend of sophistication, fun, and unforgettable experiences. From children\u2019s birthdays to glamorous weddings \u2013 we do it all with care and creativity. Subscribe to our Newsletter Get in touch Let\u2019s Make Your Celebration Unforgettable Whether you\u2019re planning a birthday, wedding, engagement, or a night to remember, Moments & Memories is here to turn your vision into reality. Let us handle the details so you can focus on enjoying every magical moment. Address 124 City Road, London, EC1V 2NX Email Address lisamomentsandmemories@gmail.com Call Us 07904472296 themomentsandmemories.co.uk is proudly powered by WordPress",
+   "calls_to_action": [
+    "Skip to main content",
+    "Contact us",
+    "Explore Our Services",
+    "WordPress"
+   ],
+   "nav_labels": [
+    "Home",
+    "Service",
+    "Contact us"
+   ],
+   "text_hash": "cb6ac1014a05c0dc4533d4848da6f95c17573b29",
+   "images": {
+    "total": 8,
+    "missing_alt": 0,
+    "empty_alt": 8,
+    "lazy": 5,
+    "no_dimensions": 0,
+    "missing_alt_samples": []
+   },
+   "links_internal": [
+    {
+     "url": "https://themomentsandmemories.co.uk/",
+     "anchor": "Home"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/service",
+     "anchor": "Service"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/contact-us",
+     "anchor": "Contact us"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/",
+     "anchor": "themomentsandmemories.co.uk"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/contact-us",
+     "anchor": "Contact us"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/service",
+     "anchor": "Explore Our Services"
+    }
+   ],
+   "links_external": [
+    {
+     "url": "https://wordpress.org/",
+     "anchor": "WordPress"
+    }
+   ],
+   "nofollow_links": 0,
+   "schema_types": [
+    "microdata:WPHeader"
+   ],
+   "schema_errors": [],
+   "schema_nodes": [],
+   "mixed_content": [],
+   "script_count": 27,
+   "depth": 0,
+   "kind": "page",
+   "in_sitemap": true,
+   "inlinks": 5,
+   "inlink_anchors": [
+    "themomentsandmemories.co.uk"
+   ]
+  },
+  {
+   "url": "https://themomentsandmemories.co.uk/service",
+   "fetched_at": "2026-10-13T13:23:42+00:00",
+   "fetch_ms": 840,
+   "status": 200,
+   "final_url": "https://themomentsandmemories.co.uk/service",
+   "redirect_chain": [
+    {
+     "url": "https://themomentsandmemories.co.uk/service",
+     "status": 301
+    }
+   ],
+   "content_type": "text/html",
+   "bytes": 105729,
+   "ttfb_ms": 405,
+   "x_robots": null,
+   "headers": {
+    "content-security-policy": "upgrade-insecure-requests"
+   },
+   "rendered": false,
+   "js_dependent": false,
+   "raw_word_count": 727,
+   "title": "Service \u2013 themomentsandmemories.co.uk",
+   "title_count": 2,
+   "meta_description": null,
+   "meta_robots": "max-image-preview:large",
+   "canonical": "https://themomentsandmemories.co.uk/service",
+   "lang": "en-US",
+   "viewport": "width=device-width, initial-scale=1.0, viewport-fit=cover",
+   "charset": true,
+   "og": {
+    "title": null,
+    "description": null,
+    "image": null,
+    "type": null,
+    "url": null
+   },
+   "twitter_card": null,
+   "favicon": false,
+   "hreflang": [],
+   "h1": [],
+   "h2": [
+    "Celebrate in Style with Moments & Memories",
+    "Elegant Adult Celebrations",
+    "Fun-Filled Children\u2019s Parties",
+    "Unique Party Experiences",
+    "Full-Service Event Planning",
+    "Kids\u2019 Party Theme Ideas",
+    "Let\u2019s Make Your Celebration Unforgettable"
+   ],
+   "h3": [
+    "Services",
+    "Get in touch",
+    "Email Address",
+    "Call Us"
+   ],
+   "outline": [
+    "h3: Services",
+    "h2: Celebrate in Style with Moments & Memories",
+    "h2: Elegant Adult Celebrations",
+    "h2: Fun-Filled Children\u2019s Parties",
+    "h2: Unique Party Experiences",
+    "h2: Full-Service Event Planning",
+    "h2: Kids\u2019 Party Theme Ideas",
+    "h3: Get in touch",
+    "h2: Let\u2019s Make Your Celebration Unforgettable",
+    "h3: Email Address",
+    "h3: Call Us"
+   ],
+   "heading_skips": 0,
+   "word_count": 727,
+   "text_excerpt": "Menu Skip to main content Services Celebrate in Style with Moments & Memories At Moments & Memories , we believe every occasion deserves to be magical, joyful, and unforgettable. From glamorous cocktail evenings to fun-filled birthday parties, we create celebrations that reflect your style and personality. With everything from elegant marquees and luxury catering to bouncy castles and themed d\u00e9cor, we design events that make hearts race, smiles sparkle, and memories last a lifetime. Whether you\u2019re planning a wedding, milestone birthday, or just a reason to celebrate with friends, our team ensures your special day is nothing short of extraordinary. Elegant Adult Celebrations Our adult celebration services bring sophistication, glamour, and joy to every event. Whether it\u2019s an engagement, wedding, or milestone birthday, we specialize in creating unforgettable atmospheres that leave a lasting impression. Glamorous cocktail parties with professional mixologists \ud83c\udf78 Elegant marquee setups with lighting and d\u00e9cor \u2728 Show-stopping spit roasts and exquisite catering \ud83c\udf7d\ufe0f Personalized event design that reflects your style A seamless experience from planning to execution Get a Quote Fun-Filled Children\u2019s Parties We believe kids\u2019 parties should be magical, exciting, and filled with laughter. Our children\u2019s party packages bring endless fun, adventure, and joy for little ones. Bouncy castles for hours of fun \ud83c\udff0 Adorable animal encounters \ud83d\udc07 Themed party d\u00e9cor and creative setups \ud83c\udf89 Fun food stalls like popcorn, candy floss, and more \ud83c\udf6d Activities designed to keep children entertained and happy Get a Quote Unique Party Experiences At Making Memories, we go beyond the ordinary to deliver unforgettable experiences that surprise and delight. Whether you\u2019re looking for something playful, glamorous, or adventurous, we\u2019ve got it covered. Limousine hire for stylish arrivals \ud83d\ude98 Skating parties for fun on wheels \u26f8\ufe0f Cocktail bars and entertainment for lively evenings \ud83c\udfb6 Custom d\u00e9cor and props to bring your theme to life Interactive activities that keep guests engaged Get a Quote Full-Service Event Planning From intimate gatherings to large-scale celebrations, we handle every detail to make your event stress-free and spectacular. Our planning services ensure you can simply enjoy the moment while we take care of the rest. End-to-end event design and coordination Venue styling with d\u00e9cor, lighting, and seating arrangements Complete catering solutions tailored to your preferences Entertainment options for all ages and styles A dedicated team focused on making your event unforgettable \ud83d\udc96 Get a Quote Kids\u2019 Party Theme Ideas Circus party Dinosaur Pirate party Harry Potter Super hero Disco party Animal party Mermaid party Safari party Unicorn Paw Patrol Princess party Rainbow Science party Space parties Tea party Under the sea Barbie party Fairies Mermaid Inflatable bumper boat (7/8 hours) Roller skating (mobile, 25 people) Fairground rides Rodeo bull party Water activities/slides Bouncy castle party Backyard camping adventure Glow in the dark dance party \ud83c\udf89 Classic Party Themes \u2022 Black & White Party \u2022 Masquerade Ball \u2022 Casino Night (Las Vegas theme) \u2022 Great Gatsby / 1920s \u2022 Hollywood Red Carpet \u2022 Arabian Nights \u2022 Tropical Luau \u2022 Mardi Gras \u2022 Around the World (multi-cultural stations) \u2e3b \ud83c\udf78 Luxury & Glamour Themes \u2022 Champagne & Diamonds \u2022 All-White Party \u2022 Glamorous Gold & Glitter \u2022 James Bond 007 / Casino Royale \u2022 Monte Carlo Night \u2022 Burlesque & Cabaret \u2022 Winter Wonderland \u2022 Enchanted Garden / Secret Garden \u2022 Venetian Carnival \u2e3b \ud83c\udfad Fun & Quirky Themes \u2022 80s Neon Disco \u2022 90s Nostalgia \u2022 Rock \u2019n\u2019 Roll \u2022 Festival Vibes (like Coachella or Glastonbury) \u2022 Glow in the Dark / UV Party \u2022 Pyjama Party (adults\u2019 version) \u2022 Murder Mystery Night \u2022 Karaoke Battle Night \u2022 Silent Disco \u2e3b \ud83c\udfd6\ufe0f Travel & Destination Themes \u2022 Ibiza Beach Club Night \u2022 Caribbean Carnival \u2022 Mexican Fiesta (Cinco de Mayo) \u2022 Oktoberfest (German Beer Hall) \u2022 Parisian Chic \u2022 Bollywood Glam \u2022 Moroccan Bazaar \u2022 Hawaiian Luau \u2e3b \ud83c\udf83 Seasonal / Holiday Themes \u2022 Halloween Masquerade \u2022 Christmas Winter Ball \u2022 New Year\u2019s Eve Countdown Party \u2022 Valentine\u2019s Masquerade \u2022 Easter Garden Party (adult twist) \u2022 Summer Solstice Party \u2e3b \ud83e\udd42 Food & Drink Themes \u2022 Wine Tasting Evening \u2022 Prosecco & Tapas Night \u2022 Whiskey & Jazz Lounge \u2022 Gin & Tonic Garden Party \u2022 Craft Beer Festival \u2022 Champagne Brunch Party \u2022 Street Food Festival Night \u2e3b \ud83d\udca1 Unique Creative Themes \u2022 Arabian Nights Hookah Lounge \u2022 Glow & Flow Yoga Party (wellness + fun) \u2022 Medieval Banquet \u2022 Space / Futuristic Party \u2022 Fantasy (Harry Potter / Game of Thrones inspired, adult twist) \u2022 Studio 54 Disco \u2022 Black Light Body Paint Party Get a Quote Get in touch Let\u2019s Make Your Celebration Unforgettable Whether you\u2019re planning a birthday, wedding, engagement, or a night to remember, Making Memories is here to turn your vision into reality. Let us handle the details so you can focus on enjoying every magical moment. contact us Email Address [Enter the email] Call Us [Enter the Phone Number] themomentsandmemories.co.uk is proudly powered by WordPress",
+   "calls_to_action": [
+    "Skip to main content",
+    "Get a Quote",
+    "contact us",
+    "WordPress"
+   ],
+   "nav_labels": [
+    "Home",
+    "Service",
+    "Contact us"
+   ],
+   "text_hash": "a8b7c4bfa9d3bf0f41245ddda5f2c07c2c7d658e",
+   "images": {
+    "total": 6,
+    "missing_alt": 0,
+    "empty_alt": 6,
+    "lazy": 3,
+    "no_dimensions": 0,
+    "missing_alt_samples": []
+   },
+   "links_internal": [
+    {
+     "url": "https://themomentsandmemories.co.uk/",
+     "anchor": "Home"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/service",
+     "anchor": "Service"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/contact-us",
+     "anchor": "Contact us"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/",
+     "anchor": "themomentsandmemories.co.uk"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/contact-us",
+     "anchor": "Get a Quote"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/contact-us",
+     "anchor": "Get a Quote"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/contact-us",
+     "anchor": "Get a Quote"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/contact-us",
+     "anchor": "Get a Quote"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/contact-us",
+     "anchor": "Get a Quote"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/contact-us",
+     "anchor": "contact us"
+    }
+   ],
+   "links_external": [
+    {
+     "url": "https://wordpress.org/",
+     "anchor": "WordPress"
+    }
+   ],
+   "nofollow_links": 0,
+   "schema_types": [
+    "microdata:WPHeader"
+   ],
+   "schema_errors": [],
+   "schema_nodes": [],
+   "mixed_content": [],
+   "script_count": 27,
+   "depth": 1,
+   "kind": "page",
+   "in_sitemap": true,
+   "inlinks": 5,
+   "inlink_anchors": [
+    "Explore Our Services",
+    "Service"
+   ]
+  },
+  {
+   "url": "https://themomentsandmemories.co.uk/contact-us",
+   "fetched_at": "2026-10-13T13:23:42+00:00",
+   "fetch_ms": 963,
+   "status": 200,
+   "final_url": "https://themomentsandmemories.co.uk/contact-us",
+   "redirect_chain": [
+    {
+     "url": "https://themomentsandmemories.co.uk/contact-us",
+     "status": 301
+    }
+   ],
+   "content_type": "text/html",
+   "bytes": 84415,
+   "ttfb_ms": 148,
+   "x_robots": null,
+   "headers": {
+    "content-security-policy": "upgrade-insecure-requests"
+   },
+   "rendered": false,
+   "js_dependent": false,
+   "raw_word_count": 73,
+   "title": "Contact us \u2013 themomentsandmemories.co.uk",
+   "title_count": 2,
+   "meta_description": null,
+   "meta_robots": "max-image-preview:large",
+   "canonical": "https://themomentsandmemories.co.uk/contact-us",
+   "lang": "en-US",
+   "viewport": "width=device-width, initial-scale=1.0, viewport-fit=cover",
+   "charset": true,
+   "og": {
+    "title": null,
+    "description": null,
+    "image": null,
+    "type": null,
+    "url": null
+   },
+   "twitter_card": null,
+   "favicon": false,
+   "hreflang": [],
+   "h1": [],
+   "h2": [
+    "Contact",
+    "Contact Us"
+   ],
+   "h3": [],
+   "outline": [
+    "h2: Contact",
+    "h2: Contact Us"
+   ],
+   "heading_skips": 0,
+   "word_count": 73,
+   "text_excerpt": "Menu Skip to main content Contact Contact Us At Moments & Memories , we believe every celebration deserves to feel magical. Whether it\u2019s a milestone birthday, engagement, wedding, or just a reason to gather loved ones, we craft experiences filled with joy, laughter, and unforgettable moments. Our passion lies in turning your vision into a celebration that reflects your style and creates memories to treasure forever. themomentsandmemories.co.uk is proudly powered by WordPress",
+   "calls_to_action": [
+    "Skip to main content",
+    "WordPress"
+   ],
+   "nav_labels": [
+    "Home",
+    "Service",
+    "Contact us"
+   ],
+   "text_hash": "d4936a763de430a8ab13a59cbf08b270b03afd2e",
+   "images": {
+    "total": 2,
+    "missing_alt": 0,
+    "empty_alt": 2,
+    "lazy": 0,
+    "no_dimensions": 0,
+    "missing_alt_samples": []
+   },
+   "links_internal": [
+    {
+     "url": "https://themomentsandmemories.co.uk/",
+     "anchor": "Home"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/service",
+     "anchor": "Service"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/contact-us",
+     "anchor": "Contact us"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/",
+     "anchor": "themomentsandmemories.co.uk"
+    }
+   ],
+   "links_external": [
+    {
+     "url": "https://wordpress.org/",
+     "anchor": "WordPress"
+    }
+   ],
+   "nofollow_links": 0,
+   "schema_types": [
+    "microdata:WPHeader"
+   ],
+   "schema_errors": [],
+   "schema_nodes": [],
+   "mixed_content": [],
+   "script_count": 34,
+   "depth": 1,
+   "kind": "page",
+   "in_sitemap": true,
+   "inlinks": 5,
+   "inlink_anchors": [
+    "Contact us",
+    "contact us"
+   ]
+  },
+  {
+   "url": "https://themomentsandmemories.co.uk/hello-world",
+   "fetched_at": "2026-10-13T13:23:43+00:00",
+   "fetch_ms": 1007,
+   "status": 200,
+   "final_url": "https://themomentsandmemories.co.uk/hello-world",
+   "redirect_chain": [
+    {
+     "url": "https://themomentsandmemories.co.uk/hello-world",
+     "status": 301
+    }
+   ],
+   "content_type": "text/html",
+   "bytes": 80400,
+   "ttfb_ms": 177,
+   "x_robots": null,
+   "headers": {
+    "content-security-policy": "upgrade-insecure-requests"
+   },
+   "rendered": false,
+   "js_dependent": false,
+   "raw_word_count": 106,
+   "title": "Hello world! \u2013 themomentsandmemories.co.uk",
+   "title_count": 1,
+   "meta_description": null,
+   "meta_robots": "max-image-preview:large",
+   "canonical": "https://themomentsandmemories.co.uk/hello-world",
+   "lang": "en-US",
+   "viewport": "width=device-width, initial-scale=1",
+   "charset": true,
+   "og": {
+    "title": null,
+    "description": null,
+    "image": null,
+    "type": null,
+    "url": null
+   },
+   "twitter_card": null,
+   "favicon": false,
+   "hreflang": [],
+   "h1": [
+    "Hello world!"
+   ],
+   "h2": [
+    "Comments",
+    "More posts",
+    "themomentsandmemories.co.uk"
+   ],
+   "h3": [
+    "One response to \u201cHello world!\u201d",
+    "Leave a Reply Cancel reply",
+    "Hello world!"
+   ],
+   "outline": [
+    "h1: Hello world!",
+    "h2: Comments",
+    "h3: One response to \u201cHello world!\u201d",
+    "h3: Leave a Reply Cancel reply",
+    "h2: More posts",
+    "h3: Hello world!",
+    "h2: themomentsandmemories.co.uk"
+   ],
+   "heading_skips": 0,
+   "word_count": 106,
+   "text_excerpt": "Hello world! Written by hazsnap2@gmail.com in Uncategorized Welcome to WordPress. This is your first post. Edit or delete it, then start writing! Comments One response to \u201cHello world!\u201d September 5, 2025 A WordPress Commenter Hi, this is a comment. To get started with moderating, editing, and deleting comments, please visit the Comments screen in the dashboard. Commenter avatars come from Gravatar . Reply Leave a Reply Cancel reply Your email address will not be published. Required fields are marked * Comment * Name * Email * Website Save my name, email, and website in this browser for the next time I comment. More posts Hello world! September 5, 2025",
+   "calls_to_action": [
+    "hazsnap2@gmail.com",
+    "Uncategorized",
+    "September 5, 2025",
+    "A WordPress Commenter",
+    "Gravatar",
+    "Reply",
+    "Cancel reply",
+    "Hello world!"
+   ],
+   "nav_labels": [
+    "Contact us",
+    "Home",
+    "Service"
+   ],
+   "text_hash": "acc277a4efc2f5ee6d8e928e8eed49b78e81a764",
+   "images": {
+    "total": 1,
+    "missing_alt": 0,
+    "empty_alt": 0,
+    "lazy": 0,
+    "no_dimensions": 0,
+    "missing_alt_samples": []
+   },
+   "links_internal": [
+    {
+     "url": "https://themomentsandmemories.co.uk/",
+     "anchor": "themomentsandmemories.co.uk"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/contact-us",
+     "anchor": "Contact us"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/",
+     "anchor": "Home"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/service",
+     "anchor": "Service"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/author/hazsnap2gmail-com",
+     "anchor": "hazsnap2@gmail.com"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/category/uncategorized",
+     "anchor": "Uncategorized"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/hello-world",
+     "anchor": "September 5, 2025"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/hello-world?replytocom=1",
+     "anchor": "Reply"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/hello-world",
+     "anchor": "Cancel reply"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/hello-world",
+     "anchor": "Hello world!"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/hello-world",
+     "anchor": "September 5, 2025"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/",
+     "anchor": "themomentsandmemories.co.uk"
+    }
+   ],
+   "links_external": [
+    {
+     "url": "https://wordpress.org/",
+     "anchor": "A WordPress Commenter"
+    },
+    {
+     "url": "https://gravatar.com/",
+     "anchor": "Gravatar"
+    },
+    {
+     "url": "https://wordpress.org/",
+     "anchor": "WordPress"
+    }
+   ],
+   "nofollow_links": 4,
+   "schema_types": [],
+   "schema_errors": [],
+   "schema_nodes": [],
+   "mixed_content": [],
+   "script_count": 18,
+   "depth": 99,
+   "kind": "page",
+   "in_sitemap": true,
+   "inlinks": 2,
+   "inlink_anchors": [
+    "September 5, 2025"
+   ]
+  },
+  {
+   "url": "https://themomentsandmemories.co.uk/elementor-hf/header",
+   "status": 301,
+   "final_url": "https://themomentsandmemories.co.uk/",
+   "redirect_chain": [
+    {
+     "url": "https://themomentsandmemories.co.uk/elementor-hf/header",
+     "status": 301
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/elementor-hf/header/",
+     "status": 301
+    }
+   ],
+   "fetched_at": "2026-10-13T13:23:43+00:00",
+   "depth": 99,
+   "kind": "redirect",
+   "final_status": 200,
+   "in_sitemap": true,
+   "inlinks": 0,
+   "inlink_anchors": []
+  },
+  {
+   "url": "https://themomentsandmemories.co.uk/category/uncategorized",
+   "fetched_at": "2026-10-13T13:23:42+00:00",
+   "fetch_ms": 288,
+   "status": 200,
+   "final_url": "https://themomentsandmemories.co.uk/category/uncategorized",
+   "redirect_chain": [
+    {
+     "url": "https://themomentsandmemories.co.uk/category/uncategorized",
+     "status": 301
+    }
+   ],
+   "content_type": "text/html",
+   "bytes": 60882,
+   "ttfb_ms": 139,
+   "x_robots": null,
+   "headers": {
+    "content-security-policy": "upgrade-insecure-requests"
+   },
+   "rendered": false,
+   "js_dependent": false,
+   "raw_word_count": 45,
+   "title": "Uncategorized \u2013 themomentsandmemories.co.uk",
+   "title_count": 1,
+   "meta_description": null,
+   "meta_robots": "max-image-preview:large",
+   "canonical": null,
+   "lang": "en-US",
+   "viewport": "width=device-width, initial-scale=1",
+   "charset": true,
+   "og": {
+    "title": null,
+    "description": null,
+    "image": null,
+    "type": null,
+    "url": null
+   },
+   "twitter_card": null,
+   "favicon": false,
+   "hreflang": [],
+   "h1": [
+    "Category: Uncategorized"
+   ],
+   "h2": [
+    "Hello world!",
+    "themomentsandmemories.co.uk"
+   ],
+   "h3": [],
+   "outline": [
+    "h1: Category: Uncategorized",
+    "h2: Hello world!",
+    "h2: themomentsandmemories.co.uk"
+   ],
+   "heading_skips": 0,
+   "word_count": 45,
+   "text_excerpt": "themomentsandmemories.co.uk Contact us Home Service Category: Uncategorized Hello world! Welcome to WordPress. This is your first post. Edit or delete it, then start writing! September 5, 2025 themomentsandmemories.co.uk Blog About FAQs Authors Events Shop Patterns Themes Twenty Twenty-Five Designed with WordPress",
+   "calls_to_action": [
+    "Hello world!",
+    "September 5, 2025"
+   ],
+   "nav_labels": [
+    "Contact us",
+    "Home",
+    "Service"
+   ],
+   "text_hash": "26aca6a3597c86d54b17f8cac647826867769965",
+   "images": {
+    "total": 0,
+    "missing_alt": 0,
+    "empty_alt": 0,
+    "lazy": 0,
+    "no_dimensions": 0,
+    "missing_alt_samples": []
+   },
+   "links_internal": [
+    {
+     "url": "https://themomentsandmemories.co.uk/",
+     "anchor": "themomentsandmemories.co.uk"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/contact-us",
+     "anchor": "Contact us"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/",
+     "anchor": "Home"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/service",
+     "anchor": "Service"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/hello-world",
+     "anchor": "Hello world!"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/hello-world",
+     "anchor": "September 5, 2025"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/",
+     "anchor": "themomentsandmemories.co.uk"
+    }
+   ],
+   "links_external": [
+    {
+     "url": "https://wordpress.org/",
+     "anchor": "WordPress"
+    }
+   ],
+   "nofollow_links": 1,
+   "schema_types": [],
+   "schema_errors": [],
+   "schema_nodes": [],
+   "mixed_content": [],
+   "script_count": 17,
+   "depth": 99,
+   "kind": "page",
+   "in_sitemap": true,
+   "inlinks": 1,
+   "inlink_anchors": [
+    "Uncategorized"
+   ]
+  },
+  {
+   "url": "https://themomentsandmemories.co.uk/author/hazsnap2gmail-com",
+   "fetched_at": "2026-10-13T13:23:43+00:00",
+   "fetch_ms": 1002,
+   "status": 200,
+   "final_url": "https://themomentsandmemories.co.uk/author/hazsnap2gmail-com",
+   "redirect_chain": [
+    {
+     "url": "https://themomentsandmemories.co.uk/author/hazsnap2gmail-com",
+     "status": 301
+    }
+   ],
+   "content_type": "text/html",
+   "bytes": 60890,
+   "ttfb_ms": 181,
+   "x_robots": null,
+   "headers": {
+    "content-security-policy": "upgrade-insecure-requests"
+   },
+   "rendered": false,
+   "js_dependent": false,
+   "raw_word_count": 47,
+   "title": "hazsnap2@gmail.com \u2013 themomentsandmemories.co.uk",
+   "title_count": 1,
+   "meta_description": null,
+   "meta_robots": "max-image-preview:large",
+   "canonical": null,
+   "lang": "en-US",
+   "viewport": "width=device-width, initial-scale=1",
+   "charset": true,
+   "og": {
+    "title": null,
+    "description": null,
+    "image": null,
+    "type": null,
+    "url": null
+   },
+   "twitter_card": null,
+   "favicon": false,
+   "hreflang": [],
+   "h1": [
+    "Author: hazsnap2@gmail.com"
+   ],
+   "h2": [
+    "Hello world!",
+    "themomentsandmemories.co.uk"
+   ],
+   "h3": [],
+   "outline": [
+    "h1: Author: hazsnap2@gmail.com",
+    "h2: Hello world!",
+    "h2: themomentsandmemories.co.uk"
+   ],
+   "heading_skips": 0,
+   "word_count": 47,
+   "text_excerpt": "themomentsandmemories.co.uk Contact us Home Service Author: hazsnap2@gmail.com Hello world! Welcome to WordPress. This is your first post. Edit or delete it, then start writing! September 5, 2025 themomentsandmemories.co.uk Blog About FAQs Authors Events Shop Patterns Themes Twenty Twenty-Five Designed with WordPress",
+   "calls_to_action": [
+    "Hello world!",
+    "September 5, 2025"
+   ],
+   "nav_labels": [
+    "Contact us",
+    "Home",
+    "Service"
+   ],
+   "text_hash": "d16554eae6cf8e4ff68c9cec55b5b208b72b2145",
+   "images": {
+    "total": 0,
+    "missing_alt": 0,
+    "empty_alt": 0,
+    "lazy": 0,
+    "no_dimensions": 0,
+    "missing_alt_samples": []
+   },
+   "links_internal": [
+    {
+     "url": "https://themomentsandmemories.co.uk/",
+     "anchor": "themomentsandmemories.co.uk"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/contact-us",
+     "anchor": "Contact us"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/",
+     "anchor": "Home"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/service",
+     "anchor": "Service"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/hello-world",
+     "anchor": "Hello world!"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/hello-world",
+     "anchor": "September 5, 2025"
+    },
+    {
+     "url": "https://themomentsandmemories.co.uk/",
+     "anchor": "themomentsandmemories.co.uk"
+    }
+   ],
+   "links_external": [
+    {
+     "url": "https://wordpress.org/",
+     "anchor": "WordPress"
+    }
+   ],
+   "nofollow_links": 1,
+   "schema_types": [],
+   "schema_errors": [],
+   "schema_nodes": [],
+   "mixed_content": [],
+   "script_count": 17,
+   "depth": 99,
+   "kind": "page",
+   "in_sitemap": true,
+   "inlinks": 1,
+   "inlink_anchors": [
+    "hazsnap2@gmail.com"
+   ]
+  },
+  {
+   "url": "https://themomentsandmemories.co.uk/?wpr_templates=user-header-header",
+   "status": 301,
+   "final_url": "https://themomentsandmemories.co.uk/",
+   "redirect_chain": [
+    {
+     "url": "https://themomentsandmemories.co.uk/?wpr_templates=user-header-header",
+     "status": 301
+    }
+   ],
+   "fetched_at": "2026-10-13T13:23:43+00:00",
+   "depth": 99,
+   "kind": "redirect",
+   "final_status": 200,
+   "in_sitemap": true,
+   "inlinks": 0,
+   "inlink_anchors": []
+  }
+ ],
+ "findings": [
+  {
+   "id": "sitemap_bad_urls",
+   "origin": "rule",
+   "category": "crawl",
+   "severity": "medium",
+   "title": "Sitemap lists URLs that redirect, fail or are noindex",
+   "fix": "List only final, indexable, HTTP 200 URLs in the sitemap.",
+   "source": "https://developers.google.com/search/docs/crawling-indexing/sitemaps/overview",
+   "effort": 2,
+   "heuristic": false,
+   "urls": [
+    "https://themomentsandmemories.co.uk/?wpr_templates=user-header-header",
+    "https://themomentsandmemories.co.uk/elementor-hf/header"
+   ],
+   "count": 2,
+   "evidence": "2 of the crawled sitemap URLs are not final indexable pages",
+   "detail": {}
+  },
+  {
+   "id": "redirect_chains",
+   "origin": "rule",
+   "category": "crawl",
+   "severity": "medium",
+   "title": "Redirect chains (more than one hop)",
+   "fix": "Point each redirect straight at its final URL.",
+   "source": "https://developers.google.com/search/docs/crawling-indexing/301-redirects",
+   "effort": 1,
+   "heuristic": false,
+   "urls": [
+    "https://themomentsandmemories.co.uk/elementor-hf/header"
+   ],
+   "count": 1,
+   "evidence": "https://themomentsandmemories.co.uk/elementor-hf/header (2 hops)",
+   "detail": {}
+  },
+  {
+   "id": "canonical_missing",
+   "origin": "rule",
+   "category": "crawl",
+   "severity": "low",
+   "title": "Pages without a canonical link",
+   "fix": "Add a self-referencing rel=canonical to each indexable page.",
+   "source": "https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls",
+   "effort": 1,
+   "heuristic": false,
+   "urls": [
+    "https://themomentsandmemories.co.uk/category/uncategorized",
+    "https://themomentsandmemories.co.uk/author/hazsnap2gmail-com"
+   ],
+   "count": 2,
+   "evidence": "2 of 6 pages",
+   "detail": {}
+  },
+  {
+   "id": "multiple_titles",
+   "origin": "rule",
+   "category": "onpage",
+   "severity": "low",
+   "title": "More than one title element",
+   "fix": "Keep a single title element in the head.",
+   "source": "https://developers.google.com/search/docs/appearance/title-link",
+   "effort": 1,
+   "heuristic": false,
+   "urls": [
+    "https://themomentsandmemories.co.uk/",
+    "https://themomentsandmemories.co.uk/service",
+    "https://themomentsandmemories.co.uk/contact-us"
+   ],
+   "count": 3,
+   "evidence": "3 pages",
+   "detail": {}
+  },
+  {
+   "id": "meta_missing",
+   "origin": "rule",
+   "category": "onpage",
+   "severity": "medium",
+   "title": "Pages without a meta description",
+   "fix": "Write a page-specific summary. Google may still generate its own snippet.",
+   "source": "https://developers.google.com/search/docs/appearance/snippet",
+   "effort": 1,
+   "heuristic": false,
+   "urls": [
+    "https://themomentsandmemories.co.uk/",
+    "https://themomentsandmemories.co.uk/service",
+    "https://themomentsandmemories.co.uk/contact-us",
+    "https://themomentsandmemories.co.uk/hello-world",
+    "https://themomentsandmemories.co.uk/category/uncategorized",
+    "https://themomentsandmemories.co.uk/author/hazsnap2gmail-com"
+   ],
+   "count": 6,
+   "evidence": "6 indexable pages",
+   "detail": {}
+  },
+  {
+   "id": "h1_missing",
+   "origin": "rule",
+   "category": "onpage",
+   "severity": "medium",
+   "title": "Pages without an H1 heading",
+   "fix": "Give each page one visible main heading that states its topic.",
+   "source": "https://developers.google.com/search/docs/fundamentals/seo-starter-guide",
+   "effort": 1,
+   "heuristic": true,
+   "urls": [
+    "https://themomentsandmemories.co.uk/",
+    "https://themomentsandmemories.co.uk/service",
+    "https://themomentsandmemories.co.uk/contact-us"
+   ],
+   "count": 3,
+   "evidence": "3 indexable pages",
+   "detail": {}
+  },
+  {
+   "id": "thin_content",
+   "origin": "rule",
+   "category": "content",
+   "severity": "medium",
+   "title": "Pages with very little main content",
+   "fix": "Expand pages that should rank with substance a visitor needs, or consolidate them. Word count is a warning sign, not a ranking factor.",
+   "source": "https://developers.google.com/search/docs/fundamentals/creating-helpful-content",
+   "effort": 3,
+   "heuristic": true,
+   "urls": [
+    "https://themomentsandmemories.co.uk/contact-us",
+    "https://themomentsandmemories.co.uk/hello-world",
+    "https://themomentsandmemories.co.uk/category/uncategorized",
+    "https://themomentsandmemories.co.uk/author/hazsnap2gmail-com"
+   ],
+   "count": 4,
+   "evidence": "/contact-us: 73 words; /hello-world: 106 words; /category/uncategorized: 45 words; /author/hazsnap2gmail-com: 47 words",
+   "detail": {
+    "word_counts": {
+     "https://themomentsandmemories.co.uk/contact-us": 73,
+     "https://themomentsandmemories.co.uk/hello-world": 106,
+     "https://themomentsandmemories.co.uk/category/uncategorized": 45,
+     "https://themomentsandmemories.co.uk/author/hazsnap2gmail-com": 47
+    }
+   }
+  },
+  {
+   "id": "og_missing",
+   "origin": "rule",
+   "category": "structured",
+   "severity": "low",
+   "title": "Open Graph title or image missing",
+   "fix": "Add og:title, og:description and og:image for link previews.",
+   "source": "https://ogp.me/",
+   "effort": 1,
+   "heuristic": false,
+   "urls": [
+    "https://themomentsandmemories.co.uk/",
+    "https://themomentsandmemories.co.uk/service",
+    "https://themomentsandmemories.co.uk/contact-us",
+    "https://themomentsandmemories.co.uk/hello-world",
+    "https://themomentsandmemories.co.uk/category/uncategorized",
+    "https://themomentsandmemories.co.uk/author/hazsnap2gmail-com"
+   ],
+   "count": 6,
+   "evidence": "6 pages lack og:title or og:image",
+   "detail": {}
+  },
+  {
+   "id": "hsts_missing",
+   "origin": "rule",
+   "category": "security",
+   "severity": "low",
+   "title": "No Strict-Transport-Security header",
+   "fix": "Send an HSTS header once HTTPS is stable everywhere.",
+   "source": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Strict-Transport-Security",
+   "effort": 1,
+   "heuristic": false,
+   "urls": [
+    "https://themomentsandmemories.co.uk/"
+   ],
+   "count": 1,
+   "evidence": "Homepage response has no HSTS header",
+   "detail": {}
+  },
+  {
+   "id": "security_headers",
+   "origin": "rule",
+   "category": "security",
+   "severity": "low",
+   "title": "Common security headers missing",
+   "fix": "Add the missing headers: x-content-type-options, referrer-policy, x-frame-options or CSP frame-ancestors.",
+   "source": "https://owasp.org/projects/secure-headers-project",
+   "effort": 1,
+   "heuristic": false,
+   "urls": [
+    "https://themomentsandmemories.co.uk/"
+   ],
+   "count": 1,
+   "evidence": "Missing on the homepage response: x-content-type-options, referrer-policy, x-frame-options or CSP frame-ancestors",
+   "detail": {}
+  },
+  {
+   "id": "favicon_missing",
+   "origin": "rule",
+   "category": "security",
+   "severity": "low",
+   "title": "No favicon declared",
+   "fix": "Declare a favicon; Google shows it beside results.",
+   "source": "https://developers.google.com/search/docs/fundamentals/seo-starter-guide",
+   "effort": 1,
+   "heuristic": false,
+   "urls": [
+    "https://themomentsandmemories.co.uk/"
+   ],
+   "count": 1,
+   "evidence": "No link rel=icon on the homepage",
+   "detail": {}
+  }
+ ],
+ "passed_rules": [
+  "robots_missing",
+  "robots_blocks_site",
+  "sitemap_missing",
+  "sitemap_errors",
+  "not_in_sitemap",
+  "http_errors",
+  "broken_internal_links",
+  "links_to_redirects",
+  "noindex",
+  "canonical_elsewhere",
+  "canonical_broken",
+  "soft_404",
+  "host_temporary_redirect",
+  "host_variant",
+  "no_https",
+  "deep_pages",
+  "orphan_pages",
+  "js_dependent",
+  "title_missing",
+  "title_duplicate",
+  "title_length",
+  "meta_duplicate",
+  "h1_multiple",
+  "heading_skips",
+  "lang_missing",
+  "viewport_missing",
+  "duplicate_content",
+  "images_alt",
+  "images_dimensions",
+  "no_structured_data",
+  "jsonld_errors",
+  "schema_required",
+  "faq_rich_result_limited",
+  "hreflang_issues",
+  "ai_bots_blocked",
+  "llms_txt_missing",
+  "mixed_content",
+  "slow_ttfb",
+  "heavy_html",
+  "generic_anchors",
+  "broken_external_links"
+ ],
+ "jev": {
+  "available": false,
+  "skipped": "disabled with --no-jev",
+  "site": null,
+  "pages": {},
+  "pairs": [],
+  "ledger": {},
+  "questions": {}
+ },
+ "performance": {
+  "source": "https://developers.google.com/speed/docs/insights/v5/get-started",
+  "keyed": false,
+  "runs": [
+   {
+    "url": "https://themomentsandmemories.co.uk/",
+    "strategy": "mobile",
+    "error": "HTTP 429"
+   },
+   {
+    "url": "https://themomentsandmemories.co.uk/",
+    "strategy": "desktop",
+    "error": "HTTP 429"
+   },
+   {
+    "url": "https://themomentsandmemories.co.uk/service",
+    "strategy": "mobile",
+    "error": "HTTP 429"
+   },
+   {
+    "url": "https://themomentsandmemories.co.uk/service",
+    "strategy": "desktop",
+    "error": "HTTP 429"
+   },
+   {
+    "url": "https://themomentsandmemories.co.uk/contact-us",
+    "strategy": "mobile",
+    "error": "HTTP 429"
+   },
+   {
+    "url": "https://themomentsandmemories.co.uk/contact-us",
+    "strategy": "desktop",
+    "error": "HTTP 429"
+   }
+  ]
+ },
+ "dataforseo": null,
+ "scores": {
+  "partial": [
+   "Jev judgments unavailable, so content quality was not assessed",
+   "PageSpeed Insights unavailable, so performance used crawl timings only"
+  ],
+  "overall": 95,
+  "grade": "A",
+  "categories": {
+   "crawl": 91,
+   "onpage": 88,
+   "content": null,
+   "links": 100,
+   "structured": 98,
+   "ai": 100,
+   "performance": 100,
+   "security": 94,
+   "visibility": null
+  },
+  "category_names": {
+   "crawl": "Crawl and indexing",
+   "onpage": "On-page",
+   "content": "Content quality",
+   "links": "Links and architecture",
+   "structured": "Structured data and sharing",
+   "ai": "AI search readiness",
+   "performance": "Performance",
+   "security": "Security and trust",
+   "visibility": "Search visibility and authority"
+  },
+  "weights": {
+   "crawl": 20,
+   "onpage": 15,
+   "content": 20,
+   "links": 10,
+   "structured": 8,
+   "ai": 12,
+   "performance": 10,
+   "security": 5,
+   "visibility": 15
+  },
+  "notes": {
+   "content": "Not assessed: Jev judgments unavailable",
+   "ai": "Rules only: Jev judgments unavailable; editorial heuristics, since Google states no special optimization is required for AI features",
+   "performance": "Crawl observations only: PageSpeed Insights unavailable",
+   "visibility": "Not assessed: run with --full (DataForSEO)",
+   "crawl": "Rules only",
+   "onpage": "Rules only",
+   "links": "Rules only",
+   "structured": "Rules only",
+   "security": "Rules only"
+  },
+  "caps": [],
+  "completeness": {
+   "categories_scored": 7,
+   "categories_total": 9,
+   "jev": false,
+   "jev_pages_not_judged": 0,
+   "pagespeed": false,
+   "dataforseo": false
+  }
+ },
+ "actions": [
+  {
+   "priority": "P2",
+   "impact": 100,
+   "effort": 1,
+   "quick_win": true,
+   "importance": null,
+   "id": "meta_missing",
+   "origin": "rule",
+   "category": "onpage",
+   "severity": "medium",
+   "title": "Pages without a meta description",
+   "fix": "Write a page-specific summary. Google may still generate its own snippet.",
+   "source": "https://developers.google.com/search/docs/appearance/snippet",
+   "count": 6,
+   "evidence": "6 indexable pages",
+   "heuristic": false,
+   "needs_review": 0,
+   "urls": [
+    "https://themomentsandmemories.co.uk/",
+    "https://themomentsandmemories.co.uk/service",
+    "https://themomentsandmemories.co.uk/contact-us",
+    "https://themomentsandmemories.co.uk/hello-world",
+    "https://themomentsandmemories.co.uk/category/uncategorized",
+    "https://themomentsandmemories.co.uk/author/hazsnap2gmail-com"
+   ],
+   "action_id": "JEV-001",
+   "status": "to_do"
+  },
+  {
+   "priority": "P2",
+   "impact": 87,
+   "effort": 3,
+   "quick_win": false,
+   "importance": null,
+   "id": "thin_content",
+   "origin": "rule",
+   "category": "content",
+   "severity": "medium",
+   "title": "Pages with very little main content",
+   "fix": "Expand pages that should rank with substance a visitor needs, or consolidate them. Word count is a warning sign, not a ranking factor.",
+   "source": "https://developers.google.com/search/docs/fundamentals/creating-helpful-content",
+   "count": 4,
+   "evidence": "/contact-us: 73 words; /hello-world: 106 words; /category/uncategorized: 45 words; /author/hazsnap2gmail-com: 47 words",
+   "heuristic": true,
+   "needs_review": 0,
+   "urls": [
+    "https://themomentsandmemories.co.uk/contact-us",
+    "https://themomentsandmemories.co.uk/hello-world",
+    "https://themomentsandmemories.co.uk/category/uncategorized",
+    "https://themomentsandmemories.co.uk/author/hazsnap2gmail-com"
+   ],
+   "action_id": "JEV-002",
+   "status": "to_do"
+  },
+  {
+   "priority": "P2",
+   "impact": 80,
+   "effort": 1,
+   "quick_win": true,
+   "importance": null,
+   "id": "h1_missing",
+   "origin": "rule",
+   "category": "onpage",
+   "severity": "medium",
+   "title": "Pages without an H1 heading",
+   "fix": "Give each page one visible main heading that states its topic.",
+   "source": "https://developers.google.com/search/docs/fundamentals/seo-starter-guide",
+   "count": 3,
+   "evidence": "3 indexable pages",
+   "heuristic": true,
+   "needs_review": 0,
+   "urls": [
+    "https://themomentsandmemories.co.uk/",
+    "https://themomentsandmemories.co.uk/service",
+    "https://themomentsandmemories.co.uk/contact-us"
+   ],
+   "action_id": "JEV-003",
+   "status": "to_do"
+  },
+  {
+   "priority": "P2",
+   "impact": 73,
+   "effort": 2,
+   "quick_win": false,
+   "importance": null,
+   "id": "sitemap_bad_urls",
+   "origin": "rule",
+   "category": "crawl",
+   "severity": "medium",
+   "title": "Sitemap lists URLs that redirect, fail or are noindex",
+   "fix": "List only final, indexable, HTTP 200 URLs in the sitemap.",
+   "source": "https://developers.google.com/search/docs/crawling-indexing/sitemaps/overview",
+   "count": 2,
+   "evidence": "2 of the crawled sitemap URLs are not final indexable pages",
+   "heuristic": false,
+   "needs_review": 0,
+   "urls": [
+    "https://themomentsandmemories.co.uk/?wpr_templates=user-header-header",
+    "https://themomentsandmemories.co.uk/elementor-hf/header"
+   ],
+   "action_id": "JEV-004",
+   "status": "to_do"
+  },
+  {
+   "priority": "P2",
+   "impact": 67,
+   "effort": 1,
+   "quick_win": true,
+   "importance": null,
+   "id": "redirect_chains",
+   "origin": "rule",
+   "category": "crawl",
+   "severity": "medium",
+   "title": "Redirect chains (more than one hop)",
+   "fix": "Point each redirect straight at its final URL.",
+   "source": "https://developers.google.com/search/docs/crawling-indexing/301-redirects",
+   "count": 1,
+   "evidence": "https://themomentsandmemories.co.uk/elementor-hf/header (2 hops)",
+   "heuristic": false,
+   "needs_review": 0,
+   "urls": [
+    "https://themomentsandmemories.co.uk/elementor-hf/header"
+   ],
+   "action_id": "JEV-005",
+   "status": "to_do"
+  },
+  {
+   "priority": "P2",
+   "impact": 33,
+   "effort": 1,
+   "quick_win": false,
+   "importance": null,
+   "id": "og_missing",
+   "origin": "rule",
+   "category": "structured",
+   "severity": "low",
+   "title": "Open Graph title or image missing",
+   "fix": "Add og:title, og:description and og:image for link previews.",
+   "source": "https://ogp.me/",
+   "count": 6,
+   "evidence": "6 pages lack og:title or og:image",
+   "heuristic": false,
+   "needs_review": 0,
+   "urls": [
+    "https://themomentsandmemories.co.uk/",
+    "https://themomentsandmemories.co.uk/service",
+    "https://themomentsandmemories.co.uk/contact-us",
+    "https://themomentsandmemories.co.uk/hello-world",
+    "https://themomentsandmemories.co.uk/category/uncategorized",
+    "https://themomentsandmemories.co.uk/author/hazsnap2gmail-com"
+   ],
+   "action_id": "JEV-006",
+   "status": "to_do"
+  },
+  {
+   "priority": "P2",
+   "impact": 33,
+   "effort": 1,
+   "quick_win": false,
+   "importance": null,
+   "id": "hsts_missing",
+   "origin": "rule",
+   "category": "security",
+   "severity": "low",
+   "title": "No Strict-Transport-Security header",
+   "fix": "Send an HSTS header once HTTPS is stable everywhere.",
+   "source": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Strict-Transport-Security",
+   "count": 1,
+   "evidence": "Homepage response has no HSTS header",
+   "heuristic": false,
+   "needs_review": 0,
+   "urls": [
+    "https://themomentsandmemories.co.uk/"
+   ],
+   "action_id": "JEV-007",
+   "status": "to_do"
+  },
+  {
+   "priority": "P2",
+   "impact": 33,
+   "effort": 1,
+   "quick_win": false,
+   "importance": null,
+   "id": "security_headers",
+   "origin": "rule",
+   "category": "security",
+   "severity": "low",
+   "title": "Common security headers missing",
+   "fix": "Add the missing headers: x-content-type-options, referrer-policy, x-frame-options or CSP frame-ancestors.",
+   "source": "https://owasp.org/projects/secure-headers-project",
+   "count": 1,
+   "evidence": "Missing on the homepage response: x-content-type-options, referrer-policy, x-frame-options or CSP frame-ancestors",
+   "heuristic": false,
+   "needs_review": 0,
+   "urls": [
+    "https://themomentsandmemories.co.uk/"
+   ],
+   "action_id": "JEV-008",
+   "status": "to_do"
+  },
+  {
+   "priority": "P2",
+   "impact": 33,
+   "effort": 1,
+   "quick_win": false,
+   "importance": null,
+   "id": "favicon_missing",
+   "origin": "rule",
+   "category": "security",
+   "severity": "low",
+   "title": "No favicon declared",
+   "fix": "Declare a favicon; Google shows it beside results.",
+   "source": "https://developers.google.com/search/docs/fundamentals/seo-starter-guide",
+   "count": 1,
+   "evidence": "No link rel=icon on the homepage",
+   "heuristic": false,
+   "needs_review": 0,
+   "urls": [
+    "https://themomentsandmemories.co.uk/"
+   ],
+   "action_id": "JEV-009",
+   "status": "to_do"
+  },
+  {
+   "priority": "P3",
+   "impact": 27,
+   "effort": 1,
+   "quick_win": false,
+   "importance": null,
+   "id": "multiple_titles",
+   "origin": "rule",
+   "category": "onpage",
+   "severity": "low",
+   "title": "More than one title element",
+   "fix": "Keep a single title element in the head.",
+   "source": "https://developers.google.com/search/docs/appearance/title-link",
+   "count": 3,
+   "evidence": "3 pages",
+   "heuristic": false,
+   "needs_review": 0,
+   "urls": [
+    "https://themomentsandmemories.co.uk/",
+    "https://themomentsandmemories.co.uk/service",
+    "https://themomentsandmemories.co.uk/contact-us"
+   ],
+   "action_id": "JEV-010",
+   "status": "to_do"
+  },
+  {
+   "priority": "P3",
+   "impact": 24,
+   "effort": 1,
+   "quick_win": false,
+   "importance": null,
+   "id": "canonical_missing",
+   "origin": "rule",
+   "category": "crawl",
+   "severity": "low",
+   "title": "Pages without a canonical link",
+   "fix": "Add a self-referencing rel=canonical to each indexable page.",
+   "source": "https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls",
+   "count": 2,
+   "evidence": "2 of 6 pages",
+   "heuristic": false,
+   "needs_review": 0,
+   "urls": [
+    "https://themomentsandmemories.co.uk/category/uncategorized",
+    "https://themomentsandmemories.co.uk/author/hazsnap2gmail-com"
+   ],
+   "action_id": "JEV-011",
+   "status": "to_do"
+  }
+ ]
+}
