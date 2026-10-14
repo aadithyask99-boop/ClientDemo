@@ -1,9 +1,0 @@
-Checked 2026-10-13 against https://themomentsandmemories.co.uk/
-Homepage HTML: 0 links containing "privacy", "cookie" or "terms"; 0 mentions of "cookie" or "consent".
-Direct URL checks (HTTP status): /privacy-policy/ 404, /privacy/ 404, /cookie-policy/ 404, /terms-and-conditions/ 404, /terms/ 404.
-wp-sitemap pages: https://themomentsandmemories.co.uk/ , /service/ , /contact-us/
-wp-sitemap posts: /hello-world/
-wp-sitemap other: /?wpr_templates=user-header-header , /elementor-hf/header/
-Wayback Machine: not reachable from this environment (blocked by egress policy), so site history is NOT checked.
-Meta Ad Library: keyword search for "Moments and Memories party hire" (GB) returned unrelated advertisers; her page ID is unknown, so this says nothing about whether she runs ads.
-Google Maps (signed out) competitor ratings: Party in Your Garden 4.9, Watford Marquees 5.0, Active Soft Play 4.9. Review counts not captured. A search for Funtime Bounce matched a different business (US phone number) and was discarded.
