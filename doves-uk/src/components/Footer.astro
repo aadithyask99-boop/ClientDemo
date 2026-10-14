@@ -1,0 +1,174 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+import { contact, footer, links, regulatory } from '../data/site';
+---
+
+<footer class="foot">
+  <div class="wrap foot__top">
+    <div class="foot__brand">
+      <Image src={logo} alt="Doves" width={140} height={84} densities={[1, 2]} />
+      <p>{footer.tagline}</p>
+      <p class="open"><span class="live" aria-hidden="true"></span>{footer.open}</p>
+    </div>
+
+    <nav class="col col--links" aria-label="On this site">
+      <h2>On this site</h2>
+      <a href="#repatriation">Repatriation & expatriation</a>
+      <a href="#global-plan">Doves Global Plan</a>
+      <a href="#eligibility">Eligibility</a>
+      <a href="#remittances">International remittances</a>
+      <a href="#how-it-works">How it works</a>
+      <a href={links.apply}>Apply for cover</a>
+      <a href={links.report}>Report a death</a>
+    </nav>
+
+    <div class="col">
+      <h2>Contact details</h2>
+      <address>{contact.address}</address>
+      <p>Landline <a href={contact.landline.href}>{contact.landline.label}</a></p>
+      <p>Mobile <a href={contact.mobile.href}>{contact.mobile.label}</a></p>
+      <p>WhatsApp <a href={contact.whatsapp.href} rel="noopener">{contact.whatsapp.label}</a></p>
+      <p><a href={`mailto:${contact.email}`}>{contact.email}</a></p>
+    </div>
+  </div>
+
+  {
+    regulatory.length > 0 && (
+      <div class="wrap">
+        <div class="reg">{regulatory.map((line) => <p>{line}</p>)}</div>
+      </div>
+    )
+  }
+
+  <div class="wrap">
+    <div class="base">
+      <p>{footer.copyright}</p>
+      <a href={links.parent} rel="noopener">doves.co.zw</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .foot {
+    border-top: 1px solid var(--line);
+    padding-top: clamp(44px, 8vw, 100px);
+  }
+
+  .foot__top {
+    display: grid;
+    gap: 40px;
+  }
+
+  .foot__brand img {
+    height: 64px;
+    width: auto;
+  }
+
+  .foot__brand p {
+    margin-top: 16px;
+    max-width: 22rem;
+    color: var(--muted);
+  }
+
+  .foot__brand .open {
+    margin-top: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink);
+  }
+
+  .live {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #2f9e6b;
+  }
+
+  .col {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    font-size: 1rem;
+  }
+
+  .col h2 {
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+
+  .col p {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  address {
+    max-width: 22rem;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  a {
+    color: var(--ink);
+    text-decoration: none;
+    width: fit-content;
+    display: inline-block;
+    padding-block: 10px;
+  }
+
+  .col {
+    gap: 0;
+  }
+
+  a:hover {
+    color: var(--blue);
+    text-decoration: underline;
+  }
+
+  .reg {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: 0.875rem;
+    color: var(--muted);
+    display: grid;
+    gap: 8px;
+  }
+
+  .base {
+    margin-top: clamp(24px, 6vw, 72px);
+    padding-block: 18px 24px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px 24px;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .base p {
+    margin: 0;
+  }
+
+  @media (max-width: 899px) {
+    .col--links {
+      grid-template-columns: 1fr 1fr;
+      column-gap: 16px;
+    }
+
+    .col--links h2 {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .foot__top {
+      grid-template-columns: 1.2fr 1fr 1.2fr;
+      gap: 64px;
+    }
+  }
+</style>

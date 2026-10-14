@@ -1,0 +1,111 @@
+---
+import { faq } from '../data/site';
+---
+
+<section class="sec faq" id="eligibility">
+  <div class="wrap split">
+    <div class="reveal">
+      <h2 class="t-title">{faq.title}</h2>
+      <p class="muted faq__body">{faq.body}</p>
+    </div>
+
+    <div class="list reveal">
+      {
+        faq.items.map((item, i) => (
+          <details name="faq" open={i === 0}>
+            <summary>
+              <span>{item.q}</span>
+              <span class="plus" aria-hidden="true" />
+            </summary>
+            <p>{item.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq {
+    padding-top: 0;
+  }
+
+  .faq__body {
+    margin-top: 12px;
+    max-width: 24rem;
+  }
+
+  .list {
+    border-top: 1px solid var(--line);
+  }
+
+  details {
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* Smooth open and close (browsers without support simply snap) */
+  details::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition: block-size 0.45s var(--ease), content-visibility 0.45s allow-discrete;
+  }
+
+  details[open]::details-content {
+    block-size: auto;
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 24px 0;
+    cursor: pointer;
+    list-style: none;
+    font-size: var(--fs-h3);
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary:hover {
+    color: var(--blue);
+  }
+
+  .plus {
+    flex: none;
+    position: relative;
+    width: 20px;
+    height: 20px;
+  }
+
+  .plus::before,
+  .plus::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 20px;
+    height: 1.5px;
+    margin-top: -0.75px;
+    background: currentColor;
+    transition: transform 0.3s var(--ease);
+  }
+
+  .plus::after {
+    transform: rotate(90deg);
+  }
+
+  details[open] .plus::after {
+    transform: rotate(0);
+  }
+
+  details p {
+    padding: 0 44px 26px 0;
+    color: var(--muted);
+    max-width: 38rem;
+  }
+</style>

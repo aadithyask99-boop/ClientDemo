@@ -1,0 +1,25 @@
+---
+import { hero } from '../data/site';
+---
+
+<section class="statement">
+  <div class="wrap statement__in reveal">
+    <p class="t-statement">{hero.body}</p>
+  </div>
+</section>
+
+<style>
+  .statement {
+    padding-block: clamp(56px, 12vw, 180px);
+  }
+
+  .statement__in {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+
+  p {
+    max-width: 24em;
+  }
+</style>

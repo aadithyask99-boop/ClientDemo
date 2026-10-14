@@ -1,0 +1,167 @@
+---
+import family from '../assets/photos/remit-family.jpg';
+import videocall from '../assets/photos/remit-videocall.jpg';
+import cash from '../assets/photos/remit-cash.jpg';
+import wing from '../assets/photos/remit-wing.jpg';
+import papers from '../assets/photos/covers/remit-papers.jpg';
+import phone from '../assets/photos/remit-phone.jpg';
+import collect from '../assets/photos/covers/remit-collect.jpg';
+import Photo from './Photo.astro';
+import { remit } from '../data/site';
+
+// The first, second, fourth and fifth are from the .uk site; the others are new stock photos on the same theme
+const shots = [
+  { src: family, alt: 'A parent with two children', pos: '50% 35%' },
+  { src: videocall, alt: 'A family waving to relatives on a video call', pos: '50% 45%' },
+  { src: cash, alt: 'Cash being handed over across a border', pos: '40% 50%' },
+  { src: wing, alt: 'An airplane wing at sunset', pos: '50% 55%' },
+  { src: papers, alt: 'A person turning through clipped transfer documents', pos: '50% 50%' },
+  { src: phone, alt: 'A person sending money from a smartphone', pos: '50% 40%' },
+  { src: collect, alt: 'Cash held after a collection', pos: '50% 50%' },
+];
+const loop = [...shots, ...shots];
+---
+
+<section class="sec remit" id="remittances">
+  <div class="wrap">
+    <div class="split reveal">
+      <h2 class="t-title">{remit.title}</h2>
+      <div>
+        <p class="t-lead">{remit.body[0]}</p>
+        <p class="muted second">{remit.body[1]}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="marquee" data-marquee role="region" aria-label="Remittance photos. Drag to move." tabindex="0">
+    <div class="track" data-track>
+      {
+        loop.map((s, i) => (
+          <div class="item zoom" aria-hidden={i >= shots.length ? 'true' : undefined}>
+            <div class="ph tile__img">
+              <Photo
+                src={s.src}
+                alt={i >= shots.length ? '' : s.alt}
+                sizes="(min-width: 1000px) 760px, 90vw"
+                widths={[480, 800, 1100, 1500]}
+                position={s.pos}
+              />
+            </div>
+          </div>
+        ))
+      }
+    </div>
+    <span class="edge edge--l" aria-hidden="true"></span>
+    <span class="edge edge--r" aria-hidden="true"></span>
+    <span class="drag-chip" data-chip aria-hidden="true">Drag</span>
+  </div>
+
+  <div class="wrap foot reveal">
+    <p class="muted">{remit.caption}</p>
+    <ul class="partners">
+      {remit.partners.map((p) => <li>{p}</li>)}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .second {
+    margin-top: 20px;
+  }
+
+  .marquee {
+    --w: clamp(250px, 30vw, 440px);
+    --gap: 20px;
+    position: relative;
+    margin-top: clamp(36px, 5vw, 72px);
+    overflow: hidden;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-y;
+    outline-offset: -4px;
+  }
+
+  .marquee.is-dragging {
+    cursor: grabbing;
+  }
+
+  .track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+  }
+
+  .item {
+    flex: none;
+    width: var(--w);
+    margin-right: var(--gap);
+  }
+
+  /* Blurred, fading edges */
+  .edge {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: clamp(48px, 13vw, 200px);
+    z-index: 2;
+    pointer-events: none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .edge--l {
+    left: 0;
+    background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
+    -webkit-mask-image: linear-gradient(to right, #000 25%, transparent);
+    mask-image: linear-gradient(to right, #000 25%, transparent);
+  }
+
+  .edge--r {
+    right: 0;
+    background: linear-gradient(to left, #fff, rgba(255, 255, 255, 0));
+    -webkit-mask-image: linear-gradient(to left, #000 25%, transparent);
+    mask-image: linear-gradient(to left, #000 25%, transparent);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .marquee {
+      cursor: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee {
+      cursor: grab;
+    }
+  }
+
+  @media (max-width: 599px) {
+    .marquee {
+      --w: 72vw;
+      --gap: 14px;
+    }
+  }
+
+  .foot {
+    margin-top: 22px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px 32px;
+    font-size: 1rem;
+  }
+
+  .partners {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 28px;
+  }
+
+  .partners li {
+    font-size: var(--fs-lead);
+    letter-spacing: -0.02em;
+    color: var(--blue);
+  }
+</style>

@@ -1,0 +1,455 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+import logoWhite from '../assets/logo-white.png';
+import { contact, links, nav } from '../data/site';
+---
+
+<header class="site-header" data-header>
+  <div class="strip">
+    <div class="wrap strip__in">
+      <p class="strip__from">
+        Part of <a href={links.parent} rel="noopener">Doves Holdings</a>, Harare, Zimbabwe
+      </p>
+      <p class="strip__right">
+        <span class="strip__open">Open 24/7 for funeral services</span>
+        <a class="strip__tel" href={contact.landline.href}>{contact.landline.label}</a>
+        <a class="strip__report" href={links.report}>Report a death</a>
+      </p>
+    </div>
+  </div>
+
+  <div class="bar">
+    <div class="wrap bar__in">
+      <a class="brand" href="#top" aria-label="Doves, back to top">
+        <Image class="logo logo--w" src={logoWhite} alt="" width={140} height={100} densities={[1, 2]} loading="eager" />
+        <Image class="logo logo--b" src={logo} alt="Doves" width={140} height={102} densities={[1, 2]} loading="eager" />
+      </a>
+
+      <nav class="cap nav" aria-label="Main" data-nav>
+        <span class="ind" data-ind aria-hidden="true"></span>
+        {nav.map((item) => <a href={item.href} data-target={item.href}>{item.label}</a>)}
+      </nav>
+
+      <div class="cap actions">
+        <a class="login" href={links.login}>Login</a>
+        <a class="btn apply" href={links.apply}>Apply</a>
+        <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn>
+          <span class="sr-only">Menu</span>
+          <span class="menu-icon" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu" id="menu" data-menu hidden>
+    <nav class="menu__in" aria-label="Mobile">
+      {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+      <a href={links.login}>Login</a>
+      <a href={contact.landline.href}>Call {contact.landline.label}</a>
+      <a href={links.whatsapp} rel="noopener">WhatsApp</a>
+      <a class="menu__report" href={links.report}>Report a death</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  /* Zero-height sticky shell: the capsules float over the hero, then turn to white glass */
+  .site-header {
+    position: sticky;
+    top: calc(var(--strip-h) * -1);
+    height: 0;
+    z-index: 60;
+  }
+
+  .strip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--strip-h);
+    background: var(--sky);
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .strip__in {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    gap: 16px;
+  }
+
+  .strip p {
+    margin: 0;
+  }
+
+  .strip a {
+    position: relative;
+    color: var(--blue);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .strip a::after {
+    content: '';
+    position: absolute;
+    inset: -10px -8px;
+  }
+
+  .strip a:hover {
+    text-decoration: underline;
+  }
+
+  .strip__right {
+    display: flex;
+    gap: 22px;
+    align-items: center;
+  }
+
+  .strip__open {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .strip__open::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #2f9e6b;
+  }
+
+  .strip__report {
+    padding: 3px 12px;
+    border-radius: 999px;
+    background: var(--blue);
+    color: #fff !important;
+  }
+
+  .strip__report:hover {
+    text-decoration: none !important;
+    background: var(--blue-deep);
+  }
+
+  /* The bar itself is empty: only the three capsules are visible */
+  .bar {
+    position: absolute;
+    top: calc(var(--strip-h) + var(--bar-gap));
+    left: 0;
+    right: 0;
+    height: var(--bar-h);
+    pointer-events: none;
+  }
+
+  /* Logo left, nav truly centred, actions right (like the reference) */
+  .bar__in {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    height: 100%;
+    gap: 12px;
+  }
+
+  .brand {
+    justify-self: start;
+  }
+
+  .actions {
+    grid-column: 3;
+    justify-self: end;
+  }
+
+  .nav {
+    grid-column: 2;
+  }
+
+  .cap {
+    pointer-events: auto;
+    height: var(--bar-h);
+    display: flex;
+    align-items: center;
+    border-radius: 999px;
+    border: 0;
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    box-shadow: 0 10px 28px -18px rgba(0, 0, 0, 0.35);
+    transition: background-color 0.35s var(--ease), box-shadow 0.35s var(--ease);
+  }
+
+  /* The logo stands alone: no capsule, background or border. The white and blue versions are
+     stacked and each is clipped (from ui.ts) so the colour changes exactly at a section edge. */
+  .brand {
+    pointer-events: auto;
+    position: relative;
+    display: block;
+    width: calc((var(--bar-h) - 6px) * 1.39);
+    height: var(--bar-h);
+    padding: 0;
+  }
+
+  .brand img {
+    position: absolute;
+    left: 0;
+    top: 3px;
+    width: 100%;
+    height: calc(var(--bar-h) - 6px);
+    object-fit: contain;
+    object-position: left center;
+    transition: transform 0.4s var(--ease);
+  }
+
+  .brand:hover img {
+    transform: scale(1.04);
+  }
+
+  .logo--w {
+    filter: drop-shadow(0 1px 10px rgba(0, 0, 0, 0.28));
+    clip-path: var(--clip-w, inset(0));
+  }
+
+  .logo--b {
+    clip-path: var(--clip-b, inset(100% 0 0 0));
+  }
+
+  .nav {
+    position: relative;
+    display: none;
+    gap: 2px;
+    padding: 5px;
+  }
+
+  .nav a {
+    position: relative;
+    z-index: 1;
+    padding: 8px 20px;
+    border-radius: 999px;
+    color: #fff;
+    font-weight: 500;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: color 0.25s;
+  }
+
+  /* Sliding highlight that follows the pointer and rests on the section in view */
+  .ind {
+    position: absolute;
+    top: 5px;
+    bottom: 5px;
+    left: 0;
+    width: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.22);
+    opacity: 0;
+    transform: translateX(0);
+    transition: transform 0.5s var(--ease), width 0.5s var(--ease), opacity 0.3s var(--ease);
+  }
+
+  .actions {
+    gap: 12px;
+    padding: 5px 5px 5px 18px;
+  }
+
+  .login {
+    display: none;
+    color: #fff;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .login:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .apply {
+    --sweep: var(--sky-2);
+    min-height: calc(var(--bar-h) - 12px);
+    padding: 0 22px;
+    background: #fff;
+    color: var(--blue);
+  }
+
+  .menu-btn {
+    width: calc(var(--bar-h) - 12px);
+    height: calc(var(--bar-h) - 12px);
+    border-radius: 50%;
+    border: 0;
+    background: transparent;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+
+  .menu-icon,
+  .menu-icon::before,
+  .menu-icon::after {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: #fff;
+    border-radius: 2px;
+    transition: transform 0.25s var(--ease), background-color 0.2s;
+  }
+
+  .menu-icon {
+    position: relative;
+  }
+
+  .menu-icon::before,
+  .menu-icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+
+  .menu-icon::before {
+    top: -6px;
+  }
+
+  .menu-icon::after {
+    top: 6px;
+  }
+
+  .menu-btn[aria-expanded='true'] .menu-icon {
+    background: transparent;
+  }
+
+  .menu-btn[aria-expanded='true'] .menu-icon::before {
+    transform: translateY(6px) rotate(45deg);
+  }
+
+  .menu-btn[aria-expanded='true'] .menu-icon::after {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  /* Phone menu: a frosted rounded panel under the capsules */
+  .menu {
+    position: absolute;
+    left: var(--pad);
+    right: var(--pad);
+    top: calc(var(--strip-h) + var(--bar-gap) + var(--bar-h) + 10px);
+    border-radius: var(--r-lg);
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(22px) saturate(170%);
+    -webkit-backdrop-filter: blur(22px) saturate(170%);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 30px 60px -30px rgba(8, 40, 90, 0.45);
+    max-width: 520px;
+    margin-left: auto;
+    max-height: calc(100svh - var(--strip-h) - var(--bar-gap) - var(--bar-h) - 24px);
+    overflow-y: auto;
+  }
+
+  .menu[hidden] {
+    display: none;
+  }
+
+  .menu__in {
+    padding: 8px 22px 14px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .menu__in a {
+    font-size: 1.35rem;
+    letter-spacing: -0.03em;
+    text-decoration: none;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .menu__in a:last-child {
+    border-bottom: 0;
+  }
+
+  .menu__in .menu__report {
+    color: var(--blue);
+  }
+
+  /* White glass after scrolling, or while the phone menu is open */
+  :global(.site-header.is-solid) .cap,
+  :global(.site-header.menu-open) .cap {
+    background: rgba(255, 255, 255, 0.76);
+    box-shadow: 0 12px 32px -16px rgba(8, 40, 90, 0.4);
+  }
+
+
+  :global(.site-header.is-solid) .nav a,
+  :global(.site-header.menu-open) .nav a {
+    color: var(--ink);
+  }
+
+  :global(.site-header.is-solid) .ind {
+    background: rgba(8, 75, 154, 0.12);
+  }
+
+  :global(.site-header.is-solid) .login {
+    color: var(--blue);
+  }
+
+  :global(.site-header.is-solid) .apply,
+  :global(.site-header.menu-open) .apply {
+    --sweep: var(--blue-deep);
+    background: var(--blue);
+    color: #fff;
+  }
+
+  :global(.site-header.is-solid) .menu-icon,
+  :global(.site-header.is-solid) .menu-icon::before,
+  :global(.site-header.is-solid) .menu-icon::after,
+  :global(.site-header.menu-open) .menu-icon::before,
+  :global(.site-header.menu-open) .menu-icon::after {
+    background: var(--ink);
+  }
+
+  :global(.site-header.menu-open) .menu-icon {
+    background: transparent;
+  }
+
+  @media (max-width: 719px) {
+    .strip__from,
+    .strip__tel {
+      display: none;
+    }
+
+    .strip__right {
+      width: 100%;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .strip__open {
+      font-size: 0.875rem;
+    }
+
+    .actions {
+      padding-left: 14px;
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .nav {
+      display: flex;
+    }
+
+    .login {
+      display: inline-block;
+    }
+
+    .menu-btn {
+      display: none;
+    }
+
+    .actions {
+      padding-right: 5px;
+    }
+
+    .menu {
+      display: none !important;
+    }
+  }
+</style>

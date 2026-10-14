@@ -1,0 +1,418 @@
+---
+import { contact, contactCopy, footer, links } from '../data/site';
+
+const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
+---
+
+<section class="contact" id="contact">
+  <div class="wrap contact__in">
+    <div class="top reveal">
+      <h2 class="t-hero">{contactCopy.title}</h2>
+      <p class="open"><span class="live" aria-hidden="true"></span>{footer.open}</p>
+
+      <a class="phone" href={contact.landline.href}>{contact.landline.label}</a>
+      <p class="muted cap">Landline</p>
+
+      <div class="channels">
+        <a class="btn btn--outline" href={contact.whatsapp.href} rel="noopener">WhatsApp {contact.whatsapp.label}</a>
+        <a class="btn btn--outline" href={contact.mobile.href}>Mobile {contact.mobile.label}</a>
+        <a class="btn btn--outline" href={`mailto:${contact.email}`}>{contact.email}</a>
+      </div>
+
+      <address class="muted">{contact.address}</address>
+
+      <a class="btn btn--primary" href={links.report}>Report a death</a>
+    </div>
+
+    <div class="card reveal">
+      <h3 class="card__title">{contactCopy.formTitle}</h3>
+
+      <form data-enquiry novalidate data-endpoint={endpoint} data-wa={links.whatsapp}>
+        <ol class="dots" aria-hidden="true" data-dots>
+          <li></li><li></li><li></li><li></li><li></li>
+        </ol>
+
+        <fieldset class="q" data-q="service">
+          <legend>I am asking about</legend>
+          <div class="pills">
+            {
+              contactCopy.services.map((s) => (
+                <label class="pill">
+                  <input type="radio" name="service" value={s} required />
+                  <span>{s}</span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <fieldset class="q" data-q="name">
+          <legend>Full name</legend>
+          <input name="name" type="text" autocomplete="name" required aria-label="Full name" />
+        </fieldset>
+
+        <fieldset class="q" data-q="phone">
+          <legend>Phone</legend>
+          <input name="phone" type="tel" autocomplete="tel" required aria-label="Phone" />
+        </fieldset>
+
+        <fieldset class="q" data-q="email" data-optional>
+          <legend>Email</legend>
+          <input name="email" type="email" autocomplete="email" aria-label="Email" />
+        </fieldset>
+
+        <fieldset class="q" data-q="message" data-optional>
+          <legend>Message</legend>
+          <textarea name="message" rows="3" aria-label="Message"></textarea>
+        </fieldset>
+
+        <p class="form__error" role="alert" hidden data-error></p>
+
+        <div class="nav">
+          <button type="button" class="back" data-back hidden>Back</button>
+          <button type="button" class="btn btn--primary" data-next hidden>Next </button>
+          <button type="submit" class="btn btn--primary" data-submit>Submit enquiry</button>
+        </div>
+      </form>
+
+      <div class="sent" data-sent hidden>
+        <svg class="tick" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle pathLength="1" cx="32" cy="32" r="26"></circle>
+          <path pathLength="1" d="M21 33l8 8 15-17"></path>
+        </svg>
+        <h3>Your message is ready</h3>
+        <a class="btn btn--primary" href={links.whatsapp} rel="noopener" data-wa-link>Continue on WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact {
+    background: var(--sky);
+    padding-block: clamp(56px, 12vw, 170px);
+  }
+
+  .contact__in {
+    display: grid;
+    justify-items: center;
+    gap: clamp(40px, 8vw, 100px);
+    text-align: center;
+  }
+
+  .top {
+    display: grid;
+    justify-items: center;
+  }
+
+  .open {
+    margin-top: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted);
+  }
+
+  .live {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #2f9e6b;
+  }
+
+  .phone {
+    display: inline-block;
+    padding-block: 8px;
+    margin-top: clamp(24px, 5vw, 56px);
+    font-size: clamp(2.3rem, 7vw, 5rem);
+    letter-spacing: -0.05em;
+    line-height: 1;
+    color: var(--blue);
+    text-decoration: none;
+  }
+
+  .phone:hover {
+    text-decoration: underline;
+    text-underline-offset: 8px;
+    text-decoration-thickness: 2px;
+  }
+
+  .cap {
+    margin-top: 8px;
+    font-size: 1rem;
+  }
+
+  .channels {
+    margin-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  address {
+    margin-block: 30px;
+    max-width: 30rem;
+  }
+
+  /* Enquiry: one question at a time */
+  .card {
+    width: 100%;
+    max-width: 680px;
+    padding: clamp(28px, 5vw, 48px);
+    background: #fff;
+    border-radius: var(--r-lg);
+    box-shadow: 0 30px 60px -40px rgba(8, 40, 90, 0.35);
+  }
+
+  .card__title {
+    font-size: var(--fs-h3);
+    letter-spacing: -0.03em;
+  }
+
+  form {
+    margin-top: 22px;
+    display: grid;
+    justify-items: center;
+    gap: 22px;
+  }
+
+  .dots {
+    display: none;
+    gap: 6px;
+  }
+
+  :global(.is-chat) .dots {
+    display: flex;
+  }
+
+  .dots li {
+    width: 26px;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--line);
+    transition: background-color 0.3s, width 0.3s var(--ease);
+  }
+
+  .dots li.on {
+    background: var(--blue);
+  }
+
+  .dots li.now {
+    width: 44px;
+    background: var(--blue);
+  }
+
+  .q {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-width: 0;
+    display: grid;
+    justify-items: center;
+    gap: 14px;
+  }
+
+  :global(.is-chat) .q {
+    display: none;
+  }
+
+  :global(.is-chat) .q.is-on {
+    display: grid;
+    animation: rise 0.45s var(--ease) both;
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.is-chat) .q.is-on {
+      animation: none;
+    }
+  }
+
+  legend {
+    padding: 0;
+    width: 100%;
+    text-align: center;
+    font-size: var(--fs-title);
+    letter-spacing: -0.04em;
+    margin-bottom: 12px;
+  }
+
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .pill {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .pill input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .pill span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 22px;
+    border-radius: 999px;
+    border: 1.5px solid var(--line);
+    font-weight: 500;
+    transition: background-color 0.25s, color 0.25s, border-color 0.25s;
+  }
+
+  .pill:hover span {
+    border-color: var(--blue);
+  }
+
+  .pill input:checked + span {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #fff;
+  }
+
+  .pill input:focus-visible + span {
+    outline: 3px solid #2f74c8;
+    outline-offset: 3px;
+  }
+
+  input[type='text'],
+  input[type='tel'],
+  input[type='email'],
+  textarea {
+    width: 100%;
+    max-width: 28rem;
+    font: inherit;
+    font-size: clamp(1.3rem, 2.6vw, 1.8rem);
+    letter-spacing: -0.03em;
+    text-align: center;
+    color: var(--ink);
+    background: transparent;
+    border: 0;
+    border-bottom: 1.5px solid var(--line);
+    border-radius: 0;
+    padding: 10px 6px;
+    /* the blue underline grows from the centre on focus */
+    background: linear-gradient(var(--blue), var(--blue)) center bottom / 0 2px no-repeat;
+    transition: border-color 0.25s, background-size 0.45s var(--ease);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+    font-size: 1.2rem;
+  }
+
+  input:focus-visible,
+  textarea:focus-visible {
+    outline: none;
+    background-size: 100% 2px;
+  }
+
+  .pill input:checked + span {
+    animation: pop 0.35s var(--ease);
+  }
+
+  @keyframes pop {
+    40% {
+      transform: scale(1.06);
+    }
+  }
+
+  .tick {
+    width: 64px;
+    height: 64px;
+    color: var(--blue);
+  }
+
+  .tick circle,
+  .tick path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draw 0.8s var(--ease) forwards;
+  }
+
+  .tick path {
+    animation-delay: 0.45s;
+  }
+
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pill input:checked + span,
+    .tick circle,
+    .tick path {
+      animation: none;
+      stroke-dashoffset: 0;
+    }
+  }
+
+  input[aria-invalid='true'] {
+    border-bottom-color: #c0392b;
+  }
+
+  .form__error {
+    color: #b3261e;
+    font-weight: 500;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .back {
+    appearance: none;
+    background: none;
+    border: 0;
+    color: var(--muted);
+    font: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 12px 6px;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .back[hidden],
+  .btn[hidden] {
+    display: none;
+  }
+
+  .sent {
+    margin-top: 22px;
+    display: grid;
+    justify-items: center;
+    gap: 22px;
+  }
+
+  .sent[hidden] {
+    display: none;
+  }
+
+  .sent h3 {
+    font-size: var(--fs-title);
+  }
+</style>

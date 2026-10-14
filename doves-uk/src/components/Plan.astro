@@ -1,0 +1,183 @@
+---
+import { plan } from '../data/site';
+---
+
+<section class="plan" id="global-plan" data-plan data-tone="dark">
+  <div class="bg" aria-hidden="true">
+    <video
+      class="video"
+      data-video
+      muted
+      loop
+      playsinline
+      preload="none"
+      poster="/video/plan-poster.webp"
+      data-hd="/video/plan-1080.mp4"
+      data-sd="/video/plan-720.mp4"
+    ></video>
+    <div class="shade"></div>
+  </div>
+
+  <div class="wrap flow">
+    <h2 class="big reveal">{plan.title}</h2>
+
+    <div class="card reveal">
+      <div class="face">
+        <p class="body">{plan.body}</p>
+
+        <div class="c-benefits">
+          <h3 class="h">{plan.benefitsTitle}</h3>
+          <ul class="rows">
+            {plan.benefits.map((b) => <li>{b}</li>)}
+          </ul>
+        </div>
+
+        <div class="c-optional">
+          <h3 class="h">{plan.optionalTitle}</h3>
+          <ul class="chips">
+            {plan.optional.map((b) => <li>{b}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <p class="big tagline reveal">{plan.tagline}</p>
+  </div>
+</section>
+
+<style>
+  .plan {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    color: #fff;
+    background: #0a1a30;
+    padding-block: clamp(64px, 9vw, 140px);
+  }
+
+  .bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  .video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 30%;
+    background: #0a1a30;
+  }
+
+  .shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.32) 45%, rgba(0, 0, 0, 0.5));
+  }
+
+  /* Centred stack like the reference: big title, narrow white card, big closing line */
+  .flow {
+    display: grid;
+    justify-items: center;
+    gap: clamp(32px, 3.6vw, 56px);
+    text-align: center;
+  }
+
+  .big {
+    max-width: 16em;
+    color: #fff;
+    font-size: var(--fs-display);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+  }
+
+  /* The white card sits on a soft frosted halo: a subtle blur and shade directly behind it */
+  .card {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: -14px;
+    border-radius: 38px;
+    background: rgba(0, 0, 0, 0.16);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.5);
+  }
+
+  .face {
+    position: relative;
+    padding: clamp(26px, 3vw, 40px);
+    background: #fff;
+    color: var(--ink);
+    border-radius: var(--r-lg);
+    display: grid;
+    gap: clamp(24px, 2.4vw, 32px);
+    text-align: center;
+  }
+
+  .body {
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .h {
+    margin-bottom: 14px;
+    font-size: var(--fs-lead);
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+  }
+
+  .rows {
+    text-align: left;
+  }
+
+  .rows li {
+    padding-block: 13px;
+    font-size: var(--fs-body);
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .chips li {
+    padding: 8px 16px;
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    font-size: 1rem;
+    letter-spacing: -0.015em;
+  }
+
+  @media (max-width: 599px) {
+    .card::before {
+      inset: -10px;
+      border-radius: 32px;
+    }
+
+    .face {
+      padding: 24px 20px;
+    }
+
+    .rows li {
+      padding-block: 11px;
+    }
+
+    .chips li {
+      font-size: 0.9375rem;
+      padding: 7px 14px;
+    }
+  }
+</style>
