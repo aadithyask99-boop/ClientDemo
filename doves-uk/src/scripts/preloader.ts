@@ -17,31 +17,34 @@ const finish = () => {
 };
 
 if (el && num && root.classList.contains('preloading')) {
-  const MIN_MS = 1500;
-  const MAX_MS = 5000;
+  const RUN_MS = 2400; // 0 to 95
+  const FINAL_MS = 1100; // 95 to 100, deliberately slower
+  const MAX_MS = 6000;
   const start = performance.now();
   let loaded = document.readyState === 'complete';
-  let shown = 0;
+  let readyAt = 0;
   let done = false;
 
-  const ready = () => (loaded = true);
-  if (!loaded) window.addEventListener('load', ready, { once: true });
+  if (!loaded) window.addEventListener('load', () => (loaded = true), { once: true });
   if ('fonts' in document) void document.fonts.ready;
+
+  const easeInOut = (x: number) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
+  const easeOut = (x: number) => 1 - Math.pow(1 - x, 3);
 
   const tick = (now: number) => {
     const t = now - start;
-    // Eases towards 90 while loading, then runs on to 100 once loaded and the minimum time has passed
-    const holding = !(loaded && t >= MIN_MS) && t < MAX_MS;
-    const target = holding ? Math.min(90, (t / MIN_MS) * 90) : 100;
-    shown += (target - shown) * (holding ? 0.18 : 0.12);
-    const n = Math.min(100, Math.round(shown + (holding ? 0 : 0.5)));
-    num.textContent = String(n);
-    if (!holding && n >= 100 && !done) {
+    let value = 95 * easeInOut(Math.min(1, t / RUN_MS));
+    // Waits at 95 until the page has loaded, then the last five percent take their time
+    if (!readyAt && t >= RUN_MS && (loaded || t >= MAX_MS)) readyAt = now;
+    if (readyAt) value = 95 + 5 * easeOut(Math.min(1, (now - readyAt) / FINAL_MS));
+    const n = Math.min(100, Math.floor(value + 0.001));
+    num.textContent = String(readyAt && now - readyAt >= FINAL_MS ? 100 : n);
+    if (readyAt && now - readyAt >= FINAL_MS && !done) {
       done = true;
       window.setTimeout(() => {
         root.classList.add('preloader-out');
         finish();
-      }, 220);
+      }, 300);
       return;
     }
     requestAnimationFrame(tick);
