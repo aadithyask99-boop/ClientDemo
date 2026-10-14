@@ -1,0 +1,11 @@
+{
+  "name": "clientdemo",
+  "compatibility_date": "2026-10-01",
+  "build": {
+    "command": "cd doves-uk && npm ci && npm run build"
+  },
+  "assets": {
+    "directory": "./doves-uk/dist",
+    "not_found_handling": "404-page"
+  }
+}
