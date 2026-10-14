@@ -14,5 +14,4 @@ if (build.status !== 0) process.exit(build.status ?? 1);
 rmSync('../site/doves-uk', { recursive: true, force: true });
 mkdirSync('../site/doves-uk', { recursive: true });
 cpSync('dist', '../site/doves-uk', { recursive: true });
-writeFileSync('../site/_redirects', '/ /doves-uk/ 302\n');
 console.log('Staged ../site/doves-uk');
