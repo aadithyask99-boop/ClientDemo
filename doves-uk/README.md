@@ -58,6 +58,10 @@ The Plan video is Pexels clip 5136247 (free to use, no attribution required). It
 
 `Photo.astro` is the only image component. Its `sizes` and `widths` must describe the image as it is **rendered after the object-fit crop**, not the box it sits in. A landscape photo cropped into a portrait card is drawn much wider than the card, so describing the card width produces blurry files. Widths larger than the source are dropped automatically. Webp quality is 82. Full-bleed photos are limited by their originals (1800 to 2000 px), so ask Doves for higher resolution files if retina sharpness matters.
 
+## Preloader (draft only)
+
+A white screen with a quiet 0 to 100% counter, then the page sharpens from a slight blur as it fades (`Preloader.astro`, `src/scripts/preloader.ts`). It shows in dev and on the demo deploy (`PUBLIC_PRELOADER=1` is set by `scripts/stage.mjs`) and is left out of normal production builds. Skipped for reduced motion.
+
 ## Enquiry form
 
 One question at a time. On submit it validates, then opens a pre-filled WhatsApp message (the same flow as the current site). To also email `contactcenter@doves.co.zw`, set a form endpoint (for example Formspree) before building:
