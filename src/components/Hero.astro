@@ -1,0 +1,198 @@
+---
+import hug from '../assets/photos/hero-family.jpg';
+import kitchen from '../assets/photos/family-home.jpg';
+import motherChild from '../assets/photos/hero-mother-child.jpg';
+import couple from '../assets/photos/hero-couple.jpg';
+import Photo from './Photo.astro';
+import { hero, links } from '../data/site';
+
+// Slides crossfade with a slow zoom. Each has its own focal point for desktop (pd) and phones (pm).
+const slides = [
+  { src: hug, alt: 'A family gathered in a warm embrace, laughing together', pd: '50% 26%', pm: '50% 30%', dx: '-1.2%', dy: '-0.8%' },
+  { src: kitchen, alt: 'A family preparing breakfast together in a bright kitchen', pd: '50% 38%', pm: '44% 40%', dx: '1.2%', dy: '-0.6%' },
+  { src: motherChild, alt: 'A mother holding her laughing child close in the sunshine', pd: '40% 38%', pm: '34% 40%', dx: '-1%', dy: '-1%' },
+  { src: couple, alt: 'A couple in matching blue traditional attire smiling at each other', pd: '50% 34%', pm: '50% 36%', dx: '1.2%', dy: '-0.8%' },
+];
+---
+
+<section class="hero" id="top" data-hero data-tone="dark">
+  <div class="hero__stack">
+    {
+      slides.map((s, i) => (
+        <div
+          class={`slide${i === 0 ? ' is-on' : ''}`}
+          data-slide
+          style={`--pd:${s.pd};--pm:${s.pm};--dx:${s.dx};--dy:${s.dy}`}
+        >
+          <Photo
+            src={s.src}
+            alt={i === 0 ? s.alt : ''}
+            sizes="100vw"
+            widths={[640, 1000, 1440, 1800, 2000]}
+            position="var(--pos)"
+            eager={i === 0}
+          />
+        </div>
+      ))
+    }
+  </div>
+  <div class="hero__shade" aria-hidden="true"></div>
+
+  <div class="wrap hero__in">
+    <h1 class="t-hero">
+      {hero.title.map((line, i) => <span class="line"><span style={`--i:${i}`}>{line}</span></span>)}
+    </h1>
+
+    <a class="btn btn--outline-w hero__cta" href={links.apply}>Apply Now</a>
+  </div>
+
+  <p class="hero__trust">{hero.trust}</p>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: max(620px, 100svh);
+    display: flex;
+    align-items: flex-end;
+    color: #fff;
+    background: var(--ink);
+    overflow: hidden;
+  }
+
+  .hero__stack {
+    position: absolute;
+    inset: 0;
+  }
+
+  .slide {
+    --pos: var(--pd);
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1.6s ease;
+  }
+
+  .slide.is-on {
+    opacity: 1;
+    z-index: 1;
+  }
+
+  .slide.is-leaving {
+    opacity: 0;
+    z-index: 0;
+  }
+
+  .slide :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1) translate(0, 0);
+    transition: transform 9s linear;
+  }
+
+  /* The zoom starts once the slideshow is running, and carries on while a slide fades out */
+  .hero.play .slide.is-on :global(img),
+  .hero.play .slide.is-leaving :global(img) {
+    transform: scale(1.07) translate(var(--dx), var(--dy));
+  }
+
+  .slide.no-t,
+  .slide.no-t :global(img) {
+    transition: none !important;
+  }
+
+  @media (max-width: 699px) {
+    .slide {
+      --pos: var(--pm);
+    }
+  }
+
+  .hero__shade {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background:
+      linear-gradient(to top, rgba(6, 16, 36, 0.82) 0%, rgba(6, 16, 36, 0.3) 42%, rgba(6, 16, 36, 0.36) 100%),
+      linear-gradient(to right, rgba(6, 16, 36, 0.46), transparent 62%);
+  }
+
+  .hero__in {
+    position: relative;
+    z-index: 3;
+    padding-bottom: clamp(40px, 7svh, 84px);
+  }
+
+  /* Transparent outline pill under the title, like the reference's second button */
+  .hero__cta {
+    margin-top: clamp(24px, 2.4vw, 40px);
+    min-height: 56px;
+    padding: 0 32px;
+    border-width: 2px;
+    border-color: #fff;
+    font-size: 1.125rem;
+    animation: fade-up 0.9s var(--ease) 0.75s both;
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+
+  h1 {
+    color: #fff;
+    max-width: 14em;
+  }
+
+  .line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+
+  .line > span {
+    display: inline-block;
+    animation: rise 1s var(--ease) both;
+    animation-delay: calc(var(--i) * 0.1s + 0.2s);
+  }
+
+  @keyframes rise {
+    from {
+      transform: translateY(105%);
+    }
+  }
+
+  .hero__trust {
+    position: absolute;
+    z-index: 3;
+    right: var(--pad);
+    bottom: clamp(40px, 7svh, 84px);
+    font-size: var(--fs-small);
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  @media (max-width: 699px) {
+    .hero__in {
+      padding-bottom: 40px;
+    }
+
+    .hero__trust {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .line > span,
+    .hero__cta {
+      animation: none;
+    }
+
+    .slide :global(img),
+    .slide {
+      transition: none;
+    }
+  }
+</style>

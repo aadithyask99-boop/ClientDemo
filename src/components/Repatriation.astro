@@ -1,0 +1,26 @@
+---
+import { repatriation } from '../data/site';
+---
+
+<section class="sec rep" id="repatriation">
+  <div class="wrap split reveal">
+    <h2 class="t-title">{repatriation.title}</h2>
+    <div class="rep__text">
+      <p class="t-lead">{repatriation.body}</p>
+      <ul class="rows rep__points">
+        {repatriation.points.map((p) => <li>{p}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .rep {
+    padding-top: 0;
+  }
+
+  .rep__points {
+    margin-top: clamp(32px, 5vw, 56px);
+    color: var(--muted);
+  }
+</style>

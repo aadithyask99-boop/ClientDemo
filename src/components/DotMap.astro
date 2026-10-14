@@ -1,0 +1,81 @@
+---
+// Faint dot-matrix world map, generated at build time from Natural Earth land data (world-atlas),
+// like the reference. Centred behind the text.
+import { feature } from 'topojson-client';
+import { geoContains, geoNaturalEarth1, geoPath } from 'd3-geo';
+import landTopology from 'world-atlas/land-110m.json';
+
+const W = 1200;
+const STEP = 12;
+const corners = {
+  type: 'MultiPoint' as const,
+  coordinates: [
+    [-180, 80],
+    [180, 80],
+    [180, -58],
+    [-180, -58],
+  ],
+};
+
+const projection = geoNaturalEarth1().fitWidth(W, corners as any);
+const [[, y0], [, y1]] = geoPath(projection).bounds(corners as any);
+const H = Math.ceil(y1 - Math.min(0, y0));
+
+const topo = landTopology as any;
+const land = feature(topo, topo.objects.land) as any;
+
+let dots = '';
+let row = 0;
+for (let y = STEP / 2; y < H; y += STEP * 0.866, row++) {
+  const offset = row % 2 ? STEP / 2 : 0;
+  for (let x = STEP / 2 + offset; x < W; x += STEP) {
+    const ll = projection.invert?.([x, y]) as [number, number] | null | undefined;
+    if (!ll || Number.isNaN(ll[0]) || ll[1] < -58 || ll[1] > 80) continue;
+    if (geoContains(land, ll)) dots += `M${x.toFixed(1)} ${y.toFixed(1)}h.01`;
+  }
+}
+
+---
+
+<div class="dotmap" aria-hidden="true">
+  <div class="frame">
+    <svg viewBox={`0 0 ${W} ${H}`} focusable="false">
+      <path class="world" d={dots}></path>
+    </svg>
+  </div>
+</div>
+
+<style>
+  .dotmap {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .frame {
+    width: min(1400px, 112%);
+  }
+
+  svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .world {
+    fill: none;
+    stroke: var(--blue);
+    stroke-opacity: 0.15;
+    stroke-width: 4.5;
+    stroke-linecap: round;
+  }
+
+  @media (max-width: 899px) {
+    .frame {
+      width: max(130%, 880px);
+    }
+  }
+</style>

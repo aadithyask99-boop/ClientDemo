@@ -1,0 +1,78 @@
+---
+import closing from '../assets/photos/hero-family.jpg';
+import Photo from './Photo.astro';
+import { cta, links } from '../data/site';
+---
+
+<section class="cta-sec">
+  <div class="wrap">
+    <div class="banner zoom reveal">
+      <div class="banner__bg" aria-hidden="true">
+        <Photo src={closing} alt="" sizes="(min-width: 1000px) 1360px, 100vw" widths={[900, 1400, 1800]} position="50% 66%" />
+      </div>
+      <div class="banner__shade" aria-hidden="true"></div>
+      <div class="banner__in">
+        <h2 class="t-statement">{cta.title}</h2>
+        <p>{cta.body}</p>
+        <a class="btn btn--white" href={links.apply}>Apply Now</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-sec {
+    padding-bottom: clamp(72px, 10vw, 150px);
+  }
+
+  .banner {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--r-lg);
+    color: #fff;
+    background: var(--ink);
+    min-height: clamp(360px, 56vw, 620px);
+    display: grid;
+    place-items: center;
+  }
+
+  .banner__bg,
+  .banner__shade {
+    position: absolute;
+    inset: 0;
+  }
+
+  .banner__bg :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .banner__shade {
+    background: rgba(6, 22, 50, 0.58);
+  }
+
+  .banner__in {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 20px;
+    padding: 48px var(--pad);
+    text-align: center;
+  }
+
+  h2 {
+    color: #fff;
+    max-width: 14em;
+  }
+
+  p {
+    max-width: 30rem;
+    font-size: var(--fs-lead);
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .btn {
+    margin-top: 10px;
+  }
+</style>

@@ -1,0 +1,74 @@
+---
+import type { ImageMetadata } from 'astro';
+import Photo from './Photo.astro';
+import { fleet } from '../data/site';
+
+const imgs = import.meta.glob<{ default: ImageMetadata }>('../assets/photos/fleet/*.jpg', { eager: true });
+const photo = (name: string) => imgs[`../assets/photos/fleet/${name}.jpg`].default;
+---
+
+<section class="sec fleet" id="fleet">
+  <div class="wrap">
+    <div class="split reveal">
+      <h2 class="t-title">{fleet.title}</h2>
+      <p class="t-lead muted">{fleet.body}</p>
+    </div>
+
+    <ul class="grid">
+      {
+        fleet.items.map((item) => (
+          <li class="tile item zoom reveal">
+            <div class="ph tile__img">
+              <Photo
+                src={photo(item.image)}
+                alt={item.alt}
+                sizes="(min-width: 1000px) 760px, 100vw"
+                widths={[480, 800, 1100, 1500]}
+                position={item.pos}
+              />
+            </div>
+            <p class="tile__cap">{item.title}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .grid {
+    margin-top: clamp(40px, 6vw, 80px);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 12px;
+  }
+
+  /* 11 photos: the last one spans the row on small screens so no cell is left empty */
+  .item:last-child {
+    grid-column: span 2;
+  }
+
+  .item:last-child :global(.tile__img) {
+    aspect-ratio: 16 / 9;
+  }
+
+  /* Desktop: 4, 4, then 3 larger photos, so every row fills the width */
+  @media (min-width: 1000px) {
+    .grid {
+      grid-template-columns: repeat(12, 1fr);
+      gap: 40px 20px;
+    }
+
+    .item {
+      grid-column: span 3;
+    }
+
+    .item:nth-last-child(-n + 3) {
+      grid-column: span 4;
+    }
+
+    .item:last-child :global(.tile__img) {
+      aspect-ratio: 4 / 3;
+    }
+  }
+</style>

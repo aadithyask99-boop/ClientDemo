@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Statement from '../components/Statement.astro';
+import Repatriation from '../components/Repatriation.astro';
+import Covers from '../components/Covers.astro';
+import Plan from '../components/Plan.astro';
+import Steps from '../components/Steps.astro';
+import Fleet from '../components/Fleet.astro';
+import Currency from '../components/Currency.astro';
+import Faq from '../components/Faq.astro';
+import Remit from '../components/Remit.astro';
+import Cta from '../components/Cta.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+import ToTop from '../components/ToTop.astro';
+
+const title = 'Doves | Repatriation & Doves Global Plan';
+const description =
+  'Doves Global Plan: funeral and repatriation cover for Zimbabweans living abroad. Doves handles documentation from start to finish, plus international remittances.';
+---
+
+<Base title={title} description={description}>
+  <Header />
+  <main id="main">
+    <Hero />
+    <Statement />
+    <Repatriation />
+    <Covers />
+    <Plan />
+    <Steps />
+    <Fleet />
+    <Currency />
+    <Faq />
+    <Remit />
+    <Cta />
+    <Contact />
+  </main>
+  <Footer />
+  <ToTop />
+</Base>
+
+<script>
+  import '../scripts/ui';
+  import '../scripts/nav';
+  import '../scripts/hero';
+  import '../scripts/form';
+  import '../scripts/carousel';
+  import '../scripts/plan';
+  import '../scripts/steps';
+  import '../scripts/marquee';
+  import '../scripts/totop';
+</script>

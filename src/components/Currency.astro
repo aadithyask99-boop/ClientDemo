@@ -1,0 +1,100 @@
+---
+import DotMap from './DotMap.astro';
+import { currency } from '../data/site';
+---
+
+<section class="currency" id="currency">
+  <DotMap />
+
+  <div class="wrap stack reveal">
+    <h2 class="big">
+      <span>{currency.title}</span>
+      <span class="lead">{currency.lead}</span>
+    </h2>
+    <p class="body">{currency.body}</p>
+
+    <ul class="regions">
+      {
+        currency.regions.map((r) => (
+          <li>
+            <span class="code">{r.big}</span>
+            <span class="name">{r.name}</span>
+            <span class="note muted">{r.note}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .currency {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(80px, 12vw, 190px);
+  }
+
+  .stack {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    justify-items: center;
+    gap: clamp(20px, 3vw, 34px);
+    text-align: center;
+  }
+
+  /* Bold and big, like the reference's big statements */
+  .big {
+    font-size: clamp(2.7rem, 8.6vw, 7.2rem);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.045em;
+  }
+
+  .big span {
+    display: block;
+  }
+
+  .lead {
+    color: var(--blue);
+  }
+
+  .body {
+    max-width: 34rem;
+    font-size: var(--fs-body);
+  }
+
+  .regions {
+    width: 100%;
+    max-width: 880px;
+    margin-top: clamp(8px, 2vw, 22px);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(10px, 3vw, 28px);
+    text-align: left;
+  }
+
+  .regions li {
+    display: grid;
+    gap: 2px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+
+  .code {
+    font-size: clamp(2.2rem, 4.6vw, 3.8rem);
+    line-height: 1;
+    letter-spacing: -0.045em;
+    font-weight: 400;
+  }
+
+  .name {
+    margin-top: 6px;
+    font-size: clamp(1rem, 1.5vw, 1.3rem);
+    letter-spacing: -0.02em;
+  }
+
+  .note {
+    font-size: var(--fs-small);
+  }
+</style>
