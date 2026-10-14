@@ -86,10 +86,6 @@ if (form) {
     });
   });
 
-  form.querySelectorAll<HTMLInputElement>('input[type=radio]').forEach((r) =>
-    r.addEventListener('change', () => window.setTimeout(advance, 260)),
-  );
-
   form.addEventListener('keydown', (e) => {
     const t = e.target as HTMLElement;
     if (e.key === 'Enter' && t instanceof HTMLInputElement && t.type !== 'radio' && i < steps.length - 1) {

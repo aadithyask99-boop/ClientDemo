@@ -29,7 +29,7 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
 
       <form data-enquiry novalidate data-endpoint={endpoint} data-wa={links.whatsapp}>
         <ol class="dots" aria-hidden="true" data-dots>
-          <li></li><li></li><li></li><li></li><li></li>
+          <li></li><li></li><li></li><li></li>
         </ol>
 
         <fieldset class="q" data-q="service">
@@ -44,6 +44,11 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
               ))
             }
           </div>
+
+          <label class="more">
+            <span>Anything specific you would like to tell us?</span>
+            <textarea name="message" rows="3" placeholder="Write it here (optional)"></textarea>
+          </label>
         </fieldset>
 
         <fieldset class="q" data-q="name">
@@ -59,11 +64,6 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
         <fieldset class="q" data-q="email" data-optional>
           <legend>Email</legend>
           <input name="email" type="email" autocomplete="email" aria-label="Email" />
-        </fieldset>
-
-        <fieldset class="q" data-q="message" data-optional>
-          <legend>Message</legend>
-          <textarea name="message" rows="3" aria-label="Message"></textarea>
         </fieldset>
 
         <p class="form__error" role="alert" hidden data-error></p>
@@ -316,6 +316,24 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
     resize: vertical;
     min-height: 100px;
     font-size: 1.2rem;
+  }
+
+  /* Free text under the four service pills */
+  .more {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    margin-top: clamp(22px, 3vw, 34px);
+    color: var(--muted);
+  }
+
+  .more textarea {
+    max-width: 34rem;
+    min-height: 88px;
+  }
+
+  textarea::placeholder {
+    color: #9aa4b5;
   }
 
   input:focus-visible,
