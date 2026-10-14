@@ -2,7 +2,7 @@
   "name": "clientdemo",
   "compatibility_date": "2026-10-01",
   "build": {
-    "command": "cd doves-uk && npm ci && BASE_PATH=/doves-uk npm run build && rm -rf ../site && mkdir -p ../site/doves-uk && cp -r dist/. ../site/doves-uk/ && printf '/ /doves-uk/ 302\n' > ../site/_redirects"
+    "command": "cd doves-uk && npm ci && node scripts/stage.mjs"
   },
   "assets": {
     "directory": "./site",
