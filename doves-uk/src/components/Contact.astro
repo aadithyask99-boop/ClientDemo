@@ -38,7 +38,7 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
             {
               contactCopy.services.map((s) => (
                 <label class="pill">
-                  <input type="radio" name="service" value={s} required />
+                  <input type="radio" name="service" value={s} />
                   <span>{s}</span>
                 </label>
               ))
@@ -330,6 +330,15 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
   .more textarea {
     max-width: 34rem;
     min-height: 88px;
+    max-height: 60vh;
+    resize: none;
+    overflow-y: auto;
+    scrollbar-width: none;
+    field-sizing: content;
+  }
+
+  .more textarea::-webkit-scrollbar {
+    display: none;
   }
 
   textarea::placeholder {

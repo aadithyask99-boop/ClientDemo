@@ -21,7 +21,8 @@ if (form) {
   const val = (name: string) => String(new FormData(form).get(name) ?? '').trim();
 
   const rules: Record<string, () => string | null> = {
-    service: () => (val('service') ? null : 'Please choose what you are asking about.'),
+    // Either choosing a topic or writing a few words is enough to continue
+    service: () => (val('service') || val('message') ? null : 'Please choose what you are asking about, or write a few words.'),
     name: () => (val('name') ? null : 'Please enter your full name.'),
     phone: () => (val('phone') ? null : 'Please enter a phone number we can reach you on.'),
     email: () => (!val('email') || /^\S+@\S+\.\S+$/.test(val('email')) ? null : 'That email address does not look right.'),
@@ -86,6 +87,17 @@ if (form) {
     });
   });
 
+  // The message box grows with what is typed, so no scroll bar appears
+  const box = form.querySelector<HTMLTextAreaElement>('textarea');
+  if (box) {
+    const grow = () => {
+      box.style.height = 'auto';
+      box.style.height = `${box.scrollHeight}px`;
+    };
+    box.addEventListener('input', grow);
+    grow();
+  }
+
   form.addEventListener('keydown', (e) => {
     const t = e.target as HTMLElement;
     if (e.key === 'Enter' && t instanceof HTMLInputElement && t.type !== 'radio' && i < steps.length - 1) {
@@ -130,7 +142,7 @@ if (form) {
       `Name: ${name}`,
       `Phone: ${phone}`,
       email ? `Email: ${email}` : '',
-      `About: ${service}`,
+      service ? `About: ${service}` : '',
       message ? `Message: ${message}` : '',
     ].filter(Boolean);
     waLink.href = `${wa}?text=${encodeURIComponent(lines.join('\n'))}`;
