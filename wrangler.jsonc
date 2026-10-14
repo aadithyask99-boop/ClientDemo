@@ -2,10 +2,10 @@
   "name": "clientdemo",
   "compatibility_date": "2026-10-01",
   "build": {
-    "command": "cd doves-uk && npm ci && npm run build"
+    "command": "cd doves-uk && npm ci && BASE_PATH=/doves-uk npm run build && rm -rf ../site && mkdir -p ../site/doves-uk && cp -r dist/. ../site/doves-uk/ && printf '/ /doves-uk/ 302\n' > ../site/_redirects"
   },
   "assets": {
-    "directory": "./doves-uk/dist",
+    "directory": "./site",
     "not_found_handling": "404-page"
   }
 }

@@ -1,5 +1,7 @@
 ---
 import { plan } from '../data/site';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <section class="plan" id="global-plan" data-plan data-tone="dark">
@@ -11,9 +13,9 @@ import { plan } from '../data/site';
       loop
       playsinline
       preload="none"
-      poster="/video/plan-poster.webp"
-      data-hd="/video/plan-1080.mp4"
-      data-sd="/video/plan-720.mp4"
+      poster={`${base}/video/plan-poster.webp`}
+      data-hd={`${base}/video/plan-1080.mp4`}
+      data-sd={`${base}/video/plan-720.mp4`}
     ></video>
     <div class="shade"></div>
   </div>
