@@ -1,7 +1,8 @@
-// Builds the site for the shared demo deploy: served under /doves-uk, with / redirecting to it.
-// Output goes to ../site, which wrangler.jsonc at the repo root serves as static assets.
+// Builds the site for the shared demo deploy, served under /doves-uk.
+// Output goes to ../site/doves-uk. ../site is what wrangler.jsonc at the repo root serves, so other
+// sites can be staged next to this one (../site/<name>) without being touched.
 import { spawnSync } from 'node:child_process';
-import { cpSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, rmSync } from 'node:fs';
 
 const build = spawnSync('npx', ['astro', 'build'], {
   stdio: 'inherit',
@@ -10,7 +11,7 @@ const build = spawnSync('npx', ['astro', 'build'], {
 });
 if (build.status !== 0) process.exit(build.status ?? 1);
 
-rmSync('../site', { recursive: true, force: true });
+rmSync('../site/doves-uk', { recursive: true, force: true });
 mkdirSync('../site/doves-uk', { recursive: true });
 cpSync('dist', '../site/doves-uk', { recursive: true });
 writeFileSync('../site/_redirects', '/ /doves-uk/ 302\n');
