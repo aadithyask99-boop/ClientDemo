@@ -61,7 +61,7 @@ describe("toCallRecord", () => {
       endedAt: "2026-10-15T10:01:35.000Z",
     });
     expect(r.sourceArtifacts).toEqual({ recordingUrl: payload.recording_url, transcriptUrl: payload.transcript_url });
-    expect(r.recordingUrl).toBeUndefined();
+    expect(r.recordingRef).toBeUndefined();
   });
 
   it("treats empty and unresolved template values as missing", () => {
@@ -134,7 +134,7 @@ describe("artifact copying", () => {
     let seen: CallRecord | undefined;
     const store: ArtifactStore = { save: async (_t, id, kind) => `artifact://t1/${id}.${kind}` };
     await new ArtifactCopyingWriter({ writeCall: async (_t, r) => void (seen = r) }, store).writeCall(tenant, base);
-    expect(seen?.recordingUrl).toBe("artifact://t1/dograh:42.recording");
+    expect(seen?.recordingRef).toBe("artifact://t1/dograh:42.recording");
     expect(seen?.sourceArtifacts).toBeUndefined();
   });
 
@@ -145,7 +145,7 @@ describe("artifact copying", () => {
     await new ArtifactCopyingWriter(crm, null).writeCall(tenant, base);
     expect(seen).toHaveLength(2);
     for (const r of seen) {
-      expect(r.recordingUrl).toBeUndefined();
+      expect(r.recordingRef).toBeUndefined();
       expect(r.sourceArtifacts).toBeUndefined();
     }
   });

@@ -92,8 +92,9 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Re
       durationSeconds: e.durationSeconds,
       outcome: e.outcome,
       summary: e.summary,
-      ...(e.recordingUrl ? { recordingUrl: e.recordingUrl } : {}),
-      ...(e.transcriptUrl ? { transcriptUrl: e.transcriptUrl } : {}),
+      ...(e.recordingUrl || e.transcriptUrl
+        ? { sourceArtifacts: { ...(e.recordingUrl ? { recordingUrl: e.recordingUrl } : {}), ...(e.transcriptUrl ? { transcriptUrl: e.transcriptUrl } : {}) } }
+        : {}),
       ...(e.message ? { message: e.message } : {}),
     };
 

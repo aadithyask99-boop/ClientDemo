@@ -42,7 +42,7 @@ export default defineObject({
       ],
     },
     { universalIdentifier: "00000000-0000-4000-8000-0000000000b7", name: "summary", type: FieldType.TEXT, label: "Summary", icon: "IconNotes", isNullable: true, defaultValue: null },
-    { universalIdentifier: "00000000-0000-4000-8000-0000000000b8", name: "recordingUrl", type: FieldType.LINKS as never, label: "Recording", icon: "IconPlayerPlay", isNullable: true, defaultValue: null },
-    { universalIdentifier: "00000000-0000-4000-8000-0000000000b9", name: "transcriptUrl", type: FieldType.LINKS as never, label: "Transcript", icon: "IconFileText", isNullable: true, defaultValue: null },
+    { universalIdentifier: "00000000-0000-4000-8000-0000000000b8", name: "recordingRef", type: FieldType.TEXT, label: "Recording reference", icon: "IconPlayerPlay", isNullable: true, defaultValue: null },
+    { universalIdentifier: "00000000-0000-4000-8000-0000000000b9", name: "transcriptRef", type: FieldType.TEXT, label: "Transcript reference", icon: "IconFileText", isNullable: true, defaultValue: null },
   ],
 });

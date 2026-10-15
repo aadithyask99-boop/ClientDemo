@@ -69,8 +69,9 @@ async function ingest(record: any): Promise<Response> {
     durationSeconds: record.durationSeconds,
     outcome: record.outcome,
     summary: record.summary,
-    recordingUrl: record.recordingUrl ? { primaryLinkUrl: record.recordingUrl } : undefined,
-    transcriptUrl: record.transcriptUrl ? { primaryLinkUrl: record.transcriptUrl } : undefined,
+    // Private storage references, not links: Twenty LINKS fields reject non-http URLs (verified), and these are not public.
+    recordingRef: record.recordingRef,
+    transcriptRef: record.transcriptRef,
   };
 
   if (existingId) {

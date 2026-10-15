@@ -64,7 +64,7 @@ export class ArtifactCopyingWriter implements CrmWriter {
         } catch {
           ref = null; // The call record must still be written; the copy can be retried from the provider later.
         }
-        if (ref) out[`${kind}Url` as const] = ref;
+        if (ref) out[`${kind}Ref` as const] = ref;
       }
     }
     await this.inner.writeCall(tenant, out);

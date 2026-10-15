@@ -36,8 +36,9 @@ export interface CallRecord {
   durationSeconds: number;
   outcome: Outcome;
   summary: string;
-  recordingUrl?: string;
-  transcriptUrl?: string;
+  /** Private storage reference (for example artifact://tenant/call.recording), never a public provider link. */
+  recordingRef?: string;
+  transcriptRef?: string;
   message?: { body: string; callbackNumber?: string; urgent: boolean };
   /** Provider-hosted links to copy into private storage before the record is written. Never forwarded to the CRM as-is. */
   sourceArtifacts?: { recordingUrl?: string; transcriptUrl?: string };
