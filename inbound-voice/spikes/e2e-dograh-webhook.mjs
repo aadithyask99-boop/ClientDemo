@@ -27,11 +27,12 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // 1. A Dograh account for this client (generated password, kept in a gitignored file, never printed).
 const pw = randomBytes(18).toString("base64url");
-const su = await api("POST", "/auth/signup", { email: "client-a@spike-inbound.dev", password: pw, name: "Client A" });
+const email = `client-${randomBytes(3).toString("hex")}@spike-inbound.dev`;
+const su = await api("POST", "/auth/signup", { email, password: pw, name: "Client A" });
 step("signup", su);
 if (su.s >= 400) process.exit(1);
 tok = su.j.token;
-fs.writeFileSync(dir + "/dograh-e2e-admin.txt", `email=client-a@spike-inbound.dev\npassword=${pw}\n`, { mode: 0o600 });
+fs.writeFileSync(dir + "/dograh-e2e-admin.txt", `email=${email}\npassword=${pw}\n`, { mode: 0o600 });
 
 // 2. The bearer credential Dograh will send to our webhook.
 const cred = await api("POST", "/credentials/", { name: "call-service", credential_type: "bearer_token", credential_data: { token: webhookToken } });
@@ -96,7 +97,7 @@ for (const text of ["Hi, I'd like to book a cleaning next Tuesday morning.", "My
   const m = await api("POST", `/workflow/${id}/text-chat/sessions/${run}/messages`, { text });
   step("message", m, "state " + m.j?.state);
 }
-const end = await api("POST", `/workflow/${id}/text-chat/sessions/${run}/end`);
+const end = await api("POST", `/workflow/${id}/text-chat/sessions/${run}/end`, {}); // the body is required, all fields optional
 step("end chat", end, "state " + end.j?.state);
 
 // 6. Wait for the webhook, the queue and Twenty.
