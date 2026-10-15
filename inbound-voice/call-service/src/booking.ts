@@ -1,14 +1,41 @@
 import { z } from "zod";
 import type { CallFactStore } from "./facts.js";
-import { SlotUnavailableError, addDays, DEFAULT_BOOKING } from "./localScheduler.js";
+import { SlotUnavailableError, addDays, weekdayOf, DEFAULT_BOOKING } from "./localScheduler.js";
 import type { Scheduler } from "./scheduler.js";
 import type { Tenant } from "./types.js";
 
-/** Input of the `check_availability` tool. The agent turns "next Tuesday" into a date using the current date in its prompt. */
-export const availabilityInput = z.object({
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "date must be YYYY-MM-DD"),
-  part_of_day: z.enum(["morning", "afternoon", "any"]).optional(),
-});
+/**
+ * Input of the `check_availability` tool. The caller's words go in `day` ("tomorrow", "next tuesday") and the service
+ * works out the date from the real clock: a language model that does its own date arithmetic gets weekdays wrong.
+ * `date` (YYYY-MM-DD) is for when the caller named an exact date.
+ */
+export const availabilityInput = z
+  .object({
+    date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "date must be YYYY-MM-DD").optional(),
+    day: z.string().min(2).optional(),
+    part_of_day: z.enum(["morning", "afternoon", "any"]).optional(),
+  })
+  .refine((v) => v.date || v.day, { message: "give either day (for example 'next tuesday') or date (YYYY-MM-DD)" });
+
+const WEEKDAYS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+
+/**
+ * Turns "today", "tomorrow", "tuesday", "next tuesday" or "this friday" into a calendar date in the tenant's time zone,
+ * or null if it cannot. "next X" and a bare weekday both mean the coming one; only "this X"/"today" can mean today.
+ */
+export function resolveDay(text: string, nowMs: number, timeZone: string): string | null {
+  const t = text.toLowerCase().trim();
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone }).format(new Date(nowMs));
+  if (/\btoday\b/.test(t)) return today;
+  if (/\bday after tomorrow\b/.test(t)) return addDays(today, 2);
+  if (/\btomorrow\b/.test(t)) return addDays(today, 1);
+  const target = WEEKDAYS.findIndex((d) => t.includes(d) || t.includes(d.slice(0, 3) + " ") || t === d.slice(0, 3));
+  if (target < 0) return null;
+  const current = weekdayOf(today);
+  let ahead = (target - current + 7) % 7;
+  if (ahead === 0 && !/\bthis\b/.test(t)) ahead = 7;
+  return addDays(today, ahead);
+}
 
 /** Input of the `book_appointment` tool. `start` must be copied exactly from a slot returned by check_availability. */
 export const bookInput = z.object({
@@ -49,8 +76,20 @@ function calendarDown(date: string, timeZone: string): AvailabilityResult {
   return { date, timeZone, slots: [], calendarUnavailable: true, message: "The calendar cannot be reached right now, so no times can be offered. Offer to take a message and say the team will call back to arrange a time." };
 }
 
-export async function checkAvailability(deps: BookingDeps, tenant: Tenant, input: z.infer<typeof availabilityInput>): Promise<AvailabilityResult> {
+export async function checkAvailability(
+  deps: BookingDeps,
+  tenant: Tenant,
+  rawInput: z.infer<typeof availabilityInput>,
+  now: () => number = Date.now,
+): Promise<AvailabilityResult> {
   const tz = tenant.booking?.timeZone ?? DEFAULT_BOOKING.timeZone;
+  // A named day wins over a date: the model is good at hearing "tuesday" and bad at calendars.
+  const resolved = rawInput.day ? resolveDay(rawInput.day, now(), tz) : null;
+  const date = resolved ?? rawInput.date;
+  if (!date) {
+    return { date: "", timeZone: tz, slots: [], message: "I could not tell which day that is. Ask the caller for a day of the week or a date." };
+  }
+  const input = { ...rawInput, date };
   const scheduler = deps.scheduler(tenant);
   const part = input.part_of_day ?? "any";
   const keep = (iso: string) => part === "any" || (part === "morning" ? localHour(iso, tz) < 12 : localHour(iso, tz) >= 12);

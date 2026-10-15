@@ -188,3 +188,44 @@ describe("tool routes and webhook", () => {
     expect(written[0]).toMatchObject({ providerCallId: "dograh:50", outcome: "OPTED_OUT" });
   });
 });
+
+describe("resolveDay", () => {
+  // Thursday 15 October 2026, 10:00 UTC (11:00 in London).
+  const THU = Date.parse("2026-10-15T10:00:00Z");
+  it("understands today, tomorrow and weekday names from the real clock", async () => {
+    const { resolveDay } = await import("../src/booking.js");
+    expect(resolveDay("today", THU, "Europe/London")).toBe("2026-10-15");
+    expect(resolveDay("Tomorrow morning", THU, "Europe/London")).toBe("2026-10-16");
+    expect(resolveDay("next Tuesday", THU, "Europe/London")).toBe("2026-10-20");
+    expect(resolveDay("tuesday", THU, "Europe/London")).toBe("2026-10-20");
+    expect(resolveDay("next thursday", THU, "Europe/London")).toBe("2026-10-22"); // not today
+    expect(resolveDay("this thursday", THU, "Europe/London")).toBe("2026-10-15");
+    expect(resolveDay("Saturday", THU, "Europe/London")).toBe("2026-10-17");
+    expect(resolveDay("the day after tomorrow", THU, "Europe/London")).toBe("2026-10-17");
+    expect(resolveDay("whenever", THU, "Europe/London")).toBeNull();
+  });
+
+  it("uses the client's time zone for what 'today' is", async () => {
+    const { resolveDay } = await import("../src/booking.js");
+    const lateUtc = Date.parse("2026-10-15T23:30:00Z"); // already Friday 16 October in Auckland
+    expect(resolveDay("today", lateUtc, "Pacific/Auckland")).toBe("2026-10-16");
+    expect(resolveDay("today", lateUtc, "Europe/London")).toBe("2026-10-16"); // BST: 00:30 on the 16th
+  });
+
+  it("check_availability resolves `day` itself and ignores a wrong date from the model", async () => {
+    const d = { scheduler: () => new LocalScheduler(() => THU) as Scheduler, facts: new InMemoryCallFactStore() };
+    const r = await checkAvailability(d, tenant, { day: "next tuesday", date: "2026-10-21" }, () => THU);
+    expect(r.date).toBe("2026-10-20");
+    expect(r.slots[0]?.label).toBe("Tuesday 20 October at 09:00");
+  });
+
+  it("asks for a clearer day when it cannot tell, and refuses empty input", async () => {
+    const d = { scheduler: () => new LocalScheduler(() => THU) as Scheduler, facts: new InMemoryCallFactStore() };
+    const r = await checkAvailability(d, tenant, { day: "sometime soon" }, () => THU);
+    expect(r.slots).toEqual([]);
+    expect(r.message).toMatch(/ask the caller/i);
+    const { availabilityInput } = await import("../src/booking.js");
+    expect(availabilityInput.safeParse({}).success).toBe(false);
+    expect(availabilityInput.safeParse({ date: "2026-10-20" }).success).toBe(true);
+  });
+});

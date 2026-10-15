@@ -42,6 +42,11 @@ services:
 EOF
 
 cd "$DIR"
+# Reaching Dograh from a browser or Twilio outside the Codespace: set PUBLIC_API_URL to the forwarded, public port 8000 address.
+# Without it the web page calls http://localhost:8000 from the visitor's own machine and sign-in fails (verified).
+if [ -n "${PUBLIC_API_URL:-}" ]; then
+  touch .env; sed -i '/^BACKEND_API_ENDPOINT=/d' .env; echo "BACKEND_API_ENDPOINT=$PUBLIC_API_URL" >> .env
+fi
 # The upstream script ends with `docker compose --profile tunnel up` (attached, public tunnel). Run it detached and tunnel-free.
 sed -i 's|docker compose --profile tunnel up --pull always$|docker compose up -d --pull always|' start_docker.sh
 chmod +x start_docker.sh
