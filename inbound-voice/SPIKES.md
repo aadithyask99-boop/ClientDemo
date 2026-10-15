@@ -164,3 +164,12 @@ Test: `spikes/e2e-outcomes.mjs` (run through `e2e-dograh-webhook.sh` with `E2E_S
 
 ### New in Twenty
 - `Call.callerNumber` (TEXT). Linking the caller to a Person is still TODO.
+
+## Booking and outcome fixes (2026-10-15, Codespaces, since reverted)
+
+Full account and results table in [BOOKING.md](BOOKING.md). Headlines:
+- Dograh HTTP tools work end to end in text chats: the agent called `check_availability` then `book_appointment`; the call-service booked the slot and recorded a fact that made the call BOOKED in Twenty.
+- Tool creation shape (verified): `POST /tools/` with `name`, `description`, `category: "http_api"` and a `definition` of `{schema_version, type, config, messages}`; the config takes `method`, `url`, `credential_uuid`, `parameters`, `preset_parameters` (for example `workflow_run_id` from `{{initial_context.workflow_run_id}}`) and `timeout_ms`. Tools attach to an agent node through its `tool_uuids`.
+- The agent-extracted `outcome` variable (agent node `extraction_variables`) is kept on text chats even though the platform disposition is not, but extraction did not run for a one-message call.
+- The agent does not always call a tool even when told to. An opt-out is therefore also caught by a deterministic scan of the caller's transcript lines.
+- Dograh stores each tool call's result in the run's `gathered_context.tool_results` (seen as a key, contents not inspected).
