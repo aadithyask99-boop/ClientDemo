@@ -132,7 +132,7 @@ describe("artifact copying", () => {
 
   it("replaces provider links with private references and never forwards the public link", async () => {
     let seen: CallRecord | undefined;
-    const store: ArtifactStore = { save: async (_t, id, kind) => `artifact://t1/${id}.${kind}` };
+    const store: ArtifactStore = { save: async (_t, id, kind) => ({ ref: `artifact://t1/${id}.${kind}` }) };
     await new ArtifactCopyingWriter({ writeCall: async (_t, r) => void (seen = r) }, store).writeCall(tenant, base);
     expect(seen?.recordingRef).toBe("artifact://t1/dograh:42.recording");
     expect(seen?.sourceArtifacts).toBeUndefined();
@@ -156,7 +156,7 @@ describe("artifact copying", () => {
       const fetchImpl = (async () => new Response("audio-bytes")) as unknown as typeof fetch;
       const store = new LocalArtifactStore(dir, { allowedHosts: ["files.example.com"], fetchImpl });
       const ref = await store.save("t1", "dograh:42", "recording", "https://files.example.com/rec/42.wav");
-      expect(ref).toBe("artifact://t1/dograh_42.recording");
+      expect(ref).toEqual({ ref: "artifact://t1/dograh_42.recording" });
       expect(await readFile(path.join(dir, "t1", "dograh_42.recording"), "utf8")).toBe("audio-bytes");
       expect(await store.save("t1", "x", "recording", "https://evil.example.net/a.wav")).toBeNull();
       expect(await store.save("t1", "x", "recording", "file:///etc/passwd")).toBeNull();

@@ -1,13 +1,17 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { CrmWriter } from "./crm.js";
+import { detectOptOut } from "./signals.js";
 import type { CallRecord, Tenant } from "./types.js";
 
 export type ArtifactKind = "recording" | "transcript";
 
 export interface ArtifactStore {
-  /** Copies the remote file into private storage and returns a stable reference, or null if it could not be copied. */
-  save(tenantId: string, callId: string, kind: ArtifactKind, sourceUrl: string): Promise<string | null>;
+  /**
+   * Copies the remote file into private storage and returns a stable reference, or null if it could not be copied.
+   * Transcripts also come back as text so deterministic checks (opt-outs) can run on them.
+   */
+  save(tenantId: string, callId: string, kind: ArtifactKind, sourceUrl: string): Promise<{ ref: string; text?: string } | null>;
 }
 
 /**
@@ -20,7 +24,7 @@ export class LocalArtifactStore implements ArtifactStore {
     private readonly opts: { allowedHosts?: string[]; fetchImpl?: typeof fetch } = {},
   ) {}
 
-  async save(tenantId: string, callId: string, kind: ArtifactKind, sourceUrl: string): Promise<string | null> {
+  async save(tenantId: string, callId: string, kind: ArtifactKind, sourceUrl: string): Promise<{ ref: string; text?: string } | null> {
     let url: URL;
     try {
       url = new URL(sourceUrl);
@@ -36,14 +40,17 @@ export class LocalArtifactStore implements ArtifactStore {
     const rel = path.join(safe(tenantId), `${safe(callId)}.${kind}`);
     const full = path.join(this.dir, rel);
     await mkdir(path.dirname(full), { recursive: true });
-    await writeFile(full, Buffer.from(await res.arrayBuffer()));
-    return `artifact://${rel.split(path.sep).join("/")}`;
+    const bytes = Buffer.from(await res.arrayBuffer());
+    await writeFile(full, bytes);
+    const ref = `artifact://${rel.split(path.sep).join("/")}`;
+    return kind === "transcript" && bytes.length < 1_000_000 ? { ref, text: bytes.toString("utf8") } : { ref };
   }
 }
 
 /**
  * Wraps a CrmWriter: copies provider-hosted recording and transcript links into private storage first, so the CRM
  * never stores a public provider link. If the store is missing or a copy fails, the link is dropped, not forwarded.
+ * Also runs the opt-out safety net on the transcript text.
  */
 export class ArtifactCopyingWriter implements CrmWriter {
   constructor(
@@ -58,13 +65,20 @@ export class ArtifactCopyingWriter implements CrmWriter {
       for (const kind of ["recording", "transcript"] as const) {
         const src = sourceArtifacts[`${kind}Url` as const];
         if (!src) continue;
-        let ref: string | null = null;
+        let saved: { ref: string; text?: string } | null = null;
         try {
-          ref = await this.store.save(tenant.id, record.providerCallId, kind, src);
+          saved = await this.store.save(tenant.id, record.providerCallId, kind, src);
         } catch {
-          ref = null; // The call record must still be written; the copy can be retried from the provider later.
+          saved = null; // The call record must still be written; the copy can be retried from the provider later.
         }
-        if (ref) out[`${kind}Ref` as const] = ref;
+        if (saved) out[`${kind}Ref` as const] = saved.ref;
+        // Safety net: a clear opt-out in the caller's own words overrides every other outcome, even if the agent forgot its tool.
+        if (saved?.text && detectOptOut(saved.text)) {
+          out.outcome = "OPTED_OUT";
+          if (!out.summary.includes("opt-out")) {
+            out.summary = `${out.summary} Caller asked not to be contacted again (opt-out heard in the transcript).`.trim();
+          }
+        }
       }
     }
     await this.inner.writeCall(tenant, out);
