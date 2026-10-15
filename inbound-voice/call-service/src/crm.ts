@@ -40,11 +40,14 @@ export class TwentyIngestWriter implements CrmWriter {
     }
 
     if (res.ok) return;
+    // Include a short slice of the response: the ingest function returns its failure reason, which is what operators need.
+    const detail = (await res.text().catch(() => "")).replace(/\s+/g, " ").slice(0, 300);
+    const suffix = detail ? `: ${detail}` : "";
     // 4xx other than 408/429 will not succeed on retry; surface for the dead-letter queue.
     if (res.status >= 400 && res.status < 500 && res.status !== 408 && res.status !== 429) {
-      throw new PermanentError(`Twenty rejected call ${record.providerCallId}: ${res.status}`);
+      throw new PermanentError(`Twenty rejected call ${record.providerCallId}: ${res.status}${suffix}`);
     }
-    throw new RetryableError(`Twenty error ${res.status} for call ${record.providerCallId}`);
+    throw new RetryableError(`Twenty error ${res.status} for call ${record.providerCallId}${suffix}`);
   }
 }
 
