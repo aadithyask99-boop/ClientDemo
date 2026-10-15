@@ -7,9 +7,9 @@ cd "$(dirname "$0")"
 DIR=.work/dograh
 mkdir -p "$DIR"
 
-# Free memory: pause (not delete) the Twenty stacks.
+# Free memory: pause (not delete) the main Twenty stack. The small app-dev Twenty (:2020) stays unless STOP_APP_DEV=1.
 [ -d .work/twenty ] && (cd .work/twenty && docker compose stop 2>/dev/null || true)
-docker stop twenty-app-dev 2>/dev/null || true
+[ "${STOP_APP_DEV:-0}" = "1" ] && docker stop twenty-app-dev 2>/dev/null || true
 
 BASE=https://raw.githubusercontent.com/dograh-hq/dograh/main
 curl -fsSL "$BASE/docker-compose.yaml" -o "$DIR/docker-compose.yaml"

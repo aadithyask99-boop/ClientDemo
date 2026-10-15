@@ -21,6 +21,8 @@ export interface Tenant {
   };
   calDiy: { baseUrl: string; apiKey: string; eventTypeId: number } | null;
   numbers: string[]; // E.164 numbers routed to this tenant
+  /** Bearer token this tenant's Dograh webhook node sends. Dograh does not sign webhooks, so this token is the only authentication. */
+  dograhWebhookToken?: string;
 }
 
 /** What the voice runtime reports when a call ends. Provider-specific adapters map into this shape. */
@@ -37,4 +39,6 @@ export interface CallRecord {
   recordingUrl?: string;
   transcriptUrl?: string;
   message?: { body: string; callbackNumber?: string; urgent: boolean };
+  /** Provider-hosted links to copy into private storage before the record is written. Never forwarded to the CRM as-is. */
+  sourceArtifacts?: { recordingUrl?: string; transcriptUrl?: string };
 }

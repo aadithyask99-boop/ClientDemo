@@ -6,6 +6,7 @@ import { verify } from "./signing.js";
 import type { TenantRegistry } from "./tenants.js";
 import { OUTCOMES, type CallRecord } from "./types.js";
 import { toE164 } from "./phone.js";
+import { dograhPayload, toCallRecord } from "./dograh.js";
 
 const callEnded = z.object({
   providerCallId: z.string().min(1),
@@ -89,6 +90,28 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Re
     };
 
     // Acknowledge fast; the Twenty write happens off the request path.
+    queue.enqueue(record.providerCallId, record);
+    return reply.code(202).send({ accepted: true });
+  });
+
+  /** Dograh webhook node: authenticated by a per-tenant bearer token (Dograh does not sign webhooks). */
+  app.post("/webhooks/dograh", async (req, reply) => {
+    const header = req.headers.authorization;
+    const token = typeof header === "string" && header.startsWith("Bearer ") ? header.slice(7).trim() : "";
+    const tenant = token ? deps.registry.byDograhToken(token) : undefined;
+    if (!tenant) return reply.code(401).send({ error: "unauthorized" });
+
+    let json: unknown;
+    try {
+      json = JSON.parse(req.body as string);
+    } catch {
+      return reply.code(400).send({ error: "invalid json" });
+    }
+    const parsed = dograhPayload.safeParse(json);
+    if (!parsed.success) return reply.code(400).send({ error: "invalid payload", issues: parsed.error.issues });
+
+    const record = toCallRecord(tenant, parsed.data);
+    // Dograh retries failed deliveries and may deliver twice; the queue key and Twenty's upsert on providerCallId absorb that.
     queue.enqueue(record.providerCallId, record);
     return reply.code(202).send({ accepted: true });
   });
