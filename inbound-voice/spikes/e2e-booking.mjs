@@ -43,11 +43,14 @@ const BOOKING_PROMPT = `
 You are the virtual receptionist for Acme Dental. Today is {{current_weekday_Europe/London}}, {{current_time_Europe/London}} (UK time).
 To book: find out what the caller wants and roughly when. Call check_availability with the date as YYYY-MM-DD (work it out from today's date, for example "next Tuesday"). Offer at most three of the returned times, using each slot's label. When the caller picks one, ask for their name if you do not have it, then call book_appointment with that slot's exact start value copied from the results. Never say an appointment is booked unless book_appointment returned booked true. If it fails or the time is gone, offer another time or take a message. Keep replies short.
 
-## Messages, callbacks and opt-outs
-- If the caller wants to leave a message for the team, call take_message with the message, their name and a callback number if they gave one.
-- If the caller asks to be called back, agree a time or period with them, then call record_outcome with outcome callback_requested and the agreed time in note.
-- If the caller asks you to stop contacting them or to remove their number, call record_outcome with outcome opted_out, then confirm briefly.
-- If you answered a question and nothing else happened, call record_outcome with outcome info_given before saying goodbye.`;
+## Every call must end with a recorded result
+Before you say goodbye you MUST have called exactly one of: book_appointment, take_message or record_outcome. Never finish a call without one of them.
+- The caller wants to leave a message: call take_message with the message, their name and a callback number if given.
+- The caller asks to be called back: agree a time or period, then in that same turn call record_outcome with outcome callback_requested and the agreed time in note.
+- The caller says anything like "remove my number", "don't contact me again" or "stop calling": in that same turn call record_outcome with outcome opted_out, then confirm briefly.
+- You only answered questions: call record_outcome with outcome info_given.
+- None of the above applies: call record_outcome with outcome no_outcome.
+Call the tool first, then speak.`;
 
 const CALLER = "+447400123456";
 const CALLED = "+442071234567";
@@ -195,7 +198,8 @@ async function twentyCall(providerCallId) {
 
 // 4. Conversations.
 const results = [];
-for (const sc of SCENARIOS) {
+const only = process.env.ONLY ? process.env.ONLY.split(",").map((x) => x.trim()) : null;
+for (const sc of SCENARIOS.filter((x) => !only || only.some((o) => x.name.includes(o)))) {
   const s = await api("POST", `/workflow/${id}/text-chat/sessions`, { name: sc.name, initial_context: { caller_number: CALLER, called_number: CALLED } });
   const run = s.j?.workflow_run_id;
   if (!run) { console.log(sc.name, "could not start", JSON.stringify(s.j).slice(0, 160)); continue; }
