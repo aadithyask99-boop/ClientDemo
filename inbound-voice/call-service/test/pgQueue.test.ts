@@ -3,6 +3,7 @@ import pg from "pg";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { PermanentError } from "../src/crm.js";
 import { fromPg, migrate, type Sql } from "../src/db.js";
+import { fromPglite } from "./pgliteSql.js";
 import { PgOutboxQueue } from "../src/pgQueue.js";
 import { buildServer } from "../src/server.js";
 import { InMemoryTenantRegistry } from "../src/tenants.js";
@@ -18,8 +19,7 @@ beforeEach(async () => {
     sql = fromPg(pool);
     await sql.query("DROP TABLE IF EXISTS outbox");
   } else {
-    const db = new PGlite();
-    sql = { query: async (text, params) => ({ rows: (await db.query(text, params as unknown[])).rows as never[] }) };
+    sql = fromPglite(new PGlite());
   }
   await migrate(sql);
 });

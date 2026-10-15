@@ -3,6 +3,7 @@ import pg from "pg";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { PgBookingStore } from "../src/bookingStore.js";
 import { fromPg, migrate, type Sql } from "../src/db.js";
+import { fromPglite } from "./pgliteSql.js";
 import { PgCallFactStore } from "../src/facts.js";
 import { LocalScheduler, SlotUnavailableError } from "../src/localScheduler.js";
 import type { Tenant } from "../src/types.js";
@@ -25,8 +26,7 @@ beforeEach(async () => {
     sql = fromPg(pool);
     await sql.query("DROP TABLE IF EXISTS bookings, call_facts");
   } else {
-    const db = new PGlite();
-    sql = { query: async (text, params) => ({ rows: (await db.query(text, params as unknown[])).rows as never[] }) };
+    sql = fromPglite(new PGlite());
   }
   await migrate(sql);
 });
@@ -38,6 +38,13 @@ describe("migrate", () => {
   it("can run twice", async () => {
     await migrate(sql);
     await migrate(sql);
+  });
+
+  it("can run from several processes at the same moment", async () => {
+    if (realUrl) await sql.query("DROP TABLE IF EXISTS bookings, call_facts, outbox"); // start from nothing, as a fresh database would
+    await Promise.all(Array.from({ length: 6 }, () => migrate(sql)));
+    const { rows } = await sql.query<{ n: string | number }>(`SELECT count(*) AS n FROM information_schema.tables WHERE table_name IN ('bookings', 'call_facts', 'outbox')`);
+    expect(Number(rows[0]?.n)).toBe(3);
   });
 });
 

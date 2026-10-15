@@ -50,6 +50,13 @@ export const SCHEMA = [
   `CREATE INDEX IF NOT EXISTS outbox_due ON outbox (status, next_attempt_at)`,
 ];
 
+const MIGRATION_LOCK = 727301;
+
+/**
+ * Safe to run from several processes at once. All statements go in one string, which Postgres runs as a single
+ * implicit transaction, so the transaction-level advisory lock is held until the last one finishes. Run one by one,
+ * two processes starting together collide inside CREATE TABLE IF NOT EXISTS ("duplicate key ... pg_type_typname_nsp_index").
+ */
 export async function migrate(sql: Sql): Promise<void> {
-  for (const stmt of SCHEMA) await sql.query(stmt);
+  await sql.query(`SELECT pg_advisory_xact_lock(${MIGRATION_LOCK});\n${SCHEMA.join(";\n")}`);
 }
