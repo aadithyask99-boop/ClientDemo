@@ -62,8 +62,16 @@ const id = wf.j?.id;
 if (!id || !cred.j?.uuid) process.exit(1);
 
 // 2. Webhook node (payload uses the real telephony variables) and disposition extraction with our codes.
+// Also: the agent extracts its own `outcome` variable. On text chats the platform keeps only the end reason as the
+// disposition, but extracted variables are kept, so this is how the outcome reaches the webhook there.
 const cur = await api("GET", "/workflow/fetch/" + id);
 const def = cur.j.workflow_definition;
+const agentNode = def.nodes.find((n) => n.type === "agentNode");
+agentNode.data.extraction_enabled = true;
+agentNode.data.extraction_prompt = "Decide how the call ended and report it.";
+agentNode.data.extraction_variables = [
+  { name: "outcome", type: "string", prompt: "Exactly one of: booked, message_taken, transferred, transfer_failed, info_given, callback_requested, opted_out, no_outcome. callback_requested means the caller asked to be called back. opted_out means the caller asked not to be contacted again." },
+];
 def.nodes.push({
   id: "webhook-call-service",
   type: "webhook",
@@ -82,6 +90,7 @@ def.nodes.push({
       called: "{{initial_context.called_number}}",
       duration: "{{cost_info.call_duration_seconds}}",
       disposition: "{{gathered_context.call_disposition}}",
+      outcome_hint: "{{gathered_context.outcome}}",
       call_status: "{{gathered_context.call_status}}",
       summary: "{{gathered_context.summary}}",
       recording_url: "{{recording_url}}",
