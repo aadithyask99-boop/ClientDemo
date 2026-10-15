@@ -68,3 +68,23 @@ Not covered: persistence (tenants and the queue are in memory), the voice runtim
 - Server-route trigger.
 - Cal.diy (not started).
 - Voice platform latency.
+
+## Dograh test (2026-10-15, Codespaces, since reverted)
+
+Open-source voice AI platform (BSD-2-Clause, Python). Started from its compose file, tested through its REST API, then removed (containers, volumes, credentials, files).
+
+### Verified
+- **Runs in Codespaces only with host networking** (same bridge problem as Twenty). `spikes/dograh-up.sh` adds the override with `networks: !reset []`. The upstream `start_docker.sh` only prepares `.env` in a non-interactive shell and prints the launch command, so the compose command is run directly, without its public Cloudflare tunnel. Postgres, Redis, MinIO, API (:8000) and UI (:3010) came up healthy; `/api/v1/health` returned 200.
+- **Fully scriptable, no manual account:** `POST /api/v1/auth/signup` (email, password, name) returns a token; `POST /api/v1/workflow/create/template` builds an inbound agent from a call type, use case and description. It created a workflow with start, agent, global and end-call nodes. (`.test` email domains are rejected as reserved.)
+- **Text-chat API works with no provider keys configured:** a session started in about 1.9 s; agent turns took 1.8 to 3.0 s. The agent greeted the caller and asked for a name. This is text through Dograh's bundled stack, not voice latency.
+- **Provider catalogs:** LLM (openai, google, groq, openrouter, azure, aws_bedrock and others), TTS (elevenlabs, deepgram, cartesia, openai, google, rime, inworld and others), STT (deepgram, assemblyai, cartesia, openai, google, soniox and others), plus speech-to-speech (openai_realtime, aws_nova_sonic, grok, ultravox, google). Defaults: openai, elevenlabs, deepgram.
+- **API surface (160 paths):** per-workflow inbound telephony webhook (`/telephony/inbound/{workflow_id}`), telephony status callbacks (Twilio, Vonage, Telnyx, Plivo, Vobiz, Cloudonix, Exotel), transfer results, campaigns, tools (custom and MCP, with a test endpoint), knowledge base (upload, search), recordings, workflow runs with transcript and recording URLs, API keys, website embed.
+- **Tuning keys in workflow configuration:** ambient noise (enabled, volume 0.3), turn start strategy (`min_words`, 2 words), turn stop strategy (`transcription`), smart turn stop seconds (2), max user idle timeout (10 s), max call duration (300 s), pronunciation dictionary, TTS cache, context compaction.
+- **Call dispositions** exist per workflow (for example qualified, not interested, wrong number), which map onto our outcome set.
+
+### Not found or not verified
+- Filler words, active-listening backchannels, and voice speed/temperature were not among the workflow configuration keys. They may live in TTS settings or agent prompts; unchecked.
+- A call-ended webhook endpoint was not seen in the API paths (the README mentions webhooks, probably a workflow node). Unchecked.
+- Voice quality and real latency (needs audio), real inbound telephony, and whether the bundled "dograh" provider calls a hosted service (self-host independence) are untested.
+- Multi-client separation (organizations) was not examined.
+- Telemetry is on by default (`ENABLE_TELEMETRY=false` disables it).
