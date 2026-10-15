@@ -1,6 +1,6 @@
 # Spike results
 
-Method: read-only review of public docs and source. No servers were started (Docker is not installed on this machine), so nothing below was exercised at runtime.
+Method: docs and source review, then a runtime spike in GitHub Codespaces (Docker is not usable on the author machine: virtualization is off in firmware). Runtime results are marked VERIFIED and were observed on 2026-10-15.
 
 ## Twenty: installing one app across workspaces
 
@@ -40,3 +40,31 @@ Not covered: persistence (tenants and the queue are in memory), the voice runtim
 1. Run Twenty with `IS_MULTIWORKSPACE_ENABLED=true`, create two workspaces, deploy the app tarball, install in both, post a signed call, check idempotency.
 2. Run Cal.diy via Docker Compose, check API v2 is served, connect a test Google calendar, request slots, make a booking.
 3. Place a test call through the chosen voice platform and measure first-audio latency.
+
+## Runtime results (Codespaces, 2026-10-15)
+
+### Environment findings
+- **Docker-in-Docker bridge networking is broken in Codespaces.** Containers on a compose network could not reach each other (`db:5432` timed out while Postgres was healthy), so Twenty's server crash-looped. Fix: `network_mode: host` for all four services plus `PG_DATABASE_HOST=localhost`, `REDIS_URL=redis://localhost:6379`. `spikes/twenty-up.sh` now does this when `CODESPACES` is set. VERIFIED.
+- **Twenty's own compose needs `SERVER_URL` to equal the origin the browser uses.** A request from another origin (for example `localhost:3000` while `SERVER_URL` is the forwarded `app.github.dev` URL) logs "Refused to issue a session cookie" and sign-up half-completes. VERIFIED.
+- **Browser sign-up half-completed twice**, leaving a user with no workspace ("user already exists", then "workspace not found"). Creating the user and workspace through the `/metadata` GraphQL API (`signUp`, `signUpInNewWorkspace` with `displayName`, `activateWorkspace`) worked. The UI form seems to omit the workspace name. Cause not proven.
+- **Twenty publishes a `twentycrm/twenty-app-dev` image** with a pre-seeded demo workspace on port 2020. `npx create-twenty-app@latest` starts it and configures the CLI with an API key. This is the easy path for app development. Needs Node 24+. VERIFIED.
+
+### Twenty app (verified against the dev server)
+- `twenty apply` synced our `Call` object and `ingest-call` function (66 metadata items added, no errors). VERIFIED.
+- The SDK typecheck caught two problems: the generated client does not know a custom object until after its first sync (so the function types the client as `any`), and select-option colors need a literal type.
+- A route-triggered function must return `new Response(body, { status })`. Returning a plain object produces HTTP 200 with the object as the body (a "401" in the body but 200 on the wire). VERIFIED.
+- `rawBody` is preserved and HMAC verification over it works: valid signature 200, wrong secret 401, stale timestamp 401. Forwarded headers worked with `forwardedRequestHeaders`. VERIFIED.
+- Idempotency: the same signed call sent twice leaves exactly one `Call` (`totalCount: 1`). VERIFIED.
+- Secret application variables cannot have a default value (typecheck rejects `value`), so a per-workspace secret must be set after install. For the spike the variable was non-secret.
+
+### Design consequences
+1. `httpRouteTriggerSettings` resolves the workspace from the request host, so each tenant needs its own domain (multi-workspace subdomains). Alternative from the same docs: `serverRouteTriggerSettings`, one URL for all tenants, where a resolver in the owner workspace verifies the signature and enqueues the target function in the right workspace (acks 202). That means one secret and one URL for the call service. Worth adopting; not yet tried.
+2. Per-workspace secrets need a provisioning step after install, or the server-route design avoids them.
+
+### Still unverified
+- Multi-workspace mode (`IS_MULTIWORKSPACE_ENABLED`) with two workspaces and the app installed in both.
+- Whether `writability: APPLICATION` actually blocks writes through the REST API.
+- Person linking, Message and Task creation in the ingest function.
+- Server-route trigger.
+- Cal.diy (not started).
+- Voice platform latency.

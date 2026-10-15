@@ -11,6 +11,8 @@ Sources: feature ideas from viewing a commercial product's UI through the owner'
 3. **Tenant registry.** Each client maps to one Twenty workspace (own subdomain), one API key, one webhook secret, its numbers and its agent config. One key and one secret per workspace is assumed, **UNVERIFIED**.
 4. **Schema and write path ship as a Twenty App**, not as per-workspace metadata scripts. The Apps SDK (`defineObject`, `defineLogicFunction`) is MIT licensed and fits Twenty's application exception.
    - `writability: APPLICATION` means only the app's own logic functions may create, update or delete those records (from Twenty's objects doc). Our sync worker therefore does **not** write Call, Agent or Message over the REST API. It POSTs to an HTTP-route logic function (`ingest-call`) that the app exposes, and that function writes the records, running as the application (from the logic-functions doc).
+   - **Verified in a spike (SPIKES.md):** the app syncs, the signed route returns 200 or 401 correctly, the raw body is preserved, and a repeated call creates one record. The route must return `new Response(...)` to set the status.
+   - **Design option to adopt:** Twenty also offers a server route trigger: one URL for all tenants, with a resolver that verifies the signature and routes to the right workspace. It would replace per-workspace URLs and secrets. Not yet tried.
    - Route auth: the function is protected by a shared-secret HMAC that we compute over the raw body and the function verifies using `rawBody` (documented for `RoutePayload`), with `forwardedRequestHeaders` set for the signature and timestamp. Using `isAuthRequired: true` with an API key instead is an alternative; whether an API key satisfies it is **UNVERIFIED**.
    - If the HTTP-route path proves unworkable, fall back to `writability: OPEN` and restrict writes through the API key's role.
    - **UNVERIFIED:** how one app installs across many self-hosted workspaces (`operations/publishing.mdx` and `sync-and-recovery.mdx` not read), and the default timeout for logic functions (the docs example uses 2 seconds, so keep the function small and batch-friendly). Fallback: run the same app install per workspace from a provisioning script.
@@ -185,7 +187,7 @@ Targets once a platform is chosen: first audio under 1 second after the caller s
 
 ## 11. Not yet verified (checklist before Phase 0)
 
-See [SPIKES.md](SPIKES.md) for what the docs and source review settled. New concern from that review: app `serverVariables` are per registration, not per workspace, so the per-workspace ingest secret may need to be set another way (post-install hook, key-value store or a header-based scheme). Check before Phase 0.
+See [SPIKES.md](SPIKES.md) for what the docs, source review and the Codespaces runtime spike settled. Verified: app sync, signed ingest, idempotency. Not verified: multi-workspace installs, `writability` enforcement, Cal.diy, voice latency. New concern from that review: app `serverVariables` are per registration, not per workspace, so the per-workspace ingest secret may need to be set another way (post-install hook, key-value store or a header-based scheme). Check before Phase 0.
 
 - [ ] Twenty Apps: installing one app across many workspaces (`operations/publishing.mdx`, `sync-and-recovery.mdx`).
 - [ ] API key scope: one workspace per key?

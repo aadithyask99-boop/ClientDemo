@@ -1,11 +1,12 @@
 /**
- * NOT RUN. Written from Twenty's objects.mdx. Field type names other than TEXT, SELECT, DATE_TIME, FULL_NAME,
- * ADDRESS are guesses (NUMBER, LINKS, PHONES) and must be checked against FieldType in twenty-sdk.
+ * VERIFIED: this object synced to a Twenty dev server with `twenty apply` and records were created through it
+ * (NUMBER, LINKS, SELECT and DATE_TIME fields accepted). `writability: APPLICATION` is declared but its
+ * enforcement against direct REST writes has not been tested.
  * Replace every universalIdentifier with a generated UUID and never change it afterwards.
  */
 import { defineObject, FieldType } from "twenty-sdk/define";
 
-const outcome = (value: string, label: string, position: number, color: string) => ({ value, label, position, color });
+const outcome = (value: string, label: string, position: number, color: string) => ({ value, label, position, color: color as never });
 
 export default defineObject({
   universalIdentifier: "00000000-0000-4000-8000-0000000000a1",

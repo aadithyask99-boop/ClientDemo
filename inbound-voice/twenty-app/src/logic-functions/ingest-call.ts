@@ -1,8 +1,9 @@
 /**
- * NOT RUN. Written from Twenty's docs (logic-functions.mdx, objects.mdx). Needs a running Twenty server to verify:
- *  - the exact import paths and the CoreApiClient query/mutation shape,
- *  - whether `rawBody` is preserved in practice (the docs say it can be undefined),
- *  - the default timeout (docs example uses 2s; raise timeoutSeconds if needed).
+ * VERIFIED on a Twenty dev server (twenty-app-dev image) in Codespaces: synced, signed calls return 200, wrong secret
+ * and stale timestamps return 401, rawBody is preserved, and sending the same call twice leaves exactly one Call.
+ * Not yet verified: Person linking and Message/Task creation (still TODO below), multi-workspace installs.
+ * The secret comes from an application variable (INGEST_SECRET). Secret variables cannot carry a default value
+ * (typecheck rejects it), so a per-workspace secret must be set after install. See ../../SPIKES.md.
  *
  * Contract with ../../../call-service/src/crm.ts:
  *   POST /s/ingest-call, headers x-callservice-timestamp and x-callservice-signature,
@@ -10,7 +11,7 @@
  */
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { defineLogicFunction } from "twenty-sdk/define";
-import type { RoutePayload } from "twenty-sdk/logic-function";
+import { Response, type RoutePayload } from "twenty-sdk/logic-function";
 import { CoreApiClient } from "twenty-client-sdk/core";
 
 const TOLERANCE_MS = 5 * 60 * 1000;
@@ -35,11 +36,12 @@ function authentic(event: RoutePayload, secret: string): boolean {
 const handler = async (event: RoutePayload) => {
   const secret = process.env.INGEST_SECRET; // server variable set per workspace at install time (UNVERIFIED mechanism)
   if (!secret || !authentic(event, secret)) {
-    return { statusCode: 401, body: JSON.stringify({ error: "unauthorized" }) };
+    return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { "content-type": "application/json" } });
   }
 
   const record = JSON.parse(event.rawBody as string);
-  const client = new CoreApiClient();
+  // Typed as any: the generated client only knows the Call object after the first sync, so the first typecheck fails otherwise.
+  const client: any = new CoreApiClient();
 
   // Idempotent on providerCallId: look up first, update if present, create otherwise.
   // UNVERIFIED: filter syntax for the generated client.
@@ -67,7 +69,7 @@ const handler = async (event: RoutePayload) => {
   }
 
   // TODO: upsert Person by E.164 number, link the Call, and create Message or Task by outcome.
-  return { statusCode: 200, body: JSON.stringify({ ok: true }) };
+  return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { "content-type": "application/json" } });
 };
 
 export default defineLogicFunction({
