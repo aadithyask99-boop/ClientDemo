@@ -41,13 +41,22 @@ const BOOKING_PROMPT = `
 
 ## Booking appointments
 You are the virtual receptionist for Acme Dental. Today is {{current_weekday_Europe/London}}, {{current_time_Europe/London}} (UK time).
-To book: find out what the caller wants and roughly when. Call check_availability with the date as YYYY-MM-DD (work it out from today's date, for example "next Tuesday"). Offer at most three of the returned times, using each slot's label. When the caller picks one, ask for their name if you do not have it, then call book_appointment with that slot's exact start value copied from the results. Never say an appointment is booked unless book_appointment returned booked true. If it fails or the time is gone, offer another time or take a message. Keep replies short.`;
+To book: find out what the caller wants and roughly when. Call check_availability with the date as YYYY-MM-DD (work it out from today's date, for example "next Tuesday"). Offer at most three of the returned times, using each slot's label. When the caller picks one, ask for their name if you do not have it, then call book_appointment with that slot's exact start value copied from the results. Never say an appointment is booked unless book_appointment returned booked true. If it fails or the time is gone, offer another time or take a message. Keep replies short.
+
+## Messages, callbacks and opt-outs
+- If the caller wants to leave a message for the team, call take_message with the message, their name and a callback number if they gave one.
+- If the caller asks to be called back, agree a time or period with them, then call record_outcome with outcome callback_requested and the agreed time in note.
+- If the caller asks you to stop contacting them or to remove their number, call record_outcome with outcome opted_out, then confirm briefly.
+- If you answered a question and nothing else happened, call record_outcome with outcome info_given before saying goodbye.`;
 
 const CALLER = "+447400123456";
 const CALLED = "+442071234567";
 const SCENARIOS = [
   { name: "book a slot", expect: "BOOKED", turns: ["Hi, I'd like to book a teeth cleaning next Tuesday morning.", "The first one works for me. My name is Sam Rivera.", "Great, thank you. Goodbye."] },
   { name: "closed day, no booking", expect: null, turns: ["Can I book a check-up this Sunday?", "No, that's all right. I'll think about it. Thanks, bye."] },
+  { name: "opt-out (one message)", expect: "OPTED_OUT", turns: ["Please remove my number from your list. Do not contact me again."] },
+  { name: "leave a message", expect: "MESSAGE_TAKEN", turns: ["I'd like to leave a message for the dentist please.", "It's Sam Rivera. Please ring me about my crown, my number is 07400 123456.", "That's everything, thanks. Bye."] },
+  { name: "callback", expect: "CALLBACK_REQUESTED", turns: ["Could someone call me back tomorrow afternoon about my crown?", "Three o'clock works. Thanks, goodbye."] },
 ];
 
 // 1. Account, credential, tools, agent.
@@ -98,7 +107,31 @@ const t2 = await mkTool(
   [{ name: "workflow_run_id", type: "number", value_template: "{{initial_context.workflow_run_id}}", required: true }],
 );
 step("tool book_appointment", t2);
-const toolIds = [t1.j?.tool_uuid ?? t1.j?.uuid, t2.j?.tool_uuid ?? t2.j?.uuid];
+const t3 = await mkTool(
+  "take_message",
+  "Record a message from the caller for the team. Use this when the caller wants to leave a message, or when you cannot help and they want someone to follow up.",
+  "/tools/message",
+  [
+    { name: "message", type: "string", description: "What the caller wants the team to know, in their own words, briefly.", required: true },
+    { name: "name", type: "string", description: "The caller's name if they gave it.", required: false },
+    { name: "callback_number", type: "string", description: "A number to reach them on, if they gave one.", required: false },
+    { name: "urgent", type: "boolean", description: "True only if the caller says it is urgent or an emergency.", required: false },
+  ],
+  [{ name: "workflow_run_id", type: "number", value_template: "{{initial_context.workflow_run_id}}", required: true }],
+);
+step("tool take_message", t3);
+const t4 = await mkTool(
+  "record_outcome",
+  "State how the call ended when it is not a booking or a message: the caller asked for a callback, asked not to be contacted again, or only wanted information. Call it once, before saying goodbye.",
+  "/tools/outcome",
+  [
+    { name: "outcome", type: "string", description: "Exactly one of: callback_requested, opted_out, info_given, no_outcome.", required: true },
+    { name: "note", type: "string", description: "For callback_requested, the agreed time or period. Otherwise a short note, or leave out.", required: false },
+  ],
+  [{ name: "workflow_run_id", type: "number", value_template: "{{initial_context.workflow_run_id}}", required: true }],
+);
+step("tool record_outcome", t4);
+const toolIds = [t1, t2, t3, t4].map((t) => t.j?.tool_uuid ?? t.j?.uuid);
 console.log("  tool ids:".padEnd(26), toolIds.map((x) => (x ? "yes" : "MISSING")).join(","));
 if (toolIds.some((x) => !x)) { console.log("  tool response keys:", Object.keys(t1.j ?? {}).join(",")); process.exit(1); }
 
