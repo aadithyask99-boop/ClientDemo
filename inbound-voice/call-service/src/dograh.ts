@@ -20,6 +20,8 @@ export const dograhPayload = z
     caller: z.string().optional(),
     duration: z.union([z.string(), z.number()]).optional(),
     disposition: z.string().optional(),
+    /** An outcome the agent extracted itself (gathered_context.outcome). Used when the platform's disposition is only an end reason. */
+    outcome_hint: z.string().optional(),
     summary: z.string().optional(),
     recording_url: z.string().optional(),
     transcript_url: z.string().optional(),
@@ -40,6 +42,25 @@ const ALIASES: Record<string, Outcome> = {
   WRONG_NUMBER: "NO_OUTCOME",
   NOT_INTERESTED: "INFO_GIVEN",
 };
+
+/** Exact outcome code or known alias, or null when the text is not recognised (unlike mapDisposition, no fallback). */
+function knownOutcome(raw: string | undefined): Outcome | null {
+  const key = (raw ?? "").trim().replace(/[\s-]+/g, "_").toUpperCase();
+  if ((OUTCOMES as readonly string[]).includes(key)) return key as Outcome;
+  return ALIASES[key] ?? null;
+}
+
+/**
+ * Platform disposition first (on voice calls it is the classifier's answer), then the agent's own extracted hint (the
+ * only real signal on text chats, where the platform stores just the end reason). End reasons map to NO_OUTCOME.
+ */
+export function chooseOutcome(disposition: string | undefined, hint: string | undefined): Outcome {
+  const fromDisposition = knownOutcome(disposition);
+  if (fromDisposition && fromDisposition !== "NO_OUTCOME") return fromDisposition;
+  const fromHint = knownOutcome(hint);
+  if (fromHint && fromHint !== "NO_OUTCOME") return fromHint;
+  return "NO_OUTCOME";
+}
 
 export function mapDisposition(raw: string | undefined): Outcome {
   const key = (raw ?? "").trim().replace(/[\s-]+/g, "_").toUpperCase();
@@ -73,7 +94,7 @@ export function toCallRecord(tenant: Tenant, p: DograhPayload): CallRecord {
     startedAt,
     endedAt,
     durationSeconds,
-    outcome: mapDisposition(p.disposition),
+    outcome: chooseOutcome(p.disposition, p.outcome_hint),
     summary: present(p.summary) ?? "",
     ...(body ? { message: { body, ...(cb ? { callbackNumber: cb } : {}), urgent: p.urgent === true || p.urgent === "true" } } : {}),
     ...(recordingUrl || transcriptUrl

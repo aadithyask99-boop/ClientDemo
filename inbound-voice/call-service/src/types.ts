@@ -23,6 +23,8 @@ export interface Tenant {
   numbers: string[]; // E.164 numbers routed to this tenant
   /** Bearer token this tenant's Dograh webhook node sends. Dograh does not sign webhooks, so this token is the only authentication. */
   dograhWebhookToken?: string;
+  /** Working hours for the built-in scheduler (also the time zone used when talking about times). */
+  booking?: { timeZone: string; days: number[]; open: string; close: string; slotMinutes: number; minNoticeMinutes?: number };
 }
 
 /** What the voice runtime reports when a call ends. Provider-specific adapters map into this shape. */

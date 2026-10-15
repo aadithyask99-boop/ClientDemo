@@ -2,6 +2,8 @@ import { readFileSync } from "node:fs";
 import { ArtifactCopyingWriter, LocalArtifactStore } from "./artifacts.js";
 import { TwentyIngestWriter } from "./crm.js";
 import { buildServer } from "./server.js";
+import { LocalScheduler } from "./localScheduler.js";
+import { CalDiyScheduler } from "./scheduler.js";
 import { InMemoryTenantRegistry } from "./tenants.js";
 import type { Tenant } from "./types.js";
 
@@ -16,8 +18,13 @@ const artifactDir = process.env.ARTIFACT_DIR;
 const allowedHosts = process.env.ARTIFACT_ALLOWED_HOSTS?.split(",").map((h) => h.trim()).filter(Boolean);
 const store = artifactDir ? new LocalArtifactStore(artifactDir, allowedHosts ? { allowedHosts } : {}) : null;
 
+const local = new LocalScheduler();
+const calDiy = new CalDiyScheduler();
+
 const { app } = buildServer({
   registry,
+  // Tenants with a Cal.diy configuration use it; everyone else gets the built-in scheduler.
+  scheduler: (tenant) => (tenant.calDiy ? calDiy : local),
   crm: new ArtifactCopyingWriter(new TwentyIngestWriter(), store),
   providerSecret,
   log: (line) => console.log(new Date().toISOString(), line),

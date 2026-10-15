@@ -8,7 +8,7 @@ export interface Scheduler {
   availableSlots(tenant: Tenant, range: { start: string; end: string; timeZone: string }): Promise<Slot[]>;
   book(
     tenant: Tenant,
-    req: { start: string; attendee: { name: string; email: string; timeZone: string; phoneNumber?: string } },
+    req: { start: string; attendee: { name: string; email?: string; timeZone: string; phoneNumber?: string } },
   ): Promise<{ bookingUid: string }>;
 }
 
@@ -42,9 +42,10 @@ export class CalDiyScheduler implements Scheduler {
 
   async book(
     tenant: Tenant,
-    req: { start: string; attendee: { name: string; email: string; timeZone: string; phoneNumber?: string } },
+    req: { start: string; attendee: { name: string; email?: string; timeZone: string; phoneNumber?: string } },
   ): Promise<{ bookingUid: string }> {
     const cfg = this.requireCfg(tenant);
+    if (!req.attendee.email) throw new Error("Cal.diy needs an attendee email; the agent must collect one for this tenant");
     const res = await this.fetchImpl(new URL("/v2/bookings", cfg.baseUrl), {
       method: "POST",
       headers: {
