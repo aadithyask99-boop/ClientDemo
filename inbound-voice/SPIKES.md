@@ -176,7 +176,7 @@ Full account and results table in [BOOKING.md](BOOKING.md). Headlines:
 
 ## Persistence and the Cal.diy build (2026-10-15)
 
-- **Storage:** bookings, call facts and the post-call queue moved to Postgres behind `DATABASE_URL` (see [BOOKING.md](BOOKING.md)). 81 tests pass on PGlite. Not yet run through the `pg` driver against a real server.
+- **Storage:** bookings, call facts and the post-call queue moved to Postgres behind `DATABASE_URL` (see [BOOKING.md](BOOKING.md)). The 23 database tests also pass on a real Postgres 16 through the `pg` driver (Codespace, three runs). That run found a start-up race in `migrate` (concurrent `CREATE TABLE IF NOT EXISTS`), now fixed with an advisory lock.
 - **Cal.diy build, attempt 1:** `DOCKER_BUILDKIT=0` (the README's advice) fails immediately: "failed to parse platform" on `FROM --platform=$BUILDPLATFORM`. Building with BuildKit gets past it.
 - **Cal.diy build, attempt 2 (stopped):** the free disk of the 4-core Codespace (32 GB) went from 21 GB to 1.9 GB during the install and link step of the first of the two images, and the build was still running. Stopped by hand so a full disk would not damage the Twenty database. Cal.diy does not fit on this machine alongside Twenty; it needs a larger Codespace (more disk), or a different way to run it. Cal.diy's API request shapes in `scheduler.ts` are still unverified.
 - **Adapter bug found by reading, not yet fixed:** `CalDiyScheduler.book` throws a plain error on any non-2xx reply, so a slot taken by someone else would reach the caller as "calendar unreachable" (502) instead of "slot unavailable" (409). Fix once the real error response is known.
