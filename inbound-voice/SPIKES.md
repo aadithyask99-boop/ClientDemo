@@ -95,3 +95,25 @@ Open-source voice AI platform (BSD-2-Clause, Python). Started from its compose f
 - No speech-synthesis endpoint was found in the API (only a TTS cache), so custom-script samples would need a provider key. The ElevenLabs voice list returns 400 without one.
 - Six previews were confirmed playable (`audio/mpeg`): Ailsa and Charlotte (GB female), Alec (GB male), Allie (US female), Adrian (US male), Aila (AU female). Judging them is subjective and still to be done by a person.
 - Real-time browser calls from a Codespace are expected to be a problem (WebRTC needs UDP). Not attempted.
+
+## Dograh: call-end webhook and multi-client model (docs and source review, not run)
+
+### Call-end webhook
+- A **webhook node** in the workflow definition POSTs JSON when a run completes. The target URL, method and a templated payload are set on the node. Several webhook nodes per agent are allowed.
+- Payload variables include `workflow_run_id` (a good idempotency key), `workflow_id`, `call_time`, `initial_context`, `gathered_context` (data the agent extracted), `gathered_context.call_disposition` and `mapped_call_disposition`, `cost_info.call_duration_seconds`, `recording_url`, `transcript_url`, and QA `annotations`.
+- Delivery is durable: a delivery table, exponential backoff, a sweeper that re-enqueues overdue attempts, and a header carrying the attempt number. Duplicates are possible, so the receiver must be idempotent.
+- **Authentication is a stored credential: none, API key header, bearer token, basic auth or a custom header. There is no HMAC signature.** Our receiver therefore authenticates with a per-client secret token and must not trust the payload without it.
+- Recording and transcript URLs are described as "public download URLs". Whether they expire or are guessable was not checked. Treat them as sensitive: download them into our own private storage on receipt and do not store the public links long term.
+- Outcomes come from per-workflow call dispositions, mapped per organization, which fit our outcome set.
+
+### Multi-client model
+- Dograh has **organizations**. In local-auth self-hosting, each sign-up creates its own organization (`org_<user id>`) with its own agents, API keys, telephony configs, model configuration, usage and disposition mapping. Sign-up works through the API while `ENABLE_SIGNUP` is true.
+- Org creation also asks Dograh's hosted Model Proxy Service for a default service key (a failure does not block sign-up). So the "no keys needed" defaults depend on a Dograh-hosted service; using our own provider keys per organization avoids it.
+- Cross-organization isolation was **not tested**.
+- Two workable layouts: (a) one organization and one agent per client, routed by phone number, with our own tenant registry; (b) one organization per client. If clients never log into Dograh (they use Twenty), (a) is simpler. (b) gives per-client usage, limits and credentials inside Dograh. Starting recommendation: (a).
+- Scaling: multiple API workers behind nginx with `least_conn` (Dograh 1.29+); campaign orchestrator and the Asterisk manager stay singletons.
+
+### Still unverified
+- Per-number inbound routing to a workflow and how a number is attached to an organization or agent (docs: telephony configs and phone numbers).
+- Whether the provisioning API can add a webhook node via `create-from-definition`/`update` (the schema suggests yes).
+- Real latency and voice quality.
