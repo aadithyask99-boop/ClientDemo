@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Starts Dograh (open-source voice AI platform) in a Codespace for a short test, without its public tunnel.
-# NOT YET RUN. Stops the Twenty stacks first to free memory; `dograh-down.sh` reverts everything.
+# Verified in Codespaces. Stops the Twenty stacks first to free memory; `dograh-down.sh` reverts everything.
 #   UI: http://localhost:3010   API: http://localhost:8000
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -45,7 +45,9 @@ cd "$DIR"
 # The upstream script ends with `docker compose --profile tunnel up` (attached, public tunnel). Run it detached and tunnel-free.
 sed -i 's|docker compose --profile tunnel up --pull always$|docker compose up -d --pull always|' start_docker.sh
 chmod +x start_docker.sh
-ENABLE_TELEMETRY=false ./start_docker.sh
+ENABLE_TELEMETRY=false ./start_docker.sh || true
+# Non-interactive shells: the upstream script only prepares .env and prints the launch command, so launch here (no tunnel).
+REGISTRY=ghcr.io/dograh-hq ENABLE_TELEMETRY=false docker compose up -d --pull always
 
 echo "Waiting for the API on :8000 ..."
 for i in $(seq 1 60); do
