@@ -39,7 +39,18 @@ const handler = async (event: RoutePayload) => {
     return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { "content-type": "application/json" } });
   }
 
-  const record = JSON.parse(event.rawBody as string);
+  try {
+    return await ingest(JSON.parse(event.rawBody as string));
+  } catch (err) {
+    // The caller is authenticated by HMAC, so returning the reason is safe and makes retries debuggable.
+    return new Response(JSON.stringify({ error: "ingest failed", detail: String((err as Error)?.message ?? err).slice(0, 400) }), {
+      status: 500,
+      headers: { "content-type": "application/json" },
+    });
+  }
+};
+
+async function ingest(record: any): Promise<Response> {
   // Typed as any: the generated client only knows the Call object after the first sync, so the first typecheck fails otherwise.
   const client: any = new CoreApiClient();
 
@@ -70,7 +81,7 @@ const handler = async (event: RoutePayload) => {
 
   // TODO: upsert Person by E.164 number, link the Call, and create Message or Task by outcome.
   return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { "content-type": "application/json" } });
-};
+}
 
 export default defineLogicFunction({
   universalIdentifier: "00000000-0000-4000-8000-000000000001", // replace with a generated UUID and keep it stable
