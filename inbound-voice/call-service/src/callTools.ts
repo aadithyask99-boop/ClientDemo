@@ -21,10 +21,10 @@ export const outcomeInput = z.object({
   workflow_run_id: z.union([z.string(), z.number()]).transform(String).optional(),
 });
 
-export function takeMessage(facts: CallFactStore, tenant: Tenant, input: z.infer<typeof messageInput>) {
+export async function takeMessage(facts: CallFactStore, tenant: Tenant, input: z.infer<typeof messageInput>) {
   const body = input.name ? `${input.name}: ${input.message}` : input.message;
   if (input.workflow_run_id) {
-    facts.record(tenant.id, `dograh:${input.workflow_run_id}`, {
+    await facts.record(tenant.id, `dograh:${input.workflow_run_id}`, {
       message: {
         body,
         ...(input.callback_number ? { callbackNumber: input.callback_number } : {}),
@@ -35,9 +35,9 @@ export function takeMessage(facts: CallFactStore, tenant: Tenant, input: z.infer
   return { recorded: true, message: "The message has been passed to the team." };
 }
 
-export function recordOutcome(facts: CallFactStore, tenant: Tenant, input: z.infer<typeof outcomeInput>) {
+export async function recordOutcome(facts: CallFactStore, tenant: Tenant, input: z.infer<typeof outcomeInput>) {
   if (input.workflow_run_id) {
-    facts.record(tenant.id, `dograh:${input.workflow_run_id}`, {
+    await facts.record(tenant.id, `dograh:${input.workflow_run_id}`, {
       outcome: { code: input.outcome.toUpperCase() as "CALLBACK_REQUESTED" | "OPTED_OUT" | "INFO_GIVEN" | "NO_OUTCOME", ...(input.note ? { note: input.note } : {}) },
     });
   }

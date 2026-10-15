@@ -154,7 +154,7 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Re
     const parsed = messageInput.safeParse(parseBody(req.body));
     if (!parsed.success) return reply.code(400).send({ error: "invalid input", message: parsed.error.issues.map((i) => i.message).join("; ") });
     deps.log?.(`message tenant=${tenant.id}`);
-    return reply.code(200).send(takeMessage(facts, tenant, parsed.data));
+    return reply.code(200).send(await takeMessage(facts, tenant, parsed.data));
   });
 
   app.post("/tools/outcome", async (req, reply) => {
@@ -163,7 +163,7 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Re
     const parsed = outcomeInput.safeParse(parseBody(req.body));
     if (!parsed.success) return reply.code(400).send({ error: "invalid input", message: parsed.error.issues.map((i) => i.message).join("; ") });
     deps.log?.(`outcome tenant=${tenant.id} ${parsed.data.outcome}`);
-    return reply.code(200).send(recordOutcome(facts, tenant, parsed.data));
+    return reply.code(200).send(await recordOutcome(facts, tenant, parsed.data));
   });
 
   /** Dograh webhook node: authenticated by a per-tenant bearer token (Dograh does not sign webhooks). */
@@ -184,7 +184,7 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Re
 
     const record = toCallRecord(tenant, parsed.data);
     // What our own tools did on this call outranks any classifier guess: booking, then an outcome the agent stated, then a message.
-    const known = facts.get(tenant.id, record.providerCallId);
+    const known = await facts.get(tenant.id, record.providerCallId);
     if (known?.booking) {
       record.outcome = "BOOKED";
       record.summary = `${record.summary} Booked ${known.booking.label} for ${known.booking.name}.`.trim();

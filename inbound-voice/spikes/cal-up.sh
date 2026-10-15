@@ -26,7 +26,8 @@ EOF
   sed -i 's|^DATABASE_DIRECT_URL=.*|DATABASE_DIRECT_URL="postgresql://unicorn_user:magical_password@database:5432/calendso"|' .env
 fi
 
-# The README says DOCKER_BUILDKIT=0 is required for the build step.
-DOCKER_BUILDKIT=0 docker compose build calcom calcom-api
+# The Cal.diy README says to build with DOCKER_BUILDKIT=0, but its Dockerfile uses --platform=$BUILDPLATFORM,
+# which the legacy builder rejects ("failed to parse platform"). Verified in the Codespace: build with BuildKit.
+docker compose build calcom calcom-api
 docker compose up -d
 echo "Started. Web: http://localhost:3000  API v2: http://localhost:5555/v2 (check docker compose ps)"

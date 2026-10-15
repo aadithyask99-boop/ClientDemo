@@ -77,7 +77,7 @@ export async function bookAppointment(deps: BookingDeps, tenant: Tenant, input: 
     });
     const iso = new Date(input.start).toISOString();
     const label = labelFor(iso, tz);
-    if (input.workflow_run_id) deps.facts.record(tenant.id, `dograh:${input.workflow_run_id}`, { booking: { uid: bookingUid, start: iso, label, name: input.name } });
+    if (input.workflow_run_id) await deps.facts.record(tenant.id, `dograh:${input.workflow_run_id}`, { booking: { uid: bookingUid, start: iso, label, name: input.name } });
     return { ok: true, body: { booked: true, start: iso, label, confirmation: bookingUid } };
   } catch (err) {
     if (err instanceof SlotUnavailableError) {

@@ -15,7 +15,7 @@ The call-service exposes four HTTP tools. Dograh calls them with the client's be
 
 ## Where the scheduling comes from
 
-`LocalScheduler` is our own slot logic: per-client time zone, working days, opening hours, slot length, minimum notice, no double booking, correct across daylight-saving changes. It is the default and what the tests use. Tenants with a Cal.diy configuration use the Cal.diy adapter instead (not yet run against a real Cal.diy). Bookings are held in memory: they must be persisted, and written to the client's real calendar, before real use.
+`LocalScheduler` is our own slot logic: per-client time zone, working days, opening hours, slot length, minimum notice, no double booking, correct across daylight-saving changes. It is the default and what the tests use. Tenants with a Cal.diy configuration use the Cal.diy adapter instead (not yet run against a real Cal.diy). Bookings and call facts are stored in Postgres when `DATABASE_URL` is set (tables `bookings` and `call_facts`, created on start); without it they are held in memory and lost on restart. A unique key on (tenant, start time) is what stops two callers taking the same slot, across processes too. Bookings are not yet written to the client's real calendar.
 
 ## How a call's outcome is decided
 
@@ -52,7 +52,8 @@ The hosted model Dograh bundles follows tool instructions most of the time but n
 ## Not verified
 
 - Voice calls (all tests were text chat). Outcomes on voice calls rely on Dograh's classifier, which the source suggests is stored before the webhook.
-- Cal.diy as the scheduler; a real client calendar; persistence of bookings and facts across restarts.
-- Several callers booking the same slot at the same moment (the in-memory scheduler is single-process).
+- Cal.diy as the scheduler (the image build started in the Codespace but has not finished; the README's `DOCKER_BUILDKIT=0` advice fails on this Dockerfile, so `cal-up.sh` uses BuildKit); a real client calendar.
+- Postgres storage is tested against PGlite (real Postgres in WASM, one connection), including a restart and three simultaneous bookings of one slot. It has not run against a networked Postgres through the `pg` driver, so the true multi-connection race is untested.
+- The post-call queue is still in memory: a call acknowledged with 202 is lost if the process dies before the write to Twenty. Tenants also still come from a file.
 - Messages as records in Twenty: the message is carried on the call record but no Message object is created yet.
 - Transcript wording in other languages for the opt-out check.

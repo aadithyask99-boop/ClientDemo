@@ -1,4 +1,5 @@
 import { randomBytes } from "node:crypto";
+import { InMemoryBookingStore, type BookingStore } from "./bookingStore.js";
 import type { Scheduler, Slot } from "./scheduler.js";
 import type { Tenant } from "./types.js";
 
@@ -49,12 +50,13 @@ export const DEFAULT_BOOKING = { timeZone: "Europe/London", days: [1, 2, 3, 4, 5
 /**
  * Own slot logic: working hours, slot length, minimum notice, and no double booking. This is the fallback named in
  * ARCHITECTURE.md for when the calendar service is unavailable, and it is what runs in tests.
- * Scaffold: bookings are held in memory. Persist them (and sync to the client's calendar) before real use.
+ * Bookings live in a BookingStore: in memory by default, Postgres in production. Syncing to the client's own calendar is separate.
  */
 export class LocalScheduler implements Scheduler {
-  private readonly booked = new Map<string, Set<string>>();
-
-  constructor(private readonly now: () => number = Date.now) {}
+  constructor(
+    private readonly now: () => number = Date.now,
+    private readonly store: BookingStore = new InMemoryBookingStore(),
+  ) {}
 
   private cfg(tenant: Tenant) {
     return { ...DEFAULT_BOOKING, ...(tenant.booking ?? {}) };
@@ -62,7 +64,11 @@ export class LocalScheduler implements Scheduler {
 
   async availableSlots(tenant: Tenant, range: { start: string; end: string }): Promise<Slot[]> {
     const c = this.cfg(tenant);
-    const taken = this.booked.get(tenant.id) ?? new Set<string>();
+    const taken = await this.store.taken(
+      tenant.id,
+      new Date(zonedToUtc(range.start, "00:00", c.timeZone)).toISOString(),
+      new Date(zonedToUtc(addDays(range.end, 1), "00:00", c.timeZone)).toISOString(),
+    );
     const earliest = this.now() + c.minNoticeMinutes * 60_000;
     const out: Slot[] = [];
     for (let date = range.start; date <= range.end; date = addDays(date, 1)) {
@@ -89,9 +95,15 @@ export class LocalScheduler implements Scheduler {
     const day = new Intl.DateTimeFormat("en-CA", { timeZone: c.timeZone }).format(start);
     const offered = await this.availableSlots(tenant, { start: day, end: day });
     if (!offered.some((s) => s.start === iso)) throw new SlotUnavailableError("That time is not available");
-    const set = this.booked.get(tenant.id) ?? new Set<string>();
-    set.add(iso);
-    this.booked.set(tenant.id, set);
-    return { bookingUid: `loc_${randomBytes(6).toString("hex")}` };
+    // The store's reserve is the real guard: two callers can both see the slot free, only one insert succeeds.
+    const uid = `loc_${randomBytes(6).toString("hex")}`;
+    const won = await this.store.reserve(tenant.id, iso, {
+      uid,
+      name: req.attendee.name,
+      ...(req.attendee.phoneNumber ? { phone: req.attendee.phoneNumber } : {}),
+      ...(req.attendee.email ? { email: req.attendee.email } : {}),
+    });
+    if (!won) throw new SlotUnavailableError("That time is no longer available");
+    return { bookingUid: uid };
   }
 }

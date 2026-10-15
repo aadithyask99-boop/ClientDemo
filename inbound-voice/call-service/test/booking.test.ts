@@ -104,11 +104,11 @@ describe("booking tools", () => {
     const d = deps();
     const first = await bookAppointment(d, tenant, { start: "2026-10-20T09:00:00.000Z", name: "Sam Rivera", workflow_run_id: "7" });
     expect(first.ok).toBe(true);
-    expect(d.facts.get("t1", "dograh:7")?.booking?.name).toBe("Sam Rivera");
+    expect((await d.facts.get("t1", "dograh:7"))?.booking?.name).toBe("Sam Rivera");
     const clash = await bookAppointment(d, tenant, { start: "2026-10-20T09:00:00.000Z", name: "Alex", workflow_run_id: "8" });
     expect(clash.ok).toBe(false);
     expect(!clash.ok && clash.status).toBe(409);
-    expect(d.facts.get("t1", "dograh:8")).toBeUndefined(); // a failed booking is never recorded
+    expect(await d.facts.get("t1", "dograh:8")).toBeUndefined(); // a failed booking is never recorded
   });
 
   it("does not report a booking when the scheduler itself fails", async () => {
@@ -117,7 +117,7 @@ describe("booking tools", () => {
     const r = await bookAppointment(d, tenant, { start: "2026-10-20T09:00:00.000Z", name: "Sam", workflow_run_id: "9" });
     expect(r.ok).toBe(false);
     expect(!r.ok && r.status).toBe(502);
-    expect(d.facts.get("t1", "dograh:9")).toBeUndefined();
+    expect(await d.facts.get("t1", "dograh:9")).toBeUndefined();
   });
 });
 
