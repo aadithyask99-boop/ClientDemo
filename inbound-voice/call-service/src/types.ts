@@ -19,7 +19,11 @@ export interface Tenant {
     apiKey: string; // read access (caller lookup)
     ingestSecret: string; // HMAC secret shared with the app's ingest-call function
   };
-  calDiy: { baseUrl: string; apiKey: string; eventTypeId: number } | null;
+  /**
+   * The client's own calendar. When set, offered slots exclude what is already busy there and bookings are written to it.
+   * `refreshToken` comes from the client's one-time consent (Google or Microsoft); the OAuth app itself is platform-wide.
+   */
+  calendar?: { provider: "google" | "microsoft"; refreshToken: string; calendarId?: string } | null;
   numbers: string[]; // E.164 numbers routed to this tenant
   /** Bearer token this tenant's Dograh webhook node sends. Dograh does not sign webhooks, so this token is the only authentication. */
   dograhWebhookToken?: string;

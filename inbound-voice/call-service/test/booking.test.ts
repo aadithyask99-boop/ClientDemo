@@ -14,7 +14,7 @@ const tenant: Tenant = {
   name: "Acme Dental",
   defaultRegion: "GB",
   twenty: { baseUrl: "https://acme.crm.example.com", apiKey: "k", ingestSecret: "s" },
-  calDiy: null,
+
   numbers: [],
   dograhWebhookToken: "tok_acme",
   booking: { timeZone: "Europe/London", days: [1, 2, 3, 4, 5], open: "09:00", close: "17:00", slotMinutes: 30, minNoticeMinutes: 60 },

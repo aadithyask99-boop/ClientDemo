@@ -13,6 +13,8 @@ export interface BookingStore {
   taken(tenantId: string, fromIso: string, toIso: string): Promise<Set<string>>;
   /** Books the slot. Returns false if it is already booked. */
   reserve(tenantId: string, startIso: string, entry: BookingEntry): Promise<boolean>;
+  /** Frees a slot again (used when the booking could not be written to the client's calendar). */
+  release(tenantId: string, startIso: string): Promise<void>;
 }
 
 export class InMemoryBookingStore implements BookingStore {
@@ -29,6 +31,10 @@ export class InMemoryBookingStore implements BookingStore {
     set.add(startIso);
     this.booked.set(tenantId, set);
     return true;
+  }
+
+  async release(tenantId: string, startIso: string): Promise<void> {
+    this.booked.get(tenantId)?.delete(startIso);
   }
 }
 
@@ -50,5 +56,9 @@ export class PgBookingStore implements BookingStore {
       [tenantId, startIso, e.uid, e.name, e.phone ?? null, e.email ?? null],
     );
     return rows.length === 1;
+  }
+
+  async release(tenantId: string, startIso: string): Promise<void> {
+    await this.sql.query(`DELETE FROM bookings WHERE tenant_id = $1 AND start_at = $2`, [tenantId, startIso]);
   }
 }

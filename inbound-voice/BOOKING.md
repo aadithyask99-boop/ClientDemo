@@ -15,7 +15,17 @@ The call-service exposes four HTTP tools. Dograh calls them with the client's be
 
 ## Where the scheduling comes from
 
-`LocalScheduler` is our own slot logic: per-client time zone, working days, opening hours, slot length, minimum notice, no double booking, correct across daylight-saving changes. It is the default and what the tests use. Tenants with a Cal.diy configuration use the Cal.diy adapter instead (not yet run against a real Cal.diy). Bookings, call facts and the post-call queue are stored in Postgres when `DATABASE_URL` is set (tables `bookings`, `call_facts` and `outbox`, created on start); without it they are held in memory and lost on restart. With a database the webhook answers 202 only after the call is stored, and answers 500 (so the provider retries) if it could not be; the write to Twenty is retried with backoff for hours, then dead-lettered, and a finished job keeps no call data. A unique key on (tenant, start time) is what stops two callers taking the same slot, across processes too. Bookings are not yet written to the client's real calendar.
+`LocalScheduler` is our own slot logic: per-client time zone, working days, opening hours, slot length, minimum notice, no double booking, correct across daylight-saving changes. It is the default and what the tests use. Tenants with a connected Google or Microsoft calendar use `CalendarScheduler` instead: our slots minus what is busy in their calendar, and each booking written to it (see below). Bookings, call facts and the post-call queue are stored in Postgres when `DATABASE_URL` is set (tables `bookings`, `call_facts` and `outbox`, created on start); without it they are held in memory and lost on restart. With a database the webhook answers 202 only after the call is stored, and answers 500 (so the provider retries) if it could not be; the write to Twenty is retried with backoff for hours, then dead-lettered, and a finished job keeps no call data. A unique key on (tenant, start time) is what stops two callers taking the same slot, across processes too.
+
+### The client's calendar
+
+`CalendarScheduler` (`calendarScheduler.ts`) with `GoogleCalendarClient` and `MicrosoftCalendarClient` (`calendar.ts`). Tenant config: `calendar: { provider, refreshToken, calendarId? }`; platform environment: `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`, `MS_CLIENT_ID` and `MS_CLIENT_SECRET` (optional `MS_AUTHORITY`).
+
+- Offered slots exclude anything overlapping busy time in the client's calendar (Microsoft events not marked free, including tentative, count as busy; cancelled ones do not).
+- Booking: the time must be offered at that moment, then it is reserved in our database (atomic), then the event is created. If the event cannot be created the reservation is released and the tool answers 502, so the agent takes a message.
+- If the calendar cannot be read (outage, revoked consent, API error, a calendar Google reports errors for), the availability tool returns no slots and tells the agent to take a message. It never offers slots it could not check.
+- Startup fails if a tenant has a calendar but its provider has no OAuth app configured.
+- 18 tests with mocked HTTP cover request shapes, token reuse and refresh, paging, failure handling and the behaviour above.
 
 ## How a call's outcome is decided
 
@@ -52,7 +62,8 @@ The hosted model Dograh bundles follows tool instructions most of the time but n
 ## Not verified
 
 - Voice calls (all tests were text chat). Outcomes on voice calls rely on Dograh's classifier, which the source suggests is stored before the webhook.
-- Cal.diy as the scheduler (the image build started in the Codespace but has not finished; the README's `DOCKER_BUILDKIT=0` advice fails on this Dockerfile, so `cal-up.sh` uses BuildKit); a real client calendar.
+- Live Google and Microsoft calendars: the clients are tested against mocked HTTP that follows the providers' published APIs, nothing more. The OAuth apps, consent flow and scopes have not been created or tried. Cal.diy was dropped (SPIKES.md).
+- Cancelling or rescheduling a booking; attendee invitations; a client with several staff calendars.
 - Postgres storage: verified. The 23 database tests (`persistence.test.ts`, `pgQueue.test.ts`) pass on PGlite and, run with `TEST_DATABASE_URL=postgres://... npm test`, on a real Postgres 16 through the `pg` driver (Codespace, three runs in a row). That covers three simultaneous bookings of one slot over separate connections (one wins), a job stored before a crash being run by the next process, an expired lock being taken over, a redelivery during a run not being lost, and two workers sharing 20 jobs with none run twice. Not covered: a Postgres outage in the middle of a run, and sustained load.
 - The real server found one bug PGlite could not: starting several processes at once collided in `CREATE TABLE IF NOT EXISTS`. Fixed by running the schema in one transaction under an advisory lock, and a test starts six migrations at once.
 - Tenants still come from a file, not the database (their Twenty API keys and secrets need encryption at rest first).

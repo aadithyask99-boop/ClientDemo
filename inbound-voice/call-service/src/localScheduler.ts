@@ -52,6 +52,10 @@ export const DEFAULT_BOOKING = { timeZone: "Europe/London", days: [1, 2, 3, 4, 5
  * ARCHITECTURE.md for when the calendar service is unavailable, and it is what runs in tests.
  * Bookings live in a BookingStore: in memory by default, Postgres in production. Syncing to the client's own calendar is separate.
  */
+export function bookingConfig(tenant: Tenant) {
+  return { ...DEFAULT_BOOKING, ...(tenant.booking ?? {}) };
+}
+
 export class LocalScheduler implements Scheduler {
   constructor(
     private readonly now: () => number = Date.now,
@@ -59,7 +63,7 @@ export class LocalScheduler implements Scheduler {
   ) {}
 
   private cfg(tenant: Tenant) {
-    return { ...DEFAULT_BOOKING, ...(tenant.booking ?? {}) };
+    return bookingConfig(tenant);
   }
 
   async availableSlots(tenant: Tenant, range: { start: string; end: string }): Promise<Slot[]> {
@@ -85,7 +89,7 @@ export class LocalScheduler implements Scheduler {
 
   async book(
     tenant: Tenant,
-    req: { start: string; attendee: { name: string; email?: string; timeZone: string; phoneNumber?: string } },
+    req: { start: string; attendee: { name: string; email?: string; timeZone: string; phoneNumber?: string }; reason?: string },
   ): Promise<{ bookingUid: string }> {
     const start = new Date(req.start);
     if (Number.isNaN(start.getTime())) throw new SlotUnavailableError("Not a valid start time");

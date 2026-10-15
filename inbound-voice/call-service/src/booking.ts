@@ -40,7 +40,13 @@ export interface AvailabilityResult {
   timeZone: string;
   slots: Array<{ start: string; label: string }>;
   message?: string;
+  calendarUnavailable?: boolean;
   nextAvailable?: Array<{ start: string; label: string }>;
+}
+
+/** The client's calendar could not be read. Offering slots anyway could double-book them, so offer none. */
+function calendarDown(date: string, timeZone: string): AvailabilityResult {
+  return { date, timeZone, slots: [], calendarUnavailable: true, message: "The calendar cannot be reached right now, so no times can be offered. Offer to take a message and say the team will call back to arrange a time." };
 }
 
 export async function checkAvailability(deps: BookingDeps, tenant: Tenant, input: z.infer<typeof availabilityInput>): Promise<AvailabilityResult> {
@@ -49,12 +55,21 @@ export async function checkAvailability(deps: BookingDeps, tenant: Tenant, input
   const part = input.part_of_day ?? "any";
   const keep = (iso: string) => part === "any" || (part === "morning" ? localHour(iso, tz) < 12 : localHour(iso, tz) >= 12);
 
-  const onDay = (await scheduler.availableSlots(tenant, { start: input.date, end: input.date, timeZone: tz })).filter((s) => keep(s.start));
   const shape = (s: { start: string }) => ({ start: s.start, label: labelFor(s.start, tz) });
-  if (onDay.length > 0) return { date: input.date, timeZone: tz, slots: onDay.slice(0, 6).map(shape) };
+  try {
+    const onDay = (await scheduler.availableSlots(tenant, { start: input.date, end: input.date, timeZone: tz })).filter((s) => keep(s.start));
+    if (onDay.length > 0) return { date: input.date, timeZone: tz, slots: onDay.slice(0, 6).map(shape) };
+  } catch {
+    return calendarDown(input.date, tz);
+  }
 
   // Nothing that day: look ahead a week so the agent can offer alternatives in the same turn.
-  const ahead = (await scheduler.availableSlots(tenant, { start: addDays(input.date, 1), end: addDays(input.date, 7), timeZone: tz })).filter((s) => keep(s.start));
+  let ahead: Array<{ start: string }>;
+  try {
+    ahead = (await scheduler.availableSlots(tenant, { start: addDays(input.date, 1), end: addDays(input.date, 7), timeZone: tz })).filter((s) => keep(s.start));
+  } catch {
+    return calendarDown(input.date, tz);
+  }
   return {
     date: input.date,
     timeZone: tz,
@@ -74,6 +89,7 @@ export async function bookAppointment(deps: BookingDeps, tenant: Tenant, input: 
     const { bookingUid } = await deps.scheduler(tenant).book(tenant, {
       start: input.start,
       attendee: { name: input.name, timeZone: tz, ...(input.email ? { email: input.email } : {}), ...(input.phone ? { phoneNumber: input.phone } : {}) },
+      ...(input.reason ? { reason: input.reason } : {}),
     });
     const iso = new Date(input.start).toISOString();
     const label = labelFor(iso, tz);

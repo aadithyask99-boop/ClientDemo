@@ -17,11 +17,11 @@ Sources: feature ideas from viewing a commercial product's UI through the owner'
    - If the HTTP-route path proves unworkable, fall back to `writability: OPEN` and restrict writes through the API key's role.
    - **UNVERIFIED:** how one app installs across many self-hosted workspaces (`operations/publishing.mdx` and `sync-and-recovery.mdx` not read), and the default timeout for logic functions (the docs example uses 2 seconds, so keep the function small and batch-friendly). Fallback: run the same app install per workspace from a provisioning script.
 5. **Voice platform: Dograh (open source, BSD-2) is now the leading candidate**, pending a listening test; LiveKit Agents remains the fallback. Dograh was started and driven through its API in a spike (SPIKES.md): it provisions agents programmatically, supports inbound telephony per workflow, custom and MCP tools (our booking), a knowledge base, transfer, and ambient noise and turn-taking settings. Voice quality, latency, filler words and its call-end webhook are unverified.  Findings from the review: call results come back through a **webhook node** (templated JSON, durable retries, authenticated by a per-client bearer token, not signed; use `workflow_run_id` as the idempotency key; copy recordings into our own private storage); multi-client can start as **one Dograh organization with one agent per client**, routed by phone number through our tenant registry. Details in SPIKES.md. Original default: **LiveKit Agents**, because it can be self-hosted and keeps call data on your infrastructure. Vapi or Retell get to a first call faster. The swap point is the `VoiceProvider` interface in section 3. See section 7 for what to verify before promising any tuning feature.
-6. **Booking runs through HTTP tools on our call-service** (built and tested in text chats: see BOOKING.md), behind the `Scheduler` interface. The built-in `LocalScheduler` (own slot logic) serves any client without a calendar configured; **Cal.diy** (decided) is the adapter for clients with a calendar and has not been run against a real Cal.diy. Cal.diy is the MIT-licensed community edition of Cal.com, with no license key. It connects to each client's Google or Microsoft calendar, finds open slots and creates the booking. The call service talks to it over its API.
-   - **Production caveat:** Cal.diy's README says it is intended for personal, non-production use and points commercial users to Cal.com. We accept this for the prototype and Phase 2. Before real clients go live, make an explicit go or no-go: harden Cal.diy (security review, backups, upgrade plan) or replace the adapter with our own slot logic over Google Calendar and Microsoft Graph. The interface makes that a contained change.
-   - **Multi-client:** Teams and Organizations are removed in Cal.diy. Default: one Cal.diy user per client, each with their own connected calendar and event types, inside one instance. **UNVERIFIED:** isolation between users, API coverage for availability and booking, and API authentication. Fallback: one instance per client.
-   - **OAuth:** each client connects a calendar with read and write access. Google and Microsoft app verification is **UNVERIFIED** and may take time, so start it early.
-   - Slot offers are re-checked at booking time. A booking the calendar refuses becomes a `take_message` fallback and is flagged for staff.
+6. **Booking runs through HTTP tools on our call-service** (built and tested in text chats: see BOOKING.md), behind the `Scheduler` interface. Our own `LocalScheduler` decides the slots (hours, notice, no double booking) and is stored in Postgres. **Calendar: decided against Cal.diy** (see SPIKES.md: it did not fit the Codespace to build, is labelled non-production, and a second scheduling system adds nothing we need). Instead the call-service talks to the client's own **Google Calendar or Microsoft 365 calendar** directly (`CalendarScheduler`, `calendar.ts`). Twenty also syncs those calendars and shows the events on the caller's record, but Twenty has no availability lookup, so it is not the booking engine.
+   - **Behaviour:** offered slots are our slots minus anything busy in the client's calendar; a booking is reserved in our database first (atomic), then written to their calendar; if the calendar write fails the reservation is released and the agent takes a message instead, so a caller is never told "booked" for something the client cannot see; if the calendar cannot be read, no times are offered (never offer slots that might be taken). Tested with mocked HTTP only; **not yet run against live Google or Microsoft accounts**.
+   - **Multi-client:** one platform-wide OAuth app per provider (Google, Microsoft); each client connects once and we keep their refresh token on their tenant record (needs encryption at rest before real clients). Startup fails if a tenant has a calendar but its provider has no OAuth app configured.
+   - **OAuth:** scopes are `calendar.freebusy` and `calendar.events` (Google) and `Calendars.ReadWrite` + `offline_access` (Microsoft). Google OAuth app verification (restricted calendar scopes may need a security assessment) and Microsoft publisher verification are **UNVERIFIED** and may take weeks, so start them early. Creating the OAuth apps needs the platform owner's own Google Cloud and Entra accounts.
+   - **Limits:** attendee invites are not sent (the caller's email goes in the event description); no cancel or reschedule yet; events are written in UTC; one calendar per client; no multi-staff routing.
 7. **License posture.** The call service talks to Twenty only through its HTTP API and webhooks and does not incorporate or modify Twenty's source. Under Twenty's AGPLv3 additional permission, the service can then carry its own license. Forking Twenty ends that protection. Have a lawyer confirm before reselling.
 
 ## 2. Scope
@@ -29,7 +29,7 @@ Sources: feature ideas from viewing a commercial product's UI through the owner'
 In:
 - Answer inbound calls per client, from a knowledge base.
 - After-hours behavior, take a message, voicemail.
-- Book appointments through Cal.diy on the client's calendar.
+- Book appointments on the client's own Google or Microsoft calendar.
 - Transfer to a human rep, with a fallback when the transfer fails.
 - Post-call summary, outcome, notification, and follow-up task in the CRM.
 - Per-client recording consent, retention and PII handling.
@@ -47,7 +47,7 @@ Out (later): outbound calling, cadences, power dialer, dispatch modes, split tes
    |  STT -> LLM (tools) -> TTS, interruption handling
    |------------------- tools -------------------+
    |                      |                      |
- Knowledge search     Scheduler (Cal.diy)    Transfer (Twilio dial to rep)
+ Knowledge search     Scheduler (own+cal) Transfer (Twilio dial to rep)
    |
  Call service (Node/TypeScript)
    - tenant registry + agent config (Postgres, cached)
@@ -149,7 +149,7 @@ Targets once a platform is chosen: first audio under 1 second after the caller s
 - Done when: a scripted test call completes, the Call appears in Twenty with `providerCallId`, outcome, summary and recording link within 60 seconds of hangup, and a repeated webhook creates no duplicate.
 
 **Phase 2: real inbound behavior (2 to 3 weeks)**
-- Knowledge base answers, take message, after-hours policy, transfer with fallback, booking via Cal.diy.
+- Knowledge base answers, take message, after-hours policy, transfer with fallback, booking on the client's calendar.
 - Done when: five scripted scenarios pass (FAQ answer, booking, message, successful transfer, failed transfer falling back to a message) and p50 first-audio latency is under 1 second on a network-sampled test set of 20 calls.
 
 **Phase 3: multi-client and operations (2 to 3 weeks)**
@@ -178,7 +178,7 @@ Targets once a platform is chosen: first audio under 1 second after the caller s
 | # | Decision | Default |
 |---|---|---|
 | 1 | Voice runtime | LiveKit Agents; Vapi or Retell if speed to first call matters more than control |
-| 2 | Calendar and booking | **Decided:** self-hosted Cal.diy. Open: production go or no-go before launch; multi-staff routing |
+| 2 | Calendar and booking | **Decided:** our own slot logic plus the client's Google or Microsoft calendar (Cal.diy dropped). Open: OAuth app verification; multi-staff routing; cancel and reschedule |
 | 3 | Jurisdiction(s) of callers and clients | Unknown; consent and retention are configurable per tenant. **Needed from you.** |
 | 4 | Follow-ups in Twenty workflows or in our own worker | Own worker first (testable, versioned); move to Twenty workflows later if clients want to edit them |
 | 5 | Telephony vendor | Twilio |
@@ -189,13 +189,13 @@ Targets once a platform is chosen: first audio under 1 second after the caller s
 
 Booking, messages and outcomes are covered in [BOOKING.md](BOOKING.md): tools built and tested on text chats, with the outcome rules and a transcript opt-out safety net. Voice calls remain untested.
 
-See [SPIKES.md](SPIKES.md) for what the docs, source review and the Codespaces runtime spike settled. Verified: app sync, signed ingest, idempotency. Not verified: multi-workspace installs, `writability` enforcement, Cal.diy, voice latency. New concern from that review: app `serverVariables` are per registration, not per workspace, so the per-workspace ingest secret may need to be set another way (post-install hook, key-value store or a header-based scheme). Check before Phase 0.
+See [SPIKES.md](SPIKES.md) for what the docs, source review and the Codespaces runtime spike settled. Verified: app sync, signed ingest, idempotency. Not verified: multi-workspace installs, `writability` enforcement, live Google and Microsoft calendars, voice latency. New concern from that review: app `serverVariables` are per registration, not per workspace, so the per-workspace ingest secret may need to be set another way (post-install hook, key-value store or a header-based scheme). Check before Phase 0.
 
 - [ ] Twenty Apps: installing one app across many workspaces (`operations/publishing.mdx`, `sync-and-recovery.mdx`).
 - [ ] API key scope: one workspace per key?
 - [ ] Phone filter syntax in Twenty's REST and GraphQL.
 - [ ] Multi-workspace provisioning automation.
-- [ ] Cal.diy: user isolation, availability and booking API, API auth, and the production go or no-go.
+- [ ] Google and Microsoft calendars: free/busy and event creation against live accounts, OAuth app verification, refresh-token handling when a client revokes access.
 - [ ] Google and Microsoft OAuth app verification requirements and lead time.
 - [ ] Remaining "check" cells in the section 7 table, on the chosen platform.
 - [ ] Logic function route auth: does an API key satisfy `isAuthRequired: true`, and what is the timeout ceiling?

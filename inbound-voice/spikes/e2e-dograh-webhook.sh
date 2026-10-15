@@ -14,7 +14,7 @@ TOKEN="whk_$(openssl rand -hex 16)"
 cat > "$WORK/tenants.json" <<JSON
 [{"id":"client-a","name":"Client A","defaultRegion":"GB",
   "twenty":{"baseUrl":"http://localhost:2020","apiKey":"unused","ingestSecret":"spike-test-secret"},
-  "calDiy":null,"numbers":[],"dograhWebhookToken":"$TOKEN"}]
+  "numbers":[],"dograhWebhookToken":"$TOKEN"}]
 JSON
 chmod 600 "$WORK/tenants.json"
 

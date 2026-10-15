@@ -7,8 +7,9 @@ import { ArtifactCopyingWriter, LocalArtifactStore } from "./artifacts.js";
 import { TwentyIngestWriter } from "./crm.js";
 import { buildServer, makeCrmHandler } from "./server.js";
 import { PgOutboxQueue } from "./pgQueue.js";
+import { GoogleCalendarClient, MicrosoftCalendarClient, type CalendarClient } from "./calendar.js";
+import { schedulerSelector } from "./calendarScheduler.js";
 import { LocalScheduler } from "./localScheduler.js";
-import { CalDiyScheduler } from "./scheduler.js";
 import { InMemoryTenantRegistry } from "./tenants.js";
 import type { CallRecord, Tenant } from "./types.js";
 
@@ -48,14 +49,21 @@ if (process.env.DATABASE_URL) {
 }
 
 const local = new LocalScheduler(Date.now, bookings);
-const calDiy = new CalDiyScheduler();
+// Platform-wide OAuth apps (one per provider); each client only supplies a refresh token from their one-time consent.
+const calendars: Partial<Record<"google" | "microsoft", CalendarClient>> = {};
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  calendars.google = new GoogleCalendarClient({ clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET });
+}
+if (process.env.MS_CLIENT_ID && process.env.MS_CLIENT_SECRET) {
+  calendars.microsoft = new MicrosoftCalendarClient({ clientId: process.env.MS_CLIENT_ID, clientSecret: process.env.MS_CLIENT_SECRET, ...(process.env.MS_AUTHORITY ? { authority: process.env.MS_AUTHORITY } : {}) });
+}
 
 const { app } = buildServer({
   registry,
   facts,
   ...(durableQueue ? { queue: durableQueue } : {}),
-  // Tenants with a Cal.diy configuration use it; everyone else gets the built-in scheduler.
-  scheduler: (tenant) => (tenant.calDiy ? calDiy : local),
+  // Tenants with a connected calendar check and write it; everyone else gets the built-in slots only.
+  scheduler: schedulerSelector(tenants, local, bookings, calendars),
   crm,
   providerSecret,
   log,

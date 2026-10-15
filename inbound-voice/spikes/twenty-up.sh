@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
 # Starts a single-workspace Twenty at http://localhost:3000 using its published self-host compose file.
-# NOT YET RUN. Stops Cal.diy first because both want port 3000.
 set -euo pipefail
 cd "$(dirname "$0")"
 DIR=.work/twenty
 mkdir -p "$DIR"
 
-[ -d .work/cal.diy ] && (cd .work/cal.diy && docker compose down 2>/dev/null || true)
 
 BASE=https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker
 curl -fsSL "$BASE/docker-compose.yml" -o "$DIR/docker-compose.yml"
