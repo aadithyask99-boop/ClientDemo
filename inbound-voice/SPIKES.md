@@ -143,3 +143,24 @@ Result: **it works.** A Dograh text-chat call, ended through the API, produced o
 
 ### Still unverified
 - Disposition extraction with our outcome codes; the caller-number variable; recordings from a real voice call; the artifact store on S3/MinIO with private access; Person linking and Message/Task creation in Twenty.
+
+## Outcomes and caller number (2026-10-15, Codespaces, since reverted)
+
+Test: `spikes/e2e-outcomes.mjs` (run through `e2e-dograh-webhook.sh` with `E2E_SCRIPT=e2e-outcomes.mjs`). Disposition extraction was enabled on the workflow with our eight outcome codes (`booked`, `message_taken`, `transferred`, `transfer_failed`, `info_given`, `callback_requested`, `opted_out`, `no_outcome`) and a description for each; three text-chat calls were run with simulated telephony variables in `initial_context`.
+
+### Verified
+- **Enabling extraction works through the API:** a `call_dispositions` list of `{code, description}` in `workflow_configurations` on `PUT /workflow/{id}` is stored and returned.
+- **The classifier picks our codes correctly:** Dograh's log shows "Refining call disposition: end_call -> callback_requested", "-> opted_out" and "-> info_given" for the three scenarios (3 of 3 as intended).
+- **Caller number:** `{{initial_context.caller_number}}` in the webhook template reached Twenty as the Call's new `callerNumber` field (`+447400123456`) in all three runs. This used a simulated `initial_context`. Per Dograh's docs, telephony sets `caller_number` and `called_number` for real inbound calls (`called_number` is our number, useful for tenant checks).
+
+### Not working in this harness: outcomes through the webhook
+- All three Twenty records had outcome NO_OUTCOME. The webhook was sent about 0.3 s before the classifier logged its answer, and, more importantly, the stored run itself still reads `call_disposition: end_call` afterwards.
+- Source reading explains it: on the **text-chat** path `_build_text_chat_completion_write` writes `call_disposition` (and `call_status`) from the end reason and overwrites the extracted value. On the **voice** path `PipecatEngine.refine_call_disposition` updates the engine's gathered context and the finished context is persisted once before completion work and webhooks run, so refined outcomes should reach webhooks. That is source-level only; voice outcomes are **not verified**.
+- Consequence: text chats cannot be used to verify outcomes. A real voice call (browser WebRTC or a phone number) is needed. Worth reporting upstream as a text-chat inconsistency.
+- A reconciliation step (re-fetching the run from Dograh before writing) was considered and rejected: the stored text-chat run has the same fallback value, and the voice path appears to need no such step.
+
+### Mapping on our side
+- Our mapper turns `callback_requested`, `opted_out`, `info_given` and the other eight codes into the Twenty outcome set (unit-tested), maps Dograh's starter codes (`appointment_booked`, `do_not_call` and others) via aliases, and falls back to NO_OUTCOME for anything unknown, including the end reasons.
+
+### New in Twenty
+- `Call.callerNumber` (TEXT). Linking the caller to a Person is still TODO.

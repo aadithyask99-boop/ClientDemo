@@ -8,7 +8,10 @@ import { toE164 } from "./phone.js";
  *   { "run_id": "{{workflow_run_id}}", "called_at": "{{call_time}}", "caller": "{{initial_context.caller_number}}",
  *     "duration": "{{cost_info.call_duration_seconds}}", "disposition": "{{gathered_context.call_disposition}}",
  *     "summary": "{{gathered_context.summary}}", "recording_url": "{{recording_url}}", "transcript_url": "{{transcript_url}}" }
- * Verified (text chat): a text-chat run fires the webhook. The caller comes from initial_context.caller_number, which Dograh telephony sets for inbound calls (per its docs); with a simulated initial_context it was checked in e2e-outcomes.mjs.
+ * Verified (text chat): a text-chat run fires the webhook, and a simulated initial_context.caller_number reached Twenty as the caller.
+ * Per Dograh's docs, telephony sets caller_number and called_number for real inbound calls (not yet tested with a call).
+ * Outcomes: on the voice path Dograh stores the classifier's disposition before running webhooks (per its source), but on the
+ * text-chat path it overwrites it with the end reason, so text chats arrive as NO_OUTCOME. Voice outcomes are not yet verified.
  */
 export const dograhPayload = z
   .object({
