@@ -173,3 +173,10 @@ Full account and results table in [BOOKING.md](BOOKING.md). Headlines:
 - The agent-extracted `outcome` variable (agent node `extraction_variables`) is kept on text chats even though the platform disposition is not, but extraction did not run for a one-message call.
 - The agent does not always call a tool even when told to. An opt-out is therefore also caught by a deterministic scan of the caller's transcript lines.
 - Dograh stores each tool call's result in the run's `gathered_context.tool_results` (seen as a key, contents not inspected).
+
+## Persistence and the Cal.diy build (2026-10-15)
+
+- **Storage:** bookings, call facts and the post-call queue moved to Postgres behind `DATABASE_URL` (see [BOOKING.md](BOOKING.md)). 81 tests pass on PGlite. Not yet run through the `pg` driver against a real server.
+- **Cal.diy build, attempt 1:** `DOCKER_BUILDKIT=0` (the README's advice) fails immediately: "failed to parse platform" on `FROM --platform=$BUILDPLATFORM`. Building with BuildKit gets past it.
+- **Cal.diy build, attempt 2 (stopped):** the free disk of the 4-core Codespace (32 GB) went from 21 GB to 1.9 GB during the install and link step of the first of the two images, and the build was still running. Stopped by hand so a full disk would not damage the Twenty database. Cal.diy does not fit on this machine alongside Twenty; it needs a larger Codespace (more disk), or a different way to run it. Cal.diy's API request shapes in `scheduler.ts` are still unverified.
+- **Adapter bug found by reading, not yet fixed:** `CalDiyScheduler.book` throws a plain error on any non-2xx reply, so a slot taken by someone else would reach the caller as "calendar unreachable" (502) instead of "slot unavailable" (409). Fix once the real error response is known.

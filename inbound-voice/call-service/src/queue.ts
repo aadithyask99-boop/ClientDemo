@@ -11,12 +11,19 @@ export interface DeadLetter<T> {
   error: string;
 }
 
+/** What the server needs from a queue. `enqueue` resolving means the job is safe (for a durable queue: stored). */
+export interface JobQueue<T> {
+  enqueue(id: string, payload: T): void | Promise<void>;
+  /** Resolves when no jobs are waiting or in flight. Used by tests and graceful shutdown. */
+  idle(): Promise<void>;
+}
+
 /**
  * In-process queue with exponential backoff and a dead-letter list.
- * Scaffold only: it loses jobs on restart. Swap for BullMQ (Redis) before Phase 1 acceptance;
- * the handler contract (throw to retry, PermanentError to dead-letter) stays the same.
+ * It loses jobs on restart: used in tests and when no database is configured. PgOutboxQueue (pgQueue.ts) is the
+ * durable one; the handler contract (throw to retry, PermanentError to dead-letter) is the same.
  */
-export class RetryQueue<T> {
+export class RetryQueue<T> implements JobQueue<T> {
   readonly deadLetters: DeadLetter<T>[] = [];
   private pending = 0;
 

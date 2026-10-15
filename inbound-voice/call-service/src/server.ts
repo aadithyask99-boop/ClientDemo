@@ -1,7 +1,7 @@
 import Fastify, { type FastifyInstance } from "fastify";
 import { z } from "zod";
 import type { CrmWriter } from "./crm.js";
-import { RetryQueue } from "./queue.js";
+import { RetryQueue, type JobQueue } from "./queue.js";
 import { verify } from "./signing.js";
 import type { TenantRegistry } from "./tenants.js";
 import { OUTCOMES, type CallRecord } from "./types.js";
@@ -33,7 +33,7 @@ export interface ServerDeps {
   crm: CrmWriter;
   /** Shared secret with the voice runtime for call-ended events. */
   providerSecret: string;
-  queue?: RetryQueue<CallRecord>;
+  queue?: JobQueue<CallRecord>;
   /** Optional line logger for operations (webhook received, write retried, dead-lettered). */
   log?: (line: string) => void;
   /** Facts recorded by our tools during calls (bookings, messages). Defaults to an in-memory store. */
@@ -42,7 +42,16 @@ export interface ServerDeps {
   scheduler?: (tenant: Tenant) => Scheduler;
 }
 
-export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: RetryQueue<CallRecord> } {
+/** The queue handler: write one finished call to the tenant's CRM. Shared by the default queue and the durable one in main.ts. */
+export function makeCrmHandler(registry: TenantRegistry, crm: CrmWriter): (record: CallRecord) => Promise<void> {
+  return async (record) => {
+    const tenant = registry.byId(record.tenantId);
+    if (!tenant) throw new Error(`Unknown tenant ${record.tenantId}`);
+    await crm.writeCall(tenant, record);
+  };
+}
+
+export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: JobQueue<CallRecord> } {
   const app = Fastify({ logger: false });
 
   // Keep the raw body: signatures are verified over the exact bytes received.
@@ -70,16 +79,24 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Re
   const queue =
     deps.queue ??
     new RetryQueue<CallRecord>(
-      async (record) => {
-        const tenant = deps.registry.byId(record.tenantId);
-        if (!tenant) throw new Error(`Unknown tenant ${record.tenantId}`);
-        await deps.crm.writeCall(tenant, record);
-      },
+      makeCrmHandler(deps.registry, deps.crm),
       {
         onEvent: (e) =>
           deps.log?.(`crm-write ${e.type} id=${e.id} attempts=${e.attempts}${e.error ? ` error=${e.error}` : ""}`),
       },
     );
+
+  /** Hands the call to the queue. False means it was NOT stored, so the caller must not acknowledge it: the provider retries. */
+  const store = async (record: CallRecord): Promise<boolean> => {
+    try {
+      // Keyed per tenant so two tenants' provider IDs can never collide.
+      await queue.enqueue(`${record.tenantId}:${record.providerCallId}`, record);
+      return true;
+    } catch (err) {
+      deps.log?.(`enqueue failed tenant=${record.tenantId} id=${record.providerCallId} error=${(err as Error).message}`);
+      return false;
+    }
+  };
 
   app.get("/healthz", async () => ({ ok: true }));
 
@@ -126,7 +143,7 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Re
     };
 
     // Acknowledge fast; the Twenty write happens off the request path.
-    queue.enqueue(record.providerCallId, record);
+    if (!(await store(record))) return reply.code(500).send({ error: "could not store the call; retry" });
     return reply.code(202).send({ accepted: true });
   });
 
@@ -198,7 +215,7 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Re
     }
     deps.log?.(`dograh webhook accepted id=${record.providerCallId} tenant=${tenant.id} outcome=${record.outcome}`);
     // Dograh retries failed deliveries and may deliver twice; the queue key and Twenty's upsert on providerCallId absorb that.
-    queue.enqueue(record.providerCallId, record);
+    if (!(await store(record))) return reply.code(500).send({ error: "could not store the call; retry" });
     return reply.code(202).send({ accepted: true });
   });
 

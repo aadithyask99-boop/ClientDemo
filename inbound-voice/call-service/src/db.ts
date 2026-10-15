@@ -31,6 +31,23 @@ export const SCHEMA = [
      updated_at       timestamptz NOT NULL DEFAULT now(),
      PRIMARY KEY (tenant_id, provider_call_id)
    )`,
+  // Post-call writes to the CRM. A row exists before the provider is told 202, so a crash cannot lose a call.
+  // status: pending -> running -> done | dead. A running row whose lock has expired is taken over (worker crashed).
+  // version bumps when the same call is delivered again, so a worker finishing the old payload cannot mark the new one done.
+  `CREATE TABLE IF NOT EXISTS outbox (
+     id              serial      PRIMARY KEY,
+     job_key         text        NOT NULL UNIQUE,
+     payload         jsonb       NOT NULL,
+     status          text        NOT NULL DEFAULT 'pending',
+     attempts        integer     NOT NULL DEFAULT 0,
+     version         integer     NOT NULL DEFAULT 1,
+     next_attempt_at timestamptz NOT NULL DEFAULT now(),
+     locked_until    timestamptz,
+     last_error      text,
+     created_at      timestamptz NOT NULL DEFAULT now(),
+     updated_at      timestamptz NOT NULL DEFAULT now()
+   )`,
+  `CREATE INDEX IF NOT EXISTS outbox_due ON outbox (status, next_attempt_at)`,
 ];
 
 export async function migrate(sql: Sql): Promise<void> {

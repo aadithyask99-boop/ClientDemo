@@ -1,7 +1,8 @@
 import { PGlite } from "@electric-sql/pglite";
-import { beforeEach, describe, expect, it } from "vitest";
+import pg from "pg";
+import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { PgBookingStore } from "../src/bookingStore.js";
-import { migrate, type Sql } from "../src/db.js";
+import { fromPg, migrate, type Sql } from "../src/db.js";
 import { PgCallFactStore } from "../src/facts.js";
 import { LocalScheduler, SlotUnavailableError } from "../src/localScheduler.js";
 import type { Tenant } from "../src/types.js";
@@ -13,12 +14,24 @@ const other = { id: "t2" } as Tenant;
 const START = "2026-10-20T09:00:00.000Z"; // Tuesday 09:00 in London (BST ends 25 Oct)
 const attendee = { name: "Sam Rivera", timeZone: "Europe/London", phoneNumber: "+447400123456" };
 
-let db: PGlite;
+// By default the suite runs on PGlite (one in-process connection). With TEST_DATABASE_URL set it runs the same tests
+// through the `pg` driver against a real server, where simultaneous bookings really are separate connections.
+const realUrl = process.env.TEST_DATABASE_URL;
+let pool: pg.Pool | undefined;
 let sql: Sql;
 beforeEach(async () => {
-  db = new PGlite();
-  sql = { query: async (text, params) => ({ rows: (await db.query(text, params as unknown[])).rows as never[] }) };
+  if (realUrl) {
+    pool ??= new pg.Pool({ connectionString: realUrl, max: 8 });
+    sql = fromPg(pool);
+    await sql.query("DROP TABLE IF EXISTS bookings, call_facts");
+  } else {
+    const db = new PGlite();
+    sql = { query: async (text, params) => ({ rows: (await db.query(text, params as unknown[])).rows as never[] }) };
+  }
   await migrate(sql);
+});
+afterAll(async () => {
+  await pool?.end();
 });
 
 describe("migrate", () => {
