@@ -88,3 +88,10 @@ Open-source voice AI platform (BSD-2-Clause, Python). Started from its compose f
 - Voice quality and real latency (needs audio), real inbound telephony, and whether the bundled "dograh" provider calls a hosted service (self-host independence) are untested.
 - Multi-client separation (organizations) was not examined.
 - Telemetry is on by default (`ENABLE_TELEMETRY=false` disables it).
+
+### Dograh voice library check (second run, since reverted)
+- The built-in `dograh` voice provider lists **1,003 voices** (428 English: US 155 female and 152 male, GB 14 female and 31 male, AU 20 female and 11 male, plus Irish, Indian, others), each with name, description, accent, gender and a `preview_url`.
+- **Previews are served from `services.dograh.com`** (`/api/v1/voice-proxy/dograh/voices/<id>/preview`, MP3, about 50 to 70 KB, no login needed). So the bundled "no keys needed" voices are a hosted Dograh service, not local. A self-hosted deployment that uses them depends on that service; using our own provider keys (ElevenLabs, Deepgram, Cartesia and others) avoids it. Their terms and limits were not checked.
+- No speech-synthesis endpoint was found in the API (only a TTS cache), so custom-script samples would need a provider key. The ElevenLabs voice list returns 400 without one.
+- Six previews were confirmed playable (`audio/mpeg`): Ailsa and Charlotte (GB female), Alec (GB male), Allie (US female), Adrian (US male), Aila (AU female). Judging them is subjective and still to be done by a person.
+- Real-time browser calls from a Codespace are expected to be a problem (WebRTC needs UDP). Not attempted.
