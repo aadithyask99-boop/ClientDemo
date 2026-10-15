@@ -1,3 +1,5 @@
+import type { Outcome } from "./types.js";
+
 /**
  * Things we know for certain about a call because one of OUR tools did them (a booking made, a message taken).
  * They outrank any classifier guess when we decide the call outcome. Scaffold: in memory; persist before real use.
@@ -11,6 +13,8 @@ export interface Booking {
 
 export interface CallFacts {
   booking?: Booking;
+  /** An outcome the agent stated explicitly through the record_outcome tool (opt-out, callback, and so on). */
+  outcome?: { code: Outcome; note?: string };
   message?: { body: string; callbackNumber?: string; urgent: boolean };
 }
 

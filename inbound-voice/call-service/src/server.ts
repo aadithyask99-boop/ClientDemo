@@ -9,6 +9,7 @@ import { toE164 } from "./phone.js";
 import { dograhPayload, toCallRecord } from "./dograh.js";
 import { availabilityInput, bookAppointment, bookInput, checkAvailability } from "./booking.js";
 import { InMemoryCallFactStore, type CallFactStore } from "./facts.js";
+import { messageInput, outcomeInput, recordOutcome, takeMessage } from "./callTools.js";
 import { LocalScheduler } from "./localScheduler.js";
 import type { Scheduler } from "./scheduler.js";
 import type { Tenant } from "./types.js";
@@ -147,6 +148,24 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Re
     return reply.code(result.ok ? 200 : result.status).send(result.body);
   });
 
+  app.post("/tools/message", async (req, reply) => {
+    const tenant = toolTenant(req.headers.authorization);
+    if (!tenant) return reply.code(401).send({ error: "unauthorized" });
+    const parsed = messageInput.safeParse(parseBody(req.body));
+    if (!parsed.success) return reply.code(400).send({ error: "invalid input", message: parsed.error.issues.map((i) => i.message).join("; ") });
+    deps.log?.(`message tenant=${tenant.id}`);
+    return reply.code(200).send(takeMessage(facts, tenant, parsed.data));
+  });
+
+  app.post("/tools/outcome", async (req, reply) => {
+    const tenant = toolTenant(req.headers.authorization);
+    if (!tenant) return reply.code(401).send({ error: "unauthorized" });
+    const parsed = outcomeInput.safeParse(parseBody(req.body));
+    if (!parsed.success) return reply.code(400).send({ error: "invalid input", message: parsed.error.issues.map((i) => i.message).join("; ") });
+    deps.log?.(`outcome tenant=${tenant.id} ${parsed.data.outcome}`);
+    return reply.code(200).send(recordOutcome(facts, tenant, parsed.data));
+  });
+
   /** Dograh webhook node: authenticated by a per-tenant bearer token (Dograh does not sign webhooks). */
   app.post("/webhooks/dograh", async (req, reply) => {
     const header = req.headers.authorization;
@@ -164,15 +183,18 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Re
     if (!parsed.success) return reply.code(400).send({ error: "invalid payload", issues: parsed.error.issues });
 
     const record = toCallRecord(tenant, parsed.data);
-    // What our own tools did on this call outranks any classifier guess.
+    // What our own tools did on this call outranks any classifier guess: booking, then an outcome the agent stated, then a message.
     const known = facts.get(tenant.id, record.providerCallId);
     if (known?.booking) {
       record.outcome = "BOOKED";
       record.summary = `${record.summary} Booked ${known.booking.label} for ${known.booking.name}.`.trim();
+    } else if (known?.outcome) {
+      record.outcome = known.outcome.code;
+      if (known.outcome.note) record.summary = `${record.summary} ${known.outcome.note}`.trim();
     }
     if (known?.message) {
       record.message ??= known.message;
-      if (record.outcome === "NO_OUTCOME") record.outcome = "MESSAGE_TAKEN";
+      if (!known.booking && !known.outcome) record.outcome = "MESSAGE_TAKEN";
     }
     deps.log?.(`dograh webhook accepted id=${record.providerCallId} tenant=${tenant.id} outcome=${record.outcome}`);
     // Dograh retries failed deliveries and may deliver twice; the queue key and Twenty's upsert on providerCallId absorb that.
