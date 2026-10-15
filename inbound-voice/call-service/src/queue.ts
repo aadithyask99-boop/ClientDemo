@@ -22,7 +22,12 @@ export class RetryQueue<T> {
 
   constructor(
     private readonly handler: (payload: T) => Promise<void>,
-    private readonly opts: { maxAttempts?: number; baseDelayMs?: number } = {},
+    private readonly opts: {
+      maxAttempts?: number;
+      baseDelayMs?: number;
+      /** Observability hook: called after each failed attempt ("retry"), on dead-lettering ("dead") and on success ("ok"). */
+      onEvent?: (e: { type: "ok" | "retry" | "dead"; id: string; attempts: number; error?: string }) => void;
+    } = {},
   ) {}
 
   enqueue(id: string, payload: T): void {
@@ -42,13 +47,17 @@ export class RetryQueue<T> {
       job.attempts++;
       try {
         await this.handler(job.payload);
+        this.opts.onEvent?.({ type: "ok", id: job.id, attempts: job.attempts });
         break;
       } catch (err) {
         const permanent = err instanceof PermanentError;
+        const message = (err as Error).message;
         if (permanent || job.attempts >= max) {
-          this.deadLetters.push({ job, error: (err as Error).message });
+          this.deadLetters.push({ job, error: message });
+          this.opts.onEvent?.({ type: "dead", id: job.id, attempts: job.attempts, error: message });
           break;
         }
+        this.opts.onEvent?.({ type: "retry", id: job.id, attempts: job.attempts, error: message });
         await new Promise((r) => setTimeout(r, base * 2 ** (job.attempts - 1)));
       }
     }

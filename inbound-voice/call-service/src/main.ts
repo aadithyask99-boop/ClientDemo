@@ -16,7 +16,12 @@ const artifactDir = process.env.ARTIFACT_DIR;
 const allowedHosts = process.env.ARTIFACT_ALLOWED_HOSTS?.split(",").map((h) => h.trim()).filter(Boolean);
 const store = artifactDir ? new LocalArtifactStore(artifactDir, allowedHosts ? { allowedHosts } : {}) : null;
 
-const { app } = buildServer({ registry, crm: new ArtifactCopyingWriter(new TwentyIngestWriter(), store), providerSecret });
+const { app } = buildServer({
+  registry,
+  crm: new ArtifactCopyingWriter(new TwentyIngestWriter(), store),
+  providerSecret,
+  log: (line) => console.log(new Date().toISOString(), line),
+});
 const port = Number(process.env.PORT ?? 3000);
 await app.listen({ port, host: "0.0.0.0" });
 console.log(`call-service listening on ${port} with ${tenants.length} tenant(s)`);

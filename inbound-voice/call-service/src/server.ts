@@ -28,6 +28,8 @@ export interface ServerDeps {
   /** Shared secret with the voice runtime for call-ended events. */
   providerSecret: string;
   queue?: RetryQueue<CallRecord>;
+  /** Optional line logger for operations (webhook received, write retried, dead-lettered). */
+  log?: (line: string) => void;
 }
 
 export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: RetryQueue<CallRecord> } {
@@ -40,11 +42,17 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Re
 
   const queue =
     deps.queue ??
-    new RetryQueue<CallRecord>(async (record) => {
-      const tenant = deps.registry.byId(record.tenantId);
-      if (!tenant) throw new Error(`Unknown tenant ${record.tenantId}`);
-      await deps.crm.writeCall(tenant, record);
-    });
+    new RetryQueue<CallRecord>(
+      async (record) => {
+        const tenant = deps.registry.byId(record.tenantId);
+        if (!tenant) throw new Error(`Unknown tenant ${record.tenantId}`);
+        await deps.crm.writeCall(tenant, record);
+      },
+      {
+        onEvent: (e) =>
+          deps.log?.(`crm-write ${e.type} id=${e.id} attempts=${e.attempts}${e.error ? ` error=${e.error}` : ""}`),
+      },
+    );
 
   app.get("/healthz", async () => ({ ok: true }));
 
@@ -111,6 +119,7 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Re
     if (!parsed.success) return reply.code(400).send({ error: "invalid payload", issues: parsed.error.issues });
 
     const record = toCallRecord(tenant, parsed.data);
+    deps.log?.(`dograh webhook accepted id=${record.providerCallId} tenant=${tenant.id} outcome=${record.outcome}`);
     // Dograh retries failed deliveries and may deliver twice; the queue key and Twenty's upsert on providerCallId absorb that.
     queue.enqueue(record.providerCallId, record);
     return reply.code(202).send({ accepted: true });
