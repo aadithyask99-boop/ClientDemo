@@ -69,9 +69,9 @@ async function ingest(record: any): Promise<Response> {
     durationSeconds: record.durationSeconds,
     outcome: record.outcome,
     summary: record.summary,
-    // Private storage references, not links: Twenty LINKS fields reject non-http URLs (verified), and these are not public.
-    recordingRef: record.recordingRef,
-    transcriptRef: record.transcriptRef,
+    // Private storage keys, not links: Twenty LINKS fields reject non-http URLs (verified), and a field type cannot be changed in place, so these are new TEXT fields.
+    recordingKey: record.recordingRef,
+    transcriptKey: record.transcriptRef,
   };
 
   if (existingId) {
