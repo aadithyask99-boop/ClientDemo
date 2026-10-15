@@ -17,10 +17,28 @@ if [ ! -f "$DIR/.env" ]; then
   sed -i "s|^# ENCRYPTION_KEY=.*|ENCRYPTION_KEY=$(openssl rand -base64 32)|" "$DIR/.env"
 fi
 
+# Docker-in-Docker in Codespaces: containers on a bridge network could not reach each other (db:5432 timed out
+# although Postgres was healthy). Host networking works around it. Found by running this script.
+if [ -n "${CODESPACES:-}" ]; then
+  printf 'services:
+  db:
+    network_mode: host
+  redis:
+    network_mode: host
+  server:
+    network_mode: host
+  worker:
+    network_mode: host
+' > "$DIR/docker-compose.override.yml"
+  sed -i 's|^#PG_DATABASE_HOST=.*|PG_DATABASE_HOST=localhost|; s|^#REDIS_URL=.*|REDIS_URL=redis://localhost:6379|' "$DIR/.env"
+  # The browser reaches Twenty through the forwarded URL, so the server must advertise that URL.
+  sed -i "s|^SERVER_URL=.*|SERVER_URL=https://${CODESPACE_NAME}-3000.app.github.dev|" "$DIR/.env"
+fi
+
 cd "$DIR"
 docker compose up -d
 echo "Waiting for Twenty to report healthy..."
-for i in $(seq 1 60); do
+for i in $(seq 1 90); do
   if curl -fsS http://localhost:3000/healthz >/dev/null 2>&1; then echo "Twenty is up: http://localhost:3000"; exit 0; fi
   sleep 5
 done
