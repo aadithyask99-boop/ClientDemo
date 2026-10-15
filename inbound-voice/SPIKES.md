@@ -117,3 +117,29 @@ Open-source voice AI platform (BSD-2-Clause, Python). Started from its compose f
 - Per-number inbound routing to a workflow and how a number is attached to an organization or agent (docs: telephony configs and phone numbers).
 - Whether the provisioning API can add a webhook node via `create-from-definition`/`update` (the schema suggests yes).
 - Real latency and voice quality.
+
+## End-to-end: Dograh webhook to call-service to Twenty (2026-10-15, Codespaces, since reverted)
+
+Result: **it works.** A Dograh text-chat call, ended through the API, produced one `Call` in Twenty (`dograh:7`, 8 s, outcome NO_OUTCOME because disposition extraction was not enabled), with the transcript copied into private storage.
+
+### What ran
+- Dograh (host networking) provisioned over its API: sign-up, a stored **bearer-token credential**, an inbound agent from the template, and a **webhook node** added with `PUT /workflow/{id}`, then `POST /workflow/{id}/publish`.
+- A text-chat session with two caller turns, then `POST .../text-chat/sessions/{run}/end` with an empty JSON body (the body is required; all fields optional).
+- Ending the session enqueued Dograh's completion job, which ran the webhook (log: "Found 1 webhook nodes", delivery succeeded 202, attempt 1).
+- call-service (`/webhooks/dograh`) authenticated the bearer token to a tenant, answered 202, queued the write, copied the transcript, and posted the signed record to the Twenty app's `ingest-call` route.
+
+### Problems found and fixed
+- The end-session call returned 422 until sent with `{}`.
+- Writes failed 6 times, then dead-lettered, with only "Twenty error 500" in the log. The queue had no observability. Added: log lines for webhook receipt and write retry/dead-letter, and Twenty's failure reason in the error text. Retries and dead-lettering behaved as designed.
+- Cause 1: the ingest function stored our private `artifact://...` references in Twenty **LINKS** fields, which reject non-http URLs ("The URL of the link is not valid"). They are not public links, so they are now plain text.
+- Cause 2: a Twenty field type **cannot be changed in place** (the synced field kept its old link shape and rejected strings). Fix: new TEXT fields under new names and new universal identifiers (`recordingKey`, `transcriptKey`).
+- Direct signed posts of Dograh-shaped records passed all along, so the record shape was never the problem. The failure only showed on the real path, which is why this end-to-end run mattered.
+
+### Also observed
+- Dograh's text-chat LLM calls go to `services.dograh.com/api/v1/llm/chat/completions`: the bundled model is a **hosted service** at run time, confirmed in its log. Production needs our own provider keys.
+- `transcript_url` was fetchable and was copied to local private storage. `recording_url` is empty for a text chat (not tested for voice).
+- Dispositions: with extraction off, the disposition falls back to the reason the call ended, which maps to NO_OUTCOME. Enabling per-workflow disposition extraction with our outcome codes is still to do.
+- Caller number: `initial_context.phone_number` is a guess and was empty here. For real inbound calls the caller number source must be checked.
+
+### Still unverified
+- Disposition extraction with our outcome codes; the caller-number variable; recordings from a real voice call; the artifact store on S3/MinIO with private access; Person linking and Message/Task creation in Twenty.
