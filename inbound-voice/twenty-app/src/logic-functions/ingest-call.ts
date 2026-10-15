@@ -64,6 +64,7 @@ async function ingest(record: any): Promise<Response> {
   const data = {
     providerCallId: record.providerCallId,
     direction: record.direction,
+    callerNumber: record.callerNumber,
     startedAt: record.startedAt,
     endedAt: record.endedAt,
     durationSeconds: record.durationSeconds,

@@ -5,10 +5,10 @@ import { toE164 } from "./phone.js";
 /**
  * The JSON our Dograh webhook node sends. We control the node's payload_template, so this is our own contract;
  * Dograh renders every value as a string. Template (also in SPIKES.md):
- *   { "run_id": "{{workflow_run_id}}", "called_at": "{{call_time}}", "caller": "{{initial_context.phone_number}}",
+ *   { "run_id": "{{workflow_run_id}}", "called_at": "{{call_time}}", "caller": "{{initial_context.caller_number}}",
  *     "duration": "{{cost_info.call_duration_seconds}}", "disposition": "{{gathered_context.call_disposition}}",
  *     "summary": "{{gathered_context.summary}}", "recording_url": "{{recording_url}}", "transcript_url": "{{transcript_url}}" }
- * UNVERIFIED: the `caller` source variable for inbound calls, and that a text-chat run fires the webhook.
+ * Verified (text chat): a text-chat run fires the webhook. The caller comes from initial_context.caller_number, which Dograh telephony sets for inbound calls (per its docs); with a simulated initial_context it was checked in e2e-outcomes.mjs.
  */
 export const dograhPayload = z
   .object({

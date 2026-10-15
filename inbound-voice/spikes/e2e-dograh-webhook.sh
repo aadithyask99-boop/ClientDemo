@@ -26,7 +26,7 @@ for i in $(seq 1 30); do curl -fs http://localhost:3100/healthz >/dev/null 2>&1 
 echo "call-service: $(curl -s http://localhost:3100/healthz)"
 
 # 4. Provision Dograh, run a text-chat call, and check Twenty.
-node ./e2e-dograh-webhook.mjs "$WORK"
+node "./${E2E_SCRIPT:-e2e-dograh-webhook.mjs}" "$WORK"
 
 echo "--- call-service log (tail) ---"
 tail -5 /tmp/call-service.log | cut -c1-160

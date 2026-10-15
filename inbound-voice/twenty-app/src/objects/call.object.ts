@@ -19,6 +19,7 @@ export default defineObject({
   writability: "APPLICATION" as never, // MetadataWritability.APPLICATION: only this app's logic functions can write
   fields: [
     { universalIdentifier: "00000000-0000-4000-8000-0000000000b1", name: "providerCallId", type: FieldType.TEXT, label: "Provider call ID", icon: "IconKey" },
+    { universalIdentifier: "00000000-0000-4000-8000-0000000000d3", name: "callerNumber", type: FieldType.TEXT, label: "Caller number", icon: "IconPhone", isNullable: true, defaultValue: null },
     { universalIdentifier: "00000000-0000-4000-8000-0000000000b2", name: "direction", type: FieldType.TEXT, label: "Direction", icon: "IconArrowDownLeft" },
     { universalIdentifier: "00000000-0000-4000-8000-0000000000b3", name: "startedAt", type: FieldType.DATE_TIME, label: "Started at", icon: "IconClock", isNullable: true, defaultValue: null },
     { universalIdentifier: "00000000-0000-4000-8000-0000000000b4", name: "endedAt", type: FieldType.DATE_TIME, label: "Ended at", icon: "IconClock", isNullable: true, defaultValue: null },
