@@ -30,7 +30,7 @@ let bookings: BookingStore = new InMemoryBookingStore();
 let facts: CallFactStore = new InMemoryCallFactStore();
 let durableQueue: PgOutboxQueue<CallRecord> | undefined;
 const log = (line: string) => console.log(new Date().toISOString(), line);
-const crm = new ArtifactCopyingWriter(new TwentyIngestWriter(), store);
+const crm = new ArtifactCopyingWriter(new TwentyIngestWriter(fetch, log), store);
 if (process.env.DATABASE_URL) {
   const sql = fromPg(new pg.Pool({ connectionString: process.env.DATABASE_URL }));
   await migrate(sql);

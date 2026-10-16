@@ -86,15 +86,29 @@ async function ingest(record: any): Promise<Response> {
     callId = created?.createCall?.id;
   }
 
-  // Follow-up (UNVERIFIED, see the header). Errors are thrown on purpose: the Call above is already stored and the upsert is
-  // idempotent, so the call-service's retry is safe, and the failure shows up in its log instead of silently losing the task.
-  // The followUpTaskId guard makes a retry or a redelivered webhook skip a task that already exists.
+  // Follow-up (UNVERIFIED, see the header). The order is what keeps a retry or a redelivered webhook from creating a second
+  // task: the task id is saved on the Call the moment the task exists, BEFORE anything that can fail after it. A failure to
+  // find the person or to link the task to them is reported as a warning (the task is still useful: its title names the
+  // caller), while a failure to create the task itself is thrown, so the call-service retries and logs it.
+  const warnings: string[] = [];
   if (record.followUp && callId && !existingTaskId) {
-    const personId = await findOrCreatePerson(client, record);
-    const taskId = await createTask(client, record.followUp, personId);
+    let personId: string | undefined;
+    try {
+      personId = await findOrCreatePerson(client, record);
+    } catch (err) {
+      warnings.push(`person: ${String((err as Error)?.message ?? err).slice(0, 200)}`);
+    }
+    const taskId = await createTask(client, record.followUp);
     await client.mutation({ updateCall: { __args: { id: callId, data: { followUpTaskId: taskId } }, id: true } });
+    if (personId) {
+      try {
+        await client.mutation({ createTaskTarget: { __args: { data: { taskId, personId } }, id: true } });
+      } catch (err) {
+        warnings.push(`taskTarget: ${String((err as Error)?.message ?? err).slice(0, 200)}`);
+      }
+    }
   }
-  return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { "content-type": "application/json" } });
+  return new Response(JSON.stringify({ ok: true, ...(warnings.length ? { warnings } : {}) }), { status: 200, headers: { "content-type": "application/json" } });
 }
 
 /**
@@ -126,8 +140,8 @@ async function findOrCreatePerson(client: any, record: any): Promise<string | un
   return created?.createPerson?.id;
 }
 
-/** UNVERIFIED field names: title, bodyV2.markdown, dueAt, status on Task; taskId/personId on TaskTarget. */
-async function createTask(client: any, followUp: any, personId: string | undefined): Promise<string> {
+/** UNVERIFIED field names: title, bodyV2.markdown, dueAt, status on Task. */
+async function createTask(client: any, followUp: any): Promise<string> {
   const created = await client.mutation({
     createTask: {
       __args: { data: { title: followUp.title, bodyV2: { markdown: followUp.body }, dueAt: followUp.dueAt, status: "TODO" } },
@@ -136,7 +150,6 @@ async function createTask(client: any, followUp: any, personId: string | undefin
   });
   const taskId = created?.createTask?.id as string | undefined;
   if (!taskId) throw new Error("Task was not created");
-  if (personId) await client.mutation({ createTaskTarget: { __args: { data: { taskId, personId } }, id: true } });
   return taskId;
 }
 

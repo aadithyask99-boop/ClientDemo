@@ -190,3 +190,17 @@ describe("the whole path, webhook to CRM request", () => {
     expect(sent[0]!.body.message).toEqual({ body: "Sam Rivera: Leak under the sink", urgent: true }); // the name is not duplicated into the message object
   });
 });
+
+describe("warnings from the Twenty app", () => {
+  it("a 200 reply with warnings is a success that is logged, not retried", async () => {
+    const lines: string[] = [];
+    const fetchImpl = (async () => new Response(JSON.stringify({ ok: true, warnings: ["taskTarget: Object taskTarget does not exist"] }), { status: 200 })) as unknown as typeof fetch;
+    await new TwentyIngestWriter(fetchImpl, (l) => lines.push(l)).writeCall(tenant, base);
+    expect(lines).toEqual(["crm-write warning id=dograh:1 taskTarget: Object taskTarget does not exist"]);
+  });
+  it("a plain 200 says nothing, and an empty body is fine", async () => {
+    const lines: string[] = [];
+    for (const body of ['{"ok":true}', ""]) await new TwentyIngestWriter((async () => new Response(body, { status: 200 })) as unknown as typeof fetch, (l) => lines.push(l)).writeCall(tenant, base);
+    expect(lines).toEqual([]);
+  });
+});

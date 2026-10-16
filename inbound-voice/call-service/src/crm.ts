@@ -16,7 +16,11 @@ export class PermanentError extends Error {}
  * UNVERIFIED against a running Twenty server.
  */
 export class TwentyIngestWriter implements CrmWriter {
-  constructor(private readonly fetchImpl: typeof fetch = fetch) {}
+  /** `onWarning` hears about parts of the write that were skipped without failing it (for example a task that could not be linked to a person). */
+  constructor(
+    private readonly fetchImpl: typeof fetch = fetch,
+    private readonly onWarning: (line: string) => void = () => {},
+  ) {}
 
   async writeCall(tenant: Tenant, record: CallRecord): Promise<void> {
     const rawBody = JSON.stringify(record);
@@ -39,7 +43,11 @@ export class TwentyIngestWriter implements CrmWriter {
       throw new RetryableError(`Twenty unreachable: ${(err as Error).message}`);
     }
 
-    if (res.ok) return;
+    if (res.ok) {
+      const warnings = ((await res.json().catch(() => null)) as { warnings?: unknown } | null)?.warnings;
+      if (Array.isArray(warnings) && warnings.length) this.onWarning(`crm-write warning id=${record.providerCallId} ${warnings.map(String).join("; ")}`);
+      return;
+    }
     // Include a short slice of the response: the ingest function returns its failure reason, which is what operators need.
     const detail = (await res.text().catch(() => "")).replace(/\s+/g, " ").slice(0, 300);
     const suffix = detail ? `: ${detail}` : "";
