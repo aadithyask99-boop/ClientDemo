@@ -220,7 +220,7 @@ describe("tools: find, cancel, move", () => {
     await book(d, at("08:00"), { phone: "07911 123456", reason: "Dripping taps" });
     const found = await findAppointments(d, tenant, { caller_number: PHONE });
     expect(found.ok && found.body.appointments).toEqual([
-      { appointment_id: expect.stringMatching(/^loc_/), start: at("08:00"), label: "Tuesday 20 October at 09:00", name: "Sam Rivera", reason: "Dripping taps. Contact number: +447911123456" },
+      { appointment_id: expect.stringMatching(/^loc_/), start: "2026-10-20T09:00:00+01:00", label: "Tuesday 20 October at 09:00", name: "Sam Rivera", reason: "Dripping taps. Contact number: +447911123456" },
     ]);
   });
 
@@ -461,5 +461,36 @@ describe("on Postgres", () => {
     await sql.query(`INSERT INTO bookings (tenant_id, start_at, uid, attendee_name) VALUES ('t1', '${at("08:00")}', 'old1', 'Early customer')`);
     await migrate(sql);
     expect(await new PgBookingStore(sql).get("t1", "old1")).toMatchObject({ uid: "old1", name: "Early customer" });
+  });
+});
+
+describe("times given to the agent are local, so label and value agree", () => {
+  it("toLocalIso writes the wall clock with its offset, in summer and winter", async () => {
+    const m = await import("../src/localScheduler.js");
+    expect(m.toLocalIso(Date.parse("2026-10-16T13:30:00Z"), "Europe/London")).toBe("2026-10-16T14:30:00+01:00");
+    expect(m.toLocalIso(Date.parse("2026-10-26T09:00:00Z"), "Europe/London")).toBe("2026-10-26T09:00:00+00:00");
+    expect(m.toLocalIso(Date.parse("2026-10-20T13:00:00Z"), "America/New_York")).toBe("2026-10-20T09:00:00-04:00");
+    expect(m.toLocalIso(Date.parse("2026-10-20T00:00:00Z"), "Asia/Kolkata")).toBe("2026-10-20T05:30:00+05:30");
+  });
+
+  it("every offered start has the same clock digits as its label, and copying it back books exactly that slot (the call 11 bug)", async () => {
+    const one = new LocalScheduler(() => NOW) as Scheduler; // one instance, so bookings persist between the calls below
+    const d = { scheduler: () => one, facts: new InMemoryCallFactStore() };
+    const r = await checkAvailability(d, tenant, { date: TUE });
+    for (const s of r.slots) expect(s.label.slice(-5)).toBe(s.start.slice(11, 16));
+    const pick = r.slots[3]!; // 10:30 on the clock
+    const booked = await bookAppointment(d, tenant, { start: pick.start, name: "Sam", caller_number: PHONE });
+    expect(booked.ok && booked.body.label).toBe(pick.label);
+    expect(booked.ok && booked.body.start).toBe(pick.start);
+    // The same value moves it, too.
+    const other = r.slots[5]!;
+    const moved = await rescheduleAppointment(d, tenant, { caller_number: PHONE, new_start: other.start });
+        expect(moved.ok && moved.body.label).toBe(other.label);
+  });
+
+  it("an agent that wrongly adds a Z to the clock digits gets a DIFFERENT slot, and the label in the answer shows it", async () => {
+    const d = { scheduler: () => new LocalScheduler(() => NOW) as Scheduler, facts: new InMemoryCallFactStore() };
+    const wrong = await bookAppointment(d, tenant, { start: "2026-10-20T10:30:00Z", name: "Sam", caller_number: PHONE });
+    expect(wrong.ok && wrong.body.label).toBe("Tuesday 20 October at 11:30"); // not what "10:30" meant: the answer exposes it
   });
 });

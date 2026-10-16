@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { CallFactStore } from "./facts.js";
-import { BookingNotFoundError, SlotUnavailableError, addDays, weekdayOf, DEFAULT_BOOKING } from "./localScheduler.js";
+import { BookingNotFoundError, SlotUnavailableError, addDays, toLocalIso, weekdayOf, DEFAULT_BOOKING } from "./localScheduler.js";
 import { toE164 } from "./phone.js";
 import type { Scheduler } from "./scheduler.js";
 import type { Tenant } from "./types.js";
@@ -97,7 +97,7 @@ export async function checkAvailability(
   const part = input.part_of_day ?? "any";
   const keep = (iso: string) => part === "any" || (part === "morning" ? localHour(iso, tz) < 12 : localHour(iso, tz) >= 12);
 
-  const shape = (s: { start: string }) => ({ start: s.start, label: labelFor(s.start, tz) });
+  const shape = (s: { start: string }) => ({ start: toLocalIso(Date.parse(s.start), tz), label: labelFor(s.start, tz) });
   try {
     const onDay = (await scheduler.availableSlots(tenant, { start: input.date, end: input.date, timeZone: tz })).filter((s) => keep(s.start));
     if (onDay.length > 0) return { date: input.date, timeZone: tz, slots: onDay.slice(0, 6).map(shape) };
@@ -149,7 +149,7 @@ export async function bookAppointment(deps: BookingDeps, tenant: Tenant, input: 
     const iso = new Date(input.start).toISOString();
     const label = labelFor(iso, tz);
     if (input.workflow_run_id) await deps.facts.record(tenant.id, `dograh:${input.workflow_run_id}`, { booking: { uid: bookingUid, start: iso, label, name: input.name } });
-    return { ok: true, body: { booked: true, start: iso, label, confirmation: bookingUid } };
+    return { ok: true, body: { booked: true, start: toLocalIso(Date.parse(iso), tz), label, confirmation: bookingUid } };
   } catch (err) {
     if (err instanceof SlotUnavailableError) {
       return { ok: false, status: 409, body: { booked: false, error: "slot_unavailable", message: "That time is no longer available. Ask for another time and check availability again." } };
@@ -180,7 +180,7 @@ const down: ManageResult = { ok: false, status: 502, body: { error: "scheduler_e
 
 async function listFor(deps: BookingDeps, tenant: Tenant, phone: string) {
   const tz = tenant.booking?.timeZone ?? DEFAULT_BOOKING.timeZone;
-  return (await deps.scheduler(tenant).findBookings(tenant, phone)).map((b) => ({ appointment_id: b.uid, start: b.start, label: labelFor(b.start, tz), name: b.name, ...(b.reason ? { reason: b.reason } : {}) }));
+  return (await deps.scheduler(tenant).findBookings(tenant, phone)).map((b) => ({ appointment_id: b.uid, start: toLocalIso(Date.parse(b.start), tz), label: labelFor(b.start, tz), name: b.name, ...(b.reason ? { reason: b.reason } : {}) }));
 }
 
 export async function findAppointments(deps: BookingDeps, tenant: Tenant, input: z.infer<typeof findInput>): Promise<ManageResult> {
@@ -235,7 +235,7 @@ export async function rescheduleAppointment(deps: BookingDeps, tenant: Tenant, i
         rescheduled: { from: before.label, to: label, name: before.name },
       });
     }
-    return { ok: true, body: { rescheduled: true, start: moved.start, label, message: `The appointment is now on ${label}.` } };
+    return { ok: true, body: { rescheduled: true, start: toLocalIso(Date.parse(moved.start), tz), label, message: `The appointment is now on ${label}.` } };
   } catch (err) {
     if (err instanceof BookingNotFoundError) return notFound;
     if (err instanceof SlotUnavailableError) {

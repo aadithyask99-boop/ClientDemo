@@ -36,6 +36,20 @@ export function zonedToUtc(date: string, hhmm: string, tz: string): number {
   return guess - tzOffsetMs(first, tz);
 }
 
+/**
+ * The instant `utcMs` written as the wall clock of `tz` with its offset, e.g. "2026-10-16T14:30:00+01:00".
+ * Given to the voice agent instead of a UTC time: with UTC the clock digits differ from the spoken time by an hour in summer,
+ * and the agent copied "14:30Z" for what the caller heard as 2:30 pm, which is really 13:30Z (seen on a real call).
+ */
+export function toLocalIso(utcMs: number, tz: string): string {
+  const offset = tzOffsetMs(utcMs, tz);
+  const sign = offset < 0 ? "-" : "+";
+  const abs = Math.abs(offset) / 60_000;
+  const hh = String(Math.floor(abs / 60)).padStart(2, "0");
+  const mm = String(abs % 60).padStart(2, "0");
+  return `${new Date(utcMs + offset).toISOString().slice(0, 19)}${sign}${hh}:${mm}`;
+}
+
 /** Weekday (0 = Sunday) of a calendar date, independent of any time zone. */
 export function weekdayOf(date: string): number {
   const [y, m, d] = date.split("-").map(Number) as [number, number, number];
