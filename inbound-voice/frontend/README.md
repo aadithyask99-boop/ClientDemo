@@ -1,14 +1,22 @@
 # Front-end overlay for Dograh's UI
 
-Adds two items to Dograh's left sidebar, without forking its code: **CRM** (Twenty inside an iframe, tabs for Calls, Tasks, People, plus a new-tab link) and **Calendar** (upcoming bookings from the call-service, grouped by day in the client's time zone).
-
-Everything we own is in `overlay/src` (three new files). `apply-overlay.mjs` copies them into a checkout of `dograh-hq/dograh` and patches `AppSidebar.tsx` once (two icon imports and two list entries). If Dograh changes that file the script stops with a clear message instead of guessing.
+Adds the client-facing screens to Dograh's left sidebar without forking its code. Everything we own is in `overlay/src`; `apply-overlay.mjs` copies it into a checkout of `dograh-hq/dograh` and patches `AppSidebar.tsx` (adds Calendar, Customers, Calls and Follow-ups, removes the old CRM item). If Dograh changes that file the script stops with a clear message instead of guessing.
 
 ```
 git clone --depth 1 https://github.com/dograh-hq/dograh.git
 node apply-overlay.mjs ./dograh
 ```
 
-Settings for the UI server: `CALL_SERVICE_URL` (e.g. `http://localhost:3100`), `CALL_SERVICE_TOKEN` (the tenant's `dograhWebhookToken`; stays on the server, the browser only calls `/api/calendar`), and at build time `NEXT_PUBLIC_TWENTY_URL` (Twenty's address as the browser sees it). The Calendar page needs the call-service endpoint `GET /api/bookings?from=&to=` (tested in `call-service/test/bookingsApi.test.ts`).
+Screens:
+- **Calendar** (`calendar/page.tsx`): week grid. Click a free cell to add a booking, click a booking to move or cancel it. Uses the same hours and free times as the phone assistant.
+- **Customers** (`customers/page.tsx`): everyone who called or was added by hand, search, add.
+- **Calls** (`calls/page.tsx`): every call with outcome and summary.
+- **Follow-ups** (`follow-ups/page.tsx`): messages and callback requests waiting for a reply, with "Mark done".
 
-Status: built into the `dograh-ui` container and checked in a browser (see HANDOVER 20c). The CRM page embeds the Twenty gateway (`twenty-gateway/`), not Twenty itself. Dograh's middleware only checks that a session cookie exists, which is what protects `/api/calendar`.
+All of them talk to the call-service through one server-side proxy, `api/staff/[...path]/route.ts` (only whitelisted paths), and `api/calendar/route.ts` for the booking list. The client's token stays on the UI server.
+
+UI server settings: `CALL_SERVICE_URL` (e.g. `http://localhost:3100`) and `CALL_SERVICE_TOKEN` (the client's `dograhWebhookToken`). Nothing is needed at build time.
+
+There is no CRM: calls, customers and follow-ups are stored by the call-service in its own Postgres next to the bookings (`call-service/src/callLog.ts`). Twenty was used earlier and has been retired; it is no longer part of the call path.
+
+Dograh's middleware only checks that a session cookie exists, which is what protects `/api/staff` and `/api/calendar`. Type-checks against Dograh `main`.
