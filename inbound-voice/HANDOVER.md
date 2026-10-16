@@ -300,3 +300,9 @@ Note: a text-chat run proves the tools and prompt; it cannot prove voice, latenc
 - **Speech recognition:** the transcript contained Devanagari characters in one caller line: language was on "Multilingual (auto-detect)". Language is now **English (UK)** on the Models page. Models page now: Dograh mode, voice Cora (British), speed 1, English (UK), LLM tier accurate, temperature unset.
 - **Polish done:** a message that already starts with the caller's name no longer repeats it ("Joseph: Joseph needs...").
 - **Run page quirk:** `runtime_configuration.llm_model` shows "default" even on the accurate tier: it is a label, not the resolved model.
+
+## 20. Front end started (2026-10-16, later)
+
+- **call-service:** new read-only `GET /api/bookings?from=&to=` (tenant bearer token, default now to +90 days, only that tenant's rows), `BookingStore.list` in memory and Postgres. 170 tests pass, `tsc` clean. Needs a call-service restart to be live (bookings are in memory: a restart empties them).
+- **Front end:** `frontend/` holds an overlay, not a fork: three new files (CRM page, Calendar page, `/api/calendar` proxy) plus `apply-overlay.mjs` that patches Dograh's `AppSidebar.tsx`. Type-checks against Dograh main. See `frontend/README.md`. **Not built into the `dograh-ui` container and not seen in a browser yet.** Next: in the Codespace clone dograh, apply the overlay, build the UI image with the three settings, swap it in for `dograh-ui` on port 3010, then check CRM (is Twenty framable?) and Calendar with a real booking.
+- Still open from section 0 NEXT STEPS: 2 to 6. Commits are local, not pushed.

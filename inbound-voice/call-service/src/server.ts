@@ -10,6 +10,7 @@ import { dograhPayload, toCallRecord } from "./dograh.js";
 import { availabilityInput, bookAppointment, bookInput, cancelAppointment, cancelInput, checkAvailability, findAppointments, findInput, rescheduleAppointment, rescheduleInput, type ManageResult } from "./booking.js";
 import { InMemoryCallFactStore, type CallFactStore } from "./facts.js";
 import { messageInput, outcomeInput, recordOutcome, takeMessage } from "./callTools.js";
+import type { BookingStore } from "./bookingStore.js";
 import { LocalScheduler } from "./localScheduler.js";
 import type { Scheduler } from "./scheduler.js";
 import type { Tenant } from "./types.js";
@@ -40,6 +41,8 @@ export interface ServerDeps {
   facts?: CallFactStore;
   /** Which scheduler serves a tenant. Defaults to the built-in LocalScheduler for everyone. */
   scheduler?: (tenant: Tenant) => Scheduler;
+  /** Where bookings live. Enables the read-only GET /api/bookings used by the Calendar screen. */
+  bookings?: BookingStore;
 }
 
 /** The queue handler: write one finished call to the tenant's CRM. Shared by the default queue and the durable one in main.ts. */
@@ -145,6 +148,19 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Jo
     // Acknowledge fast; the Twenty write happens off the request path.
     if (!(await store(record))) return reply.code(500).send({ error: "could not store the call; retry" });
     return reply.code(202).send({ accepted: true });
+  });
+
+  /** Read-only list of the tenant's bookings for the front end. Same bearer token as the tools. Query: from, to (ISO; default now to +90 days). */
+  app.get("/api/bookings", async (req, reply) => {
+    const tenant = toolTenant(req.headers.authorization);
+    if (!tenant) return reply.code(401).send({ error: "unauthorized" });
+    if (!deps.bookings) return reply.code(501).send({ error: "bookings are not available" });
+    const q = req.query as { from?: string; to?: string };
+    const from = q.from ? new Date(q.from) : new Date();
+    const to = q.to ? new Date(q.to) : new Date(from.getTime() + 90 * 86_400_000);
+    if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) return reply.code(400).send({ error: "from and to must be ISO dates" });
+    const bookings = await deps.bookings.list(tenant.id, from.toISOString(), to.toISOString());
+    return reply.code(200).send({ timeZone: tenant.booking?.timeZone ?? "UTC", bookings });
   });
 
   app.post("/tools/availability", async (req, reply) => {

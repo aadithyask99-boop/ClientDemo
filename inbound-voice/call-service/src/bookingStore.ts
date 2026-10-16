@@ -28,6 +28,8 @@ export interface BookingStore {
   upcomingForPhone(tenantId: string, phone: string, fromIso: string): Promise<StoredBooking[]>;
   /** Removes a booking by uid and returns what was removed, or undefined if there was none. */
   cancel(tenantId: string, uid: string): Promise<StoredBooking | undefined>;
+  /** Bookings starting in [fromIso, toIso) for the tenant, soonest first. Read-only view for the Calendar screen. */
+  list(tenantId: string, fromIso: string, toIso: string): Promise<StoredBooking[]>;
   /** Remembers the calendar event written for a booking, so cancelling can delete it. */
   setEventId(tenantId: string, uid: string, eventId: string): Promise<void>;
 }
@@ -68,6 +70,10 @@ export class InMemoryBookingStore implements BookingStore {
     const b = await this.get(tenantId, uid);
     if (b) this.forTenant(tenantId).delete(b.start);
     return b;
+  }
+
+  async list(tenantId: string, fromIso: string, toIso: string): Promise<StoredBooking[]> {
+    return [...this.forTenant(tenantId).values()].filter((b) => b.start >= fromIso && b.start < toIso).sort((a, b) => a.start.localeCompare(b.start));
   }
 
   async setEventId(tenantId: string, uid: string, eventId: string): Promise<void> {
@@ -140,6 +146,14 @@ export class PgBookingStore implements BookingStore {
   async cancel(tenantId: string, uid: string): Promise<StoredBooking | undefined> {
     const { rows } = await this.sql.query<Row>(`DELETE FROM bookings WHERE tenant_id = $1 AND uid = $2 RETURNING ${COLUMNS}`, [tenantId, uid]);
     return rows[0] ? fromRow(rows[0]) : undefined;
+  }
+
+  async list(tenantId: string, fromIso: string, toIso: string): Promise<StoredBooking[]> {
+    const { rows } = await this.sql.query<Row>(
+      `SELECT ${COLUMNS} FROM bookings WHERE tenant_id = $1 AND start_at >= $2 AND start_at < $3 ORDER BY start_at`,
+      [tenantId, fromIso, toIso],
+    );
+    return rows.map(fromRow);
   }
 
   async setEventId(tenantId: string, uid: string, eventId: string): Promise<void> {

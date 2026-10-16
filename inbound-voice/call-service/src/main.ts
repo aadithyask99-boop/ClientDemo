@@ -61,6 +61,7 @@ if (process.env.MS_CLIENT_ID && process.env.MS_CLIENT_SECRET) {
 const { app } = buildServer({
   registry,
   facts,
+  bookings,
   ...(durableQueue ? { queue: durableQueue } : {}),
   // Tenants with a connected calendar check and write it; everyone else gets the built-in slots only.
   scheduler: schedulerSelector(tenants, local, bookings, calendars),
