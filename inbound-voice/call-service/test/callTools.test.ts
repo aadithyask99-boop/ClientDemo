@@ -102,3 +102,16 @@ describe("take_message and record_outcome tools", () => {
     expect(written[0]!.outcome).toBe("NO_OUTCOME");
   });
 });
+
+describe("message wording", () => {
+  it("does not repeat the caller's name when the message already starts with it", async () => {
+    const { takeMessage } = await import("../src/callTools.js");
+    const { InMemoryCallFactStore } = await import("../src/facts.js");
+    const facts = new InMemoryCallFactStore();
+    const tenant = { id: "t1" } as never;
+    await takeMessage(facts, tenant, { message: "Joseph needs a callback as soon as possible.", name: "Joseph", workflow_run_id: "1" });
+    await takeMessage(facts, tenant, { message: "Leak under the sink", name: "Alex", workflow_run_id: "2" });
+    expect((await facts.get("t1", "dograh:1"))?.message?.body).toBe("Joseph needs a callback as soon as possible.");
+    expect((await facts.get("t1", "dograh:2"))?.message?.body).toBe("Alex: Leak under the sink");
+  });
+});

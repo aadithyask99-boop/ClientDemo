@@ -22,7 +22,9 @@ export const outcomeInput = z.object({
 });
 
 export async function takeMessage(facts: CallFactStore, tenant: Tenant, input: z.infer<typeof messageInput>) {
-  const body = input.name ? `${input.name}: ${input.message}` : input.message;
+  // The agent usually starts the message with the caller's name already ("Joseph needs a callback..."): do not say it twice.
+  const named = input.name && !input.message.toLowerCase().startsWith(input.name.toLowerCase());
+  const body = named ? `${input.name}: ${input.message}` : input.message;
   if (input.workflow_run_id) {
     await facts.record(tenant.id, `dograh:${input.workflow_run_id}`, {
       message: {
