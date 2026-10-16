@@ -19,7 +19,7 @@ Needs Node 24+. See ../SPIKES.md for what was verified.
 
 Nothing here could be run on the author's PC (no Twenty server, no SDK installed), so these are **unverified** until applied in the Codespace:
 
-1. Task field names (`title`, `bodyV2.markdown`, `dueAt`, `status: "TODO"`), `createTaskTarget { taskId, targetPersonId }` (the first real run showed `personId` is not a field there), and `createPerson` with `phones { primaryPhoneNumber, primaryPhoneCountryCode, primaryPhoneCallingCode }`.
+1. Task field names (`title`, `bodyV2.markdown`, `dueAt`, `status: "TODO"`), `createTaskTarget { taskId, targetPersonId }` (VERIFIED on 2026-10-16; `personId` is not a field), and `createPerson` with `phones { primaryPhoneNumber, primaryPhoneCountryCode, primaryPhoneCallingCode }`.
 2. The phone filter `phones.primaryPhoneNumber eq <national digits>`, and the format Twenty stores: open one existing person in the workspace and compare. People typed in by hand may not match until this is checked.
 3. That `yarn twenty apply` accepts the new `followUpTaskId` TEXT field (additive, same kind of field as `recordingKey`).
 4. If `createTask` fails, the function answers 500 with the reason; the call-service logs `crm-write retry ... error=...` in `/tmp/call-service.log`. The Call itself is already saved, and a retry will not duplicate it or the task (`followUpTaskId`).
