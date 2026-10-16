@@ -82,6 +82,12 @@ describe("planFollowUp", () => {
     expect(f.body).toContain("tomorrow after 2pm");
   });
 
+  it("a callback request with a message is still a call-back, with the message in the task", () => {
+    const f = planFollowUp(tenant, { ...base, outcome: "CALLBACK_REQUESTED", callerName: "Sam", message: msg() }, THU_11)!;
+    expect(f.title).toBe("Call back Sam");
+    expect(f.body).toContain("Message: Boiler is leaking");
+  });
+
   it("a failed transfer is an urgent call-back", () => {
     const f = planFollowUp(tenant, { ...base, outcome: "TRANSFER_FAILED" }, THU_11)!;
     expect(f).toMatchObject({ kind: "callback", urgent: true });

@@ -76,7 +76,7 @@ If the caller wants to cancel, move or check an appointment they already have, c
 Only say times are limited to a certain period if check_availability actually returned nothing sooner. If the caller asks for tomorrow or another specific day, call check_availability with that day exactly and offer what it returns. Never tell the caller "only next week" without having checked the day they asked for.
 
 ## Never lose what the caller tells you
-Anything the caller says about their problem (for example dripping taps, a leak, an address, a second issue) must be stored, not just acknowledged. Put the job details in the "reason" of book_appointment. If the caller gives more details or a second issue after you have already booked, or after any tool call, call take_message with those details before saying goodbye. record_outcome is only for a call that carries no new information; never use it when the caller gave details. Only say "I've noted that" after a tool call has actually stored it.`;
+Anything the caller says about their problem (for example dripping taps, a leak, an address, a second issue) must be stored, not just acknowledged. Put the job details in the "reason" of book_appointment. If the caller gives more details or a second issue after you have already booked, or after any tool call, call take_message with those details before saying goodbye. Use record_outcome with info_given or no_outcome only when the caller gave no details worth keeping. A callback request or an opt-out always goes through record_outcome (callback_requested, opted_out), and any details they gave also go to take_message. Only say "I've noted that" after a tool call has actually stored it.`;
 
 // 1. Credential and the four tools.
 const cred = await api("POST", "/credentials/", { name: "call-service " + Date.now(), credential_type: "bearer_token", credential_data: { token: webhookToken } });
@@ -149,7 +149,7 @@ agent.data.extraction_prompt = "Decide how the call ended and report it.";
 agent.data.extraction_variables = [{ name: "outcome", type: "string", prompt: "Exactly one of: booked, message_taken, transferred, transfer_failed, info_given, callback_requested, opted_out, no_outcome. Use booked only if book_appointment returned booked true." }];
 for (const e of def.edges) {
   if (e.id === "1-4") e.data.condition = "Choose this pathway ONLY if the caller clearly says it is a wrong number, or explicitly asks you to end the call. A greeting such as 'hi', a question such as 'what is this about?', or a short or unclear reply is NOT a reason to end the call.";
-  if (e.id === "2-4") e.data.condition = "Choose this pathway ONLY after the caller has said goodbye or confirmed they need nothing else, AND you have already recorded the result by calling book_appointment, take_message or record_outcome. Never choose it just because the caller paused, said 'hi', or asked a question.";
+  if (e.id === "2-4") e.data.condition = "Choose this pathway ONLY after the caller has said goodbye or confirmed they need nothing else, AND you have already recorded the result by calling one of book_appointment, reschedule_appointment, cancel_appointment, take_message or record_outcome. Never choose it just because the caller paused, said 'hi', or asked a question.";
 }
 if (!def.nodes.some((n) => n.id === "webhook-call-service")) {
   def.nodes.push({

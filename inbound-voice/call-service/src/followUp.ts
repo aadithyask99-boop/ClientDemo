@@ -26,8 +26,8 @@ const HOUR = 3_600_000;
  * Decides what a person at the client should do after a call, from the finished record. Pure and deterministic.
  * Call it LAST, after every override (booking facts, transcript opt-out), because an opt-out must never leave a task behind.
  *  - Caller asked not to be contacted again: nothing, even if they also left a message.
+ *  - Callback requested or transfer failed: ring them back (a message they also left goes in the task body).
  *  - Message left: return the message (urgent ones are due as soon as the team is open).
- *  - Callback requested, or a transfer that failed: ring them back.
  *  - Anything else (booked, information given, cancelled, moved): nothing to do.
  */
 export function planFollowUp(tenant: Tenant, record: CallRecord, nowMs: number): FollowUp | undefined {
@@ -36,7 +36,8 @@ export function planFollowUp(tenant: Tenant, record: CallRecord, nowMs: number):
   const reach = record.message?.callbackNumber ?? record.callerNumber;
   const due = (afterMs: number) => new Date(nextOpening(tenant, nowMs + afterMs)).toISOString();
 
-  if (record.message) {
+  const note = record.message ? `Message: ${record.message.body}` : undefined;
+  if (record.message && record.outcome !== "CALLBACK_REQUESTED" && record.outcome !== "TRANSFER_FAILED") {
     const urgent = record.message.urgent;
     const booked = record.outcome === "BOOKED";
     return {
@@ -51,7 +52,7 @@ export function planFollowUp(tenant: Tenant, record: CallRecord, nowMs: number):
     return {
       kind: "callback",
       title: `Call back ${who}`,
-      body: [`The caller asked for a call back. Agreed time, in their words, is in the summary.`, `Number: ${reach}`, record.summary && `Call summary: ${record.summary}`].filter(Boolean).join("\n"),
+      body: [`The caller asked for a call back. Agreed time, in their words, is in the summary.`, note, `Number: ${reach}`, record.summary && `Call summary: ${record.summary}`].filter(Boolean).join("\n"),
       dueAt: due(HOUR),
       urgent: false,
     };
@@ -60,7 +61,7 @@ export function planFollowUp(tenant: Tenant, record: CallRecord, nowMs: number):
     return {
       kind: "callback",
       title: `URGENT: call back ${who} (transfer failed)`,
-      body: [`The caller asked for a person and nobody picked up.`, `Number: ${reach}`, record.summary && `Call summary: ${record.summary}`].filter(Boolean).join("\n"),
+      body: [`The caller asked for a person and nobody picked up.`, note, `Number: ${reach}`, record.summary && `Call summary: ${record.summary}`].filter(Boolean).join("\n"),
       dueAt: due(0),
       urgent: true,
     };
