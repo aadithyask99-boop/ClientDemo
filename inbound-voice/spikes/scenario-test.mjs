@@ -167,8 +167,10 @@ for (const sc of scenarios) {
   const nextLine = (last) =>
     once("name", sc.person ?? "My name is Jamie Fox.", last, /(your|the) (full |first )?name|who am i (speaking|talking)/i) ??
     once("num", "This number is fine.", last, /(call ?back|phone|contact) number|best number|number to reach/i) ??
-    once("pick", sc.pick ?? "The first one you offered is fine.", last, /which (of these|one|time)|what time|works best|would you prefer|available (at|times)|openings?/i) ??
-    once("yes", "Yes, please.", last, /(shall i|would you like me to|do you want me to|is that (correct|right|the one)|correct\?|confirm|go ahead)/i) ??
+    once("pick", sc.pick ?? "The first one you offered is fine.", last, { test: (t) => /which (of these|one|time)|what time|works best|would you prefer|slots? available|openings?/i.test(t) || (t.match(/\b\d{1,2}(:\d\d)?\s?(am|pm)\b/gi) ?? []).length >= 2 }) ??
+    once("yes", "Yes, please.", last, /\b(shall i|would you like me to|do you want me to|is that (correct|right|the one)|correct\?|confirm|go ahead)\b/i) ??
+    (queue.length > 1 || !/\?\s*$/.test(last) ? queue.shift() : null) ??
+    (/\?\s*$/.test(last) && (used.generic = (used.generic ?? 0) + 1) <= 2 ? "Yes, that's fine." : null) ??
     queue.shift() ??
     null;
   let line = sc.turns[0];
