@@ -11,4 +11,4 @@ node apply-overlay.mjs ./dograh
 
 Settings for the UI server: `CALL_SERVICE_URL` (e.g. `http://localhost:3100`), `CALL_SERVICE_TOKEN` (the tenant's `dograhWebhookToken`; stays on the server, the browser only calls `/api/calendar`), and at build time `NEXT_PUBLIC_TWENTY_URL` (Twenty's address as the browser sees it). The Calendar page needs the call-service endpoint `GET /api/bookings?from=&to=` (tested in `call-service/test/bookingsApi.test.ts`).
 
-Status: type-checks against Dograh `main` (2026-10-16). **Not yet built into the `dograh-ui` container or looked at in a browser.** Twenty refuses to be framed, so the CRM page uses new-tab links. Dograh's middleware only checks that a session cookie exists, which is what protects `/api/calendar`.
+Status: built into the `dograh-ui` container and checked in a browser (see HANDOVER 20c). The CRM page embeds the Twenty gateway (`twenty-gateway/`), not Twenty itself. Dograh's middleware only checks that a session cookie exists, which is what protects `/api/calendar`.
