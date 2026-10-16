@@ -50,7 +50,7 @@ export const bookInput = z.object({
   workflow_run_id: z.union([z.string(), z.number()]).transform(String).optional(),
 });
 
-function labelFor(startIso: string, timeZone: string): string {
+export function labelFor(startIso: string, timeZone: string): string {
   return new Intl.DateTimeFormat("en-GB", { timeZone, weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit", hour12: false }).format(
     new Date(startIso),
   );

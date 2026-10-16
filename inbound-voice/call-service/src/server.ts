@@ -11,7 +11,8 @@ import { availabilityInput, bookAppointment, bookInput, cancelAppointment, cance
 import { InMemoryCallFactStore, type CallFactStore } from "./facts.js";
 import { messageInput, outcomeInput, recordOutcome, takeMessage } from "./callTools.js";
 import type { BookingStore } from "./bookingStore.js";
-import { LocalScheduler } from "./localScheduler.js";
+import { staffBook, staffBookInput, staffCancel, staffMove, staffMoveInput, staffSlots, type StaffResult } from "./staffApi.js";
+import { LocalScheduler, bookingConfig } from "./localScheduler.js";
 import type { Scheduler } from "./scheduler.js";
 import type { Tenant } from "./types.js";
 
@@ -160,7 +161,33 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Jo
     const to = q.to ? new Date(q.to) : new Date(from.getTime() + 90 * 86_400_000);
     if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) return reply.code(400).send({ error: "from and to must be ISO dates" });
     const bookings = await deps.bookings.list(tenant.id, from.toISOString(), to.toISOString());
-    return reply.code(200).send({ timeZone: tenant.booking?.timeZone ?? "UTC", bookings });
+    const c = bookingConfig(tenant);
+    return reply.code(200).send({ timeZone: c.timeZone, config: { timeZone: c.timeZone, days: c.days, open: c.open, close: c.close, slotMinutes: c.slotMinutes }, bookings });
+  });
+
+  /** Staff screens: add, move and cancel a booking by hand, and see free times for a day. Same bearer token, same rules as the phone agent. */
+  const staff = (method: "GET" | "POST", path: string, run: (tenant: Tenant, req: { params: Record<string, string>; query: Record<string, string>; body: unknown }) => Promise<StaffResult>) =>
+    app.route({
+      method,
+      url: path,
+      handler: async (req, reply) => {
+        const tenant = toolTenant(req.headers.authorization);
+        if (!tenant) return reply.code(401).send({ error: "unauthorized" });
+        const result = await run(tenant, { params: req.params as Record<string, string>, query: req.query as Record<string, string>, body: parseBody(req.body) });
+        deps.log?.(`staff ${method} ${path} tenant=${tenant.id} ok=${result.ok}`);
+        return reply.code(result.ok ? 200 : result.status).send(result.body);
+      },
+    });
+  const invalid = (e: z.ZodError): StaffResult => ({ ok: false, status: 400, body: { error: "invalid input", message: e.issues.map((i) => i.message).join("; ") } });
+  staff("GET", "/api/slots", (t, r) => staffSlots(bookingDeps, t, r.query.day ?? ""));
+  staff("POST", "/api/bookings", async (t, r) => {
+    const p = staffBookInput.safeParse(r.body);
+    return p.success ? staffBook(bookingDeps, t, p.data) : invalid(p.error);
+  });
+  staff("POST", "/api/bookings/:uid/cancel", (t, r) => staffCancel(bookingDeps, t, r.params.uid ?? ""));
+  staff("POST", "/api/bookings/:uid/move", async (t, r) => {
+    const p = staffMoveInput.safeParse(r.body);
+    return p.success ? staffMove(bookingDeps, t, r.params.uid ?? "", p.data.start) : invalid(p.error);
   });
 
   app.post("/tools/availability", async (req, reply) => {

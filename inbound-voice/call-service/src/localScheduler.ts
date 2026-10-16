@@ -7,6 +7,9 @@ export class SlotUnavailableError extends Error {}
 /** No such appointment for this caller. Deliberately the same for "does not exist" and "belongs to someone else". */
 export class BookingNotFoundError extends Error {}
 
+/** Passed as the phone by the staff screens: lets them act on any upcoming booking, whoever made it. Callers on the phone can never send this. */
+export const STAFF = "staff:*";
+
 /** Offset of `tz` from UTC at the instant `utcMs`, in milliseconds. */
 function tzOffsetMs(utcMs: number, tz: string): number {
   const parts = Object.fromEntries(
@@ -154,7 +157,7 @@ export class LocalScheduler implements Scheduler {
   /** The caller's own upcoming booking, or BookingNotFoundError. Matching is on the phone number the booking was made from. */
   async ownedBooking(tenant: Tenant, uid: string, phone: string): Promise<StoredBooking> {
     const b = await this.store.get(tenant.id, uid);
-    if (!b || !phone || b.phone !== phone || Date.parse(b.start) <= this.now()) throw new BookingNotFoundError("No such appointment");
+    if (!b || (phone !== STAFF && (!phone || b.phone !== phone)) || Date.parse(b.start) <= this.now()) throw new BookingNotFoundError("No such appointment");
     return b;
   }
 
