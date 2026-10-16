@@ -217,6 +217,8 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Jo
     const record = toCallRecord(tenant, parsed.data);
     // What our own tools did on this call outranks any classifier guess: booking, then an outcome the agent stated, then a message.
     const known = await facts.get(tenant.id, record.providerCallId);
+    // "info given" and "no outcome" are weak statements: a message that was really taken outranks them (the agent often adds one after take_message).
+    const weakOutcome = known?.outcome?.code === "INFO_GIVEN" || known?.outcome?.code === "NO_OUTCOME";
     // A booking made and then cancelled on the same call is not a booking.
     const stillBooked = known?.booking && known.cancelled?.uid !== known.booking.uid;
     if (known?.rescheduled) record.summary = `${record.summary} Moved ${known.rescheduled.name}'s appointment from ${known.rescheduled.from} to ${known.rescheduled.to}.`.trim();
@@ -226,7 +228,7 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Jo
       if (!known.rescheduled) record.summary = `${record.summary} Booked ${known.booking.label} for ${known.booking.name}.`.trim();
     } else if (known?.cancelled && !known.outcome) {
       record.outcome = "INFO_GIVEN";
-    } else if (known?.outcome) {
+    } else if (known?.outcome && !(weakOutcome && known.message)) {
       record.outcome = known.outcome.code;
       if (known.outcome.note) record.summary = `${record.summary} ${known.outcome.note}`.trim();
     }
@@ -235,7 +237,7 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Jo
     if (known?.message) {
       const { name: _name, ...message } = known.message;
       record.message ??= message;
-      if (!stillBooked && !known.outcome) record.outcome = "MESSAGE_TAKEN";
+      if (!stillBooked && (!known.outcome || weakOutcome)) record.outcome = "MESSAGE_TAKEN";
     }
     deps.log?.(`dograh webhook accepted id=${record.providerCallId} tenant=${tenant.id} outcome=${record.outcome}`);
     // Dograh retries failed deliveries and may deliver twice; the queue key and Twenty's upsert on providerCallId absorb that.

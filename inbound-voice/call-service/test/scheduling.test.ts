@@ -335,6 +335,19 @@ describe("call outcome after changes", () => {
     expect(written[0]!.summary).toContain("from Tuesday 20 October at 09:00 to Tuesday 20 October at 10:00");
   });
 
+  it("a message that was taken is not turned into INFO_GIVEN by a later record_outcome info_given, but a callback request still wins", async () => {
+    const { app, queue, written } = setup();
+    await post(app, "/tools/message", { message: "Leak", name: "Alex", workflow_run_id: 31 });
+    await post(app, "/tools/outcome", { outcome: "info_given", workflow_run_id: 31 });
+    await post(app, "/webhooks/dograh", { run_id: "31", disposition: "end_call" });
+    await post(app, "/tools/message", { message: "Boiler quote", name: "Priya", workflow_run_id: 32 });
+    await post(app, "/tools/outcome", { outcome: "callback_requested", note: "tomorrow pm", workflow_run_id: 32 });
+    await post(app, "/webhooks/dograh", { run_id: "32", disposition: "end_call" });
+    await queue.idle();
+    expect(written.find((w) => w.providerCallId === "dograh:31")!.outcome).toBe("MESSAGE_TAKEN");
+    expect(written.find((w) => w.providerCallId === "dograh:32")!.outcome).toBe("CALLBACK_REQUESTED");
+  });
+
   it("the new routes reject a wrong token and bad input", async () => {
     const { app } = setup();
     const bad = await app.inject({ method: "POST", url: "/tools/cancel", headers: { "content-type": "application/json", authorization: "Bearer nope" }, payload: "{}" });

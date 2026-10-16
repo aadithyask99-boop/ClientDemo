@@ -29,6 +29,16 @@ const twenty = async (p) => (twentyKey ? (await fetch("http://localhost:2020" + 
 
 const strings = (v, out = []) => (typeof v === "string" ? out.push(v) : v && typeof v === "object" ? Object.values(v).forEach((x) => strings(x, out)) : 0, out);
 const has = (text, re) => re.test(text);
+// The text-chat message call only returns session state. The conversation itself is inside the finished run: collect every
+// assistant message found anywhere in it.
+function assistantTexts(v, out = []) {
+  if (Array.isArray(v)) v.forEach((x) => assistantTexts(x, out));
+  else if (v && typeof v === "object") {
+    if (v.role === "assistant" && typeof v.content === "string" && v.content.trim()) out.push(v.content.trim());
+    Object.values(v).forEach((x) => assistantTexts(x, out));
+  }
+  return out;
+}
 
 // Each caller gets their own fake number so scenarios cannot see each other's appointments, except where one is deliberately reused.
 const N = (n) => `+4479111234${String(n).padStart(2, "0")}`;
@@ -141,7 +151,7 @@ for (const sc of scenarios) {
   const transcript = [];
   for (const text of sc.turns) {
     const m = await api("POST", `/workflow/1/text-chat/sessions/${run}/messages`, { text });
-    transcript.push({ caller: text, agent: strings(m.j).join(" ").slice(0, 700) });
+    transcript.push({ caller: text, agent: "" });
   }
   await api("POST", `/workflow/1/text-chat/sessions/${run}/end`, {});
   await new Promise((r) => setTimeout(r, 9000));
@@ -166,7 +176,7 @@ for (const sc of scenarios) {
   failed += bad.length;
   console.log(`${bad.length ? "FAIL" : "PASS"}  ${sc.name} (run ${run}): ${checks.length - bad.length}/${checks.length}`);
   for (const c of bad) console.log(`        x ${c.label}`);
-  results.push({ scenario: sc.name, run, checks, transcript, tools: calls.map((c) => ({ name: c.function_name, args: c.arguments, result: c.result?.data })) });
+  results.push({ scenario: sc.name, run, checks, said: said.map((t) => t.slice(0, 300)), tools: calls.map((c) => ({ name: c.function_name, args: c.arguments, result: c.result?.data })) });
 }
 fs.writeFileSync("/tmp/scenario-report.json", JSON.stringify(results, null, 1));
 console.log(failed ? `\n${failed} check(s) failed. Details: /tmp/scenario-report.json` : "\nAll checks passed.");
