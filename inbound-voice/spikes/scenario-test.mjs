@@ -34,7 +34,9 @@ const has = (text, re) => re.test(text);
 function assistantTexts(v, out = []) {
   if (Array.isArray(v)) v.forEach((x) => assistantTexts(x, out));
   else if (v && typeof v === "object") {
-    if (v.role === "assistant" && typeof v.content === "string" && v.content.trim()) out.push(v.content.trim());
+    const who = String(v.role ?? v.speaker ?? v.type ?? "").toLowerCase();
+    const text = [v.content, v.text, v.message].find((x) => typeof x === "string" && x.trim());
+    if (/^(assistant|bot|agent|ai)$/.test(who) && text) out.push(text.trim());
     Object.values(v).forEach((x) => assistantTexts(x, out));
   }
   return out;
@@ -157,8 +159,9 @@ for (const sc of scenarios) {
   await new Promise((r) => setTimeout(r, 9000));
   const info = await api("GET", `/workflow/1/runs/${run}`);
   const calls = info.j?.gathered_context?.tool_results ?? [];
+  const said = [...new Set(assistantTexts(info.j))];
   const ctx = {
-    agent: transcript.map((t) => t.agent).join(" \n "),
+    agent: said.join(" \n "),
     tool: (n) => calls.find((c) => c.function_name === n),
     tools: (n) => calls.filter((c) => c.function_name === n),
   };
