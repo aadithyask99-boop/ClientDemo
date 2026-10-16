@@ -230,8 +230,11 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Jo
       record.outcome = known.outcome.code;
       if (known.outcome.note) record.summary = `${record.summary} ${known.outcome.note}`.trim();
     }
+    const callerName = known?.booking?.name ?? known?.cancelled?.name ?? known?.message?.name;
+    if (callerName) record.callerName = callerName;
     if (known?.message) {
-      record.message ??= known.message;
+      const { name: _name, ...message } = known.message;
+      record.message ??= message;
       if (!stillBooked && !known.outcome) record.outcome = "MESSAGE_TAKEN";
     }
     deps.log?.(`dograh webhook accepted id=${record.providerCallId} tenant=${tenant.id} outcome=${record.outcome}`);

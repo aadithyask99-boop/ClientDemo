@@ -1,7 +1,9 @@
 /**
  * VERIFIED on a Twenty dev server (twenty-app-dev image) in Codespaces: synced, signed calls return 200, wrong secret
  * and stale timestamps return 401, rawBody is preserved, and sending the same call twice leaves exactly one Call.
- * Not yet verified: Person linking and Message/Task creation (still TODO below), multi-workspace installs.
+ * Not yet verified: multi-workspace installs.
+ * WRITTEN WITHOUT BEING RUN (no Twenty server or SDK was available): the Person find-or-create and the follow-up Task below,
+ * including the Task, Person and TaskTarget field names and the phone filter. See "Unverified" in ../README.md.
  * The secret comes from an application variable (INGEST_SECRET). Secret variables cannot carry a default value
  * (typecheck rejects it), so a per-workspace secret must be set after install. See ../../SPIKES.md.
  *
@@ -57,9 +59,10 @@ async function ingest(record: any): Promise<Response> {
   // Idempotent on providerCallId: look up first, update if present, create otherwise.
   // UNVERIFIED: filter syntax for the generated client.
   const existing = await client.query({
-    calls: { __args: { filter: { providerCallId: { eq: record.providerCallId } }, first: 1 }, edges: { node: { id: true } } },
+    calls: { __args: { filter: { providerCallId: { eq: record.providerCallId } }, first: 1 }, edges: { node: { id: true, followUpTaskId: true } } },
   });
   const existingId = existing?.calls?.edges?.[0]?.node?.id as string | undefined;
+  const existingTaskId = existing?.calls?.edges?.[0]?.node?.followUpTaskId as string | undefined;
 
   const data = {
     providerCallId: record.providerCallId,
@@ -75,14 +78,66 @@ async function ingest(record: any): Promise<Response> {
     transcriptKey: record.transcriptRef,
   };
 
+  let callId = existingId;
   if (existingId) {
     await client.mutation({ updateCall: { __args: { id: existingId, data }, id: true } });
   } else {
-    await client.mutation({ createCall: { __args: { data }, id: true } });
+    const created = await client.mutation({ createCall: { __args: { data }, id: true } });
+    callId = created?.createCall?.id;
   }
 
-  // TODO: upsert Person by E.164 number, link the Call, and create Message or Task by outcome.
+  // Follow-up (UNVERIFIED, see the header). Errors are thrown on purpose: the Call above is already stored and the upsert is
+  // idempotent, so the call-service's retry is safe, and the failure shows up in its log instead of silently losing the task.
+  // The followUpTaskId guard makes a retry or a redelivered webhook skip a task that already exists.
+  if (record.followUp && callId && !existingTaskId) {
+    const personId = await findOrCreatePerson(client, record);
+    const taskId = await createTask(client, record.followUp, personId);
+    await client.mutation({ updateCall: { __args: { id: callId, data: { followUpTaskId: taskId } }, id: true } });
+  }
   return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { "content-type": "application/json" } });
+}
+
+/**
+ * UNVERIFIED: Twenty stores a phone as separate parts. This assumes primaryPhoneNumber holds the national digits
+ * ("7400123456"), primaryPhoneCountryCode the country ("GB") and primaryPhoneCallingCode "+44", and that people typed in by
+ * hand use the same format. Check one existing person in the workspace before relying on matching.
+ * A Person is created only when the caller gave a name on the call; otherwise the Task is created without one.
+ */
+async function findOrCreatePerson(client: any, record: any): Promise<string | undefined> {
+  const phone = record.callerPhone;
+  if (!phone?.nationalNumber) return undefined;
+  const found = await client.query({
+    people: { __args: { filter: { phones: { primaryPhoneNumber: { eq: phone.nationalNumber } } }, first: 1 }, edges: { node: { id: true } } },
+  });
+  const foundId = found?.people?.edges?.[0]?.node?.id as string | undefined;
+  if (foundId || !record.callerName) return foundId;
+  const [firstName, ...rest] = String(record.callerName).trim().split(/\s+/);
+  const created = await client.mutation({
+    createPerson: {
+      __args: {
+        data: {
+          name: { firstName, lastName: rest.join(" ") },
+          phones: { primaryPhoneNumber: phone.nationalNumber, primaryPhoneCountryCode: phone.country ?? "", primaryPhoneCallingCode: phone.callingCode },
+        },
+      },
+      id: true,
+    },
+  });
+  return created?.createPerson?.id;
+}
+
+/** UNVERIFIED field names: title, bodyV2.markdown, dueAt, status on Task; taskId/personId on TaskTarget. */
+async function createTask(client: any, followUp: any, personId: string | undefined): Promise<string> {
+  const created = await client.mutation({
+    createTask: {
+      __args: { data: { title: followUp.title, bodyV2: { markdown: followUp.body }, dueAt: followUp.dueAt, status: "TODO" } },
+      id: true,
+    },
+  });
+  const taskId = created?.createTask?.id as string | undefined;
+  if (!taskId) throw new Error("Task was not created");
+  if (personId) await client.mutation({ createTaskTarget: { __args: { data: { taskId, personId } }, id: true } });
+  return taskId;
 }
 
 export default defineLogicFunction({

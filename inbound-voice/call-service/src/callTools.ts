@@ -29,6 +29,7 @@ export async function takeMessage(facts: CallFactStore, tenant: Tenant, input: z
         body,
         ...(input.callback_number ? { callbackNumber: input.callback_number } : {}),
         urgent: input.urgent === true || input.urgent === "true",
+        ...(input.name ? { name: input.name } : {}),
       },
     });
   }

@@ -45,5 +45,7 @@ export default defineObject({
     { universalIdentifier: "00000000-0000-4000-8000-0000000000b7", name: "summary", type: FieldType.TEXT, label: "Summary", icon: "IconNotes", isNullable: true, defaultValue: null },
     { universalIdentifier: "00000000-0000-4000-8000-0000000000d1", name: "recordingKey", type: FieldType.TEXT, label: "Recording reference", icon: "IconPlayerPlay", isNullable: true, defaultValue: null },
     { universalIdentifier: "00000000-0000-4000-8000-0000000000d2", name: "transcriptKey", type: FieldType.TEXT, label: "Transcript reference", icon: "IconFileText", isNullable: true, defaultValue: null },
+    // Set once a follow-up Task exists for this call, so a redelivered webhook or a queue retry never creates a second one.
+    { universalIdentifier: "00000000-0000-4000-8000-0000000000d4", name: "followUpTaskId", type: FieldType.TEXT, label: "Follow-up task ID", icon: "IconChecklist", isNullable: true, defaultValue: null },
   ],
 });

@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { CrmWriter } from "./crm.js";
+import { planFollowUp, splitPhone } from "./followUp.js";
 import { detectOptOut } from "./signals.js";
 import type { CallRecord, Tenant } from "./types.js";
 
@@ -56,6 +57,7 @@ export class ArtifactCopyingWriter implements CrmWriter {
   constructor(
     private readonly inner: CrmWriter,
     private readonly store: ArtifactStore | null,
+    private readonly now: () => number = Date.now,
   ) {}
 
   async writeCall(tenant: Tenant, record: CallRecord): Promise<void> {
@@ -81,6 +83,12 @@ export class ArtifactCopyingWriter implements CrmWriter {
         }
       }
     }
+    // Last, after every override above: a call the transcript shows to be an opt-out must not leave a task behind.
+    const followUp = planFollowUp(tenant, out, this.now());
+    if (followUp) out.followUp = followUp;
+    if (out.message && !out.summary.includes(out.message.body)) out.summary = `${out.summary} Message: ${out.message.body}`.trim();
+    const phone = splitPhone(out.callerNumber);
+    if (phone) out.callerPhone = phone;
     await this.inner.writeCall(tenant, out);
   }
 }

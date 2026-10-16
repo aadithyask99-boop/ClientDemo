@@ -20,7 +20,7 @@ export interface CallFacts {
   rescheduled?: { from: string; to: string; name: string };
   /** An outcome the agent stated explicitly through the record_outcome tool (opt-out, callback, and so on). */
   outcome?: { code: Outcome; note?: string };
-  message?: { body: string; callbackNumber?: string; urgent: boolean };
+  message?: { body: string; callbackNumber?: string; urgent: boolean; name?: string };
 }
 
 export interface CallFactStore {

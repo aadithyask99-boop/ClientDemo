@@ -78,6 +78,21 @@ New tools (all identify the caller by the number they rang from, `caller_number`
 - The `bookings` table gains `attendee_reason`, `event_id` and indexes; `migrate` adds them to an existing database (tested).
 - 36 new tests, including 40 callers racing for one slot and a seeded random mix of book, cancel and move that checks nothing overlaps and nothing is lost. `provision-real-agent.mjs` adds the three tools and the matching prompt; it must be re-run for the live agent to get them.
 
+## Follow-up after a call (added 2026-10-16)
+
+`call-service/src/followUp.ts` decides what a person should do, from the finished call record, and runs last in the CRM writer (after the booking facts and the transcript opt-out check), so an opt-out never leaves a task behind.
+
+| Call | Task |
+|---|---|
+| Message left | "Return message from <name or number>", due 2 hours on, or now if urgent, always pushed to the next opening time |
+| Message left while booking | "Read note from <name> (appointment booked)" |
+| Callback requested | "Call back <name>", agreed time in the summary (kept as the caller's words, not parsed) |
+| Transfer failed | Urgent call back |
+| Opted out | None, even with a message |
+| Booked, information, cancelled, moved, nothing | None |
+
+Opening time uses the same hours, working days and days off as booking (tested across the clocks changing). The message text is also added to the call's summary, because the Call record had no field for it before. The Twenty side of this is unverified: see `twenty-app/README.md`.
+
 ## Not verified
 
 - Voice calls (all tests were text chat). Outcomes on voice calls rely on Dograh's classifier, which the source suggests is stored before the webhook.
