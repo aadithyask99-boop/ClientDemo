@@ -11,7 +11,9 @@ import fs from "node:fs";
 const base = process.env.DG_API;
 const callService = process.env.CALLSERVICE_URL ?? "http://localhost:3100";
 const workflowId = process.env.WORKFLOW_ID ?? "1";
-const voiceId = process.env.VOICE_ID ?? "dg_voice_299092d9e90ab2b05c47"; // Lucy - Capable Coordinator (British, female)
+// The voice is chosen on Dograh's Models page (organisation default) so there is ONE place to look. Set VOICE_ID only to force a
+// voice for this agent alone: that creates a per-agent override which then beats the Models page.
+const forcedVoice = process.env.VOICE_ID;
 const webhookToken = process.env.WEBHOOK_TOKEN;
 if (!base || !process.env.DG_EMAIL || !process.env.DG_PASSWORD || !webhookToken) throw new Error("DG_API, DG_EMAIL, DG_PASSWORD and WEBHOOK_TOKEN are required");
 
@@ -187,15 +189,14 @@ if (!def.nodes.some((n) => n.id === "webhook-call-service")) {
     },
   });
 }
-// In this Dograh version (1.49) the voice is a per-agent override; the organisation-wide user configuration ignores a changed voice.
-const cfg = {
-  ...(cur.j.workflow_configurations ?? {}),
-  call_dispositions: DISPOSITIONS,
-  model_configuration_override: { ...(cur.j.workflow_configurations?.model_configuration_override ?? {}), tts: { settings: { voice: voiceId } } },
-};
+// Without VOICE_ID any earlier per-agent voice override is removed, so the agent follows the Models page.
+const { model_configuration_override: oldOverride, ...restCfg } = cur.j.workflow_configurations ?? {};
+const { tts: _oldTts, ...otherOverrides } = oldOverride ?? {};
+const override = forcedVoice ? { ...otherOverrides, tts: { settings: { voice: forcedVoice } } } : Object.keys(otherOverrides).length ? otherOverrides : undefined;
+const cfg = { ...restCfg, call_dispositions: DISPOSITIONS, ...(override ? { model_configuration_override: override } : {}) };
 step("update agent + webhook", await api("PUT", "/workflow/" + workflowId, { workflow_definition: def, workflow_configurations: cfg }));
 step("publish", await api("POST", `/workflow/${workflowId}/publish`));
 
 const back = await api("GET", "/workflow/fetch/" + workflowId);
-console.log("voice override stored:", JSON.stringify(back.j?.workflow_configurations?.model_configuration_override));
+console.log("per-agent override now:", JSON.stringify(back.j?.workflow_configurations?.model_configuration_override ?? null));
 console.log("done. tool ids:", toolIds.length, "backup:", process.env.BACKUP ?? "./agent-backup.json");
