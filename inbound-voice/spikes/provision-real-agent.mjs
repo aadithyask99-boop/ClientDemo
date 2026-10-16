@@ -35,8 +35,9 @@ step("fetch agent", cur);
 if (cur.s >= 400) process.exit(1);
 const backupPath = process.env.BACKUP ?? "./agent-backup.json";
 if (!fs.existsSync(backupPath)) fs.writeFileSync(backupPath, JSON.stringify({ workflow_definition: cur.j.workflow_definition, workflow_configurations: cur.j.workflow_configurations }, null, 2));
-// Re-runs start from the saved original, so the prompt additions never stack.
-const baseDefinition = JSON.parse(fs.readFileSync(backupPath, "utf8")).workflow_definition;
+// The base is the LIVE definition, so changes made in Dograh's editor (for example attached knowledge base documents) survive
+// a re-run. Our prompt additions are cut off before being added again, so they never stack. The backup file is only a safety copy.
+const baseDefinition = cur.j.workflow_definition;
 
 const DISPOSITIONS = [
   { code: "booked", description: "The caller agreed to a specific appointment date and time and the agent confirmed it." },
