@@ -366,3 +366,7 @@ Note: a text-chat run proves the tools and prompt; it cannot prove voice, latenc
   3. Start the call-service from `inbound-voice/call-service` with `ARTIFACT_URL_REWRITE=...`, `DATABASE_URL=postgres://postgres:postgres@localhost:5432/callservice`, `PORT=3100`, `PROVIDER_WEBHOOK_SECRET=unused`, `TENANTS_FILE=$PWD/../spikes/.work/tenants.json`, `ARTIFACT_DIR=$PWD/../spikes/.work/artifacts`, `npx tsx src/main.ts` (setsid nohup, log to `~/call-service.log`).
   4. Twenty and the gateway stay stopped (retired).
   A single restart script for all of this is still the next job. The editor terminal also freezes under load: open a second terminal tab (+) rather than waiting.
+
+### 23d. One-command bring-back (2026-10-17)
+- The Codespace stops itself when idle (about 30 minutes), which takes the phone line down (a call "does not go through"). **`sh /workspaces/ClientDemo/inbound-voice/spikes/bring-up.sh`** now does the whole bring-back (starts Dograh with our compose files, waits for Postgres, creates the `callservice` database if missing, starts the call-service with `ARTIFACT_URL_REWRITE` and `DATABASE_URL`, checks all three). Verified on a real restart: call-service ok, Dograh API 200, UI 307.
+- **Still a person's step:** Ports tab, right-click port 8000, Port Visibility, Public. The phone line (Voiso to Cloudonix to Dograh) needs port 8000 public. A restart resets it to Private. Set it back to Private after testing. To stay up longer, raise the idle timeout in GitHub Settings, Codespaces, Default idle timeout (up to 240 minutes).
