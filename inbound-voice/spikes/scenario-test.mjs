@@ -159,7 +159,12 @@ for (const sc of scenarios) {
   await new Promise((r) => setTimeout(r, 9000));
   const info = await api("GET", `/workflow/1/runs/${run}`);
   const calls = info.j?.gathered_context?.tool_results ?? [];
-  const said = [...new Set(assistantTexts(info.j))];
+  // Found by inspection: the conversation is in logs.realtime_feedback_events[].payload.text, caller and agent mixed.
+  // The agent's lines are the ones that are not what we typed.
+  const typed = new Set(sc.turns.map((t) => t.trim()));
+  const events = info.j?.logs?.realtime_feedback_events ?? [];
+  const fromEvents = events.map((e) => e?.payload?.text).filter((t) => typeof t === "string" && t.trim() && !typed.has(t.trim()));
+  const said = [...new Set(fromEvents.length ? fromEvents : assistantTexts(info.j))];
   const ctx = {
     agent: said.join(" \n "),
     tool: (n) => calls.find((c) => c.function_name === n),
