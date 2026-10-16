@@ -14,6 +14,7 @@ const email = process.env.LOGIN_EMAIL;
 const password = process.env.LOGIN_PASSWORD;
 const frameAncestors = process.env.FRAME_ANCESTORS ?? "'self'";
 const SESSION = "twenty-session";
+const SIGNED_IN_FLAG = "isCookieAuthActiveState";
 if (!email || !password) {
   console.error("LOGIN_EMAIL and LOGIN_PASSWORD are required");
   process.exit(1);
@@ -48,11 +49,26 @@ const isHttps = (req) => (req.headers["x-forwarded-proto"] ?? "").split(",")[0] 
 function proxy(req, res) {
   const headers = { ...req.headers, host: upstream.host };
   delete headers["accept-encoding"]; // keep bodies uncompressed so nothing needs rewriting
+  // Twenty ties a session to the address it signed in at, so present its own address upstream.
+  if (headers.origin) headers.origin = upstream.origin;
+  if (headers.referer) headers.referer = upstream.origin + new URL(headers.referer).pathname;
   const out = http.request({ host: upstream.hostname, port: upstream.port, method: req.method, path: req.url, headers }, (up) => {
     const h = { ...up.headers };
     delete h["x-frame-options"];
     if (typeof h["content-security-policy"] === "string") {
       h["content-security-policy"] = h["content-security-policy"].replace(/frame-ancestors[^;]*;?/i, "").trim() + `; frame-ancestors ${frameAncestors}`;
+    }
+    if (String(h["content-type"] ?? "").includes("text/html") && up.statusCode === 200) {
+      // The session cookie is HttpOnly, so Twenty's page decides "signed in" from this local-storage flag. Set it before the app starts.
+      const chunks = [];
+      up.on("data", (c) => chunks.push(c));
+      up.on("end", () => {
+        const html = Buffer.concat(chunks).toString("utf8").replace("<head>", `<head><script>try{localStorage.setItem("${SIGNED_IN_FLAG}","true")}catch(e){}</script>`);
+        h["content-length"] = Buffer.byteLength(html);
+        res.writeHead(200, h);
+        res.end(html);
+      });
+      return;
     }
     res.writeHead(up.statusCode ?? 502, h);
     up.pipe(res);

@@ -1,36 +1,33 @@
 "use client";
 
 import { ExternalLink } from "lucide-react";
+import { useState } from "react";
 
-import { PageLayout, PageSection } from "@/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
 
-// Twenty is a separate app and does not allow being shown inside another page, so each view opens in a new tab.
-// Set NEXT_PUBLIC_TWENTY_URL at build time to its address as the browser sees it.
-const TWENTY_URL = (process.env.NEXT_PUBLIC_TWENTY_URL ?? "http://localhost:2020").replace(/\/$/, "");
+// Address of the Twenty gateway (frontend/twenty-gateway), which signs the visitor in and allows framing.
+// Set NEXT_PUBLIC_TWENTY_URL at build time. Point it at the gateway, never at Twenty directly.
+const TWENTY_URL = (process.env.NEXT_PUBLIC_TWENTY_URL ?? "http://localhost:2021").replace(/\/$/, "");
 
 const VIEWS = [
-    { label: "Calls", path: "/objects/calls", note: "Every call with its outcome and summary." },
-    { label: "Tasks", path: "/objects/tasks", note: "Follow-ups from messages and callback requests." },
-    { label: "People", path: "/objects/people", note: "Callers, matched by phone number." },
+    { label: "Calls", path: "/objects/calls" },
+    { label: "Tasks", path: "/objects/tasks" },
+    { label: "People", path: "/objects/people" },
 ];
 
 export default function CrmPage() {
-    return <PageLayout title="CRM" description="Calls, follow-up tasks and people live in the CRM.">
-        <PageSection title="Open the CRM" description="Opens in a new tab. Sign in there if asked.">
-            <ul className="divide-y">
-                {VIEWS.map((v) => (
-                    <li key={v.path} className="flex flex-wrap items-center justify-between gap-3 py-3">
-                        <div>
-                            <div className="font-medium">{v.label}</div>
-                            <div className="text-sm text-muted-foreground">{v.note}</div>
-                        </div>
-                        <Button asChild size="sm" variant="outline">
-                            <a href={`${TWENTY_URL}${v.path}`} target="_blank" rel="noreferrer"><ExternalLink className="mr-1 h-4 w-4" />Open {v.label}</a>
-                        </Button>
-                    </li>
-                ))}
-            </ul>
-        </PageSection>
-    </PageLayout>;
+    const [path, setPath] = useState(VIEWS[0].path);
+
+    return <div className="flex h-[calc(100vh-2rem)] flex-col gap-3 p-4">
+        <div className="flex flex-wrap items-center gap-2">
+            <h1 className="mr-4 text-2xl font-bold">CRM</h1>
+            {VIEWS.map((v) => (
+                <Button key={v.path} size="sm" variant={v.path === path ? "default" : "outline"} onClick={() => setPath(v.path)}>{v.label}</Button>
+            ))}
+            <Button asChild size="sm" variant="ghost" className="ml-auto">
+                <a href={`${TWENTY_URL}${path}`} target="_blank" rel="noreferrer"><ExternalLink className="mr-1 h-4 w-4" />Open in a new tab</a>
+            </Button>
+        </div>
+        <iframe key={path} title="CRM" src={`${TWENTY_URL}${path}`} className="w-full flex-1 rounded-md border" />
+    </div>;
 }
