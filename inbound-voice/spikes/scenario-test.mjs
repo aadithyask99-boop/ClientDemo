@@ -61,7 +61,7 @@ const scenarios = [
   {
     name: "book",
     caller: jamie,
-    turns: ["Hi, I'd like to book a plumber for next Tuesday morning. My name is Jamie Fox and I have dripping taps in the kitchen.", "The first time you offered is fine.", "Yes, please book it.", "No, that's everything. Goodbye."],
+    turns: ["Hi, I'd like to book a plumber for next Tuesday morning. My name is Jamie Fox and I have dripping taps in the kitchen.", "No, that's everything. Goodbye."],
     expect: [
       ["book_appointment returned booked", (r) => r.tool("book_appointment")?.result?.data?.booked === true],
       ["the job details were saved in the booking reason", (r) => /tap/i.test(r.tool("book_appointment")?.arguments?.reason ?? "")],
@@ -71,7 +71,8 @@ const scenarios = [
   {
     name: "move",
     caller: jamie,
-    turns: ["Hi, I'd like to move my appointment to next Tuesday at 10 in the morning.", "Yes, that's the one. Please move it.", "No, that's all. Goodbye."],
+    turns: ["Hi, I'd like to move my appointment to next Tuesday at 10 in the morning.", "No, that's all. Goodbye."],
+    pick: "Ten o'clock, please.",
     expect: [
       ["found the caller's own appointment", (r) => (r.tool("find_appointment")?.result?.data?.appointments ?? []).length >= 1],
       ["reschedule_appointment returned rescheduled", (r) => r.tool("reschedule_appointment")?.result?.data?.rescheduled === true],
@@ -81,6 +82,7 @@ const scenarios = [
     name: "cancel",
     caller: jamie,
     turns: ["Hi, I need to cancel my appointment, please.", "Yes, cancel it.", "No, that's all. Goodbye."],
+    person: "I am Jamie Fox.",
     expect: [
       ["cancel_appointment returned cancelled", (r) => r.tool("cancel_appointment")?.result?.data?.cancelled === true],
     ],
@@ -97,7 +99,8 @@ const scenarios = [
   {
     name: "message",
     caller: N(4),
-    turns: ["Hi, I'd like to leave a message. My toilet is leaking badly and it's urgent. My name is Alex Morgan.", "Yes, this number is fine for a call back.", "No, thanks. Goodbye."],
+    turns: ["Hi, I'd like to leave a message. My toilet is leaking badly and it's urgent. My name is Alex Morgan.", "No, thanks. Goodbye."],
+    person: "My name is Alex Morgan.",
     expect: [
       ["take_message recorded", (r) => r.tool("take_message")?.result?.data?.recorded === true],
       ["marked urgent", (r) => String(r.tool("take_message")?.arguments?.urgent) === "true"],
@@ -107,7 +110,8 @@ const scenarios = [
   {
     name: "callback",
     caller: N(5),
-    turns: ["Hi, I'd like someone to call me back tomorrow afternoon about a boiler quote. My name is Priya Shah.", "This number is fine.", "No, that's all. Goodbye."],
+    turns: ["Hi, I'd like someone to call me back tomorrow afternoon about a boiler quote. My name is Priya Shah.", "No, that's all. Goodbye."],
+    person: "My name is Priya Shah.",
     expect: [
       ["record_outcome callback_requested", (r) => r.tools("record_outcome").some((t) => t.arguments?.outcome === "callback_requested")],
       ["name saved (take_message or the note)", (r) => /priya/i.test(JSON.stringify(r.tools("take_message").concat(r.tools("record_outcome")).map((t) => t.arguments)))],
@@ -150,10 +154,31 @@ for (const sc of scenarios) {
   const s = await api("POST", "/workflow/1/text-chat/sessions", { name: "scenario " + sc.name, initial_context: { caller_number: sc.caller, called_number: "+442030972037" } });
   const run = s.j?.workflow_run_id;
   if (!run) { console.log(`FAIL  ${sc.name}: could not start a text chat (${s.s})`); failed++; continue; }
-  const transcript = [];
-  for (const text of sc.turns) {
-    const m = await api("POST", `/workflow/1/text-chat/sessions/${run}/messages`, { text });
-    transcript.push({ caller: text, agent: "" });
+  // The caller is adaptive: it answers what the agent just asked (name, a choice of times, a yes/no, a number) and otherwise
+  // moves on to the next planned line. A fixed script made the agent's perfectly sensible questions look like failures.
+  const eventsOf = async () => {
+    const i = await api("GET", `/workflow/1/runs/${run}`);
+    return (i.j?.logs?.realtime_feedback_events ?? []).map((e) => e?.payload?.text).filter((t) => typeof t === "string" && t.trim());
+  };
+  const sent = [];
+  const queue = sc.turns.slice(1);
+  const used = {};
+  const once = (key, line, last, re) => (re.test(last) && (used[key] = (used[key] ?? 0) + 1) <= 2 ? line : null);
+  const nextLine = (last) =>
+    once("name", sc.person ?? "My name is Jamie Fox.", last, /(your|the) (full |first )?name|who am i (speaking|talking)/i) ??
+    once("num", "This number is fine.", last, /(call ?back|phone|contact) number|best number|number to reach/i) ??
+    once("pick", sc.pick ?? "The first one you offered is fine.", last, /which (of these|one|time)|what time|works best|would you prefer|available (at|times)|openings?/i) ??
+    once("yes", "Yes, please.", last, /(shall i|would you like me to|do you want me to|is that (correct|right|the one)|correct\?|confirm|go ahead)/i) ??
+    queue.shift() ??
+    null;
+  let line = sc.turns[0];
+  for (let i = 0; line && i < 9; i++) {
+    sent.push(line);
+    await api("POST", `/workflow/1/text-chat/sessions/${run}/messages`, { text: line });
+    if (/goodbye/i.test(line)) break;
+    const heard = (await eventsOf()).filter((t) => !sent.includes(t.trim()));
+    line = nextLine(heard.at(-1) ?? "");
+    if (!line && !/goodbye/i.test(sent.at(-1))) line = "No, that's all, thank you. Goodbye.";
   }
   await api("POST", `/workflow/1/text-chat/sessions/${run}/end`, {});
   await new Promise((r) => setTimeout(r, 9000));
@@ -161,7 +186,7 @@ for (const sc of scenarios) {
   const calls = info.j?.gathered_context?.tool_results ?? [];
   // Found by inspection: the conversation is in logs.realtime_feedback_events[].payload.text, caller and agent mixed.
   // The agent's lines are the ones that are not what we typed.
-  const typed = new Set(sc.turns.map((t) => t.trim()));
+  const typed = new Set(sent.map((t) => t.trim()));
   const events = info.j?.logs?.realtime_feedback_events ?? [];
   const fromEvents = events.map((e) => e?.payload?.text).filter((t) => typeof t === "string" && t.trim() && !typed.has(t.trim()));
   const said = [...new Set(fromEvents.length ? fromEvents : assistantTexts(info.j))];
