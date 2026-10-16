@@ -101,11 +101,20 @@ async function ingest(record: any): Promise<Response> {
     const taskId = await createTask(client, record.followUp);
     await client.mutation({ updateCall: { __args: { id: callId, data: { followUpTaskId: taskId } }, id: true } });
     if (personId) {
-      try {
-        await client.mutation({ createTaskTarget: { __args: { data: { taskId, personId } }, id: true } });
-      } catch (err) {
-        warnings.push(`taskTarget: ${String((err as Error)?.message ?? err).slice(0, 200)}`);
+      // The first real run showed Twenty's TaskTarget has no "personId" field. The person field is probably "targetPersonId";
+      // try it first, then the old name, and report both errors if neither works.
+      const errors: string[] = [];
+      let linked = false;
+      for (const field of ["targetPersonId", "personId"]) {
+        try {
+          await client.mutation({ createTaskTarget: { __args: { data: { taskId, [field]: personId } }, id: true } });
+          linked = true;
+          break;
+        } catch (err) {
+          errors.push(`${field}: ${String((err as Error)?.message ?? err).slice(0, 120)}`);
+        }
       }
+      if (!linked) warnings.push(`taskTarget: ${errors.join(" | ")}`);
     }
   }
   return new Response(JSON.stringify({ ok: true, ...(warnings.length ? { warnings } : {}) }), { status: 200, headers: { "content-type": "application/json" } });
