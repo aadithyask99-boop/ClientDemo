@@ -59,11 +59,30 @@ The hosted model Dograh bundles follows tool instructions most of the time but n
 
 `call-service/src/signals.ts` scans only the caller's lines of the copied transcript for clear opt-out phrases ("do not contact me again", "remove my number from your list", "take me off", "unsubscribe", "opt me out"). It deliberately ignores the agent's own words and ordinary requests such as "don't call me before 9". It runs only when a transcript was copied (so it needs the artifact store configured). It is a backstop, not a classifier: phrases it does not know will be missed, and the list needs growing with real calls.
 
+## Scheduling rules, cancelling and moving (added 2026-10-16, tested, not yet tried on a call)
+
+Opening rules (tenant `booking` config): working `days`, `open`/`close`, `slotMinutes`, `minNoticeMinutes`, plus `daysOff` (dates, for holidays), `breaks` (for example lunch) and `maxAdvanceDays` (default 90). A booking blocks every slot it overlaps, so changing the slot length later cannot create overlaps. Not built: buffers between jobs, appointments of different lengths, staff-by-staff calendars.
+
+New tools (all identify the caller by the number they rang from, `caller_number`, which the telephony platform fills in, never the model):
+
+| Tool | Route | What it does |
+|---|---|---|
+| `find_appointment` | `POST /tools/find-appointment` | The caller's upcoming appointments. |
+| `cancel_appointment` | `POST /tools/cancel` | Cancels one. With several appointments it asks which instead of guessing. |
+| `reschedule_appointment` | `POST /tools/reschedule` | Reserves the new time first, then releases the old one, so a taken time leaves the original untouched. |
+
+- Only the number that made a booking can see, cancel or move it, and a wrong id looks the same as a missing one. A withheld number gets "take a message".
+- `book_appointment` now stores the job `reason` (it was dropped before) and the number it was booked from. A different number the caller gave is added to the reason.
+- With a client calendar the event id is kept; cancelling deletes the event first and keeps the booking if the delete fails; moving writes the new event first, and undoes itself if the old event cannot be removed.
+- On the call record: book then cancel on one call is not BOOKED; a cancellation is INFO_GIVEN with the cancelled time in the summary; a move is BOOKED with old and new times. There is no separate CANCELLED outcome in Twenty yet.
+- The `bookings` table gains `attendee_reason`, `event_id` and indexes; `migrate` adds them to an existing database (tested).
+- 36 new tests, including 40 callers racing for one slot and a seeded random mix of book, cancel and move that checks nothing overlaps and nothing is lost. `provision-real-agent.mjs` adds the three tools and the matching prompt; it must be re-run for the live agent to get them.
+
 ## Not verified
 
 - Voice calls (all tests were text chat). Outcomes on voice calls rely on Dograh's classifier, which the source suggests is stored before the webhook.
 - Live Google and Microsoft calendars: the clients are tested against mocked HTTP that follows the providers' published APIs, nothing more. The OAuth apps, consent flow and scopes have not been created or tried. Cal.diy was dropped (SPIKES.md).
-- Cancelling or rescheduling a booking; attendee invitations; a client with several staff calendars.
+- Attendee invitations; a client with several staff calendars; buffers and variable-length appointments. Cancel and reschedule are tested but have not been heard on a real call.
 - Postgres storage: verified. The 23 database tests (`persistence.test.ts`, `pgQueue.test.ts`) pass on PGlite and, run with `TEST_DATABASE_URL=postgres://... npm test`, on a real Postgres 16 through the `pg` driver (Codespace, three runs in a row). That covers three simultaneous bookings of one slot over separate connections (one wins), a job stored before a crash being run by the next process, an expired lock being taken over, a redelivery during a run not being lost, and two workers sharing 20 jobs with none run twice. Not covered: a Postgres outage in the middle of a run, and sustained load.
 - The real server found one bug PGlite could not: starting several processes at once collided in `CREATE TABLE IF NOT EXISTS`. Fixed by running the schema in one transaction under an advisory lock, and a test starts six migrations at once.
 - Tenants still come from a file, not the database (their Twenty API keys and secrets need encryption at rest first).

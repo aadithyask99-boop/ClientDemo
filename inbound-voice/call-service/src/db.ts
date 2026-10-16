@@ -24,6 +24,11 @@ export const SCHEMA = [
      created_at     timestamptz NOT NULL DEFAULT now(),
      PRIMARY KEY (tenant_id, start_at)
    )`,
+  // Added after the first release: what the job is, and the id of the event written to the client's calendar.
+  `ALTER TABLE bookings ADD COLUMN IF NOT EXISTS attendee_reason text`,
+  `ALTER TABLE bookings ADD COLUMN IF NOT EXISTS event_id text`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS bookings_uid ON bookings (tenant_id, uid)`,
+  `CREATE INDEX IF NOT EXISTS bookings_phone ON bookings (tenant_id, attendee_phone, start_at)`,
   `CREATE TABLE IF NOT EXISTS call_facts (
      tenant_id        text        NOT NULL,
      provider_call_id text        NOT NULL,

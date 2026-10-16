@@ -138,10 +138,11 @@ describe("CalendarScheduler", () => {
   const tenant = { id: "t1", booking: { timeZone: "Europe/London", days: [1, 2, 3, 4, 5], open: "09:00", close: "12:00", slotMinutes: 30, minNoticeMinutes: 60 }, calendar: { provider: "google", refreshToken: "x" } } as Tenant;
   const range = { start: "2026-10-20", end: "2026-10-20", timeZone: "Europe/London" }; // BST: 09:00 local is 08:00Z
 
-  function setup(opts: { busy?: Array<{ start: string; end: string }>; busyError?: Error; createError?: Error } = {}) {
+  function setup(opts: { busy?: Array<{ start: string; end: string }>; busyError?: Error; createError?: Error; deleteError?: Error } = {}) {
     const store = new InMemoryBookingStore();
     const local = new LocalScheduler(() => NOW, store);
     const created: unknown[] = [];
+    const deleted: string[] = [];
     const client: CalendarClient = {
       busy: async () => {
         if (opts.busyError) throw opts.busyError;
@@ -150,10 +151,14 @@ describe("CalendarScheduler", () => {
       createEvent: async (_t, ev) => {
         if (opts.createError) throw opts.createError;
         created.push(ev);
-        return { eventId: "ev1" };
+        return { eventId: `ev${created.length}` };
+      },
+      deleteEvent: async (_t, id) => {
+        if (opts.deleteError) throw opts.deleteError;
+        deleted.push(id);
       },
     };
-    return { store, scheduler: new CalendarScheduler(local, store, client), created, local };
+    return { store, scheduler: new CalendarScheduler(local, store, client), created, deleted, local };
   }
 
   it("removes slots that overlap busy time in the client's calendar", async () => {
@@ -217,5 +222,32 @@ describe("schedulerSelector", () => {
   });
   it("refuses to start when a tenant's calendar provider has no OAuth app, instead of silently double-booking", () => {
     expect(() => schedulerSelector([ms], local, store, { google: client })).toThrow(/no microsoft OAuth app/);
+  });
+});
+
+describe("deleting events", () => {
+  const app = { clientId: "cid", clientSecret: "sec" };
+  const tokenThen = (status: number) => (url: string) => (url.includes("oauth2") || url.includes("login.") ? json({ access_token: "at" }) : new Response(null, { status }));
+
+  it("Google: DELETE on the event, and an event that is already gone counts as deleted", async () => {
+    const r = recorder(tokenThen(204));
+    await new GoogleCalendarClient(app, r.fetchImpl).deleteEvent({ ...google, calendar: { provider: "google", refreshToken: "rt-g", calendarId: "team@acme.com" } }, "ev 1");
+    expect(r.calls[1]!.init.method).toBe("DELETE");
+    expect(r.calls[1]!.url).toBe("https://www.googleapis.com/calendar/v3/calendars/team%40acme.com/events/ev%201");
+    await new GoogleCalendarClient(app, recorder(tokenThen(410)).fetchImpl).deleteEvent(google, "gone");
+    await new GoogleCalendarClient(app, recorder(tokenThen(404)).fetchImpl).deleteEvent(google, "gone");
+  });
+
+  it("Google: any other failure is an error, so the booking is not cancelled behind the calendar's back", async () => {
+    await expect(new GoogleCalendarClient(app, recorder(tokenThen(503)).fetchImpl).deleteEvent(google, "e")).rejects.toThrow(/deletion failed: 503/);
+  });
+
+  it("Microsoft: DELETE on the event in the right calendar, 404 is fine, 403 is an error", async () => {
+    const r = recorder(tokenThen(204));
+    await new MicrosoftCalendarClient(app, r.fetchImpl).deleteEvent(ms, "AAMk1");
+    expect(r.calls[1]!.init.method).toBe("DELETE");
+    expect(r.calls[1]!.url).toBe("https://graph.microsoft.com/v1.0/me/calendar/events/AAMk1");
+    await new MicrosoftCalendarClient(app, recorder(tokenThen(404)).fetchImpl).deleteEvent(ms, "gone");
+    await expect(new MicrosoftCalendarClient(app, recorder(tokenThen(403)).fetchImpl).deleteEvent(ms, "e")).rejects.toThrow(/deletion failed: 403/);
   });
 });

@@ -7,7 +7,7 @@ import type { TenantRegistry } from "./tenants.js";
 import { OUTCOMES, type CallRecord } from "./types.js";
 import { toE164 } from "./phone.js";
 import { dograhPayload, toCallRecord } from "./dograh.js";
-import { availabilityInput, bookAppointment, bookInput, checkAvailability } from "./booking.js";
+import { availabilityInput, bookAppointment, bookInput, cancelAppointment, cancelInput, checkAvailability, findAppointments, findInput, rescheduleAppointment, rescheduleInput, type ManageResult } from "./booking.js";
 import { InMemoryCallFactStore, type CallFactStore } from "./facts.js";
 import { messageInput, outcomeInput, recordOutcome, takeMessage } from "./callTools.js";
 import { LocalScheduler } from "./localScheduler.js";
@@ -165,6 +165,21 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Jo
     return reply.code(result.ok ? 200 : result.status).send(result.body);
   });
 
+  /** find / cancel / reschedule share one shape: authenticate, validate, run, log, answer. */
+  const manage = <S extends z.ZodTypeAny>(path: string, name: string, schema: S, run: (tenant: Tenant, input: z.infer<S>) => Promise<ManageResult>) =>
+    app.post(path, async (req, reply) => {
+      const tenant = toolTenant(req.headers.authorization);
+      if (!tenant) return reply.code(401).send({ error: "unauthorized" });
+      const parsed = schema.safeParse(parseBody(req.body));
+      if (!parsed.success) return reply.code(400).send({ error: "invalid input", message: parsed.error.issues.map((i) => i.message).join("; ") });
+      const result = await run(tenant, parsed.data);
+      deps.log?.(`${name} tenant=${tenant.id} ok=${result.ok}${result.ok ? "" : ` ${String(result.body.error)}`}`);
+      return reply.code(result.ok ? 200 : result.status).send(result.body);
+    });
+  manage("/tools/find-appointment", "find", findInput, (t, i) => findAppointments(bookingDeps, t, i));
+  manage("/tools/cancel", "cancel", cancelInput, (t, i) => cancelAppointment(bookingDeps, t, i));
+  manage("/tools/reschedule", "reschedule", rescheduleInput, (t, i) => rescheduleAppointment(bookingDeps, t, i));
+
   app.post("/tools/message", async (req, reply) => {
     const tenant = toolTenant(req.headers.authorization);
     if (!tenant) return reply.code(401).send({ error: "unauthorized" });
@@ -202,16 +217,22 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Jo
     const record = toCallRecord(tenant, parsed.data);
     // What our own tools did on this call outranks any classifier guess: booking, then an outcome the agent stated, then a message.
     const known = await facts.get(tenant.id, record.providerCallId);
-    if (known?.booking) {
+    // A booking made and then cancelled on the same call is not a booking.
+    const stillBooked = known?.booking && known.cancelled?.uid !== known.booking.uid;
+    if (known?.rescheduled) record.summary = `${record.summary} Moved ${known.rescheduled.name}'s appointment from ${known.rescheduled.from} to ${known.rescheduled.to}.`.trim();
+    if (known?.cancelled) record.summary = `${record.summary} Cancelled ${known.cancelled.name}'s appointment on ${known.cancelled.label}.`.trim();
+    if (stillBooked && known?.booking) {
       record.outcome = "BOOKED";
-      record.summary = `${record.summary} Booked ${known.booking.label} for ${known.booking.name}.`.trim();
+      if (!known.rescheduled) record.summary = `${record.summary} Booked ${known.booking.label} for ${known.booking.name}.`.trim();
+    } else if (known?.cancelled && !known.outcome) {
+      record.outcome = "INFO_GIVEN";
     } else if (known?.outcome) {
       record.outcome = known.outcome.code;
       if (known.outcome.note) record.summary = `${record.summary} ${known.outcome.note}`.trim();
     }
     if (known?.message) {
       record.message ??= known.message;
-      if (!known.booking && !known.outcome) record.outcome = "MESSAGE_TAKEN";
+      if (!stillBooked && !known.outcome) record.outcome = "MESSAGE_TAKEN";
     }
     deps.log?.(`dograh webhook accepted id=${record.providerCallId} tenant=${tenant.id} outcome=${record.outcome}`);
     // Dograh retries failed deliveries and may deliver twice; the queue key and Twenty's upsert on providerCallId absorb that.

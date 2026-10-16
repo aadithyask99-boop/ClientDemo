@@ -14,6 +14,10 @@ export interface Booking {
 
 export interface CallFacts {
   booking?: Booking;
+  /** An appointment cancelled on this call. If it is the one booked on the same call, the call is not BOOKED. */
+  cancelled?: { uid: string; label: string; name: string };
+  /** An appointment moved on this call. `booking` is replaced by the new one. */
+  rescheduled?: { from: string; to: string; name: string };
   /** An outcome the agent stated explicitly through the record_outcome tool (opt-out, callback, and so on). */
   outcome?: { code: Outcome; note?: string };
   message?: { body: string; callbackNumber?: string; urgent: boolean };

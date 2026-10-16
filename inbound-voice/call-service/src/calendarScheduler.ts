@@ -1,7 +1,7 @@
 import type { BookingStore } from "./bookingStore.js";
 import type { CalendarClient } from "./calendar.js";
 import { LocalScheduler, SlotUnavailableError, addDays, bookingConfig, zonedToUtc } from "./localScheduler.js";
-import type { Scheduler, Slot } from "./scheduler.js";
+import type { BookingInfo, Scheduler, Slot } from "./scheduler.js";
 import type { Tenant } from "./types.js";
 
 /**
@@ -53,17 +53,57 @@ export class CalendarScheduler implements Scheduler {
       const description = [`Booked by the phone assistant.`, req.attendee.phoneNumber && `Phone: ${req.attendee.phoneNumber}`, req.attendee.email && `Email: ${req.attendee.email}`, req.reason && `Reason: ${req.reason}`]
         .filter(Boolean)
         .join("\n");
-      await this.calendar.createEvent(tenant, {
+      const { eventId } = await this.calendar.createEvent(tenant, {
         start: iso,
         end: new Date(start.getTime() + c.slotMinutes * 60_000).toISOString(),
         title: `Appointment: ${req.attendee.name}`,
         description,
       });
+      // Remembered so that cancelling the booking can remove the event. If it cannot be saved, remove the event again:
+      // a booking whose event can never be deleted would leave a stale entry in the client's calendar.
+      try {
+        await this.store.setEventId(tenant.id, booked.bookingUid, eventId);
+      } catch (err) {
+        await this.calendar.deleteEvent(tenant, eventId).catch(() => {});
+        throw err;
+      }
     } catch (err) {
       await this.store.release(tenant.id, iso).catch(() => {});
       throw err;
     }
     return booked;
+  }
+
+  findBookings(tenant: Tenant, phone: string): Promise<BookingInfo[]> {
+    return this.local.findBookings(tenant, phone);
+  }
+
+  /** The event is deleted from the client's calendar first; if that fails the booking stays, so the two never disagree. */
+  async cancel(tenant: Tenant, req: { uid: string; phone: string }): Promise<BookingInfo> {
+    const b = await this.local.ownedBooking(tenant, req.uid, req.phone);
+    if (b.eventId) await this.calendar.deleteEvent(tenant, b.eventId);
+    return this.local.cancel(tenant, req);
+  }
+
+  async reschedule(tenant: Tenant, req: { uid: string; phone: string; newStart: string }): Promise<{ bookingUid: string; start: string }> {
+    const old = await this.local.ownedBooking(tenant, req.uid, req.phone);
+    const start = new Date(req.newStart);
+    if (Number.isNaN(start.getTime())) throw new SlotUnavailableError("Not a valid start time");
+    const iso = start.toISOString();
+    if (iso === old.start) throw new SlotUnavailableError("The appointment is already at that time");
+    // New time first (reserved and written to their calendar); only then is the old one removed.
+    const created = await this.book(tenant, {
+      start: iso,
+      attendee: { name: old.name, timeZone: bookingConfig(tenant).timeZone, ...(old.phone ? { phoneNumber: old.phone } : {}), ...(old.email ? { email: old.email } : {}) },
+      ...(old.reason ? { reason: old.reason } : {}),
+    });
+    try {
+      await this.cancel(tenant, { uid: old.uid, phone: req.phone });
+    } catch (err) {
+      await this.cancel(tenant, { uid: created.bookingUid, phone: req.phone }).catch(() => {}); // do not leave two appointments
+      throw err;
+    }
+    return { bookingUid: created.bookingUid, start: iso };
   }
 }
 

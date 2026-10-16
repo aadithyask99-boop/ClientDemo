@@ -17,6 +17,8 @@ export interface CalendarEventInput {
 export interface CalendarClient {
   busy(tenant: Tenant, fromIso: string, toIso: string): Promise<Interval[]>;
   createEvent(tenant: Tenant, event: CalendarEventInput): Promise<{ eventId: string }>;
+  /** Deletes an event we created. An event that is already gone counts as deleted. */
+  deleteEvent(tenant: Tenant, eventId: string): Promise<void>;
 }
 
 export interface OAuthApp {
@@ -123,6 +125,16 @@ export class GoogleCalendarClient implements CalendarClient {
     if (!body.id) throw new Error("Google event creation returned no event id");
     return { eventId: body.id };
   }
+
+  async deleteEvent(tenant: Tenant, eventId: string): Promise<void> {
+    const calendarId = requireCalendar(tenant, "google").calendarId ?? "primary";
+    const res = await this.fetchImpl(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events/${encodeURIComponent(eventId)}`, {
+      method: "DELETE",
+      headers: { authorization: `Bearer ${await this.token(tenant)}` },
+      signal: AbortSignal.timeout(8_000),
+    });
+    if (!res.ok && res.status !== 404 && res.status !== 410) throw await failure("Google event deletion", res);
+  }
 }
 
 /**
@@ -207,5 +219,14 @@ export class MicrosoftCalendarClient implements CalendarClient {
     const body = (await res.json()) as { id?: string };
     if (!body.id) throw new Error("Microsoft event creation returned no event id");
     return { eventId: body.id };
+  }
+
+  async deleteEvent(tenant: Tenant, eventId: string): Promise<void> {
+    const res = await this.fetchImpl(`${this.base(tenant)}/events/${encodeURIComponent(eventId)}`, {
+      method: "DELETE",
+      headers: { authorization: `Bearer ${await this.token(tenant)}` },
+      signal: AbortSignal.timeout(8_000),
+    });
+    if (!res.ok && res.status !== 404 && res.status !== 410) throw await failure("Microsoft event deletion", res);
   }
 }

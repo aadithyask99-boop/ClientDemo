@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { CallFactStore } from "./facts.js";
-import { SlotUnavailableError, addDays, weekdayOf, DEFAULT_BOOKING } from "./localScheduler.js";
+import { BookingNotFoundError, SlotUnavailableError, addDays, weekdayOf, DEFAULT_BOOKING } from "./localScheduler.js";
+import { toE164 } from "./phone.js";
 import type { Scheduler } from "./scheduler.js";
 import type { Tenant } from "./types.js";
 
@@ -44,6 +45,8 @@ export const bookInput = z.object({
   phone: z.string().optional(),
   email: z.string().optional(),
   reason: z.string().optional(),
+  /** The number the caller is ringing from, filled in by the telephony platform (not by the model). Identifies whose appointment it is. */
+  caller_number: z.string().optional(),
   workflow_run_id: z.union([z.string(), z.number()]).transform(String).optional(),
 });
 
@@ -122,13 +125,26 @@ export type BookResult =
   | { ok: true; body: { booked: true; start: string; label: string; confirmation: string } }
   | { ok: false; status: 409 | 502; body: { booked: false; error: string; message: string } };
 
+/** The number that identifies the caller: the line they rang from, else a number they gave. Always E.164, or undefined. */
+function identity(tenant: Tenant, ...candidates: Array<string | undefined>): string | undefined {
+  for (const c of candidates) {
+    const e = c ? toE164(c, tenant.defaultRegion as never) : null;
+    if (e) return e;
+  }
+  return undefined;
+}
+
 export async function bookAppointment(deps: BookingDeps, tenant: Tenant, input: z.infer<typeof bookInput>): Promise<BookResult> {
   const tz = tenant.booking?.timeZone ?? DEFAULT_BOOKING.timeZone;
+  const phone = identity(tenant, input.caller_number, input.phone);
+  // A number the caller gave that differs from the line they rang from is kept in the notes, so staff can still ring it.
+  const given = input.phone ? identity(tenant, input.phone) : undefined;
+  const reason = [input.reason, given && given !== phone ? `Contact number: ${given}` : undefined].filter(Boolean).join(". ") || undefined;
   try {
     const { bookingUid } = await deps.scheduler(tenant).book(tenant, {
       start: input.start,
-      attendee: { name: input.name, timeZone: tz, ...(input.email ? { email: input.email } : {}), ...(input.phone ? { phoneNumber: input.phone } : {}) },
-      ...(input.reason ? { reason: input.reason } : {}),
+      attendee: { name: input.name, timeZone: tz, ...(input.email ? { email: input.email } : {}), ...(phone ? { phoneNumber: phone } : {}) },
+      ...(reason ? { reason } : {}),
     });
     const iso = new Date(input.start).toISOString();
     const label = labelFor(iso, tz);
@@ -140,5 +156,91 @@ export async function bookAppointment(deps: BookingDeps, tenant: Tenant, input: 
     }
     // Calendar service problems must not be reported to the caller as a booking.
     return { ok: false, status: 502, body: { booked: false, error: "scheduler_error", message: "The calendar could not be reached. Take a message instead." } };
+  }
+}
+
+// ---- Looking up, cancelling and moving an existing appointment ----------------------------------------------------
+
+const runId = z.union([z.string(), z.number()]).transform(String).optional();
+
+/** `caller_number` is set by the telephony platform from the call, never by the model, so a caller can only reach their own appointments. */
+export const findInput = z.object({ caller_number: z.string().optional(), workflow_run_id: runId });
+export const cancelInput = z.object({ appointment_id: z.string().optional(), caller_number: z.string().optional(), workflow_run_id: runId });
+export const rescheduleInput = z.object({ appointment_id: z.string().optional(), new_start: z.string().min(10), caller_number: z.string().optional(), workflow_run_id: runId });
+
+export type ManageResult = { ok: true; body: Record<string, unknown> } | { ok: false; status: 404 | 409 | 422 | 502; body: Record<string, unknown> };
+
+const noCaller: ManageResult = {
+  ok: false,
+  status: 422,
+  body: { error: "caller_unknown", message: "The caller's number is not available, so their appointments cannot be found safely. Take a message so the team can sort it out." },
+};
+const notFound: ManageResult = { ok: false, status: 404, body: { error: "not_found", message: "There is no upcoming appointment for this caller. Check what they said, or take a message." } };
+const down: ManageResult = { ok: false, status: 502, body: { error: "scheduler_error", message: "The calendar could not be reached, so nothing was changed. Take a message instead." } };
+
+async function listFor(deps: BookingDeps, tenant: Tenant, phone: string) {
+  const tz = tenant.booking?.timeZone ?? DEFAULT_BOOKING.timeZone;
+  return (await deps.scheduler(tenant).findBookings(tenant, phone)).map((b) => ({ appointment_id: b.uid, start: b.start, label: labelFor(b.start, tz), name: b.name, ...(b.reason ? { reason: b.reason } : {}) }));
+}
+
+export async function findAppointments(deps: BookingDeps, tenant: Tenant, input: z.infer<typeof findInput>): Promise<ManageResult> {
+  const phone = identity(tenant, input.caller_number);
+  if (!phone) return noCaller;
+  try {
+    const appointments = await listFor(deps, tenant, phone);
+    return { ok: true, body: { appointments, ...(appointments.length ? {} : { message: "This caller has no upcoming appointments." }) } };
+  } catch {
+    return down;
+  }
+}
+
+/** The appointment the caller means: the one they named, or their only one. Never guesses between several. */
+async function pick(deps: BookingDeps, tenant: Tenant, phone: string, id: string | undefined): Promise<{ id: string } | ManageResult> {
+  if (id) return { id };
+  const all = await listFor(deps, tenant, phone);
+  if (all.length === 0) return notFound;
+  if (all.length > 1) return { ok: false, status: 409, body: { error: "which_one", message: "The caller has more than one appointment. Ask which one, then use its appointment_id.", appointments: all } };
+  return { id: all[0]!.appointment_id };
+}
+
+export async function cancelAppointment(deps: BookingDeps, tenant: Tenant, input: z.infer<typeof cancelInput>): Promise<ManageResult> {
+  const phone = identity(tenant, input.caller_number);
+  if (!phone) return noCaller;
+  const tz = tenant.booking?.timeZone ?? DEFAULT_BOOKING.timeZone;
+  try {
+    const chosen = await pick(deps, tenant, phone, input.appointment_id);
+    if (!("id" in chosen)) return chosen;
+    const gone = await deps.scheduler(tenant).cancel(tenant, { uid: chosen.id, phone });
+    const label = labelFor(gone.start, tz);
+    if (input.workflow_run_id) await deps.facts.record(tenant.id, `dograh:${input.workflow_run_id}`, { cancelled: { uid: gone.uid, label, name: gone.name } });
+    return { ok: true, body: { cancelled: true, label, message: `The appointment on ${label} is cancelled.` } };
+  } catch (err) {
+    return err instanceof BookingNotFoundError ? notFound : down;
+  }
+}
+
+export async function rescheduleAppointment(deps: BookingDeps, tenant: Tenant, input: z.infer<typeof rescheduleInput>): Promise<ManageResult> {
+  const phone = identity(tenant, input.caller_number);
+  if (!phone) return noCaller;
+  const tz = tenant.booking?.timeZone ?? DEFAULT_BOOKING.timeZone;
+  try {
+    const chosen = await pick(deps, tenant, phone, input.appointment_id);
+    if (!("id" in chosen)) return chosen;
+    const before = (await listFor(deps, tenant, phone)).find((a) => a.appointment_id === chosen.id);
+    const moved = await deps.scheduler(tenant).reschedule(tenant, { uid: chosen.id, phone, newStart: input.new_start });
+    const label = labelFor(moved.start, tz);
+    if (input.workflow_run_id && before) {
+      await deps.facts.record(tenant.id, `dograh:${input.workflow_run_id}`, {
+        booking: { uid: moved.bookingUid, start: moved.start, label, name: before.name },
+        rescheduled: { from: before.label, to: label, name: before.name },
+      });
+    }
+    return { ok: true, body: { rescheduled: true, start: moved.start, label, message: `The appointment is now on ${label}.` } };
+  } catch (err) {
+    if (err instanceof BookingNotFoundError) return notFound;
+    if (err instanceof SlotUnavailableError) {
+      return { ok: false, status: 409, body: { error: "slot_unavailable", message: "That time is not available, and the original appointment is unchanged. Offer another time after checking availability." } };
+    }
+    return down;
   }
 }

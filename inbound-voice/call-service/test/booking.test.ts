@@ -112,7 +112,8 @@ describe("booking tools", () => {
   });
 
   it("does not report a booking when the scheduler itself fails", async () => {
-    const broken: Scheduler = { availableSlots: async () => [], book: async () => { throw new Error("calendar down"); } };
+    const fail = async () => { throw new Error("calendar down"); };
+    const broken: Scheduler = { availableSlots: async () => [], book: fail, findBookings: fail, cancel: fail, reschedule: fail };
     const d = { scheduler: () => broken, facts: new InMemoryCallFactStore() };
     const r = await bookAppointment(d, tenant, { start: "2026-10-20T09:00:00.000Z", name: "Sam", workflow_run_id: "9" });
     expect(r.ok).toBe(false);

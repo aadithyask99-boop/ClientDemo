@@ -50,7 +50,7 @@ const DISPOSITIONS = [
 ];
 
 const OPENING_RULES = `# HOW THIS CALL STARTS
-Whatever the caller first says ("hi", "hello", "what is this about?", a question, or nothing clear), they are NOT ending the call. If they ask what this is about, say you are Sam, the automated assistant for Acme Plumbing, and ask how you can help. Never end the call in this stage unless the caller clearly says it is a wrong number or asks you to hang up.
+Whatever the caller first says ("hi", "hello", "what is this about?", a question, or nothing clear), they are NOT ending the call. If they ask what this is about, say you are Sam from Acme Plumbing and ask how you can help. Do not call yourself automated, an AI, a bot or an automated caller unless the caller sincerely asks whether you are a real person. Say your name once at the start of the call and never repeat your introduction. Never end the call in this stage unless the caller clearly says it is a wrong number or asks you to hang up.
 
 `;
 
@@ -61,13 +61,22 @@ You are the receptionist for Acme Plumbing (Monday to Friday, 9am to 5pm, UK tim
 To book: find out what the caller needs and roughly when. Call check_availability with the day exactly as the caller said it, for example day "next tuesday" (never work out dates yourself). Say the full day and date from the slot label back to the caller before you book, for example "Tuesday 20 October at 9". Offer at most three of the returned times, using each slot's label. When the caller picks one, make sure you have their name, then call book_appointment with that slot's exact start value copied from the results. Never say an appointment is booked unless book_appointment returned booked true. If it fails or the time is gone, offer another time or take a message. If check_availability says the calendar cannot be reached, apologise and take a message instead. Keep replies short and natural, one or two sentences.
 
 ## Every call must end with a recorded result
-Before you say goodbye you MUST have called exactly one of: book_appointment, take_message or record_outcome. Never finish a call without one of them.
+Before you say goodbye you MUST have called at least one of: book_appointment, reschedule_appointment, cancel_appointment, take_message or record_outcome. Never finish a call without one of them.
 - The caller wants to leave a message: call take_message with the message, their name and a callback number if given.
 - The caller asks to be called back: agree a time or period, then in that same turn call record_outcome with outcome callback_requested and the agreed time in note.
 - The caller says anything like "remove my number", "don't contact me again" or "stop calling": in that same turn call record_outcome with outcome opted_out, then confirm briefly.
 - You only answered questions: call record_outcome with outcome info_given.
 - None of the above applies: call record_outcome with outcome no_outcome.
-Call the tool first, then speak. Do not end the call until the caller has said goodbye or has nothing more to ask.`;
+Call the tool first, then speak. Do not end the call until the caller has said goodbye or has nothing more to ask.
+
+## Cancelling or changing an appointment
+If the caller wants to cancel, move or check an appointment they already have, call find_appointment first and read the date and time back to them. Cancel only after they clearly say so, then call cancel_appointment. To move one, call check_availability for the new day, then reschedule_appointment with the exact start value of the time they pick. Never say it is cancelled or moved unless the tool said so. If a tool says the caller's number is not available, or that nothing was found, apologise and use take_message so the team can sort it out. Never read out or discuss appointments of anyone other than the caller.
+
+## Availability honesty
+Only say times are limited to a certain period if check_availability actually returned nothing sooner. If the caller asks for tomorrow or another specific day, call check_availability with that day exactly and offer what it returns. Never tell the caller "only next week" without having checked the day they asked for.
+
+## Never lose what the caller tells you
+Anything the caller says about their problem (for example dripping taps, a leak, an address, a second issue) must be stored, not just acknowledged. Put the job details in the "reason" of book_appointment. If the caller gives more details or a second issue after you have already booked, or after any tool call, call take_message with those details before saying goodbye. record_outcome is only for a call that carries no new information; never use it when the caller gave details. Only say "I've noted that" after a tool call has actually stored it.`;
 
 // 1. Credential and the four tools.
 const cred = await api("POST", "/credentials/", { name: "call-service " + Date.now(), credential_type: "bearer_token", credential_data: { token: webhookToken } });
@@ -90,6 +99,8 @@ const mkTool = async (name, description, path, parameters, preset) => {
   return r.s < 400 ? { s: r.s, j: { tool_uuid: found.tool_uuid ?? found.uuid } } : r;
 };
 const run = [{ name: "workflow_run_id", type: "number", value_template: "{{initial_context.workflow_run_id}}", required: true }];
+// The number the caller rang from comes from the telephony platform, never from the model: it decides whose appointments can be seen.
+const caller = { name: "caller_number", type: "string", value_template: "{{initial_context.caller_number}}", required: false };
 const tools = [
   await mkTool("check_availability", "Look up free appointment times. Use this as soon as the caller says when they would like to come in, before offering any time. Returns up to six slots with a label to read out and an exact start value.", "/tools/availability", [
     { name: "day", type: "string", description: "The day exactly as the caller said it, for example 'tomorrow', 'tuesday' or 'next friday'. The system works out the date, so do not calculate one yourself.", required: false },
@@ -101,7 +112,15 @@ const tools = [
     { name: "name", type: "string", description: "The caller's full name.", required: true },
     { name: "phone", type: "string", description: "The caller's phone number if they gave one.", required: false },
     { name: "reason", type: "string", description: "What the job is, if they said.", required: false },
-  ], run),
+  ], [...run, caller]),
+  await mkTool("find_appointment", "Look up the caller's upcoming appointments. Use this first when the caller wants to cancel, change or check an appointment they already have.", "/tools/find-appointment", [], [...run, caller]),
+  await mkTool("cancel_appointment", "Cancel one of the caller's appointments after they have clearly said they want it cancelled. If they have only one, appointment_id can be left out.", "/tools/cancel", [
+    { name: "appointment_id", type: "string", description: "The appointment_id from find_appointment. Leave out if the caller has only one appointment.", required: false },
+  ], [...run, caller]),
+  await mkTool("reschedule_appointment", "Move one of the caller's appointments to a new time. Call check_availability first and use the exact start value of the time the caller chose.", "/tools/reschedule", [
+    { name: "new_start", type: "string", description: "The exact start value of the new slot, copied unchanged from the check_availability result.", required: true },
+    { name: "appointment_id", type: "string", description: "The appointment_id from find_appointment. Leave out if the caller has only one appointment.", required: false },
+  ], [...run, caller]),
   await mkTool("take_message", "Record a message from the caller for the team. Use this when the caller wants to leave a message, or when you cannot help and they want someone to follow up.", "/tools/message", [
     { name: "message", type: "string", description: "What the caller wants the team to know, in their own words, briefly.", required: true },
     { name: "name", type: "string", description: "The caller's name if they gave it.", required: false },

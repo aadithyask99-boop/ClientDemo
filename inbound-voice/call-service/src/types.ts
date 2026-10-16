@@ -28,7 +28,20 @@ export interface Tenant {
   /** Bearer token this tenant's Dograh webhook node sends. Dograh does not sign webhooks, so this token is the only authentication. */
   dograhWebhookToken?: string;
   /** Working hours for the built-in scheduler (also the time zone used when talking about times). */
-  booking?: { timeZone: string; days: number[]; open: string; close: string; slotMinutes: number; minNoticeMinutes?: number };
+  booking?: {
+    timeZone: string;
+    days: number[];
+    open: string;
+    close: string;
+    slotMinutes: number;
+    minNoticeMinutes?: number;
+    /** Calendar dates (YYYY-MM-DD, in `timeZone`) with no appointments: bank holidays, holidays. */
+    daysOff?: string[];
+    /** Times of day with no appointments on every working day, for example lunch: { start: "12:00", end: "13:00" }. */
+    breaks?: Array<{ start: string; end: string }>;
+    /** How far ahead appointments can be booked. Default 90 days. */
+    maxAdvanceDays?: number;
+  };
 }
 
 /** What the voice runtime reports when a call ends. Provider-specific adapters map into this shape. */
