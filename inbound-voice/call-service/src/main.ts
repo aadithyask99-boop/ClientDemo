@@ -22,7 +22,9 @@ const registry = new InMemoryTenantRegistry(tenants);
 
 const artifactDir = process.env.ARTIFACT_DIR;
 const allowedHosts = process.env.ARTIFACT_ALLOWED_HOSTS?.split(",").map((h) => h.trim()).filter(Boolean);
-const store = artifactDir ? new LocalArtifactStore(artifactDir, allowedHosts ? { allowedHosts } : {}) : null;
+// ARTIFACT_URL_REWRITE="https://public-address=>http://localhost:8000" (comma separated pairs): fetch call files from the local address.
+const rewrite = (process.env.ARTIFACT_URL_REWRITE?.split(",") ?? []).map((p) => p.trim().split("=>") as [string, string]).filter((p) => p.length === 2 && p[0] && p[1]);
+const store = artifactDir ? new LocalArtifactStore(artifactDir, { ...(allowedHosts ? { allowedHosts } : {}), ...(rewrite.length ? { rewrite } : {}) }) : null;
 
 // With DATABASE_URL, bookings and call facts live in Postgres (restart-safe, shared by every process).
 // Without it everything is held in memory and lost on restart: fine for a demo, not for a client.

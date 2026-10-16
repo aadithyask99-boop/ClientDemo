@@ -165,4 +165,21 @@ describe("artifact copying", () => {
       await rm(dir, { recursive: true, force: true });
     }
   });
+
+  it("local store can fetch through a local address instead of the public one", async () => {
+    const dir = await mkdtemp(path.join(tmpdir(), "art-"));
+    try {
+      const seen: string[] = [];
+      const fetchImpl = (async (u: URL) => {
+        seen.push(String(u));
+        return new Response("hello");
+      }) as unknown as typeof fetch;
+      const store = new LocalArtifactStore(dir, { fetchImpl, rewrite: [["https://pub.example.com:8000", "http://localhost:8000"]] });
+      await store.save("t1", "dograh:1", "transcript", "https://pub.example.com:8000/api/v1/files/1.txt");
+      await store.save("t1", "dograh:2", "transcript", "https://other.example.com/files/2.txt");
+      expect(seen).toEqual(["http://localhost:8000/api/v1/files/1.txt", "https://other.example.com/files/2.txt"]); // only the matching start is rewritten
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
 });

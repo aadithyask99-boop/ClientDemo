@@ -22,10 +22,20 @@ export interface ArtifactStore {
 export class LocalArtifactStore implements ArtifactStore {
   constructor(
     private readonly dir: string,
-    private readonly opts: { allowedHosts?: string[]; fetchImpl?: typeof fetch } = {},
+    /**
+     * `rewrite` maps the start of a link to another address before fetching, for example the voice platform's public
+     * address to its local one: the files then come from inside the server and need no public port.
+     */
+    private readonly opts: { allowedHosts?: string[]; fetchImpl?: typeof fetch; rewrite?: Array<[string, string]> } = {},
   ) {}
 
   async save(tenantId: string, callId: string, kind: ArtifactKind, sourceUrl: string): Promise<{ ref: string; text?: string } | null> {
+    for (const [from, to] of this.opts.rewrite ?? []) {
+      if (sourceUrl.startsWith(from)) {
+        sourceUrl = to + sourceUrl.slice(from.length);
+        break;
+      }
+    }
     let url: URL;
     try {
       url = new URL(sourceUrl);
