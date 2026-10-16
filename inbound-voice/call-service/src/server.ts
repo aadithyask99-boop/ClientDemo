@@ -12,9 +12,12 @@ import { InMemoryCallFactStore, type CallFactStore } from "./facts.js";
 import { messageInput, outcomeInput, recordOutcome, takeMessage } from "./callTools.js";
 import type { BookingStore } from "./bookingStore.js";
 import { staffBook, staffBookInput, staffCancel, staffMove, staffMoveInput, staffSlots, type StaffResult } from "./staffApi.js";
+import type { CallLogStore } from "./callLog.js";
 import { LocalScheduler, bookingConfig } from "./localScheduler.js";
 import type { Scheduler } from "./scheduler.js";
 import type { Tenant } from "./types.js";
+
+const customerInput = z.object({ name: z.string().min(1).max(200), phone: z.string().max(50).optional(), email: z.string().max(200).optional() });
 
 const callEnded = z.object({
   providerCallId: z.string().min(1),
@@ -44,6 +47,8 @@ export interface ServerDeps {
   scheduler?: (tenant: Tenant) => Scheduler;
   /** Where bookings live. Enables the read-only GET /api/bookings used by the Calendar screen. */
   bookings?: BookingStore;
+  /** Calls, customers and follow-ups. Enables the /api/calls, /api/customers and /api/follow-ups routes. */
+  callLog?: CallLogStore;
 }
 
 /** The queue handler: write one finished call to the tenant's CRM. Shared by the default queue and the durable one in main.ts. */
@@ -189,6 +194,26 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Jo
     const p = staffMoveInput.safeParse(r.body);
     return p.success ? staffMove(bookingDeps, t, r.params.uid ?? "", p.data.start) : invalid(p.error);
   });
+
+  // The call log for the client's screens: calls, follow-ups (messages and callbacks) and customers.
+  const needLog = (run: (tenant: Tenant, log: CallLogStore, req: { params: Record<string, string>; query: Record<string, string>; body: unknown }) => Promise<StaffResult>) =>
+    (tenant: Tenant, req: { params: Record<string, string>; query: Record<string, string>; body: unknown }): Promise<StaffResult> =>
+      deps.callLog ? run(tenant, deps.callLog, req) : Promise.resolve({ ok: false, status: 501, body: { error: "the call log is not available" } });
+  staff("GET", "/api/calls", needLog(async (t, log) => ({ ok: true, body: { calls: await log.listCalls(t.id) } })));
+  staff("GET", "/api/follow-ups", needLog(async (t, log, r) => ({ ok: true, body: { followUps: await log.listFollowUps(t.id, r.query.include === "done") } })));
+  staff("POST", "/api/follow-ups/:id/done", needLog(async (t, log, r) => ((await log.markFollowUpDone(t.id, r.params.id ?? "")) ? { ok: true, body: { ok: true } } : { ok: false, status: 404, body: { error: "not_found" } })));
+  staff("GET", "/api/customers", needLog(async (t, log) => ({ ok: true, body: { customers: await log.listCustomers(t.id) } })));
+  staff("POST", "/api/customers", needLog(async (t, log, r) => {
+    const p = customerInput.safeParse(r.body);
+    if (!p.success) return invalid(p.error);
+    let phone: string | undefined;
+    if (p.data.phone?.trim()) {
+      phone = toE164(p.data.phone, t.defaultRegion as never) ?? undefined;
+      if (!phone) return { ok: false, status: 400, body: { error: "bad_phone", message: "That does not look like a phone number. Try 07400 123456 or +44 7400 123456." } };
+    }
+    const added = await log.addCustomer(t.id, { name: p.data.name.trim(), ...(phone ? { phone } : {}), ...(p.data.email?.trim() ? { email: p.data.email.trim() } : {}) });
+    return added.ok ? { ok: true, body: { customer: added.customer } } : { ok: false, status: 409, body: { error: "exists", message: `${added.customer.name || "A customer"} already has that number.`, customer: added.customer } };
+  }));
 
   app.post("/tools/availability", async (req, reply) => {
     const tenant = toolTenant(req.headers.authorization);

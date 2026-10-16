@@ -14,11 +14,8 @@ export interface Tenant {
   id: string;
   name: string;
   defaultRegion: string; // ISO country code, used to parse local-format numbers
-  twenty: {
-    baseUrl: string; // https://<workspace>.your-domain
-    apiKey: string; // read access (caller lookup)
-    ingestSecret: string; // HMAC secret shared with the app's ingest-call function
-  };
+  /** Legacy: the CRM this client used before calls moved into our own call log. Unused; kept so old tenant files still load. */
+  twenty?: { baseUrl: string; apiKey: string; ingestSecret: string };
   /**
    * The client's own calendar. When set, offered slots exclude what is already busy there and bookings are written to it.
    * `refreshToken` comes from the client's one-time consent (Google or Microsoft); the OAuth app itself is platform-wide.

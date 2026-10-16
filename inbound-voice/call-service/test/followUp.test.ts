@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ArtifactCopyingWriter, type ArtifactStore } from "../src/artifacts.js";
-import { TwentyIngestWriter } from "../src/crm.js";
+import { CallLogWriter, InMemoryCallLog } from "../src/callLog.js";
 import { nextOpening, planFollowUp, splitPhone } from "../src/followUp.js";
 import { InMemoryCallFactStore } from "../src/facts.js";
 import { LocalScheduler } from "../src/localScheduler.js";
@@ -162,14 +162,10 @@ describe("splitPhone", () => {
   });
 });
 
-describe("the whole path, webhook to CRM request", () => {
-  it("the name given on the call, the message and the task all reach Twenty's ingest request", async () => {
-    const sent: Array<{ url: string; body: CallRecord }> = [];
-    const fetchImpl = (async (url: string, init: RequestInit) => {
-      sent.push({ url, body: JSON.parse(String(init.body)) });
-      return new Response("{}", { status: 200 });
-    }) as unknown as typeof fetch;
-    const crm = new ArtifactCopyingWriter(new TwentyIngestWriter(fetchImpl), null, () => THU_11);
+describe("the whole path, webhook to the call log", () => {
+  it("the name given on the call, the message and the follow-up all reach the call log, and the caller becomes a customer", async () => {
+    const log = new InMemoryCallLog();
+    const crm = new ArtifactCopyingWriter(new CallLogWriter(log), null, () => THU_11);
     const scheduler = new LocalScheduler(() => THU_11);
     const { app, queue } = buildServer({ registry: new InMemoryTenantRegistry([tenant]), crm, providerSecret: "p", facts: new InMemoryCallFactStore(), scheduler: () => scheduler });
     const post = (url: string, body: unknown) => app.inject({ method: "POST", url, headers: { "content-type": "application/json", authorization: "Bearer tok" }, payload: JSON.stringify(body) });
@@ -178,29 +174,12 @@ describe("the whole path, webhook to CRM request", () => {
     await post("/webhooks/dograh", { run_id: "9", caller: "07400 123456", disposition: "end_call" });
     await queue.idle();
 
-    expect(sent).toHaveLength(1);
-    expect(sent[0]!.url).toBe("https://acme.crm.example.com/s/ingest-call");
-    expect(sent[0]!.body).toMatchObject({
-      providerCallId: "dograh:9",
-      outcome: "MESSAGE_TAKEN",
-      callerName: "Sam Rivera",
-      callerPhone: { nationalNumber: "7400123456" },
-      followUp: { kind: "message", urgent: true, title: "URGENT: Return message from Sam Rivera" },
-    });
-    expect(sent[0]!.body.message).toEqual({ body: "Sam Rivera: Leak under the sink", urgent: true }); // the name is not duplicated into the message object
-  });
-});
-
-describe("warnings from the Twenty app", () => {
-  it("a 200 reply with warnings is a success that is logged, not retried", async () => {
-    const lines: string[] = [];
-    const fetchImpl = (async () => new Response(JSON.stringify({ ok: true, warnings: ["taskTarget: Object taskTarget does not exist"] }), { status: 200 })) as unknown as typeof fetch;
-    await new TwentyIngestWriter(fetchImpl, (l) => lines.push(l)).writeCall(tenant, base);
-    expect(lines).toEqual(["crm-write warning id=dograh:1 taskTarget: Object taskTarget does not exist"]);
-  });
-  it("a plain 200 says nothing, and an empty body is fine", async () => {
-    const lines: string[] = [];
-    for (const body of ['{"ok":true}', ""]) await new TwentyIngestWriter((async () => new Response(body, { status: 200 })) as unknown as typeof fetch, (l) => lines.push(l)).writeCall(tenant, base);
-    expect(lines).toEqual([]);
+    const calls = await log.listCalls("t1");
+    expect(calls).toHaveLength(1);
+    expect(calls[0]).toMatchObject({ id: "dograh:9", outcome: "MESSAGE_TAKEN", callerNumber: "+447400123456", callerName: "Sam Rivera" });
+    const followUps = await log.listFollowUps("t1", false);
+    expect(followUps).toHaveLength(1);
+    expect(followUps[0]).toMatchObject({ kind: "message", urgent: true, status: "todo", title: "URGENT: Return message from Sam Rivera" });
+    expect((await log.listCustomers("t1")).map((c) => `${c.name} ${c.phone}`)).toEqual(["Sam Rivera +447400123456"]);
   });
 });

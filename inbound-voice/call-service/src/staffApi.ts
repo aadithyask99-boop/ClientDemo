@@ -7,7 +7,7 @@ import type { Tenant } from "./types.js";
  * What the staff screens do to bookings. They use the same schedulers and slot rules as the phone agent
  * (hours, breaks, days off, no double booking, the client's own calendar), so a booking made by hand can never clash with one made on a call.
  */
-export type StaffResult = { ok: true; body: Record<string, unknown> } | { ok: false; status: 400 | 404 | 409 | 502; body: Record<string, unknown> };
+export type StaffResult = { ok: true; body: Record<string, unknown> } | { ok: false; status: 400 | 404 | 409 | 501 | 502; body: Record<string, unknown> };
 
 const tzOf = (tenant: Tenant) => tenant.booking?.timeZone ?? DEFAULT_BOOKING.timeZone;
 

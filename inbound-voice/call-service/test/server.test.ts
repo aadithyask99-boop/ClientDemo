@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PermanentError, RetryableError, TwentyIngestWriter, type CrmWriter } from "../src/crm.js";
+import { PermanentError, RetryableError, type CrmWriter } from "../src/crm.js";
 import { RetryQueue } from "../src/queue.js";
 import { buildServer } from "../src/server.js";
 import { sign } from "../src/signing.js";
@@ -99,40 +99,5 @@ describe("POST /webhooks/call-ended", () => {
     await queue.idle();
     expect(calls).toBe(1);
     expect(queue.deadLetters).toHaveLength(1);
-  });
-});
-
-describe("TwentyIngestWriter", () => {
-  const record: CallRecord = {
-    providerCallId: "call_123",
-    tenantId: "t1",
-    direction: "INBOUND",
-    callerNumber: "+447400123456",
-    startedAt: "2026-10-15T10:00:00Z",
-    endedAt: "2026-10-15T10:02:00Z",
-    durationSeconds: 120,
-    outcome: "NO_OUTCOME",
-    summary: "",
-  };
-
-  it("signs the exact body it sends, to the workspace's ingest route", async () => {
-    let seen: { url: string; init: RequestInit } | undefined;
-    const fetchImpl = (async (url: string, init: RequestInit) => {
-      seen = { url, init };
-      return new Response("{}", { status: 200 });
-    }) as unknown as typeof fetch;
-    await new TwentyIngestWriter(fetchImpl).writeCall(tenant, record);
-    expect(seen?.url).toBe("https://acme.crm.example.com/s/ingest-call");
-    const headers = seen!.init.headers as Record<string, string>;
-    const expected = sign("ingest", headers["x-callservice-timestamp"]!, seen!.init.body as string);
-    expect(headers["x-callservice-signature"]).toBe(expected);
-  });
-
-  it("classifies 5xx and 429 as retryable, other 4xx as permanent", async () => {
-    const make = (status: number) =>
-      new TwentyIngestWriter((async () => new Response("", { status })) as unknown as typeof fetch);
-    await expect(make(503).writeCall(tenant, record)).rejects.toBeInstanceOf(RetryableError);
-    await expect(make(429).writeCall(tenant, record)).rejects.toBeInstanceOf(RetryableError);
-    await expect(make(400).writeCall(tenant, record)).rejects.toBeInstanceOf(PermanentError);
   });
 });

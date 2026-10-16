@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Server-side proxy for the staff screens (add, move, cancel a booking; free times for a day).
+// Server-side proxy for the staff screens: bookings (add, move, cancel, free times), calls, customers and follow-ups.
 // The tenant token stays on the server and only these exact call-service paths are reachable.
 // Dograh's middleware already requires a signed-in session for this path.
-const ALLOWED = [/^slots$/, /^bookings$/, /^bookings\/[A-Za-z0-9_-]+\/(cancel|move)$/];
+const ALLOWED = [/^slots$/, /^bookings$/, /^bookings\/[A-Za-z0-9_-]+\/(cancel|move)$/, /^calls$/, /^customers$/, /^follow-ups$/, /^follow-ups\/[A-Za-z0-9_-]+\/done$/];
 
 async function forward(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   const base = process.env.CALL_SERVICE_URL;

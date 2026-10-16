@@ -4,7 +4,7 @@ import { InMemoryBookingStore, PgBookingStore, type BookingStore } from "./booki
 import { fromPg, migrate } from "./db.js";
 import { InMemoryCallFactStore, PgCallFactStore, type CallFactStore } from "./facts.js";
 import { ArtifactCopyingWriter, LocalArtifactStore } from "./artifacts.js";
-import { TwentyIngestWriter } from "./crm.js";
+import { CallLogWriter, InMemoryCallLog, PgCallLog, type CallLogStore } from "./callLog.js";
 import { buildServer, makeCrmHandler } from "./server.js";
 import { PgOutboxQueue } from "./pgQueue.js";
 import { GoogleCalendarClient, MicrosoftCalendarClient, type CalendarClient } from "./calendar.js";
@@ -30,13 +30,15 @@ let bookings: BookingStore = new InMemoryBookingStore();
 let facts: CallFactStore = new InMemoryCallFactStore();
 let durableQueue: PgOutboxQueue<CallRecord> | undefined;
 const log = (line: string) => console.log(new Date().toISOString(), line);
-const crm = new ArtifactCopyingWriter(new TwentyIngestWriter(fetch, log), store);
+let callLog: CallLogStore = new InMemoryCallLog();
+const crm = new ArtifactCopyingWriter(new CallLogWriter(() => callLog), store);
 if (process.env.DATABASE_URL) {
   const sql = fromPg(new pg.Pool({ connectionString: process.env.DATABASE_URL }));
   await migrate(sql);
   bookings = new PgBookingStore(sql);
   facts = new PgCallFactStore(sql);
-  // Calls are stored before the provider is told 202, and retried for hours if Twenty is down.
+  callLog = new PgCallLog(sql);
+  // Calls are stored before the provider is told 202, and written to the call log from the queue (retried if that ever fails).
   durableQueue = new PgOutboxQueue<CallRecord>(sql, makeCrmHandler(registry, crm), {
     onEvent: (e) => log(`crm-write ${e.type} id=${e.id} attempts=${e.attempts}${e.error ? ` error=${e.error}` : ""}`),
     onError: (err) => log(`queue error: ${(err as Error).message}`),
@@ -62,6 +64,7 @@ const { app } = buildServer({
   registry,
   facts,
   bookings,
+  callLog,
   ...(durableQueue ? { queue: durableQueue } : {}),
   // Tenants with a connected calendar check and write it; everyone else gets the built-in slots only.
   scheduler: schedulerSelector(tenants, local, bookings, calendars),

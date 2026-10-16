@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 
-type Call = { id: string; startedAt: string | null; callerNumber: string | null; outcome: string | null; summary: string | null; durationSeconds: number | null };
+type Call = { id: string; startedAt: string | null; callerNumber: string | null; callerName: string; outcome: string | null; summary: string | null; durationSeconds: number | null };
 
 const OUTCOMES: Record<string, string> = {
     BOOKED: "Booked",
@@ -25,7 +25,7 @@ export default function CallsPage() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        fetch("/api/crm/calls")
+        fetch("/api/staff/calls")
             .then(async (r) => {
                 const b = await r.json();
                 if (!r.ok) throw new Error(b.error ?? `Request failed (${r.status})`);
@@ -46,7 +46,7 @@ export default function CallsPage() {
                     {calls.map((c) => (
                         <tr key={c.id} className="border-b align-top last:border-0">
                             <td className="whitespace-nowrap p-2">{when(c.startedAt)}</td>
-                            <td className="whitespace-nowrap p-2 tabular-nums">{c.callerNumber}</td>
+                            <td className="whitespace-nowrap p-2">{c.callerName ? <>{c.callerName} <span className="tabular-nums text-muted-foreground">{c.callerNumber}</span></> : <span className="tabular-nums">{c.callerNumber}</span>}</td>
                             <td className="whitespace-nowrap p-2">{OUTCOMES[c.outcome ?? ""] ?? c.outcome}</td>
                             <td className="whitespace-nowrap p-2">{length(c.durationSeconds)}</td>
                             <td className="p-2">{c.summary}</td>

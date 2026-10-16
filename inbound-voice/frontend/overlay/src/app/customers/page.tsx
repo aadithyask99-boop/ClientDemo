@@ -8,20 +8,20 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type Person = { id: string; name: string; phone: string; email: string };
+type Customer = { id: string; name: string; phone: string; email: string };
 
 export default function CustomersPage() {
-    const [people, setPeople] = useState<Person[] | null>(null);
+    const [people, setPeople] = useState<Customer[] | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [adding, setAdding] = useState(false);
     const [filter, setFilter] = useState("");
 
     const load = useCallback(() => {
-        fetch("/api/crm/people")
+        fetch("/api/staff/customers")
             .then(async (r) => {
                 const b = await r.json();
                 if (!r.ok) throw new Error(b.error ?? `Request failed (${r.status})`);
-                setPeople(b.people);
+                setPeople(b.customers);
                 setError(null);
             })
             .catch((e: Error) => setError(e.message));
@@ -63,10 +63,10 @@ function AddDialog({ onClose, onDone }: { onClose: () => void; onDone: () => voi
     const save = async () => {
         setBusy(true);
         setErr(null);
-        const r = await fetch("/api/crm/people", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name, phone, email }) });
+        const r = await fetch("/api/staff/customers", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name, phone, email }) });
         const b = await r.json().catch(() => ({}));
         if (r.ok) return onDone();
-        setErr(b.error ?? `Request failed (${r.status})`);
+        setErr(b.message ?? b.error ?? `Request failed (${r.status})`);
         setBusy(false);
     };
 

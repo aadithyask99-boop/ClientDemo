@@ -53,6 +53,49 @@ export const SCHEMA = [
      updated_at      timestamptz NOT NULL DEFAULT now()
    )`,
   `CREATE INDEX IF NOT EXISTS outbox_due ON outbox (status, next_attempt_at)`,
+  // The call log: what came out of phone calls. Customers are the people who called or were added by hand; a phone number is
+  // unique per client, so the same caller is never two customers. follow_ups has one row per call and keeps its done state.
+  `CREATE TABLE IF NOT EXISTS customers (
+     id         text        PRIMARY KEY,
+     tenant_id  text        NOT NULL,
+     name       text        NOT NULL DEFAULT '',
+     phone      text,
+     email      text,
+     created_at timestamptz NOT NULL DEFAULT now()
+   )`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS customers_phone ON customers (tenant_id, phone) WHERE phone IS NOT NULL`,
+  `CREATE TABLE IF NOT EXISTS calls (
+     tenant_id        text        NOT NULL,
+     provider_call_id text        NOT NULL,
+     customer_id      text,
+     caller_number    text        NOT NULL,
+     started_at       timestamptz NOT NULL,
+     ended_at         timestamptz NOT NULL,
+     duration_seconds integer     NOT NULL DEFAULT 0,
+     outcome          text        NOT NULL,
+     summary          text        NOT NULL DEFAULT '',
+     recording_ref    text,
+     transcript_ref   text,
+     created_at       timestamptz NOT NULL DEFAULT now(),
+     PRIMARY KEY (tenant_id, provider_call_id)
+   )`,
+  `CREATE INDEX IF NOT EXISTS calls_recent ON calls (tenant_id, started_at DESC)`,
+  `CREATE TABLE IF NOT EXISTS follow_ups (
+     id               text        PRIMARY KEY,
+     tenant_id        text        NOT NULL,
+     provider_call_id text        NOT NULL,
+     customer_id      text,
+     kind             text        NOT NULL,
+     title            text        NOT NULL,
+     body             text        NOT NULL DEFAULT '',
+     due_at           timestamptz NOT NULL,
+     urgent           boolean     NOT NULL DEFAULT false,
+     status           text        NOT NULL DEFAULT 'todo',
+     done_at          timestamptz,
+     created_at       timestamptz NOT NULL DEFAULT now(),
+     UNIQUE (tenant_id, provider_call_id)
+   )`,
+  `CREATE INDEX IF NOT EXISTS follow_ups_open ON follow_ups (tenant_id, status, created_at DESC)`,
 ];
 
 const MIGRATION_LOCK = 727301;
