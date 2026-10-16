@@ -1,6 +1,62 @@
 # Handover: AI inbound-call platform (read this first)
 
-Written 2026-10-15 at the end of a very long session, for the next Claude chat. Read this file, then `ARCHITECTURE.md`, `BOOKING.md` and `SPIKES.md` in the same folder. This file is the map; those are the detail. Nothing secret is in this file or the repo: where a secret lives it says where, never what.
+Written 2026-10-15 and extended 2026-10-16, for the next Claude chat. START WITH SECTION 0. Read this file, then `ARCHITECTURE.md`, `BOOKING.md` and `SPIKES.md` in the same folder. This file is the map; those are the detail. Nothing secret is in this file or the repo: where a secret lives it says where, never what.
+
+## 0. STATE AT A GLANCE (updated 2026-10-16 night: read this first, it overrides older sections where they conflict)
+
+Sections 1 to 12 were written on 2026-10-15; sections 13 to 19 at the end of this file were added on 2026-10-16 and are newer. Detail on each topic is in `ARCHITECTURE.md`, `BOOKING.md`, `SPIKES.md`, `twenty-app/README.md`.
+
+### What exists and works (all verified unless marked)
+- **A real phone call works end to end.** Caller -> Voiso number +44 20 3097 2037 (trial, ends about 2026-10-29, only the user's registered phone can call it) -> Cloudonix SIP -> Dograh agent "Sam" for the made-up client **Acme Plumbing** -> our call-service -> Twenty CRM.
+- **The agent can:** answer from a knowledge base (`kb/acme-plumbing-faq.txt`, uploaded to Dograh), book, find, move and cancel appointments (by the caller's own number), take messages, handle callback requests and opt-outs. Booking rules (hours, days off, breaks, no double booking, 90-day horizon) are in `call-service/src/localScheduler.ts`.
+- **Twenty receives every call** as a Call record with outcome, summary, caller number, and creates a follow-up **Task** (message, callback, failed transfer; never after an opt-out) linked to a Person (`targetPersonId`). Verified on real calls 12, 13 and 78.
+- **Tests:** 167 unit tests (`cd call-service && npx vitest run`, `npx tsc --noEmit`) and a 10-scenario self-test through Dograh text chat (`spikes/scenario-test.mjs`, about 3 minutes, details in section 18).
+- **Not verified:** the calendar link to a real Google or Microsoft calendar (code exists, mocked tests only); recordings copied to private storage; opt-out and cancel spoken on a real voice call; Postgres storage in the running call-service (it runs in memory: bookings vanish on restart); multi-workspace Twenty; production hosting.
+
+### What the stack is made of (be clear with the user about this, they were confused)
+- **Dograh** (open source voice agent platform, BSD licence, v1.49) is the engine: phone line, hear -> think -> speak, agent builder, knowledge base (Files), tools, call-ended webhook, recordings. Its screens show our work: Voice Agents -> the agent canvas (prompts, 7 tools, webhook node), Tools page, Files page, Models page. The user will sell this under their OWN name, so Dograh's name and look will be replaced later.
+- **call-service** (`call-service/`, TypeScript) is OUR glue: booking and calendar logic, message and outcome facts, follow-up planning, the signed write to Twenty. Dograh calls it (tools on `localhost:3100` inside the Codespace) and it calls Twenty. Dograh has no calendar or CRM of its own.
+- **Twenty CRM** is the CRM (self-hosted, `twentycrm/twenty-app-dev`, port 2020), with our small Twenty app (`twenty-app/`): `Call` object, `ingest-call` function (Person, Task, link).
+- **Nothing is trained.** It is prompt + tools + knowledge + settings, tested by calls. `spikes/provision-real-agent.mjs` writes the agent's prompt, tools and webhook through Dograh's API (safe to re-run; it starts from the live definition so editor changes survive).
+
+### Live configuration right now (Codespace "bookish adventure", user's GitHub account)
+- Dograh Models page (organisation default): Dograh mode, voice **Cora** (British), speed 1, language **English (UK)**, LLM tier **accurate**, temperature unset. The per-agent voice override was removed, so this page is the one place for voice.
+- Agent: workflow 1, published (v9 or later), 7 tools, knowledge base document attached to "Main Agenda and Questions", call-ended webhook to the call-service.
+- Twenty app: latest `call.object.ts` and `ingest-call.ts` applied (field `followUpTaskId`).
+- Commits: branch `inbound-voice`, last PUSHED commit `9cf81d5`. Local commits `4fbcd33` and `125d3da` (message wording, handover notes) and this edit are NOT pushed. The user approves every push individually: ask first. The repo is public: never commit secrets.
+- **Codespace needs the 125d3da code pulled and the call-service restarted** to get the message-wording fix (harmless if not).
+
+### How to bring the stack back (after the Codespace stops)
+Start it by opening the web editor `https://bookish-adventure-q7wggwjrrrpg34gr4.github.dev/`. Then in its terminal (details in section 9, plus):
+1. Dograh: `cd /workspaces/ClientDemo/inbound-voice/spikes/.work/dograh && REGISTRY=ghcr.io/dograh-hq ENABLE_TELEMETRY=false docker compose up -d`.
+2. Twenty: `docker start twenty-app-dev`, wait about 60 seconds, check `curl localhost:2020/healthz`.
+3. `git pull -q origin inbound-voice`; stop the old call-service (`pkill -f "src/main.ts"`); copy `/tmp/call-service.log` if you need it (a restart overwrites it); start the new one with the command in section 9. Keep it running between test calls (memory storage).
+4. The user sets port **8000 to Public** in the Ports tab (the harness blocks making ports public). Set it back to Private and stop the Codespace when done.
+5. To (re)apply the agent: run `provision-real-agent.mjs` inside the Codespace with the login read from `.work/dograh-login.txt` in the shell (never print it); to apply Twenty app changes copy the two files from `twenty-app/src` into `.work/app-spike/src/...` and run `yarn twenty apply` there. The working Twenty key is in `~/.twenty/config.json` (remote `local`); `.work/twenty-apikey.txt` is an expired token.
+
+### Working quirks (will save you hours)
+- **Claude in Chrome** drives the user's signed-in Chrome (Codespace editor, Dograh UI on port 3010). The Codespace editor tab **freezes** when a screenshot is taken right after a command prints: wait 10 seconds first, reload the tab (`navigate` to the editor URL) if it hangs, keep terminal output short (use `cut`, `grep`, `head`), run long things with `nohup ... > /tmp/x.out &` and read the file later.
+- Dograh run pages (`/workflow/1/run/<id>`, readable with `get_page_text`) show the transcript, per-reply "Reasoning Delay", tool calls and arguments. Text-chat runs have no delays. `/usage` lists runs. The Models page voice, language and tier can be set with the UI; a native `<select>` is set most safely with `form_input`.
+- The Files page upload fails in the browser (storage URL is `localhost:9000`): use `spikes/upload-kb.mjs` inside the Codespace, then attach the document on the agent node and publish.
+- **Do not write scripts through bash heredocs or `python -c` with backslashes**: `\b` became a backspace character twice. Use the Write tool, then run the file.
+- The harness blocks making a port public and entering passwords. The user does those. Never print secrets; one Twenty dev token was printed on screen by mistake (expired).
+- Dograh run ids restart if its database is rebuilt, so Twenty `dograh:<id>` rows can collide with old test rows.
+- The probe Call `probe:1` in Twenty cannot be deleted through the API (writability works); ignore it.
+
+### The user and how to work with them
+- Marketing agency; they will sell this as ONE integrated platform under their own name (Dograh engine + Twenty CRM + calendar). Not a developer: wants things done for them, plain explanations, honest status. Use Dograh's built-in features first; build only the glue. Typing in the chat box beats reply buttons (buttons send only their first line).
+- They asked to **see the CRM working in the front end** and later a bespoke design ("inspiration to come, a weekend job"). Do not spend effort on visual design yet.
+
+### NEXT STEPS (in this order)
+1. **Front end (user's request):** fork or wrap Dograh's Next.js front end (repo `dograh-hq/dograh`, UI in its `ui` folder; the Codespace runs it as the `dograh-ui` container on port 3010) and add two left-sidebar items under "Build": **CRM** (opens Twenty, port 2020, ideally embedded or deep-linked to Calls and Tasks) and **Calendar** (a bookings view from the call-service: needs a small read endpoint over the `bookings` table, per tenant and token protected). Keep changes in a few isolated files so Dograh updates can still be merged. Branding and design come later. Renaming the model tiers ("accurate" etc.) can only happen in our own front end: show Standard / Precise / Fast and map them to Dograh's values in one file.
+2. **Latency and voice:** accurate tier averages about 1.47 s reply delay (default about 1.18 s); retrieval turns reach 2.5 s. Options: try the "fast" tier plus the key facts also written into the agent instructions; provider keys via Dograh Providers/BYOK (user enters keys; Groq for the model, Deepgram for hearing and speaking, ElevenLabs or Cartesia for a more natural voice); Dograh also has a Realtime (speech to speech) mode (OpenAI Realtime, Gemini Live, etc. need a provider key; Claude cannot do audio). Measure from "Reasoning Delay" on call run pages after each single change. Speech and voice time are not in those numbers.
+3. **More backend testing on real voice calls:** cancel, opt-out spoken, info-only, an after-hours call, the move flow, and a name that is hard to hear (agent should spell back). Check each in Twenty. Re-run the self-test after any prompt change. Known open points: agent sometimes skips `record_outcome opted_out` (transcript safety net catches it); the call-out price answer from the knowledge base was missed once in 4.
+4. **Persistence:** give the call-service a Postgres `DATABASE_URL` so bookings and the post-call queue survive restarts; move tenants from the JSON file to the database with encrypted secrets.
+5. **Calendar:** link a real Google or Microsoft calendar. Needs the user to create a Google Cloud OAuth app (and a Microsoft Entra app); Google may take weeks to verify calendar scopes, start early. Optionally show bookings in the new Calendar sidebar view first (no OAuth needed).
+6. Later: per-client provisioning script, multi-workspace Twenty, recording consent and retention, transfer to a human, outbound campaigns, notifications, hosting (cloud VM, domain, TLS, backups), legal review (AGPL position, recording consent, whether Dograh's licence allows rebranding: believed BSD-2, not read in full).
+
+### Housekeeping debts for the user (unchanged)
+Reset the voice of agent "Tanya" on app.teamfollowup.ai to Lucy (UK); delete Dograh telephony config 2 (user's Twilio keys) and consider rotating the Twilio token and Voiso key; set Codespace port 8000 back to Private; stop the Codespace when idle; Voiso trial ends about 2026-10-29. The Dograh knowledge base sends uploaded documents to Dograh's managed processing service: fine for the made-up FAQ, a privacy point for real clients.
 
 ## 1. Who and what
 
