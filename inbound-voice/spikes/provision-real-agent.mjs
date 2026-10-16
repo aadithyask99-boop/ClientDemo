@@ -142,14 +142,8 @@ const start = def.nodes.find((n) => n.type === "startCall");
 const agent = def.nodes.find((n) => n.type === "agentNode");
 if (!start || !agent) throw new Error("unexpected agent structure: " + def.nodes.map((n) => n.type).join(","));
 // Safe on an agent that was already provisioned: our earlier additions are cut off first, so they never stack.
-start.data.prompt = OPENING_RULES + String(start.data.prompt).replace(/^# HOW THIS CALL STARTS
-[^
-]*
-
-/, "");
-agent.data.prompt = String(agent.data.prompt ?? "").split("
-
-## Booking and taking messages")[0] + AGENT_RULES;
+start.data.prompt = OPENING_RULES + String(start.data.prompt).replace(/^# HOW THIS CALL STARTS\n[^\n]*\n\n/, "");
+agent.data.prompt = String(agent.data.prompt ?? "").split("\n\n## Booking and taking messages")[0] + AGENT_RULES;
 agent.data.tool_uuids = toolIds;
 agent.data.extraction_enabled = true;
 agent.data.extraction_prompt = "Decide how the call ended and report it.";
