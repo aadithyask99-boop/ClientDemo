@@ -1,5 +1,5 @@
 // Runs the receptionist through a set of scripted caller scenarios using Dograh's text chat, then checks what the tools did and,
-// when run inside the Codespace, what arrived in Twenty. Text chat tests the instructions, tools, booking rules, call-service and
+// when run inside the Codespace, what arrived in the call log. Text chat tests the instructions, tools, booking rules, call-service and
 // CRM end to end. It does NOT test voice, speed or phone lines.
 //
 //   DG_API=http://localhost:8000/api/v1 DG_EMAIL=... DG_PASSWORD=... node scenario-test.mjs [only-scenario-name ...]
@@ -22,10 +22,10 @@ async function api(method, p, body) {
 }
 tok = (await api("POST", "/auth/login", { email: process.env.DG_EMAIL, password: process.env.DG_PASSWORD })).j.token;
 
-// Twenty is only reachable from inside the Codespace; the CLI keeps a working key in ~/.twenty/config.json.
-let twentyKey;
-try { twentyKey = JSON.parse(fs.readFileSync(os.homedir() + "/.twenty/config.json", "utf8")).remotes.local.apiKey; } catch {}
-const twenty = async (p) => (twentyKey ? (await fetch("http://localhost:2020" + p, { headers: { authorization: "Bearer " + twentyKey } })).json() : null);
+// The call log lives in the call-service. Set CALL_SERVICE_TOKEN (the client's token) to check what arrived there.
+const logBase = process.env.CALL_SERVICE_URL ?? "http://localhost:3100";
+const logToken = process.env.CALL_SERVICE_TOKEN;
+const logGet = async (p) => (await fetch(logBase + p, { headers: { authorization: "Bearer " + logToken } })).json();
 
 const strings = (v, out = []) => (typeof v === "string" ? out.push(v) : v && typeof v === "object" ? Object.values(v).forEach((x) => strings(x, out)) : 0, out);
 const has = (text, re) => re.test(text);
@@ -105,7 +105,7 @@ const scenarios = [
       ["take_message recorded", (r) => r.tool("take_message")?.result?.data?.recorded === true],
       ["marked urgent", (r) => String(r.tool("take_message")?.arguments?.urgent) === "true"],
     ],
-    twenty: { outcome: "MESSAGE_TAKEN", task: true },
+    log: { outcome: "MESSAGE_TAKEN", task: true },
   },
   {
     name: "callback",
@@ -117,14 +117,14 @@ const scenarios = [
       ["name saved (take_message or the note)", (r) => /priya/i.test(JSON.stringify(r.tools("take_message").concat(r.tools("record_outcome")).map((t) => t.arguments)))],
       ["did not ask for a phone number the line already gives", (r) => !has(r.agent, /what('s| is) (your|the) (callback |phone |contact )?number|best number/i)],
     ],
-    twenty: { outcome: "CALLBACK_REQUESTED", task: true },
+    log: { outcome: "CALLBACK_REQUESTED", task: true },
   },
   {
     name: "opt-out",
     caller: N(6),
     turns: ["Hi. Please don't contact me again and take me off your list.", "Thanks. Goodbye."],
     expect: [["record_outcome opted_out", (r) => r.tools("record_outcome").some((t) => t.arguments?.outcome === "opted_out")]],
-    twenty: { outcome: "OPTED_OUT", task: false },
+    log: { outcome: "OPTED_OUT", task: false },
   },
   {
     name: "info",
@@ -134,7 +134,7 @@ const scenarios = [
       ["said Monday to Friday 9 to 5", (r) => has(r.agent, /monday/i) && has(r.agent, /9/) && has(r.agent, /5|17/)],
       ["booked nothing", (r) => !r.tool("book_appointment")],
     ],
-    twenty: { task: false },
+    log: { task: false },
   },
   {
     name: "closed-day",
@@ -199,12 +199,18 @@ for (const sc of scenarios) {
   };
   const checks = sc.expect.map(([label, fn]) => { let ok = false; try { ok = !!fn(ctx); } catch {} return { label, ok }; });
 
-  // Twenty (Codespace only): did the call arrive with the right outcome, and a follow-up task only when one is due?
-  if (sc.twenty && twentyKey) {
-    const rows = Object.values((await twenty("/rest/calls?limit=200"))?.data ?? {})[0] ?? [];
-    const row = rows.find((c) => c.providerCallId === `dograh:${run}`);
-    if (sc.twenty.outcome) checks.push({ label: `Twenty has the call as ${sc.twenty.outcome}`, ok: row?.outcome === sc.twenty.outcome });
-    if (sc.twenty.task !== undefined) checks.push({ label: sc.twenty.task ? "Twenty has a follow-up task" : "Twenty has NO follow-up task", ok: !!row?.followUpTaskId === sc.twenty.task });
+  // Call log: did the call arrive with the right outcome, and a follow-up only when one is due? The queue writes it a moment after the call ends.
+  if (sc.log && logToken) {
+    let row;
+    for (let i = 0; i < 12 && !row; i++) {
+      row = ((await logGet("/api/calls")).calls ?? []).find((c) => c.id === `dograh:${run}`);
+      if (!row) await new Promise((r) => setTimeout(r, 1500));
+    }
+    if (sc.log.outcome) checks.push({ label: `The call log has the call as ${sc.log.outcome}`, ok: row?.outcome === sc.log.outcome });
+    if (sc.log.task !== undefined) {
+      const has = ((await logGet("/api/follow-ups?include=done")).followUps ?? []).some((f) => f.callId === `dograh:${run}`);
+      checks.push({ label: sc.log.task ? "The call log has a follow-up" : "The call log has NO follow-up", ok: has === sc.log.task });
+    }
   }
 
   const bad = checks.filter((c) => !c.ok);

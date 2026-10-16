@@ -20,6 +20,8 @@ export interface CallRow {
 
 export interface FollowUpRow {
   id: string;
+  /** The call this came from. */
+  callId: string;
   kind: string;
   title: string;
   body: string;
@@ -104,7 +106,7 @@ export class InMemoryCallLog implements CallLogStore {
     return [...this.followUps.values()]
       .filter((f) => f.tenantId === tenantId && (includeDone || f.status === "todo"))
       .sort((a, b) => Number(a.status === "done") - Number(b.status === "done") || b.createdAt.localeCompare(a.createdAt))
-      .map(({ tenantId: _t, callId: _c, ...f }) => f);
+      .map(({ tenantId: _t, ...f }) => f);
   }
 
   async markFollowUpDone(tenantId: string, fid: string): Promise<boolean> {
@@ -144,6 +146,7 @@ interface CallDbRow {
 }
 interface FollowUpDbRow {
   id: string;
+  provider_call_id: string;
   kind: string;
   title: string;
   body: string;
@@ -207,12 +210,12 @@ export class PgCallLog implements CallLogStore {
 
   async listFollowUps(tenantId: string, includeDone: boolean): Promise<FollowUpRow[]> {
     const { rows } = await this.sql.query<FollowUpDbRow>(
-      `SELECT id, kind, title, body, due_at, urgent, status, created_at FROM follow_ups
+      `SELECT id, provider_call_id, kind, title, body, due_at, urgent, status, created_at FROM follow_ups
        WHERE tenant_id = $1 AND ($2 OR status = 'todo')
        ORDER BY (status = 'done'), created_at DESC LIMIT 500`,
       [tenantId, includeDone],
     );
-    return rows.map((r) => ({ id: r.id, kind: r.kind, title: r.title, body: r.body, dueAt: iso(r.due_at), urgent: r.urgent, status: r.status, createdAt: iso(r.created_at) }));
+    return rows.map((r) => ({ id: r.id, callId: r.provider_call_id, kind: r.kind, title: r.title, body: r.body, dueAt: iso(r.due_at), urgent: r.urgent, status: r.status, createdAt: iso(r.created_at) }));
   }
 
   async markFollowUpDone(tenantId: string, fid: string): Promise<boolean> {
