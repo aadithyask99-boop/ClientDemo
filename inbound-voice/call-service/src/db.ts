@@ -79,6 +79,9 @@ export const SCHEMA = [
      created_at       timestamptz NOT NULL DEFAULT now(),
      PRIMARY KEY (tenant_id, provider_call_id)
    )`,
+  // The name this caller gave on this call. The customer row keeps the first name heard for a number, so a shared line (a family,
+  // an office) would otherwise show that first name on every call.
+  `ALTER TABLE calls ADD COLUMN IF NOT EXISTS caller_name text`,
   `CREATE INDEX IF NOT EXISTS calls_recent ON calls (tenant_id, started_at DESC)`,
   `CREATE TABLE IF NOT EXISTS follow_ups (
      id               text        PRIMARY KEY,

@@ -77,9 +77,12 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Jo
     const token = typeof header === "string" && header.startsWith("Bearer ") ? header.slice(7).trim() : "";
     return token ? deps.registry.byDograhToken(token) : undefined;
   };
+  /** Language models often fill optional tool fields with "" or null instead of leaving them out; treat those as absent. */
+  const dropBlank = (v: unknown): unknown =>
+    v && typeof v === "object" && !Array.isArray(v) ? Object.fromEntries(Object.entries(v).filter(([, x]) => x !== "" && x !== null)) : v;
   const parseBody = (raw: unknown): unknown => {
     try {
-      return JSON.parse(typeof raw === "string" && raw !== "" ? raw : "{}");
+      return dropBlank(JSON.parse(typeof raw === "string" && raw !== "" ? raw : "{}"));
     } catch {
       return undefined;
     }

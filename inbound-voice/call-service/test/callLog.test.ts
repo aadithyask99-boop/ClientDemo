@@ -69,6 +69,16 @@ describe.each(stores)("call log (%s)", (_name, make) => {
     expect(await log.listCalls("a")).toHaveLength(3);
   });
 
+  it("on a shared number each call shows the name given on that call, while the customer keeps the first name", async () => {
+    const log = await make();
+    await log.recordCall(a, call({ providerCallId: "s1", startedAt: "2030-01-07T09:00:00.000Z", callerName: "Nim", followUp: undefined }));
+    await log.recordCall(a, call({ providerCallId: "s2", startedAt: "2030-01-07T10:00:00.000Z", callerName: "Graham", followUp: undefined }));
+    await log.recordCall(a, call({ providerCallId: "s3", startedAt: "2030-01-07T11:00:00.000Z", callerName: undefined, followUp: undefined }));
+    const byId = Object.fromEntries((await log.listCalls("a")).map((c) => [c.id, c.callerName]));
+    expect(byId).toEqual({ s1: "Nim", s2: "Graham", s3: "Nim" });
+    expect((await log.listCustomers("a")).map((c) => c.name)).toEqual(["Nim"]);
+  });
+
   it("lists newest calls first, and open follow-ups before finished ones", async () => {
     const log = await make();
     await log.recordCall(a, call({ providerCallId: "old", startedAt: "2030-01-07T09:00:00.000Z", callerNumber: "+447400000001" }));

@@ -94,6 +94,17 @@ describe("take_message and record_outcome tools", () => {
     expect(byClassifier.outcome).toBe("OPTED_OUT");
   });
 
+  it("tool calls with blank or null optional fields are treated as if the fields were left out", async () => {
+    const { post } = setup();
+    // This is exactly what gpt-4.1-mini sent: an empty date next to a day in words.
+    const blank = await post("/tools/availability", { day: "next tuesday", date: "", part_of_day: "morning" });
+    expect(blank.statusCode).toBe(200);
+    const nulls = await post("/tools/availability", { day: "tomorrow", date: null, part_of_day: null });
+    expect(nulls.statusCode).toBe(200);
+    // A blank day with no date is still an error: there is nothing to look up.
+    expect((await post("/tools/availability", { day: "", date: "" })).statusCode).toBe(400);
+  });
+
   it("calls with no tool activity keep the classifier or hint outcome", async () => {
     const { finish } = setup();
     expect((await finish("20", { outcome_hint: "callback_requested" })).outcome).toBe("CALLBACK_REQUESTED");

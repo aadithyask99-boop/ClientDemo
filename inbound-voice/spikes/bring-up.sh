@@ -13,6 +13,20 @@ until docker exec dograh-postgres-1 pg_isready -U postgres >/dev/null 2>&1; do s
 docker exec dograh-postgres-1 psql -U postgres -tc "SELECT 1 FROM pg_database WHERE datname='callservice'" | grep -q 1 \
   || docker exec dograh-postgres-1 psql -U postgres -c "CREATE DATABASE callservice" >/dev/null
 
+echo "2b/4 re-applying our patches to the Dograh API container (they are lost if the container was recreated)"
+until docker exec dograh-api-1 true >/dev/null 2>&1; do sleep 2; done
+dograh_sums() { docker exec dograh-api-1 sh -c 'cd /app/api; cat services/pipecat/service_factory.py services/configuration/registry.py services/configuration/voice_catalog_adapters.py schemas/tool.py services/workflow/tool_execution.py 2>/dev/null | md5sum'; }
+before=$(dograh_sums)
+for p in dograh-openrouter-max-tokens dograh-flux-tts dograh-flux-ui; do
+  docker exec -u root -i dograh-api-1 python - < "spikes/patches/$p.py" 2>&1 | sed "s/^/   $p: /"
+done
+bash spikes/patches/dograh-tool-messages.sh 2>&1 | tail -2 | sed 's/^/   tool-messages: /'
+if [ "$before" != "$(dograh_sums)" ]; then
+  echo "   patches changed files, restarting the API to load them"
+  docker restart dograh-api-1 >/dev/null
+  until curl -s -m 3 -o /dev/null localhost:8000/api/v1/health; do sleep 3; done
+fi
+
 echo "3/4 starting the call-service"
 pkill -f "src/main.ts" 2>/dev/null
 PUBLIC="https://${CODESPACE_NAME:-bookish-adventure-q7wggwjrrrpg34gr4}-8000.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN:-app.github.dev}"

@@ -64,6 +64,20 @@ export class CallLogWriter implements CrmWriter {
 
 const id = (prefix: string) => `${prefix}_${randomBytes(6).toString("hex")}`;
 
+/**
+ * Which name a call shows. The customer row keeps the first name heard for a number, but a number can be shared (a family, an
+ * office). If the caller gave the same first name as the stored customer ("Dee" for "Dee Walker") it is the same person and the
+ * fuller stored name wins; a different first name is a different person, so the name spoken on the call is shown. The same rule
+ * is written in SQL in PgCallLog.listCalls.
+ */
+export function displayName(spoken: string | undefined, stored: string): string {
+  const said = (spoken ?? "").trim();
+  if (!said) return stored;
+  if (!stored.trim()) return said;
+  const first = (s: string) => s.trim().split(/\s+/)[0]!.toLowerCase();
+  return first(said) === first(stored) ? stored : said;
+}
+
 export class InMemoryCallLog implements CallLogStore {
   private readonly calls = new Map<string, CallRow & { tenantId: string }>();
   private readonly followUps = new Map<string, FollowUpRow & { tenantId: string; callId: string }>();
@@ -85,7 +99,7 @@ export class InMemoryCallLog implements CallLogStore {
       tenantId: tenant.id,
       startedAt: r.startedAt,
       callerNumber: r.callerNumber,
-      callerName: c.name,
+      callerName: displayName(name, c.name),
       outcome: r.outcome,
       summary: r.summary,
       durationSeconds: r.durationSeconds,
@@ -180,12 +194,13 @@ export class PgCallLog implements CallLogStore {
     );
     const customerId = cust.rows[0]?.id ?? null;
     await this.sql.query(
-      `INSERT INTO calls (tenant_id, provider_call_id, customer_id, caller_number, started_at, ended_at, duration_seconds, outcome, summary, recording_ref, transcript_ref)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      `INSERT INTO calls (tenant_id, provider_call_id, customer_id, caller_number, started_at, ended_at, duration_seconds, outcome, summary, recording_ref, transcript_ref, caller_name)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
        ON CONFLICT (tenant_id, provider_call_id) DO UPDATE SET
          customer_id = EXCLUDED.customer_id, ended_at = EXCLUDED.ended_at, duration_seconds = EXCLUDED.duration_seconds,
-         outcome = EXCLUDED.outcome, summary = EXCLUDED.summary, recording_ref = EXCLUDED.recording_ref, transcript_ref = EXCLUDED.transcript_ref`,
-      [tenant.id, r.providerCallId, customerId, r.callerNumber, r.startedAt, r.endedAt, r.durationSeconds, r.outcome, r.summary, r.recordingRef ?? null, r.transcriptRef ?? null],
+         outcome = EXCLUDED.outcome, summary = EXCLUDED.summary, recording_ref = EXCLUDED.recording_ref, transcript_ref = EXCLUDED.transcript_ref,
+         caller_name = EXCLUDED.caller_name`,
+      [tenant.id, r.providerCallId, customerId, r.callerNumber, r.startedAt, r.endedAt, r.durationSeconds, r.outcome, r.summary, r.recordingRef ?? null, r.transcriptRef ?? null, r.callerName?.trim() || null],
     );
     if (r.followUp) {
       const f = r.followUp;
@@ -200,7 +215,12 @@ export class PgCallLog implements CallLogStore {
 
   async listCalls(tenantId: string, limit = 100): Promise<CallRow[]> {
     const { rows } = await this.sql.query<CallDbRow>(
-      `SELECT c.provider_call_id, c.started_at, c.caller_number, cu.name AS customer_name, c.outcome, c.summary, c.duration_seconds
+      `SELECT c.provider_call_id, c.started_at, c.caller_number, CASE
+                WHEN COALESCE(btrim(c.caller_name), '') = '' THEN cu.name
+                WHEN COALESCE(btrim(cu.name), '') = '' THEN c.caller_name
+                WHEN lower(split_part(btrim(c.caller_name), ' ', 1)) = lower(split_part(btrim(cu.name), ' ', 1)) THEN cu.name
+                ELSE c.caller_name
+              END AS customer_name, c.outcome, c.summary, c.duration_seconds
        FROM calls c LEFT JOIN customers cu ON cu.id = c.customer_id
        WHERE c.tenant_id = $1 ORDER BY c.started_at DESC LIMIT $2`,
       [tenantId, limit],
