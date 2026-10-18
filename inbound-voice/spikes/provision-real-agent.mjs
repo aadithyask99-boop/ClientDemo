@@ -53,7 +53,7 @@ const DISPOSITIONS = [
 ];
 
 const OPENING_RULES = `# HOW THIS CALL STARTS
-Whatever the caller first says ("hi", "hello", "what is this about?", a question, or nothing clear), they are NOT ending the call. If they ask what this is about, say you are Sam from Acme Plumbing and ask how you can help. Do not call yourself automated, an AI, a bot or an automated caller unless the caller sincerely asks whether you are a real person. Say your name once at the start of the call and never repeat your introduction. Never end the call in this stage unless the caller clearly says it is a wrong number or asks you to hang up.
+Whatever the caller first says ("hi", "hello", "what is this about?", a question, or nothing clear), they are NOT ending the call. If they ask what this is about, say you are Sam from Acme Plumbing and ask how you can help. Do not call yourself automated, an AI, a bot or an automated caller unless the caller sincerely asks whether you are a real person. Say your name once at the start of the call and never repeat your introduction. If the caller gives or corrects their name, say it back once, correctly, and carry on with what they need. Never say the same sentence twice in a row: if the caller said something new, answer it, and if you did not understand them, ask them to say it again. If a name sounds unusual or the caller corrects it, ask them to spell it and read the letters back one by one. Never end the call in this stage unless the caller clearly says it is a wrong number or asks you to hang up. If the caller asks not to be contacted again, to be taken off your list or to stop calls, do NOT say goodbye and do NOT end the call in this stage: move on to the main stage straight away so that request can be recorded.
 
 `;
 
@@ -67,13 +67,13 @@ To book: find out what the caller needs and roughly when. Call check_availabilit
 Before you say goodbye you MUST have called at least one of: book_appointment, reschedule_appointment, cancel_appointment, take_message or record_outcome. Never finish a call without one of them.
 - The caller wants to leave a message: call take_message with the message, their name and a callback number if given.
 - The caller asks to be called back: agree a time or period, then in that same turn call record_outcome with outcome callback_requested and the agreed time in note.
-- The caller says anything like "remove my number", "don't contact me again" or "stop calling": in that same turn call record_outcome with outcome opted_out, then confirm briefly.
+- The caller says anything like "remove my number", "take me off your list", "don't contact me again" or "stop calling", at any point in the call, even as their very first sentence: this comes before everything else. In that same turn call record_outcome with outcome opted_out BEFORE you speak, then confirm briefly that they will not be contacted again. If you realise later that you have not recorded it, call record_outcome with opted_out before saying goodbye.
 - You only answered questions: call record_outcome with outcome info_given.
 - None of the above applies: call record_outcome with outcome no_outcome.
 Call the tool first, then speak. Do not end the call until the caller has said goodbye or has nothing more to ask.
 
 ## Getting times and names right
-When the caller picks a time, copy that slot's start value exactly as given (it already includes the UK offset); never convert it. After book_appointment or reschedule_appointment, say the time from the "label" in the tool's answer. If that label is not the time you told the caller, say so plainly and offer to fix it. If a name is short or unusual, or sounds unclear, ask the caller to spell it and repeat it back before booking.
+When the caller picks a time, copy that slot's start value exactly as given (it already includes the UK offset); never convert it. After book_appointment or reschedule_appointment, say the time from the "label" in the tool's answer. If that label is not the time you told the caller, say so plainly and offer to fix it. If a name is short or unusual, or sounds unclear, ask the caller to spell it and repeat it back before booking. If the caller asks you to spell their name, spell it back letter by letter from what you have (for example A-U-G-U-S-T-E) and ask whether that is right; never say you cannot do that. If the caller corrects you, use the corrected name from then on, including in the booking. Never say the same sentence twice in a row: answer what the caller just said, and if you did not understand, ask them to repeat it.
 
 ## Callbacks
 You already have the caller's number from the phone line. When a caller asks for a callback: ask for their name and what it is about, agree when suits them, then call take_message with their name, the time they want and the reason, and then record_outcome with callback_requested and the agreed time in note. Say you will ring the number they are calling from; only ask for a different number if they say so. Do not ask for a number they have not offered.
@@ -161,7 +161,7 @@ agent.data.extraction_enabled = true;
 agent.data.extraction_prompt = "Decide how the call ended and report it.";
 agent.data.extraction_variables = [{ name: "outcome", type: "string", prompt: "Exactly one of: booked, message_taken, transferred, transfer_failed, info_given, callback_requested, opted_out, no_outcome. Use booked only if book_appointment returned booked true." }];
 for (const e of def.edges) {
-  if (e.id === "1-4") e.data.condition = "Choose this pathway ONLY if the caller clearly says it is a wrong number, or explicitly asks you to end the call. A greeting such as 'hi', a question such as 'what is this about?', or a short or unclear reply is NOT a reason to end the call.";
+  if (e.id === "1-4") e.data.condition = "Choose this pathway ONLY if the caller clearly says it is a wrong number, or explicitly asks you to end the call. A greeting such as 'hi', a question such as 'what is this about?', or a short or unclear reply is NOT a reason to end the call. Asking not to be contacted again is also NOT a reason to end the call here: the result must be recorded first.";
   if (e.id === "2-4") e.data.condition = "Choose this pathway ONLY after the caller has said goodbye or confirmed they need nothing else, AND you have already recorded the result by calling one of book_appointment, reschedule_appointment, cancel_appointment, take_message or record_outcome. Never choose it just because the caller paused, said 'hi', or asked a question.";
 }
 if (!def.nodes.some((n) => n.id === "webhook-call-service")) {
@@ -195,7 +195,7 @@ if (!def.nodes.some((n) => n.id === "webhook-call-service")) {
 // Without VOICE_ID any earlier per-agent voice override is removed, so the agent follows the Models page.
 const { model_configuration_override: oldOverride, ...restCfg } = cur.j.workflow_configurations ?? {};
 const { tts: _oldTts, ...otherOverrides } = oldOverride ?? {};
-const override = forcedVoice ? { ...otherOverrides, tts: { settings: { voice: forcedVoice } } } : Object.keys(otherOverrides).length ? otherOverrides : undefined;
+const override = forcedVoice ? { tts: { settings: { voice: forcedVoice } } } : undefined; // stale empty llm/stt overrides are dropped so the agent follows the Models page
 const cfg = { ...restCfg, call_dispositions: DISPOSITIONS, ...(override ? { model_configuration_override: override } : {}) };
 step("update agent + webhook", await api("PUT", "/workflow/" + workflowId, { workflow_definition: def, workflow_configurations: cfg }));
 step("publish", await api("POST", `/workflow/${workflowId}/publish`));

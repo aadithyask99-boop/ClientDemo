@@ -283,6 +283,7 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Jo
     if (!parsed.success) return reply.code(400).send({ error: "invalid payload", issues: parsed.error.issues });
 
     const record = toCallRecord(tenant, parsed.data);
+    const classifierOptOut = record.outcome === "OPTED_OUT";
     // What our own tools did on this call outranks any classifier guess: booking, then an outcome the agent stated, then a message.
     const known = await facts.get(tenant.id, record.providerCallId);
     // "info given" and "no outcome" are weak statements: a message that was really taken outranks them (the agent often adds one after take_message).
@@ -307,6 +308,8 @@ export function buildServer(deps: ServerDeps): { app: FastifyInstance; queue: Jo
       record.message ??= message;
       if (!stillBooked && (!known.outcome || weakOutcome)) record.outcome = "MESSAGE_TAKEN";
     }
+    // A request not to be contacted again outranks everything else on the call, including a booking made earlier in it.
+    if (classifierOptOut || known?.outcome?.code === "OPTED_OUT") record.outcome = "OPTED_OUT";
     deps.log?.(`dograh webhook accepted id=${record.providerCallId} tenant=${tenant.id} outcome=${record.outcome}`);
     // Dograh retries failed deliveries and may deliver twice; the queue key and Twenty's upsert on providerCallId absorb that.
     if (!(await store(record))) return reply.code(500).send({ error: "could not store the call; retry" });

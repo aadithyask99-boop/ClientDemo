@@ -80,6 +80,20 @@ describe("take_message and record_outcome tools", () => {
     expect((await finish("14")).outcome).toBe("BOOKED");
   });
 
+  it("an opt-out outranks a booking made earlier on the same call, whether the agent or the classifier reports it", async () => {
+    const { post, finish } = setup();
+    const slots = (await post("/tools/availability", { date: "2026-10-20" })).json().slots as Array<{ start: string }>;
+    await post("/tools/book", { start: slots[0]!.start, name: "Auguste", workflow_run_id: 30 });
+    await post("/tools/outcome", { outcome: "opted_out", workflow_run_id: 30 });
+    const byAgent = await finish("30");
+    expect(byAgent.outcome).toBe("OPTED_OUT");
+    expect(byAgent.followUp).toBeUndefined();
+
+    await post("/tools/book", { start: slots[1]!.start, name: "Auguste", workflow_run_id: 31 });
+    const byClassifier = await finish("31", { disposition: "opted_out" });
+    expect(byClassifier.outcome).toBe("OPTED_OUT");
+  });
+
   it("calls with no tool activity keep the classifier or hint outcome", async () => {
     const { finish } = setup();
     expect((await finish("20", { outcome_hint: "callback_requested" })).outcome).toBe("CALLBACK_REQUESTED");
