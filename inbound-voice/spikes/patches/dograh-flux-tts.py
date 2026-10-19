@@ -15,9 +15,26 @@ import sys
 F = "/app/api/services/pipecat/service_factory.py"
 MARKER = "# dograh-ours: flux voices"
 
+import os
+
+# SENTENCE = wait for a whole sentence before speaking (Dograh's own choice, safest);
+# TOKEN = speak as words stream in (starts sooner). Default is TOKEN; set FLUX_AGGREGATION=SENTENCE to revert.
+MODE = os.environ.get("FLUX_AGGREGATION", "TOKEN").upper()
+if MODE not in ("TOKEN", "SENTENCE"):
+    sys.exit("FLUX_AGGREGATION must be TOKEN or SENTENCE")
+
 s = open(F).read()
 if MARKER in s:
-    print("already patched")
+    want = "text_aggregation_mode=TextAggregationMode.%s," % MODE
+    other = "text_aggregation_mode=TextAggregationMode.%s," % ("SENTENCE" if MODE == "TOKEN" else "TOKEN")
+    if want in s:
+        print("already patched, mode", MODE)
+    elif s.count(other) == 1:
+        open(F + ".pre-aggmode", "w").write(s)
+        open(F, "w").write(s.replace(other, want))
+        print("switched aggregation mode to", MODE)
+    else:
+        sys.exit("patched file has an unexpected aggregation line; not touching it")
     sys.exit(0)
 hits = list(re.finditer(r"^( +)return DeepgramTTSService\(\n", s, re.M))
 if len(hits) != 1:
@@ -37,7 +54,7 @@ NEW = (
     + j + '        speed=getattr(user_config.tts, "speed", None),\n'
     + j + '        expressivity=(1 if getattr(user_config.tts, "expressivity", None) is None else user_config.tts.expressivity),\n'
     + j + "    ),\n"
-    + j + "    text_aggregation_mode=TextAggregationMode.SENTENCE,\n"
+    + j + "    text_aggregation_mode=TextAggregationMode.%s,\n" % MODE
     + j + "    text_filters=[xml_function_tag_filter],\n"
     + j + '    skip_aggregator_types=["recording_router", "recording"],\n'
     + j + "    silence_time_s=1.0,\n"
