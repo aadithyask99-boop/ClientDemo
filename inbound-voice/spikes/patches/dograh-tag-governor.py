@@ -2,8 +2,8 @@
 
 A model told to "use a tag now and then" often opens every reply with [short pause]. Prompts cannot be trusted to hold a rule like
 that, so this enforces it in code, on the text that is about to be spoken (one sentence at a time):
-  - Voices that understand tags (ElevenLabs Eleven v3 / v4 / v4 Turbo): only the allowed tags survive; a tag at the very start of a
-    sentence is dropped; at most one tag is kept per TAG_MIN_SENTENCES sentences (default 3). The exception is a [short pause] placed
+  - Voices that understand tags (ElevenLabs Eleven v3 / v4 / v4 Turbo): only the allowed tags survive; a [short pause] at the very start of a
+    sentence is dropped (other tags may lead a sentence, as ElevenLabs intends); at most one tag is kept per TAG_MIN_SENTENCES sentences (default 3). The exception is a [short pause] placed
     just before a time or a price (a digit or a pound sign soon after it), which always stays.
   - Every other voice: all bracketed tags are removed, so nothing is ever read out as "short pause".
 The words the model wrote are not changed, only the tags. Any failure leaves the text untouched and is logged, so it cannot break a call.
@@ -81,7 +81,7 @@ class TagGovernor:
             if reads and tag in ALLOWED:
                 if tag == "short pause" and NUMBER_NEAR.match(rest):
                     keep = True
-                elif before.strip() and not kept_here and self.since_kept >= MIN_SENTENCES:
+                elif (tag != "short pause" or before.strip()) and not kept_here and self.since_kept >= MIN_SENTENCES:
                     keep = True
                     kept_here = True
             if keep:
