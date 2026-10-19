@@ -57,6 +57,14 @@ Whatever the caller first says ("hi", "hello", "what is this about?", a question
 
 `;
 
+// MERGE_STAGES=1: one stage instead of two. The greeting is a fixed line the platform speaks at once (no model turn before it), and the
+// start node carries the tools, so there is no separate hand-over turn. Nothing else about how she behaves is meant to change.
+const GREETING = "Hi, this is Sam from Acme Plumbing. How can I help you today?";
+const MERGED_OPENING = `# HOW THIS CALL STARTS
+The greeting has already been spoken to the caller: "${GREETING}". Never say it again and never introduce yourself a second time. Whatever the caller first says ("hi", "hello", "what is this about?", a question, or nothing clear), they are NOT ending the call. If they ask what this is about, say you are Sam from Acme Plumbing and ask how you can help. Do not call yourself automated, an AI, a bot or an automated caller unless the caller sincerely asks whether you are a real person. If the caller gives or corrects their name, say it back once, correctly, and carry on with what they need. Never say the same sentence twice in a row: if the caller said something new, answer it, and if you did not understand them, ask them to say it again. Take names as you hear them. If you cannot make one out, ask once for it to be repeated, never more than once, and do not read letters back unless the caller asks. Do not ask for a name until you need one for a booking or a message. Never end the call unless the caller clearly says it is a wrong number or asks you to hang up. Sound like a warm, relaxed person on the phone, not someone reading a script: short simple sentences, contractions, and small natural reactions such as Mm-hm, Right, Okay, Sure, Of course.
+
+`;
+
 const AGENT_RULES = `
 
 ## Booking and taking messages
@@ -203,6 +211,22 @@ agent.data.extraction_variables = [{ name: "outcome", type: "string", prompt: "E
 for (const e of def.edges) {
   if (e.id === "1-4") e.data.condition = "Choose this pathway ONLY if the caller clearly says it is a wrong number, or explicitly asks you to end the call. A greeting such as 'hi', a question such as 'what is this about?', or a short or unclear reply is NOT a reason to end the call. Asking not to be contacted again is also NOT a reason to end the call here: the result must be recorded first.";
   if (e.id === "2-4") e.data.condition = "Choose this pathway ONLY after the caller has said goodbye or confirmed they need nothing else, AND you have already recorded the result by calling one of book_appointment, reschedule_appointment, cancel_appointment, take_message or record_outcome. Never choose it just because the caller paused, said 'hi', or asked a question.";
+}
+if (process.env.MERGE_STAGES) {
+  // Everything the main stage had moves onto the start node; the main stage and its hand-over edge are removed.
+  start.data.greeting_type = "text";
+  start.data.greeting = GREETING;
+  start.data.prompt = MERGED_OPENING + agent.data.prompt;
+  start.data.tool_uuids = agent.data.tool_uuids;
+  start.data.extraction_enabled = agent.data.extraction_enabled;
+  start.data.extraction_prompt = agent.data.extraction_prompt;
+  start.data.extraction_variables = agent.data.extraction_variables;
+  const endEdge = def.edges.find((e) => e.id === "2-4");
+  const wrongNumber = def.edges.find((e) => e.id === "1-4");
+  if (wrongNumber && endEdge) wrongNumber.data.condition = endEdge.data.condition;
+  def.edges = def.edges.filter((e) => e.source !== agent.id && e.target !== agent.id);
+  def.nodes = def.nodes.filter((n) => n.id !== agent.id);
+  console.log("merged: single stage with greeting, nodes now", def.nodes.map((n) => n.type).join(","));
 }
 if (!def.nodes.some((n) => n.id === "webhook-call-service")) {
   def.nodes.push({
