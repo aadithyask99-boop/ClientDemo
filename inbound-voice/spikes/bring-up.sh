@@ -17,7 +17,7 @@ echo "2b/4 re-applying our patches to the Dograh API container (they are lost if
 until docker exec dograh-api-1 true >/dev/null 2>&1; do sleep 2; done
 dograh_sums() { docker exec dograh-api-1 sh -c 'cd /app/api; cat services/pipecat/service_factory.py services/configuration/registry.py services/configuration/voice_catalog_adapters.py schemas/tool.py services/workflow/tool_execution.py services/pipecat/run_pipeline.py 2>/dev/null | md5sum'; }
 before=$(dograh_sums)
-for p in dograh-openrouter-max-tokens dograh-flux-tts dograh-flux-ui dograh-ack-filler dograh-openai-tts-voice; do
+for p in dograh-openrouter-max-tokens dograh-flux-tts dograh-flux-ui dograh-ack-filler dograh-openai-tts-voice dograh-openai-tts-anyvoice; do
   docker exec -u root -i dograh-api-1 python - < "spikes/patches/$p.py" 2>&1 | sed "s/^/   $p: /"
 done
 bash spikes/patches/dograh-tool-messages.sh 2>&1 | tail -2 | sed 's/^/   tool-messages: /'
