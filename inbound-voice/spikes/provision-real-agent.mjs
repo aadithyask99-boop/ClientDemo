@@ -235,7 +235,11 @@ if (!def.nodes.some((n) => n.id === "webhook-call-service")) {
 // Without VOICE_ID any earlier per-agent voice override is removed, so the agent follows the Models page.
 const { model_configuration_override: oldOverride, ...restCfg } = cur.j.workflow_configurations ?? {};
 const { tts: _oldTts, ...otherOverrides } = oldOverride ?? {};
-const override = forcedVoice ? { tts: { settings: { voice: forcedVoice } } } : undefined; // stale empty llm/stt overrides are dropped so the agent follows the Models page
+// Keep the agent's chosen named model configuration (Model tab). Dropping it silently put live calls back on Dograh's default
+// models. MODEL_CONFIG_UUID can set it when an earlier run already lost it. Stale empty llm/stt overrides are still dropped.
+const keepUuid = process.env.MODEL_CONFIG_UUID ?? oldOverride?.model_configuration_uuid;
+const keep = keepUuid ? { model_configuration_uuid: keepUuid } : {};
+const override = forcedVoice ? { ...keep, tts: { settings: { voice: forcedVoice } } } : (keepUuid ? keep : undefined);
 const cfg = { ...restCfg, call_dispositions: DISPOSITIONS, ...(override ? { model_configuration_override: override } : {}) };
 step("update agent + webhook", await api("PUT", "/workflow/" + workflowId, { workflow_definition: def, workflow_configurations: cfg }));
 if (!process.env.NO_PUBLISH) step("publish", await api("POST", `/workflow/${workflowId}/publish`));
