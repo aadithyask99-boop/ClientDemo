@@ -230,3 +230,15 @@ describe("resolveDay", () => {
     expect(availabilityInput.safeParse({ date: "2026-10-20" }).success).toBe(true);
   });
 });
+
+describe("book_appointment name guard", () => {
+  it("refuses a missing or placeholder name so the agent asks for the real one", async () => {
+    const { bookInput } = await import("../src/booking.js");
+    const base = { start: "2026-10-20T11:30:00+01:00" };
+    for (const name of ["", "x", "Unknown", "the caller", "Customer", "N/A", "not provided"]) {
+      expect(bookInput.safeParse({ ...base, name }).success, name).toBe(false);
+    }
+    expect(bookInput.safeParse({ ...base, name: "Jet Free" }).success).toBe(true);
+    expect(bookInput.safeParse({ ...base, name: "  Rick  " }).data?.name).toBe("Rick");
+  });
+});

@@ -38,10 +38,17 @@ export function resolveDay(text: string, nowMs: number, timeZone: string): strin
   return addDays(today, ahead);
 }
 
+/** Names a model writes when it has no name for the caller. A booking with one of these is refused so the agent asks for the real name. */
+const PLACEHOLDER_NAMES = /^(unknown|unnamed|caller|the caller|customer|client|user|guest|anonymous|n\/?a|none|not (given|provided|known)|no name|tbc|tbd|name|[?x-]+)$/i;
+
 /** Input of the `book_appointment` tool. `start` must be copied exactly from a slot returned by check_availability. */
 export const bookInput = z.object({
   start: z.string().min(10),
-  name: z.string().min(1),
+  name: z
+    .string()
+    .trim()
+    .min(2, "The caller's name is missing. Ask the caller for their name, then book.")
+    .refine((n) => !PLACEHOLDER_NAMES.test(n), "That is not the caller's real name. Ask the caller for their name, then book. Never guess or use a placeholder."),
   phone: z.string().optional(),
   email: z.string().optional(),
   reason: z.string().optional(),

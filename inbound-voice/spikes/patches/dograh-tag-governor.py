@@ -36,6 +36,7 @@ log = logging.getLogger(__name__)
 TAG = re.compile(r"\\s*\\[([A-Za-z][A-Za-z \\-]{0,30})\\]\\s*")
 ALLOWED = {"short pause", "thoughtful", "warmly", "sighs", "clears throat", "sympathetic", "softly", "reassuring", "curious", "exhales", "chuckles"}
 MIN_SENTENCES = int(os.environ.get("TAG_MIN_SENTENCES", "2"))
+FILLERS = {"mm-hm", "mm", "hmm", "um", "uh", "okay", "right", "ah"}
 NUMBER_NEAR = re.compile(r"^.{0,30}?(\\d|\\u00a3)")
 
 
@@ -46,10 +47,11 @@ class TagGovernor:
 
     def _reads_tags(self):
         name = type(self.service).__name__.lower()
-        if "elevenlabs" not in name:
-            return False
         model = str(getattr(self.service, "model_name", "") or getattr(getattr(self.service, "_settings", None), "model", "") or "").lower()
-        return "v3" in model or "v4" in model or "dialogue" in name
+        if "elevenlabs" in name:
+            return "v3" in model or "v4" in model or "dialogue" in name
+        # ElevenLabs reached through an OpenAI-compatible endpoint (OpenRouter): the model name carries the vendor.
+        return model.startswith("elevenlabs/") and ("v3" in model or "v4" in model)
 
     async def __call__(self, text, aggregation_type=None):
         try:
@@ -69,6 +71,10 @@ class TagGovernor:
         for m in TAG.finditer(text):
             out.append(text[pos:m.start()])
             tag = m.group(1).strip().lower()
+            if tag in FILLERS:
+                out.append(" " + m.group(1).strip() + ("," if text[m.end():m.end() + 1].strip()[:1].isalnum() else "") + " ")
+                pos = m.end()
+                continue
             before = "".join(out)
             rest = text[m.end():]
             keep = False
