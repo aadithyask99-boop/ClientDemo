@@ -34,7 +34,7 @@ import re
 log = logging.getLogger(__name__)
 
 TAG = re.compile(r"\\s*\\[([A-Za-z][A-Za-z \\-]{0,30})\\]\\s*")
-ALLOWED = {"short pause", "thoughtful", "warmly", "sighs", "clears throat", "sympathetic", "softly", "reassuring", "curious", "exhales", "chuckles"}
+ALLOWED = {"short pause", "thoughtful", "warmly", "sighs", "clears throat", "sympathetic", "softly", "reassuring", "curious", "exhales", "chuckles", "keyboard typing"}
 MIN_SENTENCES = int(os.environ.get("TAG_MIN_SENTENCES", "2"))
 FILLERS = {"mm-hm", "mm", "hmm", "um", "uh", "okay", "right", "ah"}
 NUMBER_NEAR = re.compile(r"^.{0,30}?(\\d|\\u00a3)")

@@ -118,12 +118,12 @@ const existingList = Array.isArray(existing.j) ? existing.j : (existing.j?.tools
 // Spoken by the platform, not the model, the moment a tool starts, so a lookup never sounds like dead air. Needs the tool-messages
 // patch on the Dograh container (spikes/patches/dograh-tool-messages.sh). Not used for record_outcome: nobody wants "one moment" before goodbye.
 const START_MESSAGES = {
-  check_availability: ["Okay, let me just have a look for you...", "Right, [thoughtful] one second, checking that now...", "Mm-hm, bear with me a moment...", "Okay, hmm, let me see what we've got..."],
-  find_appointment: ["Okay, let me pull up your booking...", "One sec, [thoughtful] just finding that for you...", "Right, bear with me a moment..."],
-  book_appointment: ["Right, booking that in now...", "Okay, [reassuring] let me get that down for you...", "One moment while I put that in..."],
+  check_availability: ["Okay, let me just have a look for you...", "Right, [thoughtful] one second, checking that now...", "Mm-hm, bear with me a moment...", "Okay, hmm, let me see what we've got...", "Okay, [keyboard typing] let me just pull that up..."],
+  find_appointment: ["Okay, let me pull up your booking...", "One sec, [thoughtful] just finding that for you...", "Right, bear with me a moment...", "Okay, [keyboard typing] let me find your booking..."],
+  book_appointment: ["Right, booking that in now...", "Okay, [reassuring] let me get that down for you...", "One moment while I put that in...", "Right, [keyboard typing] putting that in for you..."],
   reschedule_appointment: ["Okay, moving that for you now...", "Right, one second while I change that...", "Mm-hm, [reassuring] let me sort that out..."],
   cancel_appointment: ["Okay, let me take care of that...", "Right, one moment..."],
-  take_message: ["Okay, let me note that down...", "Right, [reassuring] getting that written down..."],
+  take_message: ["Okay, let me note that down...", "Right, [reassuring] getting that written down...", "Okay, [keyboard typing] noting that down now..."],
 };
 // Said once each if a tool is still running after this long, so a slow lookup never leaves dead air. Cancelled if the tool finishes first.
 const DELAYED_MESSAGES = {
@@ -238,6 +238,9 @@ You are Sam, the phone receptionist for Acme Plumbing, a small UK plumbing busin
 
 ## Empathy and small talk
 Respond to the person before the logistics. If they describe a problem (a leak, a flood, no heating, something broken), acknowledge it in a short, human way first, such as "Oh no, that sounds stressful", then reassure them and move on to what happens next. If they make small talk (how are you, the weather, a joke), answer in a few warm words, match their mood, then gently bring it back to how you can help. Never ignore it and never make a speech of it. Use the caller's own words ("the bathroom ceiling", "your boiler") instead of generic phrases. Do not over-apologise, and do not use the same sympathy phrase twice in one call. Stay calm and steady if the caller is upset, and a little brisker if they are in a hurry.
+
+## Mirror the caller
+Quietly match how the caller talks. If they are casual and chatty ("yeah, cheers", "no worries"), be casual and chatty back. If they are formal and brief, be polite, tidy and brief. Match their pace and energy: short answers for short callers, a little more warmth and time for someone who wants to talk. Pick up their own words and expressions and use them back. Never copy mistakes, slang that would sound fake, or an accent. If they are upset, be softer and slower than they are.
 
 ### Examples of the tone (copy the feel, never the exact words)
 Caller: "Hi Sam, how are you doing?" You: "I'm good, thanks for asking! How's your day going?"
