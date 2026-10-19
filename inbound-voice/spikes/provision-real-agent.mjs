@@ -118,19 +118,24 @@ const existingList = Array.isArray(existing.j) ? existing.j : (existing.j?.tools
 // Spoken by the platform, not the model, the moment a tool starts, so a lookup never sounds like dead air. Needs the tool-messages
 // patch on the Dograh container (spikes/patches/dograh-tool-messages.sh). Not used for record_outcome: nobody wants "one moment" before goodbye.
 const START_MESSAGES = {
-  check_availability: ["Okay, let me just have a look for you...", "Right, one second, checking that now...", "Mm-hm, bear with me a moment..."],
-  find_appointment: ["Okay, let me pull up your booking...", "One sec, just finding that for you...", "Right, bear with me a moment..."],
-  book_appointment: ["Right, booking that in now...", "Okay, let me get that down for you...", "One moment while I put that in..."],
-  reschedule_appointment: ["Okay, moving that for you now...", "Right, one second while I change that...", "Mm-hm, let me sort that out..."],
+  check_availability: ["Okay, let me just have a look for you...", "Right, [thoughtful] one second, checking that now...", "Mm-hm, bear with me a moment...", "Okay, hmm, let me see what we've got..."],
+  find_appointment: ["Okay, let me pull up your booking...", "One sec, [thoughtful] just finding that for you...", "Right, bear with me a moment..."],
+  book_appointment: ["Right, booking that in now...", "Okay, [reassuring] let me get that down for you...", "One moment while I put that in..."],
+  reschedule_appointment: ["Okay, moving that for you now...", "Right, one second while I change that...", "Mm-hm, [reassuring] let me sort that out..."],
   cancel_appointment: ["Okay, let me take care of that...", "Right, one moment..."],
-  take_message: ["Okay, let me note that down...", "Right, getting that written down..."],
+  take_message: ["Okay, let me note that down...", "Right, [reassuring] getting that written down..."],
+};
+// Said once each if a tool is still running after this long, so a slow lookup never leaves dead air. Cancelled if the tool finishes first.
+const DELAYED_MESSAGES = {
+  3000: ["Sorry, still looking, bear with me...", "Just a moment longer, it's being a bit slow...", "Hmm, still checking, one second..."],
+  6000: ["Thanks for waiting, nearly there...", "Sorry about this, still just waiting on it..."],
 };
 const mkTool = async (name, description, path, parameters, preset) => {
   const body = {
     name,
     description,
     category: "http_api",
-    definition: { schema_version: 1, type: "http_api", config: { method: "POST", url: callService + path, credential_uuid: credUuid, parameters, ...(preset ? { preset_parameters: preset } : {}), timeout_ms: 8000 }, messages: (START_MESSAGES[name] ?? []).map((text) => ({ type: "text", text, event: "start" })) },
+    definition: { schema_version: 1, type: "http_api", config: { method: "POST", url: callService + path, credential_uuid: credUuid, parameters, ...(preset ? { preset_parameters: preset } : {}), timeout_ms: 8000 }, messages: START_MESSAGES[name] ? [...START_MESSAGES[name].map((text) => ({ type: "text", text, event: "start" })), ...Object.entries(DELAYED_MESSAGES).flatMap(([ms, lines]) => lines.map((text) => ({ type: "text", text, event: "delayed", after_ms: Number(ms) })))] : [] },
   };
   const found = existingList.find((t) => t.name === name);
   if (!found) return api("POST", "/tools/", body);
