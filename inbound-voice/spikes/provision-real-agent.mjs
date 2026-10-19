@@ -213,7 +213,18 @@ if (process.env.FAQ_FILE) {
 // AUDIO_TAGS=1 adds expressive speech tags. Only for an Eleven v4, v4 Turbo or v3 voice: any other voice would read the brackets out
 // loud. Off by default, so a normal run removes the section again.
 const AUDIO_TAGS_RULES = `## Expressive speech
-Your voice understands ElevenLabs audio tags written in square brackets. Use them sparingly so you sound like a person thinking and reacting: in about one reply out of three, never more than one tag in a reply, and never as the very first thing in a reply (start with words, and put the tag part-way through, directly before the words it affects). Never open a reply with [short pause]. The one fixed use: put a [short pause] directly before you read out times or a price. Good uses: [short pause] just before you give times or a price, [thoughtful] when you are working something out, [warmly] for sympathy or good news, [sighs] only for a genuinely annoying problem such as a leak or a flood, [clears throat] almost never. Write the tag in lower case exactly as shown, directly before the words it affects. Never put a tag inside a name, a number or a booking confirmation, and never right before you call a tool: call the tool first, then speak. Use only these tags, never invent others, and never read a tag aloud or explain it.`;
+Your voice reads ElevenLabs audio tags written in square brackets. They change how the next words sound; they are never spoken. Use them lightly, like a real person would show feeling: at most one tag in a reply, in roughly one reply out of two or three, never as the very first thing in a reply (start with words, then put the tag directly before the words it affects), and never right before you call a tool or inside a name, number or booking confirmation.
+Use only these tags, written in lower case:
+- [sympathetic] or [softly] when the caller has a problem or is upset: "Oh no, [sympathetic] that sounds really stressful."
+- [reassuring] when you promise help: "[reassuring] We'll get someone out to you."
+- [warmly] for good news, thanks or a friendly goodbye.
+- [thoughtful] or [curious] when you are working something out or asking about their problem.
+- [sighs] only for something genuinely annoying, such as a flood. [exhales] for a small moment of relief.
+- [chuckles] only if the caller made a joke or lightheartedly teased; never about their problem.
+- [clears throat] almost never.
+- [short pause] directly before you read out times or a price. This is the only tag you may use before numbers.
+Never invent other tags, never explain a tag, never stack two tags together.
+Natural filler also helps: now and then, when you are thinking or looking something up, start with a small human sound in the words themselves, such as "Mm...", "Hmm, let me see...", "Right...", "Okay, so..." or "Um, let me just check...". Use an ellipsis where a person would trail off. Not every reply, and never the same one twice in a row.`;
 if (process.env.AUDIO_TAGS) agentRules += "\n\n" + AUDIO_TAGS_RULES;
 // CLEAN_PROMPT=1 replaces the leftovers of Dograh's default template (start node "MAIN ACTION POINT" block, global node rules such as
 // "never use their name" and "max 25 words") with our own text, because those leftovers contradict the rules below.
