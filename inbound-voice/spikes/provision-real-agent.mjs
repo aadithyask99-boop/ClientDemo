@@ -102,7 +102,7 @@ For any question about prices, fees, guarantees, payment, areas covered, service
 Anything the caller says about their problem (for example dripping taps, a leak, an address, a second issue) must be stored, not just acknowledged. Put the job details in the "reason" of book_appointment. If the caller gives more details or a second issue after you have already booked, or after any tool call, call take_message with those details before saying goodbye. Use record_outcome with info_given or no_outcome only when the caller gave no details worth keeping. A callback request or an opt-out always goes through record_outcome (callback_requested, opted_out), and any details they gave also go to take_message. Only say "I've noted that" after a tool call has actually stored it.
 
 ## How you sound
-You are a warm, relaxed receptionist on a phone call, not someone reading a script. Talk the way people really talk: short simple sentences, contractions (I'll, that's, we've), and small natural reactions and fillers such as "Mm-hm", "Right", "Okay", "Ah, okay", "Sure", "Of course". Begin most replies with a tiny reaction to what the caller just said, then get to the point. Use a comma or an ellipsis where a person would pause. Vary your wording and do not reuse the same phrase twice in one call. Sound a little warmer and gentler if the caller is worried or has a leak, and brisker if they are in a hurry. No lists, symbols or long sentences. Say times the way a person would, like "half twelve" or "nine o'clock". One or two sentences, then let the caller speak. When you need to look something up, book, cancel, move or record something, call the tool straight away without saying anything first, and speak only after the result comes back. If you cannot make out what the caller said, say once, simply, "Sorry, I missed that, could you say it again?" and never guess or invent names, places or details the caller did not clearly say.`;
+You are a warm, relaxed receptionist on a phone call, not someone reading a script. Talk the way people really talk: short simple sentences, contractions (I'll, that's, we've), and small natural reactions and fillers such as "Mm-hm", "Right", "Okay", "Ah, okay", "Sure", "Of course". Begin most replies with a tiny reaction to what the caller just said, then get to the point. Use a comma or an ellipsis where a person would pause. Once you have the caller's first name, use it now and then, for example when you confirm a booking and when you say goodbye, but not in every reply, and never apologise for using it or say you should not use names. Vary your wording and do not reuse the same phrase twice in one call. Sound a little warmer and gentler if the caller is worried or has a leak, and brisker if they are in a hurry. No lists, symbols or long sentences. Say times the way a person would, like "half twelve" or "nine o'clock". One or two sentences, then let the caller speak. When you need to look something up, book, cancel, move or record something, call the tool straight away without saying anything first, and speak only after the result comes back. If you cannot make out what the caller said, say once, simply, "Sorry, I missed that, could you say it again?" and never guess or invent names, places or details the caller did not clearly say.`;
 
 // 1. Credential and the four tools.
 const cred = await api("POST", "/credentials/", { name: "call-service " + Date.now(), credential_type: "bearer_token", credential_data: { token: webhookToken } });
@@ -176,11 +176,15 @@ if (toolIds.some((x) => !x)) process.exit(1);
 const def = structuredClone(baseDefinition);
 const start = def.nodes.find((n) => n.type === "startCall");
 const agent = def.nodes.find((n) => n.type === "agentNode");
-if (!start || !agent) throw new Error("unexpected agent structure: " + def.nodes.map((n) => n.type).join(","));
+const merged = Boolean(process.env.MERGE_STAGES);
+// A merged agent has no main stage any more: its main prompt lives on the start node, so re-running must work from there.
+if (!start || (!agent && !merged)) throw new Error("unexpected agent structure: " + def.nodes.map((n) => n.type).join(","));
 // Safe on an agent that was already provisioned: our earlier additions are cut off first, so they never stack.
-start.data.prompt = OPENING_RULES + String(start.data.prompt).replace(/^# HOW THIS CALL STARTS\n[^\n]*\n\n/, "")
-  .replace("ask for their name, and ask how you can help them today", "ask how you can help them today")
-  .replace("Use the first 1 to 3 user turns to understand who is calling and what they need.", "Use the first user turn to understand what they need.");
+if (!merged) {
+  start.data.prompt = OPENING_RULES + String(start.data.prompt).replace(/^# HOW THIS CALL STARTS\n[^\n]*\n\n/, "")
+    .replace("ask for their name, and ask how you can help them today", "ask how you can help them today")
+    .replace("Use the first 1 to 3 user turns to understand who is calling and what they need.", "Use the first user turn to understand what they need.");
+}
 // With FAQ_FILE set, the business facts go into the prompt and the knowledge base is detached. Use this when the model setup has no
 // embedding provider (a BYOK setup cannot search a knowledge base without one). Without FAQ_FILE nothing changes.
 let agentRules = AGENT_RULES;
@@ -200,32 +204,41 @@ if (process.env.FAQ_FILE) {
   clearDocs(def);
   // The caller can ask a factual question before the agent moves on from the opening stage, so the facts live there too.
   // The marker is cut off first, so re-running does not stack copies.
-  start.data.prompt = String(start.data.prompt).split("\n\n## Business facts (opening stage)")[0] +
+  if (!merged) start.data.prompt = String(start.data.prompt).split("\n\n## Business facts (opening stage)")[0] +
     "\n\n## Business facts (opening stage)\nIf the caller asks about prices, fees, guarantees, payment, areas covered, services or opening hours, answer only from these facts and quote figures exactly as written. Never guess.\n\n" + faq;
 }
-agent.data.prompt = String(agent.data.prompt ?? "").split("\n\n## Booking and taking messages")[0] + agentRules;
-agent.data.tool_uuids = toolIds;
-agent.data.extraction_enabled = true;
-agent.data.extraction_prompt = "Decide how the call ended and report it.";
-agent.data.extraction_variables = [{ name: "outcome", type: "string", prompt: "Exactly one of: booked, message_taken, transferred, transfer_failed, info_given, callback_requested, opted_out, no_outcome. Use booked only if book_appointment returned booked true." }];
+const mainBase = agent ? String(agent.data.prompt ?? "") : String(start.data.prompt ?? "").replace(MERGED_OPENING, "");
+const mainPrompt = mainBase.split("\n\n## Booking and taking messages")[0] + agentRules;
+const EXTRACTION_PROMPT = "Decide how the call ended and report it.";
+const EXTRACTION_VARIABLES = [{ name: "outcome", type: "string", prompt: "Exactly one of: booked, message_taken, transferred, transfer_failed, info_given, callback_requested, opted_out, no_outcome. Use booked only if book_appointment returned booked true." }];
+const END_CONDITION = "Choose this pathway ONLY after the caller has said goodbye or confirmed they need nothing else, AND you have already recorded the result by calling one of book_appointment, reschedule_appointment, cancel_appointment, take_message or record_outcome. Never choose it just because the caller paused, said 'hi', or asked a question.";
+if (agent) {
+  agent.data.prompt = mainPrompt;
+  agent.data.tool_uuids = toolIds;
+  agent.data.extraction_enabled = true;
+  agent.data.extraction_prompt = EXTRACTION_PROMPT;
+  agent.data.extraction_variables = EXTRACTION_VARIABLES;
+}
 for (const e of def.edges) {
   if (e.id === "1-4") e.data.condition = "Choose this pathway ONLY if the caller clearly says it is a wrong number, or explicitly asks you to end the call. A greeting such as 'hi', a question such as 'what is this about?', or a short or unclear reply is NOT a reason to end the call. Asking not to be contacted again is also NOT a reason to end the call here: the result must be recorded first.";
   if (e.id === "2-4") e.data.condition = "Choose this pathway ONLY after the caller has said goodbye or confirmed they need nothing else, AND you have already recorded the result by calling one of book_appointment, reschedule_appointment, cancel_appointment, take_message or record_outcome. Never choose it just because the caller paused, said 'hi', or asked a question.";
 }
-if (process.env.MERGE_STAGES) {
-  // Everything the main stage had moves onto the start node; the main stage and its hand-over edge are removed.
+if (merged) {
+  // Everything the main stage had moves onto the start node; the main stage and its hand-over edge are removed. Re-running on an
+  // already merged agent just refreshes the start node.
   start.data.greeting_type = "text";
   start.data.greeting = GREETING;
-  start.data.prompt = MERGED_OPENING + agent.data.prompt;
-  start.data.tool_uuids = agent.data.tool_uuids;
-  start.data.extraction_enabled = agent.data.extraction_enabled;
-  start.data.extraction_prompt = agent.data.extraction_prompt;
-  start.data.extraction_variables = agent.data.extraction_variables;
-  const endEdge = def.edges.find((e) => e.id === "2-4");
-  const wrongNumber = def.edges.find((e) => e.id === "1-4");
-  if (wrongNumber && endEdge) wrongNumber.data.condition = endEdge.data.condition;
-  def.edges = def.edges.filter((e) => e.source !== agent.id && e.target !== agent.id);
-  def.nodes = def.nodes.filter((n) => n.id !== agent.id);
+  start.data.prompt = MERGED_OPENING + mainPrompt;
+  start.data.tool_uuids = toolIds;
+  start.data.extraction_enabled = true;
+  start.data.extraction_prompt = EXTRACTION_PROMPT;
+  start.data.extraction_variables = EXTRACTION_VARIABLES;
+  const toEnd = def.edges.find((e) => e.id === "1-4");
+  if (toEnd) toEnd.data.condition = END_CONDITION;
+  if (agent) {
+    def.edges = def.edges.filter((e) => e.source !== agent.id && e.target !== agent.id);
+    def.nodes = def.nodes.filter((n) => n.id !== agent.id);
+  }
   console.log("merged: single stage with greeting, nodes now", def.nodes.map((n) => n.type).join(","));
 }
 if (!def.nodes.some((n) => n.id === "webhook-call-service")) {
