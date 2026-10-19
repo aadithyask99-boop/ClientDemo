@@ -18,8 +18,8 @@ MARKER = "# dograh-ours: flux voices"
 import os
 
 # SENTENCE = wait for a whole sentence before speaking (Dograh's own choice, safest);
-# TOKEN = speak as words stream in (starts sooner). Default is TOKEN; set FLUX_AGGREGATION=SENTENCE to revert.
-MODE = os.environ.get("FLUX_AGGREGATION", "TOKEN").upper()
+# TOKEN = speak as words stream in (starts sooner, but it sounded chopped). Default is SENTENCE; set FLUX_AGGREGATION=TOKEN to try it.
+MODE = os.environ.get("FLUX_AGGREGATION", "SENTENCE").upper()
 if MODE not in ("TOKEN", "SENTENCE"):
     sys.exit("FLUX_AGGREGATION must be TOKEN or SENTENCE")
 
