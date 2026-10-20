@@ -64,7 +64,7 @@ A white screen with a quiet 0 to 100% counter, then the page sharpens from a sli
 
 ## Enquiry form
 
-One question at a time. On submit it validates, then opens a pre-filled WhatsApp message (the same flow as the current site). To also email `contactcenter@doves.co.zw`, set a form endpoint (for example Formspree) before building:
+One question at a time. On submit it validates, then opens a pre-filled WhatsApp message (the same flow as the current site). To also email `enquiries@doves.co.zw`, set a form endpoint (for example Formspree) before building:
 
 ```bash
 PUBLIC_FORM_ENDPOINT=https://formspree.io/f/xxxx npm run build

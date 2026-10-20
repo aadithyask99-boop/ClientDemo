@@ -14,7 +14,7 @@ export const contact = {
   landline: { label: '+44 20 3885 1002', href: 'tel:+442038851002' },
   mobile: { label: '+44 7387 940626', href: 'tel:+447387940626' },
   whatsapp: { label: '+44 7387 940626', href: links.whatsapp },
-  email: 'contactcenter@doves.co.zw',
+  email: 'enquiries@doves.co.zw',
 } as const;
 
 export const nav = [
@@ -57,15 +57,15 @@ export const covers = {
   body: 'Everything listed here is part of the repatriation cover, so families know what is taken care of before the journey begins.',
   items: [
     { title: 'Attendance fees', image: 'attendance', alt: 'An officiant attending a coffin at a service', pos: '50% 40%' },
-    { title: 'Mortuary fees', image: 'chapel', alt: 'A coffin resting in a chapel', pos: '45% 50%' },
+    { title: 'Mortuary fees', image: 'mortuary', alt: 'Refrigerated mortuary units at a Doves mortuary', pos: '50% 50%' },
     { title: 'Removal', image: 'hospital-bed', alt: 'A hospital ward, where collection often begins', pos: '50% 50%' },
-    { title: 'Undertakers', image: 'undertakers', alt: 'Funeral staff gathered at a coffin', pos: '50% 45%' },
+    { title: 'Undertakers', image: 'undertakers', alt: 'The Doves undertakers team in blue suits and white gloves', pos: '50% 40%' },
     { title: 'Washing and dressing', image: 'shirt', alt: 'Clothing prepared for dressing', pos: '35% 50%' },
     { title: 'Embalming', image: 'clinical', alt: 'A practitioner preparing sterile gloves', pos: '50% 60%' },
-    { title: 'Casket', image: 'casket', alt: 'A closed wooden casket', pos: '40% 50%' },
+    { title: 'Casket', image: 'casket', alt: 'A white and gold Doves casket with gold handles', pos: '88% 55%' },
     { title: 'Zinc lining', image: 'zinc-lining', alt: 'A closed sealed casket prepared for travel', pos: '55% 50%' },
-    { title: 'Hearse', image: 'hearse-nissan', alt: 'A white Doves Nissan hearse', pos: '45% 50%' },
-    { title: 'Airport clearance', image: 'airport', alt: 'A cargo aircraft being loaded at an airport', pos: '30% 55%' },
+    { title: 'Hearse', image: 'hearse', alt: 'A Doves Mercedes hearse', pos: '35% 50%' },
+    { title: 'Airport clearance', image: 'airport', alt: 'An aircraft wing at sunset, where the journey home begins', pos: '50% 50%' },
     { title: 'Documentation', image: 'papers', alt: 'Official papers being completed', pos: '50% 50%' },
   ] satisfies Frame[],
 };
@@ -112,12 +112,11 @@ export const fleet = {
   title: 'Fleet, tentage and events',
   body: 'The plan includes the vehicles for the journey, executive tentage for the gathering, and the event set up for family and guests.',
   items: [
-    { title: 'All terrain', image: 'hearse-nissan', alt: 'A white Doves all terrain hearse parked on grass', pos: '50% 55%' },
     { title: 'G-Wagon hearse', image: 'hearse-prestige', alt: 'A white G-Wagon hearse', pos: '45% 55%' },
-    { title: 'Executive hearses', image: 'hearse-pair', alt: 'Two executive hearses parked beside a lake', pos: '50% 60%' },
+    { title: 'Executive hearses', image: 'exec-hearses', alt: 'Three Doves executive hearses seen from above', pos: '50% 50%' },
     { title: 'Vintage hearses', image: 'vintage-hearse', alt: 'A dark vintage Doves hearse', pos: '50% 55%' },
     { title: 'All terrain hearses', image: 'removal-vehicle', alt: 'A Doves all terrain vehicle on a bush track', pos: '50% 55%' },
-    { title: 'Hearses', image: 'removal-fleet', alt: 'A line of white Doves hearses', pos: '50% 50%' },
+    { title: 'Hearses', image: 'line-up', alt: 'The Doves fleet lined up on a field', pos: '50% 55%' },
     { title: 'Executive buses', image: 'courtesy-bus', alt: 'A Doves VVIP executive coach', pos: '60% 50%' },
     { title: 'Mourners transport', image: 'executive-buses', alt: 'A row of Doves buses for mourners', pos: '50% 55%' },
     { title: 'Courtesy vehicles', image: 'courtesy-suv', alt: 'White Doves courtesy SUVs parked together', pos: '50% 55%' },

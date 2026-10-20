@@ -43,16 +43,9 @@ const photo = (name: string) => imgs[`../assets/photos/fleet/${name}.jpg`].defau
     gap: 20px 12px;
   }
 
-  /* 11 photos: the last one spans the row on small screens so no cell is left empty */
-  .item:last-child {
-    grid-column: span 2;
-  }
+  /* 10 photos: two columns on phones, so every row is full */
 
-  .item:last-child :global(.tile__img) {
-    aspect-ratio: 16 / 9;
-  }
-
-  /* Desktop: 4, 4, then 3 larger photos, so every row fills the width */
+  /* Desktop: 4, then 3 and 3 larger photos, so every row fills the width */
   @media (min-width: 1000px) {
     .grid {
       grid-template-columns: repeat(12, 1fr);
@@ -63,12 +56,8 @@ const photo = (name: string) => imgs[`../assets/photos/fleet/${name}.jpg`].defau
       grid-column: span 3;
     }
 
-    .item:nth-last-child(-n + 3) {
+    .item:nth-child(n + 5) {
       grid-column: span 4;
-    }
-
-    .item:last-child :global(.tile__img) {
-      aspect-ratio: 4 / 3;
     }
   }
 </style>
