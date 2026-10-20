@@ -190,5 +190,7 @@ initPanel();
 void flags;
 
 runPreloader(() => {
+  // The hero sits at the very bottom edge of the first screen, so reveal it directly
+  document.querySelectorAll('.hero .clr').forEach((el, i) => window.setTimeout(() => el.classList.add('is-in'), 120 * i));
   setupReveals();
 });

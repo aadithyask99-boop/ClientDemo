@@ -452,3 +452,97 @@
     aspect-ratio: 4 / 4.6;
   }
 }
+
+/* ---------- Hero photograph with a plain warm brown backdrop: copy sits in the open space beside her ---------- */
+.hero {
+  background: #3b2314;
+}
+
+.hero__img::after {
+  background: linear-gradient(90deg, #3b2314 0%, rgba(59, 35, 20, 0.55) 14%, rgba(59, 35, 20, 0) 36%);
+}
+
+.hero::before {
+  background:
+    linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 34%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.32) 0%, rgba(0, 0, 0, 0) 20%);
+}
+
+.hero__img img {
+  object-position: 50% 16%;
+}
+
+/* ---------- Phone hero: one full-bleed photograph, no colour wash, title higher up as in the reference ---------- */
+@media (max-width: 880px) {
+  .hero {
+    display: grid;
+    align-items: end;
+    min-height: 100svh;
+  }
+
+  .hero__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: auto;
+  }
+
+  /* A neutral, light scrim only: the photograph is never blended into plum */
+  .hero__img::after {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.32) 0%, rgba(0, 0, 0, 0) 22%, rgba(0, 0, 0, 0) 48%, rgba(0, 0, 0, 0.38) 100%);
+  }
+
+  .hero__img img {
+    object-position: 90% 18%;
+  }
+
+  .hero__in {
+    min-height: 100svh;
+    margin-top: 0;
+    padding: 6rem var(--gutter) 1.6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 7.5rem;
+  }
+
+  .hero__main {
+    gap: 1.3rem;
+  }
+
+  .hero .display {
+    font-size: clamp(2rem, 8.3vw, 3.2rem);
+    max-width: none;
+  }
+
+  .hero__sub {
+    gap: 1.3rem;
+  }
+
+  .hero__sub p {
+    max-width: 17rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  .hero .btn--lg {
+    --h: 3.2rem;
+    font-size: 0.9375rem;
+  }
+
+  .hero__act .link,
+  .hero .scroll {
+    display: none;
+  }
+
+  .hero__bar {
+    display: flex;
+    justify-content: flex-start;
+    font-size: 0.75rem;
+  }
+
+  /* Header: logo on the left, just the round arrow on the right */
+  .nav__cta .lbl {
+    display: none;
+  }
+}
