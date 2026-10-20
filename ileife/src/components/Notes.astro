@@ -1,0 +1,52 @@
+---
+import Photo from './Photo.astro';
+import hydration from '../assets/photos/p16038186.jpg';
+import coffee from '../assets/photos/p7797735.jpg';
+import steam from '../assets/photos/p11741348.jpg';
+import { notes as c } from '../data/site';
+
+const imgs = [
+  { src: hydration, alt: 'A drop of serum falling from a glass dropper', pos: '50% 50%' },
+  { src: coffee, alt: 'A dropper bottle resting on a ceramic dish with dried flowers', pos: '50% 55%' },
+  { src: steam, alt: 'A frosted dropper bottle on a wooden dish', pos: '45% 50%' },
+];
+---
+
+<section class="sec notes" data-tone-section="sand" data-notes>
+  <div class="wrap">
+    <div class="notes__head">
+      <h2 class="h2" data-split>{c.title[0]} <span class="ac">{c.title[1]}</span></h2>
+      <p class="lede clr muted">{c.lede}</p>
+    </div>
+    <div class="notes__grid">
+      <div class="notes__imgs clr-img">
+        {
+          imgs.map((m, i) => (
+            <div class={`frame notes__img${i === 0 ? ' on' : ''}`} data-i={i}>
+              <Photo src={m.src} alt={m.alt} sizes="(max-width: 880px) 90vw, 38vw" widths={[500, 800, 1200]} position={m.pos} />
+            </div>
+          ))
+        }
+      </div>
+      <div class="notes__list">
+        {
+          c.list.map((n, i) => (
+            <div class={`note2${i === 0 ? ' open' : ''}`} data-i={i}>
+              <h3 class="sr">{n.t}</h3>
+              <button type="button" class="note2__btn" aria-expanded={i === 0 ? 'true' : 'false'}>
+                <span class="note2__n">0{i + 1}</span>
+                <span class="note2__t">{n.t}</span>
+                <span class="tx__plus" aria-hidden="true"></span>
+              </button>
+              <div class="note2__panel">
+                <div>
+                  <p>{n.d}</p>
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,30 @@
+---
+import Photo from './Photo.astro';
+import portrait from '../assets/photos/p9470179.jpg';
+import { rules as c } from '../data/site';
+---
+
+<section class="sec rules" id="rules" data-tone-section="sand">
+  <div class="wrap rules__grid">
+    <div class="rules__side">
+      <h2 class="h2" data-split>{c.title[0]} <span class="ac">{c.title[1]}</span></h2>
+      <p class="lede clr">{c.lede}</p>
+      <div class="frame frame--arch rules__photo clr-img">
+        <Photo src={portrait} alt="A woman resting her hands on her head, eyes closed, against a soft pink wall" sizes="(max-width: 880px) 90vw, 28rem" widths={[600, 900, 1200]} position="50% 30%" />
+      </div>
+    </div>
+    <ol class="rules__list" style="list-style:none;margin:0;padding:0">
+      {
+        c.list.map((r, i) => (
+          <li class="rule clr" style={`--d:${i * 0.08}s`}>
+            <span class="rule__n">0{i + 1}</span>
+            <div>
+              <h3 class="h3">{r.t}</h3>
+              <p>{r.d}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

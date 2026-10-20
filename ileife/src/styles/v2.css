@@ -1,0 +1,476 @@
+@import '@fontsource-variable/cormorant-garamond/wght-italic.css';
+
+/* ---- Round CTA, as in the reference: a thin circle with a tilted arrow, label beside it ---- */
+.btn {
+  --h: 3.4rem;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  height: auto;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  overflow: visible;
+  isolation: auto;
+  color: var(--fg);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: transform 0.5s var(--ease);
+}
+
+.btn::before {
+  display: none;
+}
+
+.btn .arr {
+  order: -1;
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: var(--h);
+  height: var(--h);
+  border: 1px solid color-mix(in srgb, currentColor 55%, transparent);
+  border-radius: 50%;
+  overflow: hidden;
+  transition:
+    border-color 0.5s var(--ease),
+    color 0.5s var(--ease);
+}
+
+.btn .arr::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: currentColor;
+  transform: scale(0);
+  transition: transform 0.6s var(--ease);
+}
+
+.btn .arr svg {
+  position: relative;
+  transition: transform 0.6s var(--ease);
+}
+
+.btn .lbl {
+  display: inline;
+  padding: 0;
+  position: relative;
+}
+
+.btn .lbl::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.3rem;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease);
+}
+
+.btn:hover,
+.btn:focus-visible {
+  color: var(--fg);
+  border-color: transparent;
+}
+
+.btn:hover .arr::before,
+.btn:focus-visible .arr::before {
+  transform: scale(1);
+}
+
+.btn:hover .arr,
+.btn:focus-visible .arr {
+  border-color: var(--fg);
+}
+
+.btn:hover .arr svg,
+.btn:focus-visible .arr svg {
+  color: var(--bg);
+  transform: rotate(45deg);
+}
+
+.btn:hover .lbl::after,
+.btn:focus-visible .lbl::after {
+  transform: scaleX(1);
+}
+
+.btn--lg {
+  --h: 4rem;
+  font-size: 1.0625rem;
+}
+
+.btn--solid {
+  background: none;
+  border: 0;
+}
+
+.btn--solid .arr {
+  border-color: color-mix(in srgb, currentColor 55%, transparent);
+}
+
+/* On the hero photograph the CTA stays white whatever the page tone is */
+.hero .btn,
+.hero .btn:hover,
+.hero .btn:focus-visible {
+  color: #fff;
+}
+
+.hero .btn:hover .arr svg,
+.hero .btn:focus-visible .arr svg {
+  color: #1f1720;
+}
+
+.hero .btn:hover .arr,
+.hero .btn:focus-visible .arr {
+  border-color: #fff;
+}
+
+/* Top right CTA: transparent, text and a small tilted arrow */
+.nav__cta.btn {
+  gap: 0.7rem;
+  --h: 2.4rem;
+  font-size: 0.9375rem;
+}
+
+.nav__cta.btn .arr {
+  order: 2;
+}
+
+/* ---- Italic accents, as in the reference ---- */
+.ac {
+  font-style: italic;
+}
+
+/* ---- Hero: staggered title, more space, no rules ---- */
+.hero .display {
+  font-size: clamp(3rem, 6.2vw, 7.6rem);
+  line-height: 1.04;
+  max-width: none;
+}
+
+.hero .display > div:nth-child(2) {
+  padding-left: 1.5em;
+}
+
+.hero .display .ac {
+  color: inherit;
+  padding-right: 0.06em;
+}
+
+.hero__in {
+  gap: clamp(4rem, 14vh, 9rem);
+  padding-bottom: clamp(2rem, 5vh, 3.4rem);
+}
+
+.hero__main {
+  gap: clamp(2.2rem, 5vh, 3.4rem);
+}
+
+.hero__sub {
+  gap: 1.6rem 3.4rem;
+  align-items: center;
+  max-width: 62rem;
+  padding-left: 1.5em;
+}
+
+.hero__sub p {
+  max-width: 21rem;
+}
+
+.hero__bar {
+  border-top: 0;
+  padding-top: 0;
+}
+
+@media (max-width: 880px) {
+  .hero .display {
+    font-size: clamp(2.7rem, 11.4vw, 4.2rem);
+  }
+  .hero .display > div:nth-child(2) {
+    padding-left: 0;
+  }
+  .hero__sub {
+    padding-left: 0;
+  }
+}
+
+/* ---- More breathing space ---- */
+.sec {
+  padding-block: clamp(6.5rem, 14vw, 13rem);
+}
+
+/* ---- Photos stay crisp: never stretch them past what they can carry ---- */
+.pr__photo {
+  max-width: 34rem;
+}
+
+.tx__thumb {
+  max-width: 20rem;
+}
+
+/* ---- Princess: her own words and a first-visit outline ---- */
+.pr__mission {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2vw, 1.9rem);
+  line-height: 1.4;
+  max-width: 34rem;
+}
+
+.visit__grid {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: clamp(2rem, 6vw, 7rem);
+  align-items: start;
+}
+
+.visit__side {
+  display: grid;
+  gap: 1.6rem;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 4.2rem 1fr;
+  padding-block: clamp(1.5rem, 2.6vw, 2.3rem);
+  border-top: 1px solid var(--line);
+}
+
+.step:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.step__n {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--accent);
+  line-height: 1.5;
+}
+
+.step p {
+  margin-top: 0.6rem;
+  color: var(--muted);
+  max-width: 34rem;
+}
+
+@media (max-width: 880px) {
+  .visit__grid {
+    grid-template-columns: 1fr;
+  }
+  .step {
+    grid-template-columns: 3rem 1fr;
+  }
+}
+
+/* ---- Appointment request: a sentence you complete ---- */
+.req__in {
+  display: grid;
+  gap: clamp(2.4rem, 5vw, 4rem);
+  max-width: 78rem;
+}
+
+.req__head {
+  display: grid;
+  gap: 2rem;
+}
+
+.req__head .lede {
+  max-width: 36rem;
+  color: var(--muted);
+}
+
+.req__form {
+  display: grid;
+  gap: 2.4rem;
+  justify-items: start;
+}
+
+.sentence {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.7rem, 2.9vw, 3rem);
+  line-height: 1.6;
+  letter-spacing: -0.005em;
+}
+
+.fit {
+  position: relative;
+  display: inline-grid;
+  vertical-align: baseline;
+}
+
+.fit::after {
+  content: attr(data-v) ' ';
+  grid-area: 1 / 1;
+  visibility: hidden;
+  white-space: pre;
+  min-width: 6ch;
+  padding-inline: 0.15em 0.9em;
+}
+
+.fit > input,
+.fit > select {
+  grid-area: 1 / 1;
+  width: 100%;
+  min-width: 0;
+  padding: 0 0.15em;
+  border: 0;
+  border-bottom: 1px solid var(--accent);
+  border-radius: 0;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  font-style: italic;
+  letter-spacing: inherit;
+  outline: none;
+  transition:
+    border-color 0.4s ease,
+    background-color 0.4s ease;
+}
+
+.fit > select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  padding-right: 0.9em;
+}
+
+.fit > select option {
+  font-family: var(--font-body);
+  font-style: normal;
+  font-size: 1rem;
+  color: #2d2230;
+  background: #f4ede3;
+}
+
+.fit.sel::before {
+  content: '';
+  position: absolute;
+  right: 0.2em;
+  top: 55%;
+  width: 0.34em;
+  height: 0.34em;
+  border-right: 1px solid var(--accent);
+  border-bottom: 1px solid var(--accent);
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+
+.fit > input::placeholder {
+  color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.fit > input:focus,
+.fit > select:focus {
+  border-bottom-width: 2px;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.fit.bad > input {
+  border-color: #ff9a8f;
+}
+
+.req__extra {
+  display: grid;
+  gap: 0.6rem;
+  width: min(100%, 44rem);
+}
+
+.req__extra label {
+  color: var(--muted);
+  font-size: var(--t-small);
+  letter-spacing: 0.06em;
+}
+
+.req__extra input {
+  width: 100%;
+  padding: 0.7rem 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  outline: none;
+  transition: border-color 0.4s ease;
+}
+
+.req__extra input:focus {
+  border-color: var(--accent);
+}
+
+.req__act {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.2rem 2.4rem;
+}
+
+.req__err {
+  min-height: 1.5em;
+  color: #ffb3a9;
+  font-size: 0.9375rem;
+}
+
+.req__done {
+  display: none;
+  gap: 1.4rem;
+  justify-items: start;
+}
+
+.req.sent .req__form {
+  display: none;
+}
+
+.req.sent .req__done {
+  display: grid;
+  animation: settle 1.2s var(--ease) both;
+}
+
+@keyframes settle {
+  from {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateY(10px);
+  }
+}
+
+.req__done .lede {
+  max-width: 36rem;
+  color: var(--muted);
+}
+
+.req__note {
+  color: var(--muted);
+  font-size: var(--t-small);
+}
+
+/* ---- Footer wordmark centred ---- */
+.footer__word {
+  text-align: center;
+}
+
+/* Line masks must not clip descenders (g, y, p) */
+[data-split] > div {
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+/* The header keeps a soft backing once the page has moved, so links never collide with text */
+.nav {
+  transition: background-color 0.6s var(--ease), backdrop-filter 0.6s var(--ease);
+}
+
+.nav.scrolled {
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(16px) saturate(1.1);
+  -webkit-backdrop-filter: blur(16px) saturate(1.1);
+  padding-block: 0.8rem;
+}

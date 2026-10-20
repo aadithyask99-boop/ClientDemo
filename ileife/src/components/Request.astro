@@ -1,0 +1,68 @@
+---
+import { brand, request as c } from '../data/site';
+
+const arrow = 'M5 13 13 5M6 5h7v7';
+---
+
+<section class="sec req" id="book" data-tone-section="plum">
+  <div class="wrap">
+    <div class="req__in" data-req data-req-data={JSON.stringify({ facials: c.facials })} data-endpoint={import.meta.env.PUBLIC_FORM_ENDPOINT ?? ''}>
+      <div class="req__head">
+        <h2 class="h2" data-split>{c.title[0]} <span class="ac">{c.title[1]}</span></h2>
+        <p class="lede clr">{c.lede}</p>
+      </div>
+
+      <form class="req__form clr" novalidate data-form>
+        <p class="sentence">
+          <span class="lead">Hello Princess, I would like to book</span>
+          <span class="fit sel" data-v={c.facials[1].t}>
+            <select name="facial" aria-label="Which facial">
+              {c.facials.map((f, i) => <option value={f.v} selected={i === 1}>{f.t}</option>)}
+            </select>
+          </span><span class="pt">&nbsp;</span>
+          <span class="lead">for</span>
+          <span class="fit sel" data-v={c.concerns[0]}>
+            <select name="concern" aria-label="What is your skin doing">
+              {c.concerns.map((t) => <option value={t}>{t}</option>)}
+            </select>
+          </span><span class="pt">.</span>
+          <span class="lead">I am usually free</span>
+          <span class="fit sel" data-v={c.times[1]}>
+            <select name="time" aria-label="When suits you">
+              {c.times.map((t, i) => <option value={t} selected={i === 1}>{t}</option>)}
+            </select>
+          </span><span class="pt">.</span>
+          <span class="lead">My name is</span>
+          <span class="fit" data-v="your name">
+            <input name="name" type="text" autocomplete="name" placeholder="your name" aria-label="Your name" required />
+          </span>
+          <span class="lead">and the best way to reach me is</span>
+          <span class="fit" data-v="phone or email">
+            <input name="contact" type="text" autocomplete="email" placeholder="phone or email" aria-label="Phone number or email" required />
+          </span><span class="pt">.</span>
+        </p>
+
+        <div class="req__extra">
+          <label for="req-note">Anything Princess should know? (optional)</label>
+          <textarea id="req-note" name="note" rows="3" placeholder="Allergies, sensitivities, a special occasion, or anything else you would like her to know."></textarea>
+        </div>
+
+        <div class="req__act">
+          <button class="btn btn--lg" type="submit" data-magnet>
+            <span class="lbl">Send request</span>
+            <span class="arr" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.2"><path d={arrow} /></svg></span>
+          </button>
+          <a class="link" href={brand.book} rel="noopener">{c.alt}</a>
+        </div>
+        <p class="req__err" role="alert" data-err></p>
+      </form>
+
+      <div class="req__done" data-done aria-live="polite">
+        <h3 class="h2" data-thanks>Thank you.</h3>
+        <p class="lede" data-summary></p>
+        <p class="req__note" data-demo hidden>Preview only: nothing has been sent from this demo.</p>
+        <button class="link" type="button" data-again>Change my request</button>
+      </div>
+    </div>
+  </div>
+</section>

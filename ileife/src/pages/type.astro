@@ -1,0 +1,69 @@
+---
+// Type specimen, only for choosing fonts. Not part of the staged site (see scripts/stage.mjs, which removes it).
+import '@fontsource-variable/cormorant-garamond/wght.css';
+import '@fontsource-variable/manrope/wght.css';
+import '@fontsource/bellefair';
+import '@fontsource-variable/bodoni-moda/wght.css';
+import '@fontsource/gilda-display';
+import '@fontsource-variable/newsreader/wght.css';
+import '@fontsource/marcellus';
+import '@fontsource-variable/hanken-grotesk/wght.css';
+import '@fontsource-variable/onest/wght.css';
+import '@fontsource-variable/figtree/wght.css';
+
+const sets = [
+  { n: '1', t: 'Current', h: 'Cormorant Garamond Variable', b: 'Manrope Variable', w: 300 },
+  { n: '2', t: 'Bellefair + Hanken Grotesk', h: 'Bellefair', b: 'Hanken Grotesk Variable', w: 400 },
+  { n: '3', t: 'Bodoni Moda + Onest', h: 'Bodoni Moda Variable', b: 'Onest Variable', w: 400 },
+  { n: '4', t: 'Gilda Display + Figtree', h: 'Gilda Display', b: 'Figtree Variable', w: 400 },
+  { n: '5', t: 'Newsreader + Hanken Grotesk', h: 'Newsreader Variable', b: 'Hanken Grotesk Variable', w: 300 },
+  { n: '6', t: 'Marcellus + Onest', h: 'Marcellus', b: 'Onest Variable', w: 400 },
+];
+---
+
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Type specimen</title>
+    <style>
+      body { margin: 0; background: #1f1720; color: #fff; }
+      .set { display: grid; }
+      .hero { padding: 9vh 5vw 6vh; background: linear-gradient(90deg, #1f1720, #3a2a30); }
+      .lab { font: 500 13px system-ui; letter-spacing: 0.08em; opacity: 0.7; margin-bottom: 2rem; }
+      .hero h1 { margin: 0 0 1.4rem; font-size: clamp(2.8rem, 7vw, 8rem); line-height: 1.04; max-width: 11em; }
+      .hero p { max-width: 30rem; font-size: 1.0625rem; line-height: 1.65; opacity: 0.86; margin: 0 0 1.6rem; }
+      .hero a { display: inline-block; border: 1px solid #fff9; padding: 1rem 1.6rem; font-size: 0.95rem; color: #fff; text-decoration: none; }
+      .body { padding: 8vh 5vw; background: #f4ede3; color: #2d2230; display: grid; grid-template-columns: 1fr 1fr; gap: 4vw; }
+      .body h2 { margin: 0; font-size: clamp(2.2rem, 4.6vw, 5rem); line-height: 1.06; }
+      .body h2 span { color: #96566a; }
+      .body p { font-size: 1.0625rem; line-height: 1.7; margin: 0 0 1rem; max-width: 34rem; color: #5b4e5b; }
+      .body h3 { margin: 0 0 0.6rem; font-size: 1.9rem; font-weight: 400; }
+      @media (max-width: 800px) { .body { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    {
+      sets.map((s) => (
+        <section class="set" style={`font-family:'${s.b}',sans-serif`}>
+          <div class="hero">
+            <div class="lab">{s.n}. {s.t}</div>
+            <h1 style={`font-family:'${s.h}',serif;font-weight:${s.w}`}>Restorative skin care, delivered with intention.</h1>
+            <p>A calm, intimate space for facials in South London.</p>
+            <a href="#">Book a facial &rarr;</a>
+          </div>
+          <div class="body">
+            <h2 style={`font-family:'${s.h}',serif;font-weight:${s.w}`}>Skin care, on <span>your own terms.</span></h2>
+            <div>
+              <h3 style={`font-family:'${s.h}',serif`}>Glow Facial</h3>
+              <p>A deeply hydrating facial focused on restoring moisture, smoothing texture, and enhancing natural radiance. £90.</p>
+              <p style={`font-family:'${s.h}',serif;font-size:1.7rem;line-height:1.3;color:#2d2230`}>ILÉ ÌFẸ́, the house of love. Rooted in love and guided by peace.</p>
+            </div>
+          </div>
+        </section>
+      ))
+    }
+  </body>
+</html>

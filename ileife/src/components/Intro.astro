@@ -1,0 +1,30 @@
+---
+import Photo from './Photo.astro';
+import room from '../assets/photos/p35884502.jpg';
+import { intro as c } from '../data/site';
+---
+
+<section class="sec intro" id="intro" data-tone-section="cream">
+  <div class="wrap">
+    <div class="intro__grid">
+      <h2 class="h2" data-split>{c.title[0]} <span class="ac">{c.title[1]}</span></h2>
+      <div class="intro__text">
+        <p class="lede clr">{c.body}</p>
+        <p class="clr muted" style="--d:0.1s">{c.more}</p>
+      </div>
+    </div>
+    <div class="frame intro__photo clr-img">
+      <Photo src={room} alt="A treatment bed with a rolled towel, a candle and soft light" sizes="(max-width: 880px) 100vw, 88vw" widths={[800, 1400, 2000]} position="50% 62%" />
+    </div>
+    <dl class="facts">
+      {
+        c.facts.map((f, i) => (
+          <div class="clr" style={`--d:${i * 0.12}s`}>
+            <dt>{f.k}</dt>
+            <dd>{f.v}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>

@@ -1,0 +1,47 @@
+---
+import logoCream from '../assets/logo-cream.png';
+import { brand } from '../data/site';
+
+const explore = [
+  { href: '#facials', label: 'Facials' },
+  { href: '#rules', label: 'House rules' },
+  { href: '#persona', label: 'Skin persona' },
+  { href: '#princess', label: 'Princess' },
+  { href: '#reviews', label: 'Reviews' },
+];
+---
+
+<footer class="footer" data-tone-section="plum">
+  <div class="wrap">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <img class="footer__logo" src={logoCream.src} width={logoCream.width} height={logoCream.height} alt={brand.name} />
+        <p class="muted">Restorative skin care, delivered with intention. {brand.meaning}.</p>
+      </div>
+      <div>
+        <h3>Explore</h3>
+        <ul>
+          {explore.map((l) => <li><a class="link" href={l.href}>{l.label}</a></li>)}
+        </ul>
+      </div>
+      <div>
+        <h3>Visit</h3>
+        <ul>
+          <li><span class="muted">{brand.area}</span></li>
+          <li><a class="link" href={brand.book} rel="noopener">Book a facial</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Follow</h3>
+        <ul>
+          <li><a class="link" href={brand.instagram} rel="noopener">Instagram</a></li>
+          <li><a class="link" href={brand.terms} rel="noopener">Terms</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__word" aria-hidden="true">ILÉ IFÉ</div>
+    <div class="footer__base">
+      <span>© {new Date().getFullYear()} {brand.name}</span>
+    </div>
+  </div>
+</footer>

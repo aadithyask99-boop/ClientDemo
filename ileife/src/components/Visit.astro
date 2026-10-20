@@ -1,0 +1,81 @@
+---
+import Photo from './Photo.astro';
+import talk from '../assets/photos/p32707142.jpg';
+import guided from '../assets/photos/own4.jpg';
+import facial from '../assets/photos/own7.jpg';
+import care from '../assets/photos/p8101511.jpg';
+import { visit as c } from '../data/site';
+
+const imgs = [
+  { src: talk, alt: 'A woman laughing, relaxed and at ease', pos: '50% 30%' },
+  { src: guided, alt: 'Gentle hands guiding a facial massage', pos: '50% 40%' },
+  { src: facial, alt: 'A client relaxing during her facial', pos: '60% 40%' },
+  { src: care, alt: 'Dropper bottles on linen, aftercare to take home', pos: '50% 50%' },
+];
+const n = c.steps.length;
+---
+
+<section class="visit" id="visit" data-tone-section="cream" data-visit style={`--n:${n}`}>
+  <div class="visit__track">
+    <div class="visit__stick">
+      <div class="wrap visit__pin">
+        <div class="visit__left">
+          <h2 class="h2" data-split>{c.title[0]} <span class="ac">{c.title[1]}</span></h2>
+          <p class="lede muted clr">{c.lede}</p>
+          <ol class="visit__nav" aria-label="Steps">
+            {
+              c.steps.map((s, i) => (
+                <li>
+                  <button type="button" data-go={i} class={i === 0 ? 'on' : ''}>
+                    <span class="visit__num">0{i + 1}</span>
+                    <span>{s.t}</span>
+                  </button>
+                </li>
+              ))
+            }
+          </ol>
+          <div class="visit__bar" aria-hidden="true"><i data-fill></i></div>
+        </div>
+        <div class="visit__right">
+          <div class="visit__imgs">
+            {
+              imgs.map((m, i) => (
+                <div class={`frame visit__img${i === 0 ? ' on' : ''}`} data-i={i}>
+                  <Photo src={m.src} alt={m.alt} sizes="(max-width: 880px) 90vw, 36vw" widths={[500, 800, 1100]} position={m.pos} />
+                </div>
+              ))
+            }
+          </div>
+          <div class="visit__texts" aria-live="polite">
+            {
+              c.steps.map((s, i) => (
+                <div class={`visit__text${i === 0 ? ' on' : ''}`} data-i={i}>
+                  <h3 class="h3">{s.t}</h3>
+                  <p>{s.d}</p>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phone and no-JS version: the same steps as a simple list -->
+  <div class="wrap visit__list">
+    <h2 class="h2">{c.title[0]} <span class="ac">{c.title[1]}</span></h2>
+    <ol style="list-style:none;margin:0;padding:0">
+      {
+        c.steps.map((s, i) => (
+          <li class="step">
+            <span class="step__n">0{i + 1}</span>
+            <div>
+              <h3 class="h3">{s.t}</h3>
+              <p>{s.d}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

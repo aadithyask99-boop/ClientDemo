@@ -1,0 +1,491 @@
+/* ---------- Hero: copy on the left over deep plum, photograph on the right, as in the reference ---------- */
+.hero {
+  background: #1b141c;
+  align-items: end;
+}
+
+.hero__img {
+  inset: 0 0 0 auto;
+  width: 58vw;
+}
+
+.hero__img {
+  overflow: hidden;
+}
+
+.hero__img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #1b141c 0%, rgba(27, 20, 28, 0.62) 16%, rgba(27, 20, 28, 0) 44%);
+}
+
+.hero__img img {
+  object-position: 50% 30%;
+  transform-origin: 60% 35%;
+}
+
+.hero::before {
+  background:
+    linear-gradient(0deg, rgba(27, 20, 28, 0.6) 0%, rgba(27, 20, 28, 0) 38%),
+    linear-gradient(180deg, rgba(27, 20, 28, 0.5) 0%, rgba(27, 20, 28, 0) 22%);
+}
+
+.hero .display {
+  font-size: clamp(2.9rem, 5.5vw, 7.2rem);
+}
+
+.hero__sub {
+  display: grid;
+  gap: 2.2rem;
+  max-width: none;
+  padding-left: 0;
+  align-items: start;
+}
+
+.hero__sub p {
+  max-width: 22rem;
+}
+
+.hero__act {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.2rem 2.6rem;
+}
+
+@media (max-width: 880px) {
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    min-height: 100svh;
+  }
+
+  .hero__img {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: 46svh;
+    flex: none;
+    overflow: hidden;
+  }
+
+  .hero__img::after {
+    background: linear-gradient(180deg, rgba(27, 20, 28, 0.55) 0%, rgba(27, 20, 28, 0) 26%, rgba(27, 20, 28, 0) 40%, rgba(27, 20, 28, 0.85) 82%, #1b141c 96%);
+  }
+
+  .hero::before {
+    display: none;
+  }
+
+  .hero__in {
+    position: relative;
+    flex: 1;
+    margin-top: -4.5rem;
+    padding-top: 0;
+    gap: 2.4rem;
+    align-content: space-between;
+  }
+
+  .hero .display {
+    font-size: clamp(2.3rem, 9.6vw, 3.6rem);
+  }
+
+  .hero__main {
+    gap: 1.6rem;
+  }
+
+  .hero__in {
+    padding-bottom: 1.4rem;
+  }
+
+  .hero__sub {
+    gap: 1.6rem;
+  }
+}
+
+/* ---------- Appointment request, centred ---------- */
+.req__in {
+  max-width: 72rem;
+  margin-inline: auto;
+  justify-items: center;
+  text-align: center;
+}
+
+.req__head {
+  justify-items: center;
+}
+
+.req__form {
+  justify-items: center;
+  width: 100%;
+}
+
+.sentence {
+  text-align: center;
+}
+
+.req__extra {
+  justify-items: stretch;
+  text-align: left;
+  margin-top: 0.6rem;
+}
+
+.req__extra textarea {
+  width: 100%;
+  min-height: 7.5rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+  color: var(--fg);
+  font: inherit;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  transition:
+    border-color 0.4s ease,
+    background-color 0.4s ease;
+}
+
+.req__extra textarea:focus {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.req__extra textarea::placeholder {
+  color: color-mix(in srgb, var(--fg) 45%, transparent);
+}
+
+.req__act {
+  justify-content: center;
+}
+
+.req__done {
+  justify-items: center;
+  text-align: center;
+}
+
+/* ---------- Your first visit: pins to the viewport, the steps follow the scroll ---------- */
+.visit__track {
+  height: calc(100svh + var(--n) * 80svh);
+}
+
+.visit__stick {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: grid;
+  align-items: center;
+  overflow: hidden;
+}
+
+.visit__pin {
+  display: grid;
+  grid-template-columns: 0.82fr 1.18fr;
+  gap: clamp(2rem, 6vw, 7rem);
+  align-items: center;
+  padding-top: 4.5rem;
+}
+
+.visit__left {
+  display: grid;
+  gap: 1.6rem;
+  align-content: center;
+}
+
+.visit__nav {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: grid;
+}
+
+.visit__nav button {
+  display: flex;
+  align-items: baseline;
+  gap: 1.1rem;
+  width: 100%;
+  min-height: 44px;
+  text-align: left;
+  color: var(--muted);
+  font-size: 1.0625rem;
+  transition:
+    color 0.5s ease,
+    transform 0.7s var(--ease);
+}
+
+.visit__nav button.on {
+  color: var(--fg);
+  transform: translateX(0.7rem);
+}
+
+.visit__num {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--accent);
+  min-width: 2rem;
+}
+
+.visit__bar {
+  position: relative;
+  height: 1px;
+  margin-top: 0.4rem;
+  background: var(--line);
+}
+
+.visit__bar i {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.visit__right {
+  display: grid;
+  gap: 1.8rem;
+}
+
+.visit__imgs {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  max-height: 52svh;
+}
+
+.visit__img {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  filter: blur(16px);
+  transform: scale(1.04);
+  transition:
+    opacity 0.9s var(--ease),
+    filter 1s var(--ease),
+    transform 1.3s var(--ease);
+}
+
+.visit__img.on {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+.visit__texts {
+  position: relative;
+  min-height: 8.4rem;
+}
+
+.visit__text {
+  position: absolute;
+  inset: 0 auto auto 0;
+  max-width: 36rem;
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateY(14px);
+  transition:
+    opacity 0.7s ease,
+    filter 0.8s ease,
+    transform 0.9s var(--ease);
+  pointer-events: none;
+}
+
+.visit__text.on {
+  opacity: 1;
+  filter: none;
+  transform: none;
+  pointer-events: auto;
+  transition-delay: 0.15s;
+}
+
+.visit__text p {
+  margin-top: 0.7rem;
+  color: var(--muted);
+}
+
+.visit__list {
+  display: none;
+}
+
+@media (max-width: 880px) {
+  .visit__track {
+    display: none;
+  }
+
+  .visit__list {
+    display: block;
+    padding-block: 4.5rem;
+  }
+
+  .visit__list .h2 {
+    margin-bottom: 2rem;
+  }
+}
+
+/* ---------- Skin notes: titles on the left, a photograph and the text on the right ---------- */
+.notes__grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: clamp(2rem, 6vw, 7rem);
+  align-items: start;
+}
+
+.notes__imgs {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  max-height: 78svh;
+}
+
+.notes__img {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  filter: blur(14px);
+  transform: scale(1.05);
+  transition:
+    opacity 0.9s var(--ease),
+    filter 1s var(--ease),
+    transform 1.3s var(--ease);
+}
+
+.notes__img.on {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+.notes__list {
+  border-top: 1px solid var(--line);
+}
+
+.note2 {
+  border-bottom: 1px solid var(--line);
+}
+
+.note2__btn {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 3.2rem 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding-block: clamp(1.4rem, 2.6vw, 2.2rem);
+  text-align: left;
+  min-height: 44px;
+}
+
+.note2__n {
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+}
+
+.note2__t {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 3vw, 3rem);
+  line-height: 1.1;
+  font-weight: 300;
+  transition:
+    color 0.4s ease,
+    transform 0.7s var(--ease);
+}
+
+.note2.open .note2__t {
+  color: var(--accent);
+  transform: translateX(0.5rem);
+}
+
+.note2__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.8s var(--ease);
+}
+
+.note2.open .note2__panel {
+  grid-template-rows: 1fr;
+}
+
+.note2__panel > div {
+  overflow: hidden;
+}
+
+.note2__panel p {
+  padding: 0 0 1.9rem 4.2rem;
+  max-width: 38rem;
+  color: var(--muted);
+}
+
+.note2.open .tx__plus {
+  transform: rotate(180deg);
+  background: var(--pill-bg);
+  color: var(--pill-fg);
+}
+
+.note2.open .tx__plus::after {
+  transform: translate(-50%, -50%) rotate(0deg);
+}
+
+@media (max-width: 880px) {
+  .notes__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .notes__imgs {
+    aspect-ratio: 4 / 3;
+  }
+
+  .note2__panel p {
+    padding-left: 0;
+  }
+}
+
+/* ---------- Phone: tighter, more even spacing ---------- */
+@media (max-width: 880px) {
+  :root {
+    --gutter: 1.35rem;
+  }
+
+  .sec {
+    padding-block: 4.5rem;
+  }
+
+  .intro__photo {
+    margin-top: 2.4rem;
+  }
+
+  .facts {
+    margin-top: 2.2rem;
+  }
+
+  .tx__head,
+  .notes__head {
+    margin-bottom: 1.8rem;
+  }
+
+  .focus {
+    margin-top: 2.4rem;
+  }
+
+  .quiz {
+    min-height: 0;
+  }
+
+  .quiz__stage {
+    min-height: 0;
+  }
+
+  .rv__stage {
+    min-height: 15rem;
+  }
+
+  .footer {
+    padding-top: 3.4rem;
+  }
+
+  .footer__word {
+    margin-top: 2.2rem;
+  }
+}

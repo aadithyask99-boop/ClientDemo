@@ -1,0 +1,27 @@
+---
+import logoCream from '../assets/logo-cream.png';
+import logoPlum from '../assets/logo-aubergine.png';
+import { brand } from '../data/site';
+
+const links = [
+  { href: '#facials', label: 'Facials' },
+  { href: '#rules', label: 'House rules' },
+  { href: '#persona', label: 'Skin persona' },
+  { href: '#princess', label: 'Princess' },
+  { href: '#reviews', label: 'Reviews' },
+];
+---
+
+<header class="nav">
+  <a class="nav__logo" href="#top" aria-label={`${brand.name}, back to top`}>
+    <img class="on-dark" src={logoCream.src} alt="" width={logoCream.width} height={logoCream.height} />
+    <img class="on-light" src={logoPlum.src} alt="" width={logoPlum.width} height={logoPlum.height} />
+  </a>
+  <nav class="nav__links" aria-label="Sections" data-nav>
+    <span class="nav__hl" aria-hidden="true"></span>
+    {links.map((l) => <a href={l.href}>{l.label}</a>)}
+  </nav>
+  <a class="btn nav__cta" href="#book" data-magnet>
+    <span class="lbl">Book a facial</span><span class="arr" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M5 13 13 5M6 5h7v7" /></svg></span>
+  </a>
+</header>

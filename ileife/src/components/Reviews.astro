@@ -1,0 +1,30 @@
+---
+import { reviews as c } from '../data/site';
+---
+
+<section class="sec" id="reviews" data-tone-section="rose">
+  <div class="wrap rv" data-reviews data-reviews-data={JSON.stringify(c.list)}>
+    <div class="rv__side">
+      <h2 class="h2" data-split>{c.title[0]} <span class="ac">{c.title[1]}</span></h2>
+      <div class="rv__score clr">
+        <b>{c.rating}</b>
+        <span class="muted">from {c.count} reviews</span>
+      </div>
+    </div>
+    <div>
+      <div class="rv__stage" data-stage aria-live="polite">
+        <p class="rv__text" data-text>{c.list[0].t}</p>
+        <p class="rv__who"><b data-name>{c.list[0].n}</b> <span class="muted" data-date>{c.list[0].d}</span></p>
+      </div>
+      <div class="rv__ctl">
+        <button class="arrow" type="button" data-prev aria-label="Previous review">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M11 3 5 9l6 6" /></svg>
+        </button>
+        <span class="rv__count" data-count>01 / 0{c.count}</span>
+        <button class="arrow" type="button" data-next aria-label="Next review">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.2"><path d="m7 3 6 6-6 6" /></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

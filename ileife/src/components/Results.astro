@@ -1,0 +1,52 @@
+---
+import Photo from './Photo.astro';
+import glowBefore from '../assets/photos/ba-glow-before.jpg';
+import glowAfter from '../assets/photos/ba-glow-after.jpg';
+import clarityBefore from '../assets/photos/ba-clarity-before.jpg';
+import clarityAfter from '../assets/photos/ba-clarity-after.jpg';
+import { results as c } from '../data/site';
+
+const imgs = {
+  glow: { before: glowBefore, after: glowAfter, alt: 'A woman’s skin before and after a Glow Facial' },
+  clarity: { before: clarityBefore, after: clarityAfter, alt: 'A woman’s skin before and after a Clarity Facial' },
+} as const;
+---
+
+<section class="sec results" id="results" data-tone-section="rose" data-results>
+  <div class="wrap results__grid">
+    <div class="results__text">
+      <h2 class="h2" data-split>{c.title[0]} <span class="ac">{c.title[1]}</span></h2>
+      <p class="lede clr muted">{c.lede}</p>
+      <div class="results__tabs clr" role="tablist" aria-label="Choose a treatment">
+        {
+          c.pairs.map((p, i) => (
+            <button type="button" role="tab" class={`results__tab${i === 0 ? ' on' : ''}`} data-pair={p.id} aria-selected={i === 0 ? 'true' : 'false'}>
+              <span class="results__num">0{i + 1}</span>
+              <span>
+                <b>{p.label}</b>
+                <small>{p.note}</small>
+              </span>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="results__stage clr-img">
+      {
+        c.pairs.map((p, i) => (
+          <div class={`cmp${i === 0 ? ' on' : ''}`} data-pair={p.id} style="--pos:50%">
+            <div class="frame cmp__box">
+              <div class="cmp__layer cmp__after"><Photo src={imgs[p.id as 'glow'].after} alt={imgs[p.id as 'glow'].alt} sizes="(max-width: 880px) 92vw, 40vw" widths={[500, 800, 1200]} /></div>
+              <div class="cmp__layer cmp__before"><Photo src={imgs[p.id as 'glow'].before} alt="" sizes="(max-width: 880px) 92vw, 40vw" widths={[500, 800, 1200]} /></div>
+              <span class="cmp__tag cmp__tag--b">Before</span>
+              <span class="cmp__tag cmp__tag--a">After</span>
+              <span class="cmp__line" aria-hidden="true"><i></i></span>
+              <input class="cmp__range" type="range" min="0" max="100" value="50" aria-label={`Compare before and after, ${p.label}`} />
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

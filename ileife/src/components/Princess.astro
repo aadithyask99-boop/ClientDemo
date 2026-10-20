@@ -1,0 +1,53 @@
+---
+import Photo from './Photo.astro';
+import studio from '../assets/photos/p36837604.jpg';
+import { princess as c, mission } from '../data/site';
+
+// Drop her own portrait at src/assets/photos/princess.jpg (or .jpeg/.png/.webp) and it is used automatically.
+const own = import.meta.glob<{ default: ImageMetadata }>('../assets/photos/princess.{jpg,jpeg,png,webp}', { eager: true });
+const portrait = Object.values(own)[0]?.default;
+const isPortrait = Boolean(portrait);
+---
+
+<section class="sec pr" id="princess" data-tone-section="sand">
+  <div class="wrap">
+    <div class="pr__grid">
+      <div class="frame frame--arch pr__photo clr-img">
+        <Photo
+          src={portrait ?? studio}
+          alt={isPortrait ? 'Princess Adeyemi, founder of ILÉ IFÉ' : 'A quiet treatment room with a plant and soft daylight'}
+          sizes="(max-width: 880px) 90vw, 44vw"
+          widths={[600, 900, 1300]}
+          position="50% 20%"
+        />
+      </div>
+      <div class="pr__text">
+        <h2 class="h2" data-split>{c.title[0]} <span class="ac">{c.title[1]}</span></h2>
+        <p class="pr__role clr">{c.role}</p>
+        <div class="pr__body clr" style="--d:0.08s">
+          {c.body.map((p) => <p>{p}</p>)}
+        </div>
+        <p class="pr__mission clr" style="--d:0.1s">{mission}</p>
+        <p class="pr__quote clr" style="--d:0.12s">{c.quote}</p>
+        <div class="pr__facts clr" style="--d:0.16s">
+          {c.facts.map((f) => (
+            <div>
+              <b>{f.k}</b>
+              <span>{f.v}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+    <div class="focus">
+      {
+        c.focus.map((f, i) => (
+          <div class="clr" style={`--d:${i * 0.1}s`}>
+            <h3 class="h3">{f.t}</h3>
+            <p>{f.d}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

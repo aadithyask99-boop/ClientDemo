@@ -1,0 +1,61 @@
+---
+import Photo from './Photo.astro';
+// Her own treatment photos from the current website
+import collagen from '../assets/photos/own3.jpg';
+import glow from '../assets/photos/own7.jpg';
+import clarity from '../assets/photos/own2.jpg';
+import balance from '../assets/photos/own4.jpg';
+import { treatments as c } from '../data/site';
+
+const photos = { collagen, glow, clarity, balance };
+const alts = {
+  collagen: 'Microneedling being performed on a client',
+  glow: 'A client having her face cleansed',
+  clarity: 'A client resting during a calming mask treatment',
+  balance: 'A therapist gently massaging a client’s face',
+};
+---
+
+<section class="sec tx-sec" id="facials" data-tone-section="cream">
+  <div class="wrap">
+    <div class="tx__head">
+      <h2 class="h2" data-split>{c.title[0]} <span class="ac">{c.title[1]}</span></h2>
+    </div>
+    <div class="tx__list" data-tx>
+      {
+        c.list.map((t, i) => (
+          <div class={`tx clr${i === 0 ? ' open' : ''}`} data-id={t.id} style={`--d:${i * 0.07}s`}>
+            <h3 class="sr">{t.name}</h3>
+            <button class="tx__btn" type="button" aria-expanded={i === 0 ? 'true' : 'false'} aria-controls={`tx-${t.id}`}>
+              <span class="tx__n">0{i + 1}</span>
+              <span class="tx__name">{t.name}</span>
+              <span class="tx__for">{t.for}</span>
+              <span class="tx__price">{t.price}</span>
+              <span class="tx__plus" aria-hidden="true" />
+            </button>
+            <div class="tx__panel" id={`tx-${t.id}`}>
+              <div>
+                <div class="tx__body">
+                  <div class="frame tx__thumb">
+                    <Photo src={photos[t.id]} alt={alts[t.id]} sizes="(max-width: 880px) 80vw, 1px" widths={[480, 800]} />
+                  </div>
+                  <p>{t.body}</p>
+                  <div class="tx__act">
+                    <a class="btn" href="#book" data-facial={t.id}><span class="lbl">Request {t.name}</span><span class="arr" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M5 13 13 5M6 5h7v7" /></svg></span></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  <div class="peek" data-peek aria-hidden="true">
+    {
+      c.list.map((t) => (
+        <img data-id={t.id} src={photos[t.id].src} alt="" width={photos[t.id].width} height={photos[t.id].height} loading="lazy" decoding="async" />
+      ))
+    }
+  </div>
+</section>

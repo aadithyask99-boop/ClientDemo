@@ -1,0 +1,37 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+/*
+  Sizing rule: `sizes` and `widths` describe the image as it is RENDERED after the
+  object-fit crop, not the box it sits in. A landscape photo cropped into a portrait card
+  is drawn much wider than the card, so describing the card width gives a blurry file.
+  Widths above the source width are dropped so nothing is ever upscaled in the file itself.
+*/
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  sizes: string;
+  widths?: number[];
+  position?: string;
+  eager?: boolean;
+  class?: string;
+}
+const { src, alt, sizes, widths = [480, 800, 1200], position = '50% 50%', eager = false, class: cls } = Astro.props;
+const usable = [...new Set(widths.map((w) => Math.min(w, src.width)))].sort((a, b) => a - b);
+---
+
+<Image
+  src={src}
+  alt={alt}
+  widths={usable}
+  sizes={sizes}
+  format="webp"
+  quality={88}
+  loading={eager ? 'eager' : 'lazy'}
+  fetchpriority={eager ? 'high' : 'auto'}
+  decoding={eager ? 'sync' : 'async'}
+  draggable={false}
+  class={cls}
+  style={`object-position:${position}`}
+/>

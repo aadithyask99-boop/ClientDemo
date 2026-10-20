@@ -1,0 +1,54 @@
+---
+import '../styles/global.css';
+import '../styles/v2.css';
+import '../styles/v3.css';
+import '../styles/v4.css';
+import logoCream from '../assets/logo-cream.png';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<!doctype html>
+<html lang="en-GB" data-tone="plum" class="preloading">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#2d2230" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/png" href={`${base}/favicon.png`} />
+    <script is:inline>
+      // Content stays visible without JavaScript. These classes only switch the entrance states on.
+      document.documentElement.classList.add('js');
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.remove('preloading');
+      }
+      // If the main script never starts, do not leave the page hidden behind the preloader
+      window.setTimeout(function () {
+        if (!window.__ileife) {
+          document.documentElement.classList.remove('js', 'preloading');
+          var p = document.querySelector('[data-preloader]');
+          if (p) p.style.display = 'none';
+        }
+      }, 7000);
+    </script>
+  </head>
+  <body>
+    <div class="preloader" data-preloader aria-hidden="true">
+      <div class="preloader__in">
+        <img src={logoCream.src} width={logoCream.width} height={logoCream.height} alt="" />
+        <p>The house of love for your skin</p>
+      </div>
+    </div>
+    <slot />
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>
