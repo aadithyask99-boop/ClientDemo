@@ -7,7 +7,9 @@ import { cpSync, mkdirSync, rmSync } from 'node:fs';
 const build = spawnSync('npx', ['astro', 'build'], {
   stdio: 'inherit',
   shell: true,
-  env: { ...process.env, BASE_PATH: '/doves-uk', PUBLIC_PRELOADER: '1' },
+  env: { ...process.env, BASE_PATH: '/doves-uk', PUBLIC_PRELOADER: '1',
+    PUBLIC_FORM_ENDPOINT: process.env.PUBLIC_FORM_ENDPOINT ?? 'https://formsubmit.co/ajax/enquiries@doves.co.zw',
+  },
 });
 if (build.status !== 0) process.exit(build.status ?? 1);
 

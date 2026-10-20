@@ -13,7 +13,6 @@ if (form) {
   const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
   const sent = document.querySelector<HTMLElement>('[data-sent]')!;
   const waLink = document.querySelector<HTMLAnchorElement>('[data-wa-link]')!;
-  const endpoint = form.dataset.endpoint ?? '';
   const wa = form.dataset.wa ?? '';
   let i = 0;
 
@@ -125,13 +124,24 @@ if (form) {
     const email = val('email');
     const message = val('message');
 
+    const endpoint = form.dataset.endpoint ?? '';
+    let emailed = false;
     if (endpoint) {
       try {
-        await fetch(endpoint, {
+        const res = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({ name, phone, email, service, message }),
+          body: JSON.stringify({
+            _subject: `Doves UK website enquiry: ${service || 'General'}`,
+            ...(email ? { _replyto: email } : {}),
+            name,
+            phone,
+            email,
+            about: service,
+            message,
+          }),
         });
+        emailed = res.ok;
       } catch {
         // The WhatsApp hand-off below still lets the person reach Doves.
       }
@@ -147,6 +157,8 @@ if (form) {
     ].filter(Boolean);
     waLink.href = `${wa}?text=${encodeURIComponent(lines.join('\n'))}`;
 
+    const note = sent.querySelector<HTMLElement>('[data-emailed]');
+    if (note) note.hidden = !emailed;
     form.hidden = true;
     sent.hidden = false;
     const h = sent.querySelector<HTMLElement>('h3');
