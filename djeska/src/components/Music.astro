@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import photo from '../assets/photos/portsmouth-force.jpg';
+import photo from '../assets/photos/portrait.jpg';
 import orange from '../assets/art/orange.jpg';
 import waves from '../assets/art/waves.jpg';
 import sky from '../assets/art/sky.jpg';
@@ -14,8 +14,13 @@ const first = tracks[0];
 
 <section class="music" id="music" data-section>
   <div class="music__top">
+    <div class="music__bg" aria-hidden="true">
+      {tracks.map((t, i) => (
+        <Image class={i === 0 ? 'is-on' : ''} src={covers[t.art]} alt="" widths={[500, 900]} sizes="100vw" data-bg-img />
+      ))}
+    </div>
     <div class="music__photo" data-reveal-img>
-      <Image src={photo} alt="DJ ESKA mixing at a Portsmouth Force game" widths={[700, 1100]} sizes="(max-width: 800px) 100vw, 48vw" />
+      <Image src={photo} alt="DJ ESKA smiling behind the decks" widths={[700, 1100, 1500]} sizes="(max-width: 800px) 100vw, 48vw" style="object-position: 62% 30%" />
     </div>
     <div class="music__side">
       <h2 class="title" data-title>{brand.tagline}</h2>
@@ -23,6 +28,7 @@ const first = tracks[0];
       <div class="current" data-player>
         <p class="current__label">Current mix <span data-track-no>01</span></p>
         <p class="current__title" data-track-title>{first.title}</p>
+        <p class="current__meta" data-track-meta>{first.meta}</p>
         <div class="current__row">
           <button type="button" class="current__play" data-play aria-label="Play">
             <svg class="i-play" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg>
@@ -35,6 +41,35 @@ const first = tracks[0];
           <span class="current__time" data-time>0:00</span>
           <a class="pill pill--gold" href={listen.href} target="_blank" rel="noopener">
             Listen now
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 12L12 4M6 4h6v6" fill="none" stroke="currentColor" stroke-width="1.6" /></svg>
+          </a>
+        </div>
+        <div class="phone-ui">
+          <label class="m-seek">
+            <span class="sr-only">Seek</span>
+            <input type="range" min="0" max="1000" value="0" step="1" data-seek />
+          </label>
+          <p class="m-times"><span data-time>0:00</span><span data-remain>-0:00</span></p>
+          <div class="ctrl">
+            <button type="button" class="ctrl__btn" data-shuffle aria-label="Shuffle" aria-pressed="false">
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M3 7h3.5c2 0 3.2 1 4.2 2.6l2.6 4.8c1 1.6 2.2 2.6 4.2 2.6H21M3 17h3.5c1.4 0 2.4-.5 3.2-1.4M13.5 8.4C14.4 7.5 15.4 7 16.5 7H21M18.5 4.5L21 7l-2.5 2.5M18.5 14.5L21 17l-2.5 2.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </button>
+            <button type="button" class="ctrl__btn ctrl__btn--skip" data-prev aria-label="Previous mix">
+              <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="M6 5h2.6v14H6zM20 5.5v13L9.6 12z" fill="currentColor" /></svg>
+            </button>
+            <button type="button" class="ctrl__play" data-play aria-label="Play">
+              <svg class="i-play" viewBox="0 0 24 24" width="34" height="34" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg>
+              <svg class="i-pause" viewBox="0 0 24 24" width="34" height="34" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor" /></svg>
+            </button>
+            <button type="button" class="ctrl__btn ctrl__btn--skip" data-next aria-label="Next mix">
+              <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="M15.4 5H18v14h-2.6zM4 5.5v13L14.4 12z" fill="currentColor" /></svg>
+            </button>
+            <button type="button" class="ctrl__btn" data-repeat aria-label="Repeat" aria-pressed="false">
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M17 3l3 3-3 3M4 11V9.5A3.5 3.5 0 0 1 7.5 6H20M7 21l-3-3 3-3M20 13v1.5a3.5 3.5 0 0 1-3.5 3.5H4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </button>
+          </div>
+          <a class="m-listen" href={listen.href} target="_blank" rel="noopener">
+            Listen on SoundCloud
             <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 12L12 4M6 4h6v6" fill="none" stroke="currentColor" stroke-width="1.6" /></svg>
           </a>
         </div>

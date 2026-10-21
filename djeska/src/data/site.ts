@@ -51,11 +51,16 @@ export const kit = [
   'Personalised playlists',
 ];
 
+// Strip in "More than music". Generated images (placeholders for his own event photos) alternate with his Instagram photos. pos sets which part of each photo stays in view when it is cropped.
 export const portfolio = [
-  { title: 'Behind the decks', meta: '2024', photo: 'pointing' },
-  { title: 'South Coast Classic', meta: 'Solent University, 2025', photo: 'classic' },
-  { title: 'Portsmouth Force', meta: 'National League, 2025', photo: 'force' },
-  { title: 'Garden party', meta: 'Mobile setup, 2025', photo: 'mobile' },
+  { title: 'Wedding reception', meta: 'Weddings', photo: 'wedding', pos: '22% 50%' },
+  { title: 'South Coast Classic', meta: 'Solent University, 2025', photo: 'classic', pos: '50% 50%' },
+  { title: 'Packed dance floor', meta: 'Clubs and parties', photo: 'crowd', pos: '62% 50%' },
+  { title: 'Garden party', meta: 'Mobile setup, 2025', photo: 'mobile', pos: '50% 50%' },
+  { title: 'Hands on the mixer', meta: 'On the decks', photo: 'hands', pos: '88% 50%' },
+  { title: 'Portsmouth Force', meta: 'National League, 2025', photo: 'force', pos: '50% 40%' },
+  { title: 'Behind the decks', meta: 'Portrait', photo: 'portrait', pos: '58% 35%' },
+  { title: 'All in smiles', meta: 'South Coast Classic, 2024', photo: 'pointing', pos: '50% 25%' },
 ] as const;
 
 export const ticker = ['Now taking bookings', '2026 and 2027 dates open', 'Weddings, parties and clubs'];

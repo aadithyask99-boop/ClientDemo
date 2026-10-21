@@ -4,25 +4,37 @@ import mobile from '../assets/photos/mobile-setup.jpg';
 import classic from '../assets/photos/summer-classic.jpg';
 import force from '../assets/photos/portsmouth-force.jpg';
 import pointing from '../assets/photos/pointing.jpg';
+import wedding from '../assets/photos/wedding.jpg';
+import crowd from '../assets/photos/crowd.jpg';
+import portrait from '../assets/photos/portrait.jpg';
+import hands from '../assets/photos/hands.jpg';
 import { portfolio } from '../data/site';
 
-const photos = { mobile, classic, force, pointing };
+const photos = { mobile, classic, force, pointing, wedding, crowd, portrait, hands };
 ---
 
 <section class="section about" id="about" data-section>
   <h2 class="title title--center" data-title>More than music</h2>
   <p class="meta"><span>Soulful house</span><span>R&amp;B and urban</span><span>Hampshire, UK</span></p>
 
-  <ul class="folio" data-folio>
-    {portfolio.map((p) => (
-      <li>
-        <div class="folio__img" data-reveal-img>
-          <Image src={photos[p.photo]} alt={p.title} widths={[500, 800]} sizes="(max-width: 800px) 50vw, 24vw" />
-        </div>
-        <p class="folio__cap"><span>{p.title}</span><span>{p.meta}</span></p>
-      </li>
-    ))}
-  </ul>
+  <div class="gallery" data-gallery aria-label="Events and setups">
+    <div class="gallery__edge gallery__edge--l" aria-hidden="true"></div>
+    <div class="gallery__edge gallery__edge--r" aria-hidden="true"></div>
+    <div class="gallery__track" data-gallery-track>
+      {[0, 1].map((n) => (
+        <ul class="gallery__run" aria-hidden={n === 1 ? 'true' : undefined}>
+          {portfolio.map((p) => (
+            <li>
+              <div class="folio__img">
+                <Image src={photos[p.photo]} alt={n === 0 ? p.title : ''} height={640} widths={[420, 640, 900]} sizes="30vw" draggable="false" style={`object-position: ${p.pos}`} />
+              </div>
+              <p class="folio__cap"><span>{p.title}</span><span>{p.meta}</span></p>
+            </li>
+          ))}
+        </ul>
+      ))}
+    </div>
+  </div>
 
   <div class="about__text">
     <p class="about__big">

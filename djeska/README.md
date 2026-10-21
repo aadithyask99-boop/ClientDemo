@@ -42,9 +42,9 @@ The root `wrangler.jsonc` builds all three sites, then copies `demo-index/index.
 
 ## Placeholders to replace before it is shown as final
 
-- Hero photo: `src/assets/photos/hero-placeholder.jpg` is a Pexels stock DJ (greyscale), a different person. Brief for the
-  real one: landscape, 2400px wide or more, him mid-mix or facing camera, dark room with warm light, empty space across the
-  bottom third for the wordmark, no flyers or logos in frame. His smiling shot (`pointing.jpg`) is the best asset he has.
+- Hero photo: `src/assets/photos/hero.jpg` and the four images in the "More than music" strip (wedding, crowd, portrait,
+  hands) are generated from his Instagram photo, so treat them as placeholders. Replace with his real event photos (his
+  smiling shot `pointing.jpg` is also in the strip) and have him approve any generated likeness.
 - Music: mixes 3 and 4 are Pixabay tracks and the titles are placeholders (research/SOURCES.md).
   Swap in his mixes and update `tracks` in `src/data/site.ts`. The SoundCloud and Apple Music rows point to his Linktree until the real URLs are known.
 - Photos are 800 to 1400px Instagram files. Ask for originals.

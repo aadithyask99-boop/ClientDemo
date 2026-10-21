@@ -2,6 +2,7 @@ import { gsap } from 'gsap';
 import { SplitText } from 'gsap/SplitText';
 import './player';
 import './eq';
+import './gallery';
 import './sections';
 
 (window as any).__djeska = true;

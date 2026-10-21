@@ -10,7 +10,7 @@
 Swap for his originals before the site goes live. Instagram serves roughly 800 to 1400 px wide.
 
 ## Hero placeholder (replace)
-- hero-placeholder.jpg: Pexels photo 9005455, "Man in black t-shirt and sunglasses smiling and pointing finger to the audience". Pexels licence, free to use.
+- (replaced, no longer used) hero-placeholder.jpg: Pexels photo 9005455, "Man in black t-shirt and sunglasses smiling and pointing finger to the audience". Pexels licence, free to use.
   https://www.pexels.com/photo/man-in-black-t-shirt-and-sunglasses-smiling-and-pointing-finger-to-the-audience-9005455/
   Greyscale in the page. A different person from the client, only there to hold the layout.
 
@@ -31,3 +31,8 @@ Swap for his originals before the site goes live. Instagram serves roughly 800 t
 - sky.jpg: Pexels 8848913, sunset sky
 - dune.jpg: Pexels 39709011, sunset over White Sands dunes
 Replace with generated or commissioned cover art.
+
+## Generated images (round 3, supplied by the client of this project, made with an image generator from his Instagram photo)
+- src/assets/photos/hero.jpg: hero, black and white, him pointing at the crowd
+- wedding.jpg, crowd.jpg, portrait.jpg, hands.jpg: event and portrait images used in the "More than music" strip
+These are illustrative placeholders. Replace with his real event photos, and have him approve any generated likeness.

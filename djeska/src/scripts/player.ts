@@ -44,7 +44,7 @@ function ensureSC() {
     scw.bind(SC.Widget.Events.PLAY, () => { scPaused = false; setPlaying(true); });
     scw.bind(SC.Widget.Events.PAUSE, () => { scPaused = true; if (isSC()) setPlaying(false); });
     scw.bind(SC.Widget.Events.PLAY_PROGRESS, (e: any) => { scTime = e.currentPosition / 1000; paint(); });
-    scw.bind(SC.Widget.Events.FINISH, () => { scw.pause(); scPaused = true; next(); });
+    scw.bind(SC.Widget.Events.FINISH, () => { scw.pause(); scPaused = true; finished(); });
   })();
   return scReady;
 }
@@ -88,6 +88,13 @@ const titles = [...document.querySelectorAll<HTMLElement>('[data-track-title]')]
 const numbers = [...document.querySelectorAll<HTMLElement>('[data-track-no]')];
 const bar = document.querySelector<HTMLElement>('[data-bar]');
 const barSub = document.querySelector<HTMLElement>('[data-bar-sub]');
+const metas = [...document.querySelectorAll<HTMLElement>('[data-track-meta]')];
+const remains = [...document.querySelectorAll<HTMLElement>('[data-remain]')];
+const bgImgs = [...document.querySelectorAll<HTMLElement>('[data-bg-img]')];
+const shuffleBtns = [...document.querySelectorAll<HTMLElement>('[data-shuffle]')];
+const repeatBtns = [...document.querySelectorAll<HTMLElement>('[data-repeat]')];
+let shuffle = false;
+let repeat = false;
 const volumeEls = [...document.querySelectorAll<HTMLInputElement>('[data-volume]')];
 const flagged = [...document.querySelectorAll<HTMLElement>('[data-player], [data-bar]')];
 
@@ -99,6 +106,8 @@ const paused = () => (isSC() ? scPaused : audio.paused);
 function label() {
   titles.forEach((t) => (t.textContent = cur().title));
   numbers.forEach((n) => (n.textContent = String(idx + 1).padStart(2, '0')));
+  metas.forEach((m) => (m.textContent = cur().meta));
+  bgImgs.forEach((im, k) => im.classList.toggle('is-on', k === idx));
   mixes.forEach((m, k) => m.classList.toggle('is-current', k === idx));
   document.querySelectorAll('[data-cover-img]').forEach((im, k) => im.classList.toggle('is-on', k === idx));
 }
@@ -111,6 +120,7 @@ function paint() {
     s.style.setProperty('--p', `${p * 100}%`);
   });
   times.forEach((t) => (t.textContent = fmt(time())));
+  remains.forEach((r) => (r.textContent = `-${fmt(Math.max(0, d - time()))}`));
   mixes[idx]?.style.setProperty('--p', `${p * 100}%`);
 }
 
@@ -180,12 +190,48 @@ function pause() {
   }, reduce ? 0 : 380);
 }
 const toggle = () => (paused() ? play() : pause());
-function next() { select(idx + 1); play(); }
+function randomOther() {
+  if (tracks.length < 2) return idx;
+  let n = idx;
+  while (n === idx) n = Math.floor(Math.random() * tracks.length);
+  return n;
+}
+function next() { select(shuffle ? randomOther() : idx + 1); play(); }
+function prev() {
+  if (time() > 3) {
+    if (isSC()) { scw?.seekTo(0); scTime = 0; } else audio.currentTime = 0;
+    paint();
+    return;
+  }
+  select(idx - 1);
+  play();
+}
+// A mix finished: repeat it, or move on
+function finished() {
+  if (repeat) { select(idx); play(); return; }
+  next();
+}
 
 label();
 paint();
 
 playBtns.forEach((b) => b.addEventListener('click', toggle));
+document.querySelectorAll('[data-next]').forEach((b) => b.addEventListener('click', next));
+document.querySelectorAll('[data-prev]').forEach((b) => b.addEventListener('click', prev));
+shuffleBtns.forEach((b) => b.addEventListener('click', () => { shuffle = !shuffle; shuffleBtns.forEach((x) => { x.classList.toggle('is-on', shuffle); x.setAttribute('aria-pressed', String(shuffle)); }); }));
+repeatBtns.forEach((b) => b.addEventListener('click', () => { repeat = !repeat; repeatBtns.forEach((x) => { x.classList.toggle('is-on', repeat); x.setAttribute('aria-pressed', String(repeat)); }); }));
+
+// Swipe the player screen sideways to change mix
+const screen = document.querySelector<HTMLElement>('.music__top');
+let sx = 0;
+let sy = 0;
+screen?.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+screen?.addEventListener('touchend', (e) => {
+  if (!matchMedia('(max-width: 900px)').matches) return;
+  const dx = e.changedTouches[0].clientX - sx;
+  const dy = e.changedTouches[0].clientY - sy;
+  if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.6 && !(e.target as HTMLElement).closest('input')) (dx < 0 ? next : prev)();
+}, { passive: true });
 mixes.forEach((m, k) => {
   m.querySelector('[data-mix-play]')?.addEventListener('click', () => {
     if (k === idx && !paused()) { pause(); return; }
@@ -195,7 +241,7 @@ mixes.forEach((m, k) => {
 });
 audio.addEventListener('timeupdate', () => { if (!isSC()) paint(); });
 audio.addEventListener('loadedmetadata', () => { if (!isSC()) paint(); });
-audio.addEventListener('ended', next);
+audio.addEventListener('ended', finished);
 seeks.forEach((s) =>
   s.addEventListener('input', () => {
     const f = Number(s.value) / 1000;
@@ -217,8 +263,10 @@ volumeEls.forEach((v) => {
 
 /* Sticky bar: there from the moment the gate opens, so the music can always be paused. The cross closes it. */
 let entered = !document.documentElement.classList.contains('gated');
+let screenInView = false;
 function updateBar() {
-  const on = entered && !dismissed;
+  const phone = matchMedia('(max-width: 900px)').matches;
+  const on = entered && !dismissed && !(phone && screenInView);
   document.documentElement.classList.toggle('has-bar', on);
   bar?.classList.toggle('is-on', on);
   bar?.setAttribute('aria-hidden', String(!on));
@@ -229,6 +277,8 @@ document.querySelector('[data-bar-close]')?.addEventListener('click', () => {
   if (!paused()) pause();
   updateBar();
 });
+if (screen) new IntersectionObserver(([e]) => { screenInView = e.isIntersecting; updateBar(); }, { threshold: 0.6 }).observe(screen);
+addEventListener('resize', updateBar);
 updateBar();
 
 /* The gate click is the user gesture that lets the music start */
