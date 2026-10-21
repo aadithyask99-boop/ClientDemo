@@ -421,4 +421,11 @@ input[type='range']::-moz-range-thumb { width: 12px; height: 12px; border-radius
 
 .bar__vol { display: flex; align-items: center; gap: 0.5rem; color: var(--mute); }
 .bar__vol input { width: 5.5rem; }
-@media (max-width: 760px) { .bar__vol { display: none; } }
+@media (max-width: 760px) {
+  .bar { grid-template-columns: minmax(0, 1fr) auto auto 44px; }
+  .bar__now { grid-column: 1; grid-row: 1; }
+  .bar__vol { grid-column: 2; grid-row: 1; gap: 0.3rem; }
+  .bar__vol input { width: 4.8rem; height: 44px; }
+  .bar__btn { grid-column: 3; grid-row: 1; }
+  .bar__close { grid-column: 4; grid-row: 1; }
+}

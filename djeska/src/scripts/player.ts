@@ -53,6 +53,7 @@ function ensureSC() {
    origin and cannot be analysed, so the equaliser animates from the beat instead. */
 let actx: AudioContext | null = null;
 let analyser: AnalyserNode | null = null;
+let gain: GainNode | null = null;
 function ensureAnalyser() {
   if (analyser) { actx?.resume(); return; }
   try {
@@ -61,10 +62,16 @@ function ensureAnalyser() {
     analyser = actx.createAnalyser();
     analyser.fftSize = 256;
     analyser.smoothingTimeConstant = 0.74;
+    gain = actx.createGain();
+    gain.gain.value = 0;
+    // The gain node does the volume (phones ignore audio.volume), after the analyser so the bars stay full size
     src.connect(analyser);
-    analyser.connect(actx.destination);
+    analyser.connect(gain);
+    gain.connect(actx.destination);
+    audio.volume = 1;
   } catch {
     analyser = null;
+    gain = null;
   }
 }
 
@@ -117,6 +124,7 @@ function setPlaying(on: boolean) {
 
 function applyVolume() {
   if (isSC()) scw?.setVolume(Math.round(vol.v * 100));
+  else if (gain) gain.gain.value = vol.v;
   else audio.volume = vol.v;
 }
 function fadeTo(v: number, d = 1.2) {
@@ -154,7 +162,7 @@ async function play() {
     } else {
       if (!audio.src) audio.src = `${base}/${cur().src}`;
       ensureAnalyser();
-      audio.volume = 0;
+      applyVolume();
       await audio.play();
       setPlaying(true);
     }
