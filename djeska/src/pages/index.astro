@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import Gate from '../components/Gate.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Music from '../components/Music.astro';
+import Played from '../components/Played.astro';
+import Packages from '../components/Packages.astro';
+import About from '../components/About.astro';
+import Enquire from '../components/Enquire.astro';
+import Tiers from '../components/Tiers.astro';
+import Ticker from '../components/Ticker.astro';
+import Footer from '../components/Footer.astro';
+import PlayerBar from '../components/PlayerBar.astro';
+import { brand } from '../data/site';
+---
+
+<Base
+  title={`${brand.name} | ${brand.alias}, DJ in ${brand.place}`}
+  description={`${brand.name} aka ${brand.alias}. ${brand.tagline}. Weddings, parties, clubs and corporate events across Hampshire.`}
+>
+  <Gate />
+  <Header />
+  <main id="top">
+    <Hero />
+    <Music />
+    <Played />
+    <Packages />
+    <Ticker />
+    <Tiers />
+    <Enquire />
+    <About />
+  </main>
+  <Footer />
+  <PlayerBar />
+</Base>

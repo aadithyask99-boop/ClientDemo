@@ -1,0 +1,63 @@
+---
+import { Image } from 'astro:assets';
+import photo from '../assets/photos/portsmouth-force.jpg';
+import orange from '../assets/art/orange.jpg';
+import waves from '../assets/art/waves.jpg';
+import sky from '../assets/art/sky.jpg';
+import dune from '../assets/art/dune.jpg';
+import { tracks, listen, brand } from '../data/site';
+
+const covers = { orange, waves, sky, dune };
+
+const first = tracks[0];
+---
+
+<section class="music" id="music" data-section>
+  <div class="music__top">
+    <div class="music__photo" data-reveal-img>
+      <Image src={photo} alt="DJ ESKA mixing at a Portsmouth Force game" widths={[700, 1100]} sizes="(max-width: 800px) 100vw, 48vw" />
+    </div>
+    <div class="music__side">
+      <h2 class="title" data-title>{brand.tagline}</h2>
+      <div class="eq" aria-hidden="true"><canvas data-eq></canvas></div>
+      <div class="current" data-player>
+        <p class="current__label">Current mix <span data-track-no>01</span></p>
+        <p class="current__title" data-track-title>{first.title}</p>
+        <div class="current__row">
+          <button type="button" class="current__play" data-play aria-label="Play">
+            <svg class="i-play" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg>
+            <svg class="i-pause" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor" /></svg>
+          </button>
+          <label class="current__seek">
+            <span class="sr-only">Seek</span>
+            <input type="range" min="0" max="1000" value="0" step="1" data-seek />
+          </label>
+          <span class="current__time" data-time>0:00</span>
+          <a class="pill pill--gold" href={listen.href} target="_blank" rel="noopener">
+            Listen now
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 12L12 4M6 4h6v6" fill="none" stroke="currentColor" stroke-width="1.6" /></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ul class="mixes" data-mixes>
+    {tracks.map((t, i) => (
+      <li class={`mix mix--${i + 1}`} data-mix={i}>
+        <button type="button" class="mix__cover" data-mix-play aria-label={`Play ${t.title}`}>
+          <Image class="mix__img" src={covers[t.art]} alt="" widths={[400, 700]} sizes="(max-width: 800px) 50vw, 24vw" />
+          <span class="mix__brand">DJ ESKA</span>
+          <span class="mix__name">{t.title}</span>
+          <span class="mix__icon" aria-hidden="true">
+            <svg class="i-play" viewBox="0 0 24 24" width="22" height="22"><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg>
+            <svg class="i-pause" viewBox="0 0 24 24" width="22" height="22"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor" /></svg>
+          </span>
+          <span class="mix__progress"><span data-mix-fill></span></span>
+        </button>
+        <p class="mix__title">{t.title}</p>
+        <p class="mix__meta">{t.meta}</p>
+      </li>
+    ))}
+  </ul>
+</section>

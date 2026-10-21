@@ -1,0 +1,23 @@
+---
+import { Image } from 'astro:assets';
+import poster from '../assets/photos/decks-poster.jpg';
+
+---
+
+<section class="section packages" id="reel-section" data-section>
+  <h2 class="title title--center title--long" data-title>Your event deserves more than just music</h2>
+  <p class="meta"><span>Professional DJ, lighting, PA and microphones</span><span>360 photo booth</span><span>Personalised playlists</span></p>
+
+  <div class="reel" data-reel>
+    <Image class="reel__poster" src={poster} alt="" widths={[900, 1400, 1900]} sizes="100vw" />
+    <video class="reel__video" data-reel-video muted loop playsinline preload="none" src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/video/decks.mp4`} aria-label="DJ equipment in use"></video>
+    <div class="reel__shade"></div>
+    <button type="button" class="reel__play" data-reel-play aria-label="Play video">
+      <svg class="i-play" viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg>
+      <svg class="i-pause" viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor" /></svg>
+    </button>
+    <p class="reel__cap reel__cap--l">Weddings, parties and clubs</p>
+    <p class="reel__cap reel__cap--r">Hampshire, UK</p>
+  </div>
+
+</section>

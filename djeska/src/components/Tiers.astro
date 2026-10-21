@@ -1,0 +1,27 @@
+---
+import { packages, kit } from '../data/site';
+---
+
+<section class="section packages packages--tiers" id="packages" data-section>
+  <p class="packages__lede">All my own equipment, brought to you. Every date is quoted on its own, so there is no price list here.</p>
+  <ul class="tiers" data-tiers>
+    {packages.map((name, i) => (
+      <li class={`tier tier--${name.toLowerCase()}`}>
+        <a href="#enquire" data-package={name}>
+          <span class="tier__no">{String(i + 1).padStart(2, '0')}</span>
+          <span class="tier__shine" aria-hidden="true"></span>
+          <span class="tier__name">{name}</span>
+          <span class="tier__go">
+            Ask about {name}
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" /></svg>
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+  <ul class="bring" aria-label="What I bring">
+    {kit.map((k) => (
+      <li>{k}</li>
+    ))}
+  </ul>
+</section>

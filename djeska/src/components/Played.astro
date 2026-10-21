@@ -1,0 +1,31 @@
+---
+import { Image } from 'astro:assets';
+import mobile from '../assets/photos/mobile-setup.jpg';
+import classic from '../assets/photos/summer-classic.jpg';
+import force from '../assets/photos/portsmouth-force.jpg';
+import laptop from '../assets/photos/laptop-hall.jpg';
+import pointing from '../assets/photos/pointing.jpg';
+import { played } from '../data/site';
+
+const photos = { mobile, classic, force, laptop, pointing };
+const used = [...new Set(played.map((p) => p.photo))] as (keyof typeof photos)[];
+---
+
+<section class="section played" id="played" data-section>
+  <h2 class="title title--center" data-title>Rooms I have played</h2>
+  <p class="meta"><span>Weddings</span><span>Sport</span><span>Events</span></p>
+  <ul class="rows played__list" data-played>
+    {played.map((p) => (
+      <li data-photo={p.photo}>
+        <span class="played__when">{p.when}</span>
+        <span class="played__where">{p.where}</span>
+        <span class="played__what">{p.what}</span>
+      </li>
+    ))}
+  </ul>
+  <div class="peek" data-peek aria-hidden="true">
+    {used.map((k) => (
+      <Image src={photos[k]} alt="" width={520} data-peek-img={k} />
+    ))}
+  </div>
+</section>

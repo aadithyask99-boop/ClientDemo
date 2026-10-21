@@ -1,0 +1,18 @@
+---
+import { Image } from 'astro:assets';
+import hero from '../assets/photos/hero-placeholder.jpg';
+import { brand } from '../data/site';
+---
+
+<section class="hero" data-hero>
+  <Image class="hero__photo" src={hero} alt="" widths={[900, 1400, 1900]} sizes="100vw" loading="eager" />
+  <div class="hero__shade"></div>
+  <h1 class="hero__word" data-fit aria-label={brand.name}>
+    <span class="fit-line" data-line>DJ</span> <span class="fit-line" data-line>ESKA</span>
+  </h1>
+  <div class="hero__strap">
+    <span>{brand.alias}</span>
+    <span>{brand.tagline}</span>
+    <span>{brand.place}</span>
+  </div>
+</section>

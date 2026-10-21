@@ -1,0 +1,43 @@
+---
+import { events, packages, brand } from '../data/site';
+---
+
+<section class="section enquire" id="enquire" data-section>
+  <h2 class="title" data-title>Check your date</h2>
+  <p class="enquire__lede">2026 and 2027 dates are open.</p>
+  <form class="sentence" data-enquire novalidate>
+    <p>
+      Hi, I am
+      <label class="blank"><span class="sr-only">Your name</span><input name="name" type="text" placeholder="your name" autocomplete="name" /></label>
+      and I am planning a
+      <label class="blank blank--select">
+        <span class="sr-only">Type of event</span>
+        <select name="event">
+          {events.map((e) => <option value={e.toLowerCase()}>{e.toLowerCase()}</option>)}
+        </select>
+      </label>
+      on
+      <label class="blank"><span class="sr-only">Date</span><input name="date" type="text" placeholder="a date" /></label>
+      at
+      <label class="blank"><span class="sr-only">Venue or town</span><input name="place" type="text" placeholder="a venue or town" /></label>.
+      I am looking at the
+      <label class="blank blank--select">
+        <span class="sr-only">Package</span>
+        <select name="package">
+          <option value="">not sure yet</option>
+          {packages.map((p) => <option value={p}>{p}</option>)}
+        </select>
+      </label>
+      package.
+    </p>
+    <div class="sentence__send">
+      <button type="submit" class="pill pill--gold" data-magnet>
+        Send on WhatsApp
+        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" /></svg>
+      </button>
+      <p class="sentence__alt">
+        Or <a href={`mailto:${brand.email}`} data-mailto>email</a> or call <a href={`tel:+${brand.whatsapp}`}>{brand.phone}</a>.
+      </p>
+    </div>
+  </form>
+</section>

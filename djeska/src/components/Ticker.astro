@@ -1,0 +1,26 @@
+---
+import { Image } from 'astro:assets';
+import mobile from '../assets/photos/mobile-setup.jpg';
+import classic from '../assets/photos/summer-classic.jpg';
+import force from '../assets/photos/portsmouth-force.jpg';
+import { ticker } from '../data/site';
+
+const pics = [mobile, classic, force];
+// One run of items, repeated so the loop has no gap
+const run = ticker.map((t, i) => ({ t, pic: pics[i % pics.length] }));
+---
+
+<div class="ticker" aria-label="What I play for">
+  <div class="ticker__track">
+    {[0, 1].map((n) => (
+      <ul class="ticker__run" aria-hidden={n === 1 ? 'true' : undefined}>
+        {run.map((r) => (
+          <li>
+            <span>{r.t}</span>
+            <Image src={r.pic} alt="" width={120} height={120} />
+          </li>
+        ))}
+      </ul>
+    ))}
+  </div>
+</div>

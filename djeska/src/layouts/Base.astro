@@ -1,0 +1,52 @@
+---
+import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource-variable/figtree';
+import '../styles/global.css';
+import '../styles/sections.css';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a0a09" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/png" href={`${base}/favicon.png`} />
+    <script is:inline>
+      // Content stays visible without JavaScript. These classes only switch the intro on.
+      (function () {
+        var d = document.documentElement;
+        d.classList.add('js');
+        var seen = false;
+        try { seen = sessionStorage.getItem('djeska-gate') === '1'; } catch (e) {}
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!seen && !reduce) d.classList.add('gated');
+        window.setTimeout(function () {
+          if (!window.__djeska) d.classList.remove('js', 'gated');
+        }, 6000);
+        // If the script died after the intro started, never leave the hero covered
+        window.setTimeout(function () {
+          if (document.querySelector('[data-gate]')) return;
+          var b = document.querySelector('.hero__blocks');
+          if (b) b.remove();
+        }, 9000);
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>

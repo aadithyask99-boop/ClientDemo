@@ -1,0 +1,37 @@
+---
+import { Image } from 'astro:assets';
+import mobile from '../assets/photos/mobile-setup.jpg';
+import classic from '../assets/photos/summer-classic.jpg';
+import force from '../assets/photos/portsmouth-force.jpg';
+import pointing from '../assets/photos/pointing.jpg';
+import { portfolio } from '../data/site';
+
+const photos = { mobile, classic, force, pointing };
+---
+
+<section class="section about" id="about" data-section>
+  <h2 class="title title--center" data-title>More than music</h2>
+  <p class="meta"><span>Soulful house</span><span>R&amp;B and urban</span><span>Hampshire, UK</span></p>
+
+  <ul class="folio" data-folio>
+    {portfolio.map((p) => (
+      <li>
+        <div class="folio__img" data-reveal-img>
+          <Image src={photos[p.photo]} alt={p.title} widths={[500, 800]} sizes="(max-width: 800px) 50vw, 24vw" />
+        </div>
+        <p class="folio__cap"><span>{p.title}</span><span>{p.meta}</span></p>
+      </li>
+    ))}
+  </ul>
+
+  <div class="about__text">
+    <p class="about__big">
+      It is the feeling, the energy and the memories that last forever. I am DJ ESKA, also known as Mr Good Vibes, and I play
+      out of Hampshire.
+    </p>
+    <p class="about__small">
+      I turn up with my own kit and lighting, so what you see is what you book. Basketball has been my sport since I was
+      eleven, which is why you will find me court side at tournaments along the south coast.
+    </p>
+  </div>
+</section>

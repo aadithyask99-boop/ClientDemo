@@ -1,0 +1,40 @@
+---
+import { Image } from 'astro:assets';
+import orange from '../assets/art/orange.jpg';
+import waves from '../assets/art/waves.jpg';
+import sky from '../assets/art/sky.jpg';
+import dune from '../assets/art/dune.jpg';
+import { tracks, listen } from '../data/site';
+
+const covers = { orange, waves, sky, dune };
+---
+
+<div class="bar" data-bar role="region" aria-label="Player">
+  <span class="bar__cover" aria-hidden="true">
+    {tracks.map((t, i) => (
+      <Image class={i === 0 ? 'is-on' : ''} src={covers[t.art]} alt="" width={96} height={96} data-cover-img />
+    ))}
+  </span>
+  <div class="bar__now">
+    <span class="bar__title" data-track-title>{tracks[0].title}</span>
+    <span class="bar__sub" data-bar-sub>Ready</span>
+  </div>
+  <button type="button" class="bar__btn" data-play aria-label="Play">
+    <svg class="i-play" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg>
+    <svg class="i-pause" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor" /></svg>
+  </button>
+  <span class="bar__time" data-time>0:00</span>
+  <label class="bar__seek">
+    <span class="sr-only">Seek</span>
+    <input type="range" min="0" max="1000" value="0" step="1" data-seek-bar />
+  </label>
+  <label class="bar__vol">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z" fill="currentColor" /><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>
+    <span class="sr-only">Volume</span>
+    <input type="range" min="0" max="100" value="20" step="1" data-volume />
+  </label>
+  <a class="bar__link" href={listen.href} target="_blank" rel="noopener">Listen now</a>
+  <button type="button" class="bar__close" data-bar-close aria-label="Close player">
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" fill="none" stroke="currentColor" stroke-width="1.6" /></svg>
+  </button>
+</div>

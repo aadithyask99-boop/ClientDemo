@@ -1,0 +1,18 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.jpg';
+---
+
+<header class="header" data-header>
+  <a class="header__mark" href="#top" aria-label="DJ ESKA, top of page">
+    <Image src={logo} alt="" width={96} />
+  </a>
+  <nav class="header__nav" aria-label="Sections" data-nav>
+    <span class="header__glide" data-glide aria-hidden="true"></span>
+    <a href="#music">Music</a>
+    <a href="#played">Played</a>
+    <a href="#packages">Packages</a>
+    <a href="#about">About</a>
+  </nav>
+  <a class="pill pill--gold header__cta" href="#enquire" data-magnet>Enquire</a>
+</header>

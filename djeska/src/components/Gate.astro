@@ -1,0 +1,19 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.jpg';
+---
+
+<div class="gate" data-gate role="dialog" aria-label="Welcome" aria-modal="true">
+  <div class="gate__stage" data-stage>
+    <div class="gate__vinyl" data-vinyl aria-hidden="true">
+      <span class="gate__label"></span>
+    </div>
+    <div class="gate__sleeve" data-sleeve>
+      <Image src={logo} alt="DJ ESKA, Mr Good Vibes" width={640} loading="eager" />
+    </div>
+    <button type="button" class="pill pill--gold gate__open" data-open>
+      Click to open
+      <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" /></svg>
+    </button>
+  </div>
+</div>

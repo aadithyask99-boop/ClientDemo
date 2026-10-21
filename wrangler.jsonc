@@ -2,7 +2,7 @@
   "name": "clientdemo",
   "compatibility_date": "2026-10-01",
   "build": {
-    "command": "cd doves-uk && npm ci && node scripts/stage.mjs && cd ../ileife && npm ci && node scripts/stage.mjs && cd .. && cp demo-index/index.html site/index.html"
+    "command": "cd doves-uk && npm ci && node scripts/stage.mjs && cd ../ileife && npm ci && node scripts/stage.mjs && cd ../djeska && npm ci && node scripts/stage.mjs && cd .. && cp demo-index/index.html site/index.html"
   },
   "assets": {
     "directory": "./site",

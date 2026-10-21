@@ -1,0 +1,19 @@
+---
+import { brand, soundcloud } from '../data/site';
+---
+
+<footer class="footer">
+  <p class="footer__word" data-fit aria-label={brand.name}>
+    <span class="fit-line" data-line>DJ</span> <span class="fit-line" data-line>ESKA</span>
+  </p>
+  <div class="footer__links">
+    <a href={brand.instagram} target="_blank" rel="noopener">Instagram</a>
+    <a href={soundcloud.profile} target="_blank" rel="noopener">SoundCloud</a>
+    <a href={brand.apple} target="_blank" rel="noopener">Apple Music</a>
+    <a href={brand.tiktok} target="_blank" rel="noopener">TikTok</a>
+    <a href={brand.linktree} target="_blank" rel="noopener">Linktree</a>
+    <a href={`https://wa.me/${brand.whatsapp}`} target="_blank" rel="noopener">WhatsApp</a>
+    <a href={`mailto:${brand.email}`}>{brand.email}</a>
+  </div>
+  <p class="footer__small"><span>All rights reserved</span><span>{brand.alias}</span><span>2026</span></p>
+</footer>
