@@ -34,12 +34,15 @@ html.js .stmt .w { opacity: 0.16; }
 .work__all { position: absolute; z-index: 4; top: 13svh; left: 50%; translate: -50% 0; padding: 0.4rem 1rem; border: 1px solid var(--night-line); border-radius: 999px; font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.14em; color: rgb(238 243 249 / 0.8); transition: background 0.3s, color 0.3s; }
 .work__all:hover { background: var(--night-ink); color: var(--night); }
 .tile { position: absolute; width: min(58vw, 780px); aspect-ratio: 16 / 9; overflow: hidden; background: var(--night); will-change: transform; box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 50%, transparent), 0 -18px 60px -22px var(--accent), 0 30px 60px rgb(0 0 0 / 0.45); }
-.tile__art, .tile__art svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.tile__art, .tile__svg, .tile__svg svg, .tile__art canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.tile__art canvas { cursor: crosshair; touch-action: pan-y; }
+.tile.is-live .tile__svg { visibility: hidden; }
+.tile__hint { position: absolute; z-index: 2; top: 4%; right: 3.2%; font-size: 0.58rem; color: rgb(238 243 249 / 0.5); pointer-events: none; }
 .tile::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to top, rgb(5 11 22 / 0.78), transparent 48%); }
-.tile__corner { position: absolute; z-index: 2; width: 14px; height: 14px; border: 0 solid rgb(238 243 249 / 0.7); }
+.tile__corner { position: absolute; z-index: 2; pointer-events: none; width: 14px; height: 14px; border: 0 solid rgb(238 243 249 / 0.7); }
 .tile__corner--tl { top: 3.5%; left: 2.8%; border-top-width: 1px; border-left-width: 1px; }
 .tile__corner--br { right: 2.8%; bottom: 3.5%; border-right-width: 1px; border-bottom-width: 1px; }
-.tile__meta { position: absolute; z-index: 2; left: 4.2%; bottom: 7%; display: grid; gap: 0.3rem; }
+.tile__meta { position: absolute; z-index: 2; pointer-events: none; left: 4.2%; bottom: 7%; display: grid; gap: 0.3rem; }
 .tile__meta .mono { color: rgb(238 243 249 / 0.7); font-size: 0.62rem; }
 .tile__name { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(1.5rem, 2.8vw, 2.9rem); line-height: 1; text-transform: uppercase; color: #fff; }
 

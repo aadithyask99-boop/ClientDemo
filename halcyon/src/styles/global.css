@@ -79,6 +79,9 @@ html.js [data-reveal] { opacity: 0; visibility: hidden; }
   z-index: 5;
   pointer-events: none;
   background: radial-gradient(125% 95% at 50% 42%, transparent 58%, rgb(58 104 138 / 0.26) 100%);
+  /* No vignette along the very bottom, so the hero ends in the same colour as the ground under it */
+  -webkit-mask-image: linear-gradient(to bottom, #000 58%, transparent 94%);
+  mask-image: linear-gradient(to bottom, #000 58%, transparent 94%);
 }
 .hero__glow {
   position: absolute;
@@ -114,6 +117,15 @@ html.js [data-reveal] { opacity: 0; visibility: hidden; }
 /* While the clip is in charge, the still portrait steps aside */
 html.js:not(.no-video) .hero__bird { visibility: hidden; }
 html.no-video .hero__video { display: none; }
+
+/* Mist: the bottom of the hero fades to the colour of the ground below it, and blurs, so there is no edge to see as you scroll.
+   It sits behind the copy and the cards (z-index 3) but over the bird. */
+.hero__mist {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 36svh; z-index: 2; pointer-events: none;
+  background: linear-gradient(to top, #d7e8f1 0%, rgb(215 232 241 / 0.92) 24%, rgb(215 232 241 / 0.5) 58%, rgb(215 232 241 / 0) 100%);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  -webkit-mask-image: linear-gradient(to top, #000 0%, #000 34%, transparent 100%); mask-image: linear-gradient(to top, #000 0%, #000 34%, transparent 100%);
+}
 
 /* Copy */
 .hero__copy {
@@ -176,6 +188,7 @@ html.no-video .hero__video { display: none; }
 
 /* ---------- Tablet and phone ---------- */
 @media (max-width: 1000px) {
+  .hero__mist { height: 22svh; }
   .nav { grid-template-columns: 1fr auto; }
   .nav__links, .nav__cta { display: none; }
   .nav__menu { display: inline-flex; }

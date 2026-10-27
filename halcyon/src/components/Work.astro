@@ -7,7 +7,11 @@ import { cases, art } from '../data/content';
     <a class="work__all" href="#">SEE ALL WORK <span aria-hidden="true">&#8599;</span></a>
     {cases.map((c, i) => (
       <article class="tile" data-tile style={`--accent:${c.accent}`}>
-        <div class="tile__art" set:html={art(c.art, c.accent)} />
+        <div class="tile__art">
+          <div class="tile__svg" set:html={art(c.art, c.accent)} />
+          <canvas data-art={c.art} data-accent={c.accent} aria-hidden="true"></canvas>
+        </div>
+        <span class="mono tile__hint" aria-hidden="true">HOVER &middot; CLICK</span>
         <span class="tile__corner tile__corner--tl" aria-hidden="true"></span>
         <span class="tile__corner tile__corner--br" aria-hidden="true"></span>
         <div class="tile__meta">

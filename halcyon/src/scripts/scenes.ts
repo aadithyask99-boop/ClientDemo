@@ -107,7 +107,7 @@ async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
     x: number; y: number; vx: number; vy: number;
     av: import('three').Vector3;
     rest: import('three').Euler;
-    start: number; started: boolean; settled: boolean; cool: number;
+    start: number; started: boolean; settled: boolean; cool: number; wob: number;
   };
   const rnd = (i: number, n: number) => { const v = Math.sin(i * 12.9898 + n * 78.233) * 43758.5453; return v - Math.floor(v); };
 
@@ -132,7 +132,7 @@ async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
     return {
       grp, shadow, x: 0, y: 99, vx: 0, vy: 0, av: new THREE.Vector3(),
       rest: new THREE.Euler((rnd(i, 1) - 0.5) * 0.35, (rnd(i, 2) - 0.5) * 0.9, (rnd(i, 3) - 0.5) * 0.5),
-      start: 0, started: false, settled: false, cool: 0,
+      start: 0, started: false, settled: false, cool: 0, wob: 0,
     };
   });
 
@@ -142,6 +142,8 @@ async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
   let spawnY = 0;
   let size = 1;
   let rowX: number[] = [];
+  let minX = -10;
+  let maxX = 10;
   let g = 20;
   const layout = () => {
     // Work on the plane z = 0: find the world y of a screen row by intersecting the view ray with it
@@ -160,6 +162,8 @@ async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
     const right = planeX(0.74, rowNy);
     const gap = (right - left) / (letters.length - 1);
     rowX = letters.map((_, i) => left + gap * i);
+    minX = planeX(-0.9, rowNy);
+    maxX = planeX(0.9, rowNy);
     size = Math.min(gap * 0.82, (spawnY - floorY) * 0.34);
     g = (spawnY - floorY) * 1.5; // a fall from the top takes just over a second
     keys.forEach((kk) => { kk.grp.scale.setScalar(size / 1.5); kk.shadow.scale.setScalar(size * 1.9); });
@@ -210,6 +214,8 @@ async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
           kk.vy -= g * dt;
           kk.y += kk.vy * dt;
           kk.x += kk.vx * dt;
+          if (kk.x < minX) { kk.x = minX; kk.vx = Math.abs(kk.vx) * 0.5; }
+          if (kk.x > maxX) { kk.x = maxX; kk.vx = -Math.abs(kk.vx) * 0.5; }
           kk.grp.rotation.x += kk.av.x * dt;
           kk.grp.rotation.y += kk.av.y * dt;
           kk.grp.rotation.z += kk.av.z * dt;
@@ -230,10 +236,13 @@ async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
           const wrap = (a: number) => Math.atan2(Math.sin(a), Math.cos(a));
           kk.grp.rotation.x += wrap(kk.rest.x - kk.grp.rotation.x) * e;
           kk.grp.rotation.y += wrap(kk.rest.y - kk.grp.rotation.y) * e;
-          kk.grp.rotation.z += wrap(kk.rest.z - kk.grp.rotation.z) * e;
-          kk.x += (rowX[i] - kk.x) * (1 - Math.exp(-3 * dt)); // drift back to its place in the row
-          kk.vx *= 0.9;
+          kk.grp.rotation.z += wrap(kk.rest.z + Math.sin(now * 20) * kk.wob - kk.grp.rotation.z) * e;
+          kk.wob *= Math.exp(-4.5 * dt);
+          // Slide with friction, so a struck key carries on a little and can strike the next one
+          kk.vx *= Math.exp(-5 * dt);
           kk.x += kk.vx * dt;
+          if (kk.x < minX) { kk.x = minX; kk.vx = Math.abs(kk.vx) * 0.4; }
+          if (kk.x > maxX) { kk.x = maxX; kk.vx = -Math.abs(kk.vx) * 0.4; }
           kk.cool -= dt;
           if (ptr && !reduce && kk.cool <= 0) {
             v.set(kk.x, kk.y, 0).project(camera);
@@ -250,13 +259,47 @@ async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
             }
           }
         }
-        kk.grp.position.set(kk.x, kk.y, ((i % 3) - 1) * size * 0.25);
+        kk.grp.position.set(kk.x, kk.y, 0);
 
         // Shadow on the floor, fainter and wider the higher the key is
         const h = Math.max(0, (kk.y - floor) / (spawnY - floorY));
-        kk.shadow.position.set(kk.x, floorY + 0.02, kk.grp.position.z);
+        kk.shadow.position.set(kk.x, floorY + 0.02, 0);
         (kk.shadow.material as import('three').MeshBasicMaterial).opacity = kk.started || reduce ? Math.max(0, 1 - h * 3.2) : 0;
       });
+
+      // Keys are solid. When one hits another it hands over its momentum, and the one it hits does the same to
+      // its neighbour: a ripple runs along the row, each key wobbling as the knock reaches it.
+      const rad = size * 0.55;
+      for (let a = 0; a < keys.length; a++) {
+        for (let b = a + 1; b < keys.length; b++) {
+          const A = keys[a], B = keys[b];
+          if (!A.started || !B.started) continue;
+          const dx = B.x - A.x, dy = B.y - A.y;
+          const d = Math.hypot(dx, dy);
+          const min = rad * 2 * 0.96;
+          if (d >= min || d < 1e-5) continue;
+          const nx = dx / d, ny = dy / d;
+          const push = (min - d) / 2;
+          A.x -= nx * push; A.y -= ny * push;
+          B.x += nx * push; B.y += ny * push;
+          const rv = (B.vx - A.vx) * nx + (B.vy - A.vy) * ny;
+          if (rv < 0) {
+            const j = (-(1 + 0.6) * rv) / 2;
+            A.vx -= j * nx; A.vy -= j * ny;
+            B.vx += j * nx; B.vy += j * ny;
+            const hit = Math.abs(rv);
+            if (hit > size * 0.2) {
+              // Both keys feel it: they wobble, and a resting one is woken so it slides on into the next
+              [A, B].forEach((k2, n2) => {
+                k2.wob = Math.min(0.5, k2.wob + hit * 0.35 / size);
+                k2.cool = Math.max(k2.cool, 0.25);
+                if (k2.settled && hit > size * 0.45) { k2.settled = false; k2.av.set(0, (n2 ? 1 : -1) * hit * 0.5, (n2 ? -1 : 1) * hit * 0.7); }
+              });
+            }
+          }
+        }
+      }
+      keys.forEach((kk) => { if (kk.y < floor) { kk.y = floor; if (kk.vy < 0) kk.vy = 0; } });
     },
   });
   // The keys are built when the page is idle, so a drop asked for earlier happens now

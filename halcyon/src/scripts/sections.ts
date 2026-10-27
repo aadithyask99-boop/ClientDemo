@@ -3,6 +3,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { initDots } from './dots';
 import { mountScenes } from './scenes';
+import { initTiles } from './tiles';
 
 const q = <T extends Element>(sel: string, root: ParentNode = document) => root.querySelector<T>(sel);
 const qa = <T extends Element>(sel: string, root: ParentNode = document) => [...root.querySelectorAll<T>(sel)];
@@ -21,13 +22,14 @@ export function initSections(reduce: boolean): { warm: () => Promise<void>; drop
 
   initNav(lenis, !reduce);
   const scenes = mountScenes(reduce);
-  if (reduce) return scenes;
+  if (reduce) { initTiles(true); return scenes; }
   // The keys fall as the footer comes into view
-  ScrollTrigger.create({ trigger: '[data-contact]', start: 'top 30%', once: true, onEnter: () => scenes.drop() });
+  ScrollTrigger.create({ trigger: '[data-contact]', start: 'top 10%', once: true, onEnter: () => scenes.drop() });
 
   skyFade();
   statement();
   work(lenis);
+  initTiles(false);
   manifesto();
   props();
   services();
