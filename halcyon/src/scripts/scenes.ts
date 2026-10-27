@@ -108,6 +108,7 @@ async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
     av: import('three').Vector3;
     rest: import('three').Euler;
     start: number; started: boolean; settled: boolean; cool: number; wob: number;
+    row: number; z: number;
   };
   const rnd = (i: number, n: number) => { const v = Math.sin(i * 12.9898 + n * 78.233) * 43758.5453; return v - Math.floor(v); };
 
@@ -132,7 +133,7 @@ async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
     return {
       grp, shadow, x: 0, y: 99, vx: 0, vy: 0, av: new THREE.Vector3(),
       rest: new THREE.Euler((rnd(i, 1) - 0.5) * 0.35, (rnd(i, 2) - 0.5) * 0.9, (rnd(i, 3) - 0.5) * 0.5),
-      start: 0, started: false, settled: false, cool: 0, wob: 0,
+      start: 0, started: false, settled: false, cool: 0, wob: 0, row: 0, z: 0,
     };
   });
 
@@ -155,16 +156,27 @@ async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
       ray.set(nx, ny, 0.5).unproject(camera).sub(camera.position).normalize();
       return camera.position.x + ray.x * (-camera.position.z / ray.z);
     };
-    const rowNy = camera.aspect < 1 ? -0.5 : -0.66;
+    const rowNy = camera.aspect < 0.85 ? -0.6 : -0.66;
     floorY = planeY(rowNy);
     spawnY = planeY(1.7);
-    const left = planeX(-0.74, rowNy);
-    const right = planeX(0.74, rowNy);
-    const gap = (right - left) / (letters.length - 1);
-    rowX = letters.map((_, i) => left + gap * i);
+    const left = planeX(camera.aspect < 0.85 ? -0.7 : -0.74, rowNy);
+    const right = planeX(camera.aspect < 0.85 ? 0.7 : 0.74, rowNy);
+    const narrow = camera.aspect < 0.85;
+    if (narrow) {
+      // Phones: two rows, so the keys can be big. H L Y N in front, A C O behind and between them.
+      const front = [0, 2, 4, 6];
+      const gapF = (right - left) / (front.length - 1);
+      size = gapF * 0.8;
+      rowX = letters.map((_, i) => (i % 2 === 0 ? left + gapF * (i / 2) : left + gapF * ((i - 1) / 2 + 0.5)));
+      keys.forEach((kk, i) => { kk.row = i % 2; kk.z = i % 2 ? -size * 1.35 : 0; });
+    } else {
+      const gap = (right - left) / (letters.length - 1);
+      rowX = letters.map((_, i) => left + gap * i);
+      size = Math.min(gap * 0.82, (spawnY - floorY) * 0.34);
+      keys.forEach((kk) => { kk.row = 0; kk.z = 0; });
+    }
     minX = planeX(-0.9, rowNy);
     maxX = planeX(0.9, rowNy);
-    size = Math.min(gap * 0.82, (spawnY - floorY) * 0.34);
     g = (spawnY - floorY) * 1.5; // a fall from the top takes just over a second
     keys.forEach((kk) => { kk.grp.scale.setScalar(size / 1.5); kk.shadow.scale.setScalar(size * 1.9); });
   };
@@ -259,11 +271,11 @@ async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
             }
           }
         }
-        kk.grp.position.set(kk.x, kk.y, 0);
+        kk.grp.position.set(kk.x, kk.y, kk.z);
 
         // Shadow on the floor, fainter and wider the higher the key is
         const h = Math.max(0, (kk.y - floor) / (spawnY - floorY));
-        kk.shadow.position.set(kk.x, floorY + 0.02, 0);
+        kk.shadow.position.set(kk.x, floorY + 0.02, kk.z);
         (kk.shadow.material as import('three').MeshBasicMaterial).opacity = kk.started || reduce ? Math.max(0, 1 - h * 3.2) : 0;
       });
 
@@ -273,7 +285,7 @@ async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
       for (let a = 0; a < keys.length; a++) {
         for (let b = a + 1; b < keys.length; b++) {
           const A = keys[a], B = keys[b];
-          if (!A.started || !B.started) continue;
+          if (!A.started || !B.started || A.row !== B.row) continue;
           const dx = B.x - A.x, dy = B.y - A.y;
           const d = Math.hypot(dx, dy);
           const min = rad * 2 * 0.96;

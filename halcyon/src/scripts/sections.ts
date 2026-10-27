@@ -240,7 +240,7 @@ function skyFade() {
   const fade = q<HTMLElement>('[data-skyfade]');
   if (!fade) return;
   document.documentElement.classList.add('sky-fades');
-  gsap.timeline({ scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: 0.5 } })
+  gsap.timeline({ scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom 40%', scrub: 0.5 } })
     .to(fade, { opacity: 0.9, ease: 'power1.in', duration: 0.62 })
     .to(fade, { opacity: 1, backgroundColor: '#050b16', ease: 'none', duration: 0.38 });
 }

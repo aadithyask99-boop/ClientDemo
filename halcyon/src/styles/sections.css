@@ -17,7 +17,7 @@
 html.sky-fades { background: #d7e8f1; }
 html.sky-fades .night { background: transparent; }
 html.sky-fades .night::before { display: none; }
-html.sky-fades .stmt { padding-top: 38svh; }
+html.sky-fades .stmt { padding-top: 16svh; }
 .sky-fade { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0; background: #1d4f86; }
 
 /* ---------- Statement ---------- */
@@ -137,7 +137,6 @@ html.js .stmt .w { opacity: 0.16; }
   .svc__name { font-size: clamp(3rem, 17vw, 6rem); }
   .contact__mail { font-size: clamp(2.6rem, 13vw, 5rem); }
   .contact__links > div { grid-template-columns: 6.5rem 1fr; }
-  .contact__keys { height: 30svh; }
   .contact__xy { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .marq__track { animation: none; } }
