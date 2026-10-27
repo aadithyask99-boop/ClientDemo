@@ -24,7 +24,7 @@ export function initSections(reduce: boolean): { warm: () => Promise<void>; drop
   const scenes = mountScenes(reduce);
   if (reduce) { initTiles(true); return scenes; }
   // The keys fall as the footer comes into view
-  ScrollTrigger.create({ trigger: '[data-contact]', start: 'top 10%', once: true, onEnter: () => scenes.drop() });
+  ScrollTrigger.create({ trigger: '[data-contact]', start: 'top 35%', once: true, onEnter: () => scenes.drop() });
 
   skyFade();
   statement();

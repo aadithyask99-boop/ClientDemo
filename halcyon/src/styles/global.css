@@ -69,7 +69,6 @@ html.js [data-reveal] { opacity: 0; visibility: hidden; }
   overflow: hidden;
   isolation: isolate;
   background:
-    radial-gradient(62% 46% at 50% 100%, #e8f7fd 0%, rgb(232 247 253 / 0) 72%),
     radial-gradient(46% 52% at 12% 8%, #dcebf3 0%, rgb(220 235 243 / 0) 70%),
     linear-gradient(180deg, #b4cddb 0%, #c4d9e5 46%, #d7e8f1 100%);
 }
@@ -87,13 +86,16 @@ html.js [data-reveal] { opacity: 0; visibility: hidden; }
 .hero__glow {
   position: absolute;
   left: 50%;
-  bottom: -18%;
+  bottom: 0;
   width: 90%;
   aspect-ratio: 2 / 1;
   translate: -50% 0;
   border-radius: 50%;
   background: radial-gradient(closest-side, rgb(255 255 255 / 0.85), rgb(214 240 252 / 0.35) 55%, transparent 100%);
   filter: blur(30px);
+  /* Fade out before the hero's bottom edge, so no lighter strip is left where the hero ends */
+  -webkit-mask-image: linear-gradient(to bottom, #000 25%, transparent 78%);
+  mask-image: linear-gradient(to bottom, #000 25%, transparent 78%);
   z-index: 0;
 }
 
