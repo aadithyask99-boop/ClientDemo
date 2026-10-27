@@ -13,11 +13,13 @@ npm run dev
 
 ## How the hero works
 
-- **Intro** (`src/scripts/intro.ts`): one GSAP timeline on load, about 4.2 s, that follows a reference animation frame by frame. The kingfisher drops in at the top left and hovers, crosses to the right and hovers, passes back close to the camera heading left, shrinks to a small hover, drifts right and banks, then swings left and flies at the camera with its wings wide. That approach dissolves into the portrait, head on head, and the bird stays there. The copy slides in from the left, the cards rise and the chip comes from the right. After landing it breathes slowly and follows the pointer. The flight is the `PATH` array at the top of the file: one keyframe per sixth of a second, so retiming a move means editing a row.
-- **Poses** live in `public/bird/` as transparent WebP: `hover_up` and `hover_out` (alternated quickly to read as wingbeats), `fly` and `fly_l` (side view, facing right and left), `bank`, `swoop` and `portrait`. The flying poses are positioned by the timeline. The portrait is positioned by CSS, and the timeline reads that position to know where to land, so the same code works on phones and desktops. Motion blur is an SVG blur stretched along the direction of travel.
-- **Glass objects** (`src/scripts/glass.ts`): the padlock and the orb are Three.js scenes, loaded after the page is up. Static fallbacks show until they are ready, or if WebGL is unavailable.
-- **Fallbacks**: with JavaScript off, or `prefers-reduced-motion`, the page shows its final state with no intro. A 6 s safety timeout restores the page if the script never starts.
-- `public/bird/flap.webm` is a transparent wing-flap loop (VP9 alpha) that the page does not use. Safari does not play VP9 alpha.
+- **Intro** (`src/scripts/intro.ts`): a single pre-rendered 5 s video in `public/video/`. It starts on empty sky, a kingfisher flies in, hovers, swoops toward the camera with its wings wide and settles into the portrait. The video holds its last frame, which is the finished page. The copy slides in from the left while the bird is still in flight, then the cards rise and the proof chip comes from the right. After the clip the scene follows the pointer a little.
+- **Why a video**: the first version stitched separate bird photos with blur filters, which dropped frames. A video is decoded by the browser's own player, so playback is smooth and the page stays light (about 1.4 MB desktop, 0.7 MB phone).
+- **How the clip was made**: the empty-sky frame and the landed-bird frame were screenshots of this page's own CSS (interface and vignette hidden), given to `bytedance/seedance-1-5-pro` on OpenRouter as the first and last frames, so the clip starts and ends on exactly what the page shows. Desktop is a 16:9 1080p render, phones get a 9:16 720p render (used at 1000 px and below). Each ships as MP4 and WebM.
+- **Fallbacks**: the still `portrait.webp` is shown when JavaScript is off, `prefers-reduced-motion` is set, or the video cannot play (autoplay blocked, unsupported, or no data within 5 s), and the interface comes in quickly. A 6 s safety timeout restores the page if the script never starts.
+- **Glass objects** (`src/scripts/glass.ts`): the padlock and the orb are Three.js scenes. They load only after the clip ends, because compiling their shaders blocks the page for a moment. Static fallbacks show until then, or if WebGL is unavailable.
+
+To remake the clip: screenshot the page with `.nav, .hero__copy, .dock` and `.hero::after` hidden (once with the portrait hidden too), then submit the two images as first and last frames.
 
 ## Copy
 
@@ -25,4 +27,4 @@ All figures (42%, +323) and the firm itself are placeholders.
 
 ## Bird art
 
-Generated with `bytedance-seed/seedream-5-0-flash` on a flat green background, keyed to transparency. The portrait file is pre-mirrored so the bird faces right.
+The portrait still was generated with `bytedance-seed/seedream-5-0-flash` on a flat green background and keyed to transparency. It is pre-mirrored so the bird faces right.

@@ -9,11 +9,14 @@ window.__halcyon = true;
 
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-if (document.documentElement.classList.contains('js') && !reduce) {
-  playIntro().catch(() => document.documentElement.classList.remove('js'));
-}
-
-// Three.js is large, so it loads after the page is up. Static fallbacks show until then.
+// Three.js is large and compiling its shaders blocks the page for a moment, so the glass objects load only
+// once the intro has finished. Static fallbacks show until then.
 const idle = (cb: () => void) =>
   'requestIdleCallback' in window ? window.requestIdleCallback(cb, { timeout: 2500 }) : window.setTimeout(cb, 600);
-idle(() => { mountGlass(reduce).catch(() => {}); });
+const glass = () => idle(() => { mountGlass(reduce).catch(() => {}); });
+
+if (document.documentElement.classList.contains('js') && !reduce) {
+  playIntro().then(glass, () => { document.documentElement.classList.remove('js'); glass(); });
+} else {
+  glass();
+}

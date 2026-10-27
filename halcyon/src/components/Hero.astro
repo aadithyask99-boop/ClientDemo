@@ -1,15 +1,10 @@
 ---
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const bird = (n: string) => `${base}/bird/${n}.webp`;
+const clip = (n: string) => `${base}/video/${n}`;
 // The figures below are placeholder copy for a fictional firm.
 const avatars = ['AK', 'MR', 'JT', 'LS'];
 ---
-
-<svg class="hero__defs" width="0" height="0" aria-hidden="true" focusable="false">
-  <filter id="motion" x="-35%" y="-35%" width="170%" height="170%" color-interpolation-filters="sRGB">
-    <feGaussianBlur data-motion stdDeviation="0 0" />
-  </filter>
-</svg>
 
 <section class="hero" data-hero aria-labelledby="hero-title">
   <div class="hero__glow" data-glow aria-hidden="true"></div>
@@ -28,14 +23,13 @@ const avatars = ['AK', 'MR', 'JT', 'LS'];
     </div>
   </div>
 
-  <div class="flyer" data-flyer aria-hidden="true">
-    <img class="flyer__pose" data-pose="hover_up" src={bird('hover_up')} width="1600" height="1298" alt="" />
-    <img class="flyer__pose" data-pose="hover_out" src={bird('hover_out')} width="1600" height="982" alt="" />
-    <img class="flyer__pose" data-pose="fly" src={bird('fly')} width="1540" height="1107" alt="" />
-    <img class="flyer__pose" data-pose="fly_l" src={bird('fly_l')} width="1540" height="1107" alt="" />
-    <img class="flyer__pose" data-pose="bank" src={bird('bank')} width="1505" height="1187" alt="" />
-    <img class="flyer__pose" data-pose="swoop" src={bird('swoop')} width="1600" height="1132" alt="" />
-  </div>
+  <!-- The intro is one pre-rendered clip that starts on empty sky and ends on the landed bird. The still portrait above is the fallback. -->
+  <video class="hero__video" data-video muted playsinline preload="auto" aria-hidden="true" disablepictureinpicture>
+    <source src={clip('intro-m.mp4')} type="video/mp4" media="(max-width: 1000px)" />
+    <source src={clip('intro-m.webm')} type="video/webm" media="(max-width: 1000px)" />
+    <source src={clip('intro-d.mp4')} type="video/mp4" />
+    <source src={clip('intro-d.webm')} type="video/webm" />
+  </video>
 
   <div class="hero__copy">
     <h1 id="hero-title" class="hero__title">
