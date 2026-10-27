@@ -102,8 +102,10 @@ function work(lenis?: Lenis) {
   const tiles = qa<HTMLElement>('[data-tile]');
   if (!section || !tiles.length) return;
   const last = tiles.length - 1;
+  // On a phone the tile is tall, so the first one starts higher: it is already on screen as the section arrives
+  const narrow = window.matchMedia('(max-width: 760px)').matches;
   gsap.set(tiles, { y: '125vh', rotateX: 40, scale: 0.94, transformOrigin: '50% 50%', force3D: true });
-  gsap.set(tiles[0], { y: '70vh', rotateX: 24, scale: 0.96 });
+  gsap.set(tiles[0], { y: narrow ? '30vh' : '70vh', rotateX: 24, scale: 0.96 });
 
   const tl = gsap.timeline({
     defaults: { ease: 'power1.inOut', immediateRender: false },
@@ -120,7 +122,7 @@ function work(lenis?: Lenis) {
     }
     if (i < last) tl.to(tile, { y: '-105vh', rotateX: -26, scale: 0.9, opacity: 0.15, duration: 0.6 }, main + 0.4);
   });
-  tl.to({}, { duration: 0.01 }, 1 + last + 0.8);
+  tl.to({}, { duration: 0.01 }, 1 + last + (narrow ? 0.35 : 0.8));
 }
 
 /** Dot-matrix headline: lit by scroll, glowing at the pointer */

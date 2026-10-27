@@ -129,7 +129,18 @@ html.js .stmt .w { opacity: 0.16; }
   .contact__links { position: absolute; top: 16svh; right: var(--pad); width: min(21rem, 26vw); margin: 0; }
 }
 @media (max-width: 760px) {
-  .tile { width: 86vw; }
+  /* Phones: tall tiles that fill the screen, and spacing sized for a short, narrow viewport */
+  html.sky-fades .stmt { padding-top: 12svh; }
+  .stmt { padding-bottom: 6svh; }
+  .work { height: calc(var(--n) * 105svh + 10svh); }
+  .work__all { top: 11svh; }
+  .tile { width: 84vw; aspect-ratio: 4 / 5; max-height: 64svh; }
+  .tile__name { font-size: clamp(1.6rem, 8vw, 2.4rem); }
+  .mani { min-height: 72svh; display: grid; place-items: center; }
+  .eng { padding: 5svh 0 6svh; }
+  .marq { margin-top: 7svh; }
+  .svc { padding: 11svh 0 12svh; }
+  .svc__label { margin-bottom: 4svh; }
   .eng__row td:nth-child(2), .eng__row td:nth-child(3) { display: none; }
   .eng__row td:nth-child(1) { width: 46%; }
   .eng__row td:last-child { width: 54%; }

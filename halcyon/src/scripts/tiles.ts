@@ -48,12 +48,17 @@ function radar(ctx: CanvasRenderingContext2D, W: () => number, H: () => number, 
   const pings: { x: number; y: number; t: number }[] = [];
   let ang = -Math.PI / 2;
   let n = blips.length;
+  // The radar sits to the right on a wide tile and in the middle, higher up, on a tall one
+  const geo = (w: number, h: number) => {
+    const tall = w / h < 1.2;
+    return { cx: w * (tall ? 0.5 : 0.6), cy: h * (tall ? 0.42 : 0.52), R: Math.min(w * (tall ? 0.44 : 0.46), h * (tall ? 0.34 : 0.56)) };
+  };
 
   return {
     draw(_t, dt) {
       const w = W(), h = H();
       background(ctx, w, h);
-      const cx = w * 0.6, cy = h * 0.52, R = Math.min(w * 0.46, h * 0.56);
+      const { cx, cy, R } = geo(w, h);
       ctx.lineWidth = 1;
       // rings and spokes
       [0.2, 0.4, 0.6, 0.8, 1].forEach((k, i) => { ctx.strokeStyle = rgba(accent, 0.42 - i * 0.06); ctx.beginPath(); ctx.arc(cx, cy, R * k, 0, TAU); ctx.stroke(); });
@@ -126,7 +131,7 @@ function radar(ctx: CanvasRenderingContext2D, W: () => number, H: () => number, 
     },
     click(x, y) {
       const w = W(), h = H();
-      const cx = w * 0.6, cy = h * 0.52, R = Math.min(w * 0.46, h * 0.56);
+      const { cx, cy, R } = geo(w, h);
       const dx = x - cx, dy = y - cy;
       if (Math.hypot(dx, dy) > R) return;
       pings.push({ x, y, t: 0 });
@@ -140,7 +145,8 @@ function radar(ctx: CanvasRenderingContext2D, W: () => number, H: () => number, 
 /* ---------------- Network: hover lights nodes; click starts an infection that spreads, then recovers ---------------- */
 function network(ctx: CanvasRenderingContext2D, W: () => number, H: () => number, accent: string, ptr: Ptr): Art {
   const r = seeded(11);
-  const cols = 8, rows = 4;
+  const tall = W() / H() < 1.2;
+  const cols = tall ? 5 : 8, rows = tall ? 7 : 4;
   type Node = { u: number; v: number; sick: number; heal: number; hop: number; name: string };
   const nodes: Node[] = [];
   for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) nodes.push({ u: (i + 0.5 + (j % 2) * 0.35 - 0.17) / cols + (r() - 0.5) * 0.03, v: (j + 0.55) / rows + (r() - 0.5) * 0.04, sick: 0, heal: 0, hop: 0, name: `NODE ${String(j * cols + i + 1).padStart(2, '0')}` });
@@ -180,7 +186,7 @@ function network(ctx: CanvasRenderingContext2D, W: () => number, H: () => number
       const w = W(), h = H();
       background(ctx, w, h);
       const px = (n: Node) => n.u * w, py = (n: Node) => n.v * h;
-      if (!demoed && clock > 1.4) { demoed = true; infect(idx(5, 1)); } // one demonstration, so it is clear something happens
+      if (!demoed && clock > 1.4) { demoed = true; infect(idx(Math.min(cols - 2, 5), 1)); } // one demonstration, so it is clear something happens
       // edges
       for (const [a, b] of edges) {
         const A = nodes[a], B = nodes[b];
@@ -242,11 +248,12 @@ function planes(ctx: CanvasRenderingContext2D, W: () => number, H: () => number,
       background(ctx, w, h);
       spread += ((ptr.in ? 1 : 0) - spread) * Math.min(1, dt * 5);
       if (scan >= 0) { scan += dt / 1.7; if (scan > 1.25) { scan = -1; } }
-      const hw = Math.min(w * 0.25, h * 0.52), hh = hw * 0.5;
-      const gap = h * (0.14 + 0.08 * spread);
+      const tall = w / h < 1.2;
+      const hw = Math.min(w * (tall ? 0.3 : 0.25), h * 0.52), hh = hw * 0.5;
+      const gap = h * ((tall ? 0.16 : 0.14) + (tall ? 0.07 : 0.08) * spread);
       const mx = ptr.in ? (ptr.x / w - 0.5) : 0, my = ptr.in ? (ptr.y / h - 0.5) : 0;
       // Which layer is under the pointer? Test top to bottom.
-      const centres = names.map((_, i) => ({ x: w * 0.42 + mx * (14 + i * 16), y: h * 0.5 + (i - 1) * gap + my * 8 }));
+      const centres = names.map((_, i) => ({ x: w * (tall ? 0.38 : 0.42) + mx * (14 + i * 16), y: h * (tall ? 0.42 : 0.5) + (i - 1) * gap + my * 8 }));
       let hover = -1;
       if (ptr.in) for (let i = 0; i < 3; i++) if (hit(ptr.x, ptr.y, centres[i].x, centres[i].y, hw, hh)) { hover = i; break; }
       // connectors
@@ -350,7 +357,7 @@ const makers: Record<string, typeof radar> = { rings: radar, nodes: network, pla
 
 export function initTiles(reduce: boolean) {
   const tiles = [...document.querySelectorAll<HTMLElement>('[data-tile]')];
-  const live: { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D; art: Art; visible: boolean; w: number; h: number; tile: HTMLElement }[] = [];
+  const live: { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D; art: Art; visible: boolean; w: number; h: number; tile: HTMLElement; tall: boolean }[] = [];
   let raf = 0;
   let last = 0;
 
@@ -377,8 +384,7 @@ export function initTiles(reduce: boolean) {
     if (!canvas || !make || !ctx) continue;
     const accent = canvas.dataset.accent ?? '#2fd3c8';
     const ptr: Ptr = { x: -1, y: -1, in: false };
-    const item = { canvas, ctx, visible: false, w: 1, h: 1, art: null as unknown as Art, tile };
-    item.art = make(ctx, () => item.w, () => item.h, accent, ptr);
+    const item = { canvas, ctx, visible: false, w: 1, h: 1, art: null as unknown as Art, tile, tall: false };
     live.push(item);
 
     const fit = () => {
@@ -388,6 +394,9 @@ export function initTiles(reduce: boolean) {
       canvas.width = Math.round(item.w * dpr);
       canvas.height = Math.round(item.h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // The art is built once the tile's shape is known, and rebuilt if it changes between wide and tall
+      const tall = item.w / item.h < 1.2;
+      if (!item.art || tall !== item.tall) { item.tall = tall; item.art = make!(ctx, () => item.w, () => item.h, accent, ptr); }
       item.art.draw(0, 0); // never leave a blank canvas
       tile.classList.add('is-live');
     };

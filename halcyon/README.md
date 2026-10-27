@@ -38,6 +38,8 @@ Scrolling is smoothed with Lenis on desktop pointers only. Everything is skipped
 
 **Images**: the four glass props were generated with `google/gemini-3.1-flash-image` on pure black and converted to real transparency (brightness becomes alpha, which matches a screen blend on black). The four service photos were generated with `bytedance-seed/seedream-5-0-flash`. Both are in `public/img/`.
 
+**Phones**: below 760 px the sections are re-spaced so no screen is empty. The tiles become tall (4:5) and their live art re-lays itself out for the tall shape, the first tile starts already on screen, and the paddings around the statement, manifesto, table and services are cut down. The page is about 2,700 px shorter than it would be with the desktop spacing.
+
 **Performance notes**: the keycaps are the only 3D scene below the hero; it shares one three.js load with the hero's glass cards (`objects.ts`), is built during idle time right after the intro, and renders only while on screen. Heavy WebGL is the main cost on weak devices.
 
 ## Copy
