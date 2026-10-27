@@ -34,15 +34,14 @@ export async function playIntro(): Promise<void> {
   const proof = qa('.proof');
   const cards = qa('.card');
 
-  // The nav's logo is on screen from the first frame. Everything else waits for its moment.
-  const navItems = nav.filter((el) => !el.classList.contains('nav__brand'));
+  // Nothing is shown until the bird starts to land, the nav included.
   const inner = (els: Element[]) => els.flatMap((el) => [...el.children]);
   const cardInner = inner(cards);
   const proofInner = inner(proof);
   const BLUR = 'blur(12px)';
   const SOFT = 'blur(7px)';
 
-  gsap.set(navItems, { y: 0 });
+  gsap.set(nav, { y: -10, filter: SOFT });
   gsap.set(lines, { y: 16, filter: BLUR });
   gsap.set(lede, { x: -24, filter: SOFT });
   gsap.set(actions, { x: -36, filter: SOFT });
@@ -58,8 +57,8 @@ export async function playIntro(): Promise<void> {
     const d = (n: number) => n * speed;
     const sharp = { filter: 'blur(0px)', clearProps: 'filter' };
     const tl = gsap.timeline({ delay: at });
-    tl.to(navItems, { autoAlpha: 1, duration: d(1.1), stagger: 0.05, ease: 'power1.out' }, d(0.45))
-      .to(lines, { autoAlpha: 1, y: 0, ...sharp, duration: d(1.6), stagger: 0.16, ease: 'power2.out' }, T)
+    tl.to(nav, { autoAlpha: 1, y: 0, ...sharp, duration: d(1.5), stagger: 0.1, ease: 'power2.out' }, T)
+      .to(lines, { autoAlpha: 1, y: 0, ...sharp, duration: d(1.6), stagger: 0.16, ease: 'power2.out' }, T + d(0.15))
       .to(lede, { autoAlpha: 1, x: 0, ...sharp, duration: d(1.5), ease: 'power2.out' }, T + d(0.3))
       .to(actions, { autoAlpha: 1, x: 0, ...sharp, duration: d(1.5), ease: 'power2.out' }, T + d(0.4))
       .to(cards, { autoAlpha: 1, y: 0, duration: d(1.5), stagger: 0.14, ease: 'power2.out' }, T + d(0.45))
