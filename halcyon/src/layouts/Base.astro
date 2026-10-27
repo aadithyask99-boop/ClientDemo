@@ -1,0 +1,44 @@
+---
+import '@fontsource-variable/outfit';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#b9d0dc" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <link rel="preload" as="image" type="image/webp" href={`${base}/bird/fly.webp`} />
+    <link rel="preload" as="image" type="image/webp" href={`${base}/bird/portrait.webp`} />
+    <script is:inline>
+      // Content stays visible without JavaScript. The js class only switches the intro on.
+      (function () {
+        var d = document.documentElement;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        d.classList.add('js');
+        // If the script never started, never leave the hero hidden
+        window.setTimeout(function () {
+          if (!window.__halcyon) d.classList.remove('js');
+        }, 6000);
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>

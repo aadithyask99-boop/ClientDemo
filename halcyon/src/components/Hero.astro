@@ -1,0 +1,83 @@
+---
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const bird = (n: string) => `${base}/bird/${n}.webp`;
+// The figures below are placeholder copy for a fictional firm.
+const avatars = ['AK', 'MR', 'JT', 'LS'];
+---
+
+<section class="hero" data-hero aria-labelledby="hero-title">
+  <div class="hero__glow" data-glow aria-hidden="true"></div>
+
+  <div class="hero__bird" data-portrait>
+    <div class="hero__bird-drift" data-portrait-drift>
+      <img
+        class="hero__bird-img"
+        data-portrait-img
+        src={bird('portrait')}
+        width="1600"
+        height="1415"
+        alt="A blue kingfisher, the Halcyon emblem"
+        fetchpriority="high"
+      />
+    </div>
+  </div>
+
+  <div class="flyer" data-flyer aria-hidden="true">
+    <div class="flyer__flutter" data-flutter>
+      <img class="flyer__pose flyer__pose--fly" data-pose="fly" src={bird('fly')} width="1540" height="1107" alt="" />
+      <img class="flyer__pose flyer__pose--bank" data-pose="bank" src={bird('bank')} width="1505" height="1187" alt="" />
+      <img class="flyer__pose flyer__pose--dive" data-pose="dive" src={bird('dive')} width="967" height="1136" alt="" />
+    </div>
+  </div>
+
+  <div class="hero__copy">
+    <h1 id="hero-title" class="hero__title">
+      <span class="hero__line" data-reveal>Foresight</span>
+      <span class="hero__line hero__line--indent" data-reveal><span class="amp">&amp;</span> security</span>
+    </h1>
+    <p class="hero__lede" data-reveal>Halcyon watches your network, endpoints and cloud around the clock, so your team can work in peace.</p>
+    <div class="hero__actions" data-reveal>
+      <a class="btn btn--primary" href="#">
+        Our Solutions
+        <span class="btn__arrow" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="14" height="14"><path d="M5 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </a>
+      <a class="btn btn--light" href="#">Contact us</a>
+    </div>
+  </div>
+
+  <div class="dock">
+    <div class="proof" data-reveal>
+      <ul class="proof__faces" aria-hidden="true">
+        {avatars.map((a, i) => <li style={`--i:${i}`}>{a}</li>)}
+      </ul>
+      <span class="proof__label">Protected teams</span>
+      <span class="proof__count">+323</span>
+    </div>
+
+    <div class="cards">
+      <article class="card card--glass" data-reveal>
+        <div class="card__media card__media--lock" data-glass="lock" aria-hidden="true">
+          <svg class="card__fallback" viewBox="0 0 48 56" width="44" height="52"><rect x="6" y="22" width="36" height="28" rx="8" fill="rgba(255,255,255,.55)" stroke="rgba(255,255,255,.9)"/><path d="M14 22v-6a10 10 0 0 1 20 0v6" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="4" stroke-linecap="round"/></svg>
+        </div>
+        <span class="card__tag">Perfect Security</span>
+        <h2 class="card__title">AI ensures total protection</h2>
+      </article>
+
+      <article class="card card--agent" data-reveal>
+        <div class="card__media card__media--orb" data-glass="orb" aria-hidden="true"><span class="card__fallback card__fallback--orb"></span></div>
+        <h2 class="card__title">Integrated AI Agent</h2>
+        <p class="card__text">An agent that triages alerts and responds in seconds, tuned to each client.</p>
+        <span class="card__go" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="12" height="12"><path d="M5 11l6-6M6 5h5v5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </article>
+
+      <article class="card card--glass card--stat" data-reveal>
+        <p class="card__stat">42<span>%</span></p>
+        <p class="card__text">Faster incident response across Halcyon clients.</p>
+      </article>
+    </div>
+  </div>
+</section>
