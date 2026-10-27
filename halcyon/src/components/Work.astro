@@ -1,0 +1,20 @@
+---
+import { cases, art } from '../data/content';
+---
+
+<section class="work" data-work style={`--n:${cases.length}`} aria-label="Selected work">
+  <div class="work__stage">
+    <a class="work__all" href="#">SEE ALL WORK <span aria-hidden="true">&#8599;</span></a>
+    {cases.map((c, i) => (
+      <article class="tile" data-tile style={`--accent:${c.accent}`}>
+        <div class="tile__art" set:html={art(c.art, c.accent)} />
+        <span class="tile__corner tile__corner--tl" aria-hidden="true"></span>
+        <span class="tile__corner tile__corner--br" aria-hidden="true"></span>
+        <div class="tile__meta">
+          <span class="mono">{c.year} &middot; {c.kind}</span>
+          <h3 class="tile__name">{c.name}</h3>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>

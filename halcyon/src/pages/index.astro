@@ -2,6 +2,13 @@
 import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
+import Statement from '../components/Statement.astro';
+import Work from '../components/Work.astro';
+import Manifesto from '../components/Manifesto.astro';
+import Engagements from '../components/Engagements.astro';
+import Services from '../components/Services.astro';
+import Contact from '../components/Contact.astro';
+import Dock from '../components/Dock.astro';
 ---
 
 <Base
@@ -9,7 +16,16 @@ import Hero from '../components/Hero.astro';
   description="Halcyon watches your network, endpoints and cloud around the clock, so your team can work in peace. A concept site for a fictional security firm."
 >
   <Header />
+  <Dock />
   <main>
     <Hero />
+    <div class="night">
+      <Statement />
+      <Work />
+      <Manifesto />
+      <Engagements />
+      <Services />
+    </div>
+    <Contact />
   </main>
 </Base>

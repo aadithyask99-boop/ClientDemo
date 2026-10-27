@@ -1,0 +1,23 @@
+---
+import { engagements, wordmarks } from '../data/content';
+---
+
+<section class="eng" aria-label="Engagements">
+  <table class="eng__table">
+    <caption class="sr-only">Recent engagements</caption>
+    <tbody>
+      {engagements.map((r) => (
+        <tr class="eng__row">
+          <td>{r[0]}</td><td>{r[1]}</td><td>{r[2]}</td><td class="eng__client">{r[3]}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  <div class="marq" aria-label="Clients">
+    <div class="marq__track">
+      {[0, 1].map(() => wordmarks.map((m) => (
+        <div class="marq__cell"><span class:list={['wm', m.cls]}>{m.text}</span></div>
+      )))}
+    </div>
+  </div>
+</section>

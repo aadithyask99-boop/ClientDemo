@@ -1,0 +1,14 @@
+---
+import { statement } from '../data/content';
+const lines = statement.map((l) => l.split(' ').map((w) => ({ w: w.replace(/\*/g, ''), u: w.includes('*') })));
+---
+
+<section class="stmt" data-stmt aria-label="What we do">
+  <p class="stmt__text">
+    {lines.map((line) => (
+      <span class="stmt__line">
+        {line.map((word) => <span class:list={['w', { u: word.u }]}>{word.w}</span>)}
+      </span>
+    ))}
+  </p>
+</section>

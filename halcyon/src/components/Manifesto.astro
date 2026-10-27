@@ -1,0 +1,9 @@
+---
+import { manifesto } from '../data/content';
+---
+
+<section class="mani" data-mani aria-labelledby="mani-title">
+  <h2 id="mani-title" class="sr-only">{manifesto.join(' ')}</h2>
+  <canvas class="mani__dots" data-dots data-lines={JSON.stringify(manifesto)} aria-hidden="true"></canvas>
+  <div class="mani__scene" data-floaters aria-hidden="true"></div>
+</section>

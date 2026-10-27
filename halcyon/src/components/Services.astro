@@ -1,0 +1,19 @@
+---
+import { services, art } from '../data/content';
+const accents = ['#2fd3c8', '#4f8bff', '#ff7a45', '#a47bff'];
+---
+
+<section class="svc" data-svc style={`--n:${services.length}`} aria-label="Services">
+  <div class="svc__stage">
+    <p class="mono svc__label">[ SERVICES ]</p>
+    <ul class="svc__list">
+      {services.map((s, i) => (
+        <li class="svc__item" data-svc-item data-tag={s.tag} data-art={art(s.art, accents[i])}>
+          <span class="svc__name">{s.name}</span>
+        </li>
+      ))}
+    </ul>
+    <p class="mono svc__side" data-svc-side>[ DETECT + RESPOND ]</p>
+    <div class="svc__thumb" data-svc-thumb aria-hidden="true"></div>
+  </div>
+</section>
