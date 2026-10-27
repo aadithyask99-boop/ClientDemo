@@ -1,5 +1,5 @@
-import type { Group, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
-import { loadKit, makeKey, makeLock, makeOrb, makeShield, makeStage, type Kit } from './objects';
+import type { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { loadKit, makeStage, type Kit } from './objects';
 
 interface Live {
   host: HTMLElement;
@@ -50,52 +50,6 @@ function register(l: Live) {
 function onPlane(cam: PerspectiveCamera, nx: number, ny: number) {
   const halfH = Math.tan((cam.fov * Math.PI) / 360) * cam.position.z;
   return { x: nx * halfH * cam.aspect, y: ny * halfH, halfH };
-}
-
-/** Four glass objects drifting in the corners of the manifesto, leaning a little toward the pointer */
-async function floaters(k: Kit, host: HTMLElement, reduce: boolean) {
-  const { THREE } = k;
-  const { renderer, scene } = makeStage(k, host);
-  const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 60);
-  camera.position.set(0, 0, 16);
-
-  const items: { obj: Group; nx: number; ny: number; size: number; phase: number }[] = [
-    { obj: makeLock(k, 0x86b8f0), nx: -0.84, ny: 0.5, size: 0.17, phase: 0 },
-    { obj: makeShield(k, 0x7fb2ea), nx: 0.84, ny: 0.46, size: 0.16, phase: 1.7 },
-    { obj: makeKey(k, 0x9cc7f2), nx: -0.82, ny: -0.58, size: 0.15, phase: 3.1 },
-    { obj: makeOrb(k), nx: 0.82, ny: -0.56, size: 0.13, phase: 4.6 },
-  ];
-  items.forEach((i) => scene.add(i.obj));
-
-  let px = 0;
-  let py = 0;
-  window.addEventListener('pointermove', (e) => {
-    px = (e.clientX / window.innerWidth - 0.5) * 2;
-    py = (e.clientY / window.innerHeight - 0.5) * 2;
-  });
-
-  const place = () => {
-    const narrow = camera.aspect < 0.8;
-    items.forEach((i) => {
-      const p = onPlane(camera, narrow ? i.nx * 0.92 : i.nx, narrow ? i.ny * 0.9 : i.ny);
-      i.obj.position.set(p.x, p.y, 0);
-      i.obj.scale.setScalar(p.halfH * i.size * (narrow ? 0.7 : 1));
-    });
-  };
-
-  register({
-    host, renderer, scene, camera, visible: false, fps: 30,
-    update: (t) => {
-      place();
-      items.forEach((i) => {
-        const s = reduce ? 0 : 1;
-        i.obj.rotation.y = Math.sin(t * 0.45 + i.phase) * 0.7 + px * 0.35 * s;
-        i.obj.rotation.x = Math.sin(t * 0.33 + i.phase) * 0.22 - py * 0.2 * s;
-        i.obj.rotation.z = Math.sin(t * 0.27 + i.phase) * 0.12;
-        i.obj.position.y += Math.sin(t * 0.8 + i.phase) * 0.1 * s;
-      });
-    },
-  });
 }
 
 function letterTexture(k: Kit, ch: string, fg: string) {
@@ -221,7 +175,6 @@ async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
  */
 export function mountScenes(reduce: boolean) {
   const targets: [string, (k: Kit, host: HTMLElement, reduce: boolean) => Promise<void>][] = [
-    ['[data-floaters]', floaters],
     ['[data-keys]', keycaps],
   ];
   const jobs: (() => Promise<void>)[] = [];

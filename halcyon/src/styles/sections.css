@@ -11,8 +11,14 @@
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .mono { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 400; }
 
-.night { position: relative; background: var(--night); color: var(--night-ink); }
+.night { position: relative; z-index: 2; background: var(--night); color: var(--night-ink); }
 .night::before { content: ''; display: block; height: 30svh; background: linear-gradient(#d7e8f1, var(--night)); }
+/* With scripting, the sky fades to night on scroll (see .sky-fade), so the fallback strip and solid ground go */
+html.sky-fades { background: #d7e8f1; }
+html.sky-fades .night { background: transparent; }
+html.sky-fades .night::before { display: none; }
+html.sky-fades .stmt { padding-top: 38svh; }
+.sky-fade { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0; background: #1d4f86; }
 
 /* ---------- Statement ---------- */
 .stmt { padding: 8svh var(--pad) 24svh; text-align: center; }
@@ -39,9 +45,15 @@ html.js .stmt .w { opacity: 0.16; }
 
 /* ---------- Manifesto ---------- */
 .mani { position: relative; min-height: 118svh; overflow: hidden; }
-.mani__dots, .mani__scene { position: absolute; inset: 0; width: 100%; height: 100%; }
-.mani__scene { pointer-events: none; }
-.mani__scene canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
+.mani { perspective: 1200px; }
+.mani__dots { position: absolute; inset: 0; width: 100%; height: 100%; }
+.mani__props { position: absolute; inset: 0; pointer-events: none; }
+.prop { position: absolute; width: clamp(110px, 15vw, 240px); aspect-ratio: 1; will-change: transform; }
+.prop img { display: block; width: 100%; height: 100%; object-fit: contain; will-change: transform; }
+.prop--lock { left: 3%; top: 9%; }
+.prop--shield { right: 3%; top: 7%; }
+.prop--key { left: 4%; bottom: 10%; }
+.prop--orb { right: 5%; bottom: 9%; }
 
 /* ---------- Engagements ---------- */
 .eng { padding: 8svh 0 10svh; }
@@ -66,37 +78,41 @@ html.js .stmt .w { opacity: 0.16; }
 .wm--mono { font-family: var(--mono); font-size: 1.3rem; letter-spacing: 0.04em; }
 @keyframes marq { to { transform: translateX(-50%); } }
 
-/* ---------- Services ---------- */
-.svc { position: relative; height: calc(var(--n) * 78svh + 90svh); }
-.svc__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; display: grid; place-items: center; }
-.svc__label { position: absolute; top: 14svh; left: 50%; translate: -50% 0; color: rgb(238 243 249 / 0.6); }
-.svc__list { text-align: center; }
-.svc__name { display: block; font-family: var(--display); font-size: clamp(3.2rem, 10vw, 10.6rem); line-height: 1.02; text-transform: uppercase; color: rgb(238 243 249 / 0.2); transition: color 0.5s; cursor: default; }
+/* ---------- Services (hover-driven) ---------- */
+.svc { position: relative; padding: 20svh 0 22svh; overflow: hidden; text-align: center; }
+.svc__label { color: rgb(238 243 249 / 0.6); margin: 0 0 6svh; }
+.svc__list { position: relative; z-index: 2; margin: 0 auto; }
+.svc__item { outline: none; }
+.svc__row { position: relative; display: inline-block; }
+.svc__name { display: block; font-family: var(--display); font-size: clamp(3.2rem, 10vw, 10.6rem); line-height: 1.02; text-transform: uppercase; color: rgb(238 243 249 / 0.34); transition: color 0.35s; cursor: default; will-change: transform; }
+.svc__list.has-hover .svc__item:not(.is-on) .svc__name { color: rgb(238 243 249 / 0.2); }
 .svc__item.is-on .svc__name { color: #fff; }
-.svc__side { position: absolute; right: var(--pad); top: 50%; color: rgb(238 243 249 / 0.7); }
-.svc__thumb { position: absolute; left: 0; top: 0; z-index: 3; width: min(230px, 40vw); aspect-ratio: 4 / 3; overflow: hidden; pointer-events: none; opacity: 0; transition: opacity 0.25s; box-shadow: 0 20px 60px rgb(0 0 0 / 0.5); }
-.svc__thumb.is-on { opacity: 1; }
-.svc__thumb svg { width: 100%; height: 100%; display: block; }
+.svc__cap { position: absolute; left: calc(100% + 1.1rem); top: 50%; translate: 0 -50%; white-space: nowrap; color: rgb(238 243 249 / 0.7); opacity: 0; transform: translateX(-8px); transition: opacity 0.3s, transform 0.4s var(--ease); pointer-events: none; }
+.svc__item.is-on .svc__cap { opacity: 1; transform: none; }
+.svc__thumb { position: absolute; left: 0; top: 0; z-index: 1; width: clamp(190px, 24vw, 340px); aspect-ratio: 4 / 3; overflow: hidden; pointer-events: none; opacity: 0; box-shadow: 0 24px 70px rgb(0 0 0 / 0.55); will-change: transform; }
+.svc__thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.3s; }
+.svc__thumb img.is-on { opacity: 1; }
+@media (hover: none) { .svc__thumb { left: 50%; top: 14svh; translate: -50% 0; } .svc__cap { display: none; } }
 
 /* ---------- Contact ---------- */
-.contact { position: relative; min-height: 128svh; overflow: hidden; color: #0b1220; background: linear-gradient(to bottom, #d9dfd9 0%, #d9dfd9 36%, var(--bottom, #59c8ff) 100%); }
+.contact { position: relative; z-index: 3; min-height: 128svh; overflow: hidden; color: var(--night-ink); background: linear-gradient(to bottom, #050b16 0%, #050b16 18%, #0b2850 46%, color-mix(in srgb, var(--bottom, #59c8ff) 50%, #0b2850) 72%, var(--bottom, #59c8ff) 100%); }
 .contact__body { position: relative; z-index: 2; padding: 15svh var(--pad) 0; }
 .contact__mail { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(3.4rem, 9.6vw, 10.4rem); line-height: 0.94; text-transform: uppercase; }
 .contact__tag { margin: 1.3rem 0 0; font-family: var(--display); font-size: clamp(1rem, 1.7vw, 1.8rem); text-transform: uppercase; }
 .contact__links { margin: 9svh 0 0; display: grid; gap: 1.3rem; font-size: 0.66rem; }
 .contact__links > div { display: grid; grid-template-columns: 9rem 1fr; }
 .contact__links dt { font-weight: 500; }
-.contact__links dd { margin: 0; display: grid; gap: 0.2rem; color: rgb(11 18 32 / 0.62); }
-.contact__links a:hover { color: #0b1220; }
+.contact__links dd { margin: 0; display: grid; gap: 0.2rem; color: rgb(238 243 249 / 0.68); }
+.contact__links a:hover { color: #fff; }
 .contact__keys { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; height: 44svh; pointer-events: none; }
 .contact__keys canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
 .contact__legal { position: absolute; z-index: 3; left: var(--pad); right: var(--pad); bottom: 0.9rem; display: flex; justify-content: space-between; font-size: 0.62rem; color: rgb(11 18 32 / 0.7); }
 .contact__cross { position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; transition: opacity 0.4s; }
 .contact.is-hover .contact__cross { opacity: 1; }
-.contact__h, .contact__v { position: absolute; background: rgb(11 18 32 / 0.32); }
+.contact__h, .contact__v { position: absolute; background: rgb(238 243 249 / 0.28); }
 .contact__h { left: 0; right: 0; top: var(--cy, 50%); height: 1px; }
 .contact__v { top: 0; bottom: 0; left: var(--cx, 50%); width: 1px; }
-.contact__xy { position: absolute; top: 5.4rem; right: var(--pad); font-size: 0.62rem; color: rgb(11 18 32 / 0.62); }
+.contact__xy { position: absolute; top: 5.4rem; right: var(--pad); font-size: 0.62rem; color: rgb(238 243 249 / 0.6); }
 
 /* ---------- Dock (fixed bar once the hero has scrolled away) and menu ---------- */
 .pillbar { position: fixed; inset: 0 0 auto 0; z-index: 40; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0.85rem var(--pad); pointer-events: none; opacity: 0; visibility: hidden; transform: translateY(-14px); transition: opacity 0.5s, transform 0.5s var(--ease), visibility 0.5s; }

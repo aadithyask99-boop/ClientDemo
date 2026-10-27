@@ -23,9 +23,11 @@ export function initSections(reduce: boolean): { warm: () => Promise<void> } {
   const scenes = mountScenes(reduce);
   if (reduce) return scenes;
 
+  skyFade();
   statement();
   work();
   manifesto();
+  props();
   services();
   contact();
   return scenes;
@@ -103,45 +105,114 @@ function manifesto() {
   });
 }
 
-/** One giant word is bright at a time as you scroll, with a thumbnail that follows the pointer */
+/** Hovering a word lights it up, shows its caption, and a photo follows the pointer with a lag */
 function services() {
   const section = q<HTMLElement>('[data-svc]');
-  const stage = q<HTMLElement>('.svc__stage', section ?? document);
-  const items = qa<HTMLElement>('[data-svc-item]');
-  const side = q<HTMLElement>('[data-svc-side]');
+  const list = q<HTMLElement>('[data-svc-list]');
   const thumb = q<HTMLElement>('[data-svc-thumb]');
-  if (!section || !stage || !items.length) return;
+  const items = qa<HTMLElement>('[data-svc-item]');
+  if (!section || !list || !thumb || !items.length) return;
+  const photos = qa<HTMLImageElement>('img', thumb);
+  const names = items.map((el) => q<HTMLElement>('.svc__name', el)!);
+  const hover = window.matchMedia('(hover: hover)').matches;
 
-  let active = -1;
-  const show = (i: number) => {
-    if (i === active) return;
-    active = i;
+  const set = (i: number) => {
     items.forEach((el, n) => el.classList.toggle('is-on', n === i));
-    if (side) {
-      const s = stage.getBoundingClientRect();
-      const r = items[i].getBoundingClientRect();
-      gsap.to(side, { y: r.top + r.height / 2 - s.top - s.height / 2, duration: 0.5, ease: 'power3.out' });
-      side.textContent = `[ ${items[i].dataset.tag} ]`;
-    }
+    list.classList.toggle('has-hover', i >= 0);
+    photos.forEach((p) => p.classList.toggle('is-on', i >= 0 && p.dataset.thumb === items[i].dataset.img));
+    gsap.to(thumb, { opacity: i >= 0 ? 1 : 0, scale: i >= 0 ? 1 : 0.88, duration: 0.35, ease: 'power3.out', overwrite: 'auto' });
   };
-  show(0);
-  ScrollTrigger.create({
-    trigger: section, start: 'top top', end: 'bottom bottom',
-    onUpdate: (self) => show(Math.min(items.length - 1, Math.floor(self.progress * items.length))),
-  });
+  gsap.set(thumb, { opacity: 0, scale: 0.88 });
 
-  if (!thumb || !window.matchMedia('(hover: hover)').matches) return;
-  const tx = gsap.quickTo(thumb, 'x', { duration: 0.5, ease: 'power3.out' });
-  const ty = gsap.quickTo(thumb, 'y', { duration: 0.5, ease: 'power3.out' });
-  stage.addEventListener('pointermove', (e) => {
-    const s = stage.getBoundingClientRect();
-    tx(e.clientX - s.left + 24);
-    ty(e.clientY - s.top - 80);
+  items.forEach((el, i) => el.addEventListener('focus', () => set(i)));
+  items.forEach((el) => el.addEventListener('blur', () => set(-1)));
+
+  if (!hover) {
+    // Touch: whichever word crosses the middle of the screen is the active one
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) set(items.indexOf(e.target as HTMLElement)); }), { rootMargin: '-45% 0px -45% 0px' });
+    items.forEach((el) => io.observe(el));
+    return;
+  }
+
+  const tx = gsap.quickTo(thumb, 'x', { duration: 0.7, ease: 'power3.out' });
+  const ty = gsap.quickTo(thumb, 'y', { duration: 0.7, ease: 'power3.out' });
+  const tr = gsap.quickTo(thumb, 'rotation', { duration: 0.6, ease: 'power3.out' });
+  const nudge = names.map((n) => gsap.quickTo(n, 'x', { duration: 0.6, ease: 'power3.out' }));
+  let lastX = 0;
+  let current = -1;
+
+  section.addEventListener('pointermove', (e) => {
+    const r = section.getBoundingClientRect();
+    const px = e.clientX - r.left;
+    const py = e.clientY - r.top;
+    // The photo trails up and to the left of the pointer, tilting with its horizontal speed
+    tx(px - thumb.offsetWidth * 0.78);
+    ty(py - thumb.offsetHeight * 0.9);
+    tr(Math.max(-9, Math.min(9, (px - lastX) * 0.35)));
+    lastX = px;
+    // The word under the pointer leans toward it
+    if (current >= 0) {
+      const nr = names[current].getBoundingClientRect();
+      nudge[current]((e.clientX - (nr.left + nr.width / 2)) * 0.05);
+    }
   });
-  items.forEach((el) => {
-    el.addEventListener('pointerenter', () => { thumb.innerHTML = el.dataset.art ?? ''; thumb.classList.add('is-on'); });
-    el.addEventListener('pointerleave', () => thumb.classList.remove('is-on'));
+  items.forEach((el, i) => {
+    el.addEventListener('pointerenter', () => { current = i; set(i); });
+    el.addEventListener('pointerleave', () => { nudge[i](0); current = -1; });
   });
+  list.addEventListener('pointerleave', () => set(-1));
+}
+
+/** Glass props react to the pointer: they drift against it for depth, tilt toward it, and back away when it gets close */
+function props() {
+  const section = q<HTMLElement>('[data-mani]');
+  const wraps = qa<HTMLElement>('[data-prop]');
+  if (!section || !wraps.length) return;
+  const imgs = wraps.map((w) => q<HTMLElement>('img', w)!);
+
+  // Ambient drift, so they are alive before anyone touches the page
+  wraps.forEach((w, i) => gsap.to(w, { y: i % 2 ? -18 : 18, rotation: i % 2 ? 3 : -3, duration: 4.2 + i * 0.8, ease: 'sine.inOut', yoyo: true, repeat: -1 }));
+  gsap.set(imgs, { transformPerspective: 700 });
+
+  if (!window.matchMedia('(hover: hover)').matches) return;
+  const fx = imgs.map((el) => ({
+    x: gsap.quickTo(el, 'x', { duration: 0.9, ease: 'power3.out' }),
+    y: gsap.quickTo(el, 'y', { duration: 0.9, ease: 'power3.out' }),
+    rx: gsap.quickTo(el, 'rotationX', { duration: 0.8, ease: 'power3.out' }),
+    ry: gsap.quickTo(el, 'rotationY', { duration: 0.8, ease: 'power3.out' }),
+    s: gsap.quickTo(el, 'scale', { duration: 0.8, ease: 'power3.out' }),
+  }));
+  const clamp = (v: number, m: number) => Math.max(-m, Math.min(m, v));
+
+  section.addEventListener('pointermove', (e) => {
+    const r = section.getBoundingClientRect();
+    const nx = (e.clientX - r.left) / r.width - 0.5;
+    const ny = (e.clientY - r.top) / r.height - 0.5;
+    wraps.forEach((w, i) => {
+      const depth = Number(w.dataset.depth ?? 1);
+      const pr = w.getBoundingClientRect();
+      const dx = e.clientX - (pr.left + pr.width / 2);
+      const dy = e.clientY - (pr.top + pr.height / 2);
+      const d = Math.hypot(dx, dy) || 1;
+      const near = Math.max(0, 1 - d / 340);
+      fx[i].x(-nx * 70 * depth - (dx / d) * near * 80);
+      fx[i].y(-ny * 50 * depth - (dy / d) * near * 80);
+      fx[i].ry(clamp(dx * 0.06, 28));
+      fx[i].rx(clamp(-dy * 0.06, 28));
+      fx[i].s(1 + near * 0.12);
+    });
+  });
+  section.addEventListener('pointerleave', () => fx.forEach((f) => { f.x(0); f.y(0); f.rx(0); f.ry(0); f.s(1); }));
+}
+
+/** The sky turns to night as the hero scrolls away: one colour change, no edge */
+function skyFade() {
+  const fade = q<HTMLElement>('[data-skyfade]');
+  if (!fade) return;
+  document.documentElement.classList.add('sky-fades');
+  gsap.timeline({ scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: 0.5 } })
+    .to(fade, { opacity: 0.9, ease: 'power1.in', duration: 0.62 })
+    .to(fade, { opacity: 1, backgroundColor: '#050b16', ease: 'none', duration: 0.38 });
 }
 
 /** Footer: the sky below the address slowly changes colour, and a crosshair follows the pointer */

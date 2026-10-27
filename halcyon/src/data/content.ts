@@ -41,11 +41,11 @@ export const wordmarks: { text: string; cls: string }[] = [
   { text: 'HARBOR', cls: 'wm--bold' },
 ];
 
-export const services: { name: string; tag: string; art: ArtKind }[] = [
-  { name: 'MONITORING', tag: 'DETECT', art: 'rings' },
-  { name: 'RESPONSE', tag: 'CONTAIN', art: 'nodes' },
-  { name: 'CLOUD', tag: 'HARDEN', art: 'planes' },
-  { name: 'INTEL', tag: 'ANTICIPATE', art: 'stream' },
+export const services: { name: string; caption: string; img: string }[] = [
+  { name: 'MONITORING', caption: '24/7 DETECTION + TRIAGE', img: 'monitoring' },
+  { name: 'RESPONSE', caption: 'CONTAINMENT + RECOVERY', img: 'response' },
+  { name: 'CLOUD', caption: 'POSTURE + HARDENING', img: 'cloud' },
+  { name: 'INTEL', caption: 'THREATS + FORECASTS', img: 'intel' },
 ];
 
 /** Small inline illustrations, drawn in code, used on the tiles and as hover thumbnails */

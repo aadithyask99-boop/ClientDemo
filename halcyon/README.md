@@ -25,17 +25,20 @@ To remake the clip: screenshot the page with `.nav, .hero__copy, .dock` and `.he
 
 Dark "night" sections that follow the sky, in the style of a studio-site reference, with Halcyon's own content, visuals and code. The text, figures, client names and email are placeholders.
 
+- **Sky to night** (`.sky-fade`, `sections.ts`): as the hero scrolls away, a fixed layer turns the sky to dusk blue and then to night, one continuous colour change with no strip or edge. The bird's chest fades into the mist at the bottom of the hero. Without scripting there is a plain gradient strip instead.
 - **Statement** (`Statement.astro`): condensed all-caps type that lights up word by word as it scrolls (GSAP ScrollTrigger, scrubbed).
-- **Work** (`Work.astro`): case-study tiles glide up through the centre in perspective, with the next tile peeking in from below first. The tile art is drawn in code (`data/content.ts`), no images.
-- **Manifesto** (`Manifesto.astro`, `dots.ts`, `scenes.ts`): a dot-matrix headline that lights up from left to right with scroll and glows under the pointer (2D canvas), with four glass objects (padlock, shield, key, orb) drifting in the corners (Three.js).
+- **Work** (`Work.astro`): case-study tiles glide up through the centre in perspective, with the next tile peeking in from below first. The tile art is drawn in code (`data/content.ts`).
+- **Manifesto** (`Manifesto.astro`, `dots.ts`): a dot-matrix headline that lights up with scroll. The pointer pushes dots aside and leaves a violet-to-cyan wake, and a click sends a ripple through the letters. Four glass props (padlock, shield, key, orb) float in the corners; they drift against the pointer for depth, tilt toward it and back away when it gets close.
 - **Engagements** (`Engagements.astro`): a table whose hovered row turns into a white bar, and a marquee of fictional wordmarks in slanted cells.
-- **Services** (`Services.astro`): giant stacked words, one bright at a time as you scroll, with a thumbnail that follows the pointer.
-- **Contact** (`Contact.astro`): the address in giant type, a crosshair with live X/Y readout, a sky that slowly changes colour, and loose 3D keycaps spelling the name that hop when the pointer nears them.
+- **Services** (`Services.astro`): not scroll-driven. All four words rest dim. The word under the pointer lights up, leans toward it, and shows a caption beside it, while a photo trails behind the pointer with a lag and tilts with its speed. On touch, the word at the middle of the screen is the active one.
+- **Contact** (`Contact.astro`): the footer continues from the night above it, darkening from the same navy and then brightening into a slowly colour-changing sky. It has the address in giant type, a crosshair with live X/Y readout, and loose 3D keycaps spelling the name that hop when the pointer nears them (Three.js).
 - **Fixed bar and menu** (`Dock.astro`): pill buttons and a full-screen menu that appear once the hero has scrolled away.
 
 Scrolling is smoothed with Lenis on desktop pointers only. Everything is skipped under `prefers-reduced-motion`, and the content stays readable without JavaScript.
 
-**Performance notes**: the 3D scenes share one three.js load (`objects.ts`), are built during idle time right after the intro (not while scrolling), render only while on screen, and the corner objects render at 30 fps. Heavy WebGL is the main cost on weak devices.
+**Images**: the four glass props were generated with `google/gemini-3.1-flash-image` on pure black and converted to real transparency (brightness becomes alpha, which matches a screen blend on black). The four service photos were generated with `bytedance-seed/seedream-5-0-flash`. Both are in `public/img/`.
+
+**Performance notes**: the keycaps are the only 3D scene below the hero; it shares one three.js load with the hero's glass cards (`objects.ts`), is built during idle time right after the intro, and renders only while on screen. Heavy WebGL is the main cost on weak devices.
 
 ## Copy
 

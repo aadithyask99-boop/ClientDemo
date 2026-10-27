@@ -68,37 +68,3 @@ export function makeOrb(k: Kit): T.Group {
   ));
   return g;
 }
-
-export function makeKey(k: Kit, color = 0xcfe8f7): T.Group {
-  const { THREE } = k;
-  const g = new THREE.Group();
-  const m = glass(k, color, 0.8);
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.62, 0.2, 28, 56), m);
-  ring.position.x = -1.1;
-  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 2.3, 24), m);
-  shaft.rotation.z = Math.PI / 2;
-  shaft.position.x = 0.45;
-  const t1 = new THREE.Mesh(new k.RoundedBoxGeometry(0.3, 0.62, 0.3, 4, 0.08), m);
-  t1.position.set(1.05, -0.38, 0);
-  const t2 = new THREE.Mesh(new k.RoundedBoxGeometry(0.3, 0.46, 0.3, 4, 0.08), m);
-  t2.position.set(1.4, -0.3, 0);
-  g.add(ring, shaft, t1, t2);
-  return g;
-}
-
-export function makeShield(k: Kit, color = 0xb7d7f4): T.Group {
-  const { THREE } = k;
-  const g = new THREE.Group();
-  const s = new THREE.Shape();
-  s.moveTo(0, 1.35);
-  s.lineTo(1.0, 1.02);
-  s.lineTo(1.0, 0.1);
-  s.quadraticCurveTo(1.0, -0.85, 0, -1.45);
-  s.quadraticCurveTo(-1.0, -0.85, -1.0, 0.1);
-  s.lineTo(-1.0, 1.02);
-  s.closePath();
-  const geo = new THREE.ExtrudeGeometry(s, { depth: 0.32, bevelEnabled: true, bevelThickness: 0.1, bevelSize: 0.1, bevelSegments: 6, curveSegments: 24 });
-  geo.center();
-  g.add(new THREE.Mesh(geo, glass(k, color, 0.78)));
-  return g;
-}
