@@ -34,21 +34,38 @@ export async function playIntro(): Promise<void> {
   const proof = qa('.proof');
   const cards = qa('.card');
 
-  gsap.set(lines, { y: 30 });
-  gsap.set(lede, { x: -90 });
-  gsap.set(actions, { x: -150 });
-  gsap.set(cards, { y: 90 });
-  gsap.set(proof, { x: 140 });
-  gsap.set(nav, { y: -10 });
+  // The nav's logo is on screen from the first frame. Everything else waits for its moment.
+  const navItems = nav.filter((el) => !el.classList.contains('nav__brand'));
+  const inner = (els: Element[]) => els.flatMap((el) => [...el.children]);
+  const cardInner = inner(cards);
+  const proofInner = inner(proof);
+  const BLUR = 'blur(12px)';
+  const SOFT = 'blur(7px)';
 
+  gsap.set(navItems, { y: 0 });
+  gsap.set(lines, { y: 16, filter: BLUR });
+  gsap.set(lede, { x: -24, filter: SOFT });
+  gsap.set(actions, { x: -36, filter: SOFT });
+  gsap.set(cards, { y: 34 });
+  gsap.set(cardInner, { autoAlpha: 0 });
+  gsap.set(proof, { x: 44 });
+  gsap.set(proofInner, { autoAlpha: 0 });
+
+  // Times are seconds into the clip. The bird starts its approach to the camera at about 3.3 s, so the
+  // interface eases in slowly as it lands: the copy fades up out of a soft blur, and card text lags its card.
   const ui = (at: number, speed = 1) => {
+    const T = 3.3 * speed;
+    const d = (n: number) => n * speed;
+    const sharp = { filter: 'blur(0px)', clearProps: 'filter' };
     const tl = gsap.timeline({ delay: at });
-    tl.to(nav, { autoAlpha: 1, y: 0, duration: 0.8 * speed, stagger: 0.05, ease: 'power3.out' }, 0)
-      .to(actions, { autoAlpha: 1, x: 0, duration: 1.4 * speed, ease: 'power2.out' }, 2.45 * speed)
-      .to(lede, { autoAlpha: 1, x: 0, duration: 1.4 * speed, ease: 'power2.out' }, 2.55 * speed)
-      .to(lines, { autoAlpha: 1, y: 0, duration: 1.3 * speed, stagger: 0.12, ease: 'power2.out' }, 2.6 * speed)
-      .to(cards, { autoAlpha: 1, y: 0, duration: 1.3 * speed, stagger: 0.12, ease: 'power2.out' }, 2.75 * speed)
-      .to(proof, { autoAlpha: 1, x: 0, duration: 1.3 * speed, ease: 'power2.out' }, 2.8 * speed);
+    tl.to(navItems, { autoAlpha: 1, duration: d(1.1), stagger: 0.05, ease: 'power1.out' }, d(0.45))
+      .to(lines, { autoAlpha: 1, y: 0, ...sharp, duration: d(1.6), stagger: 0.16, ease: 'power2.out' }, T)
+      .to(lede, { autoAlpha: 1, x: 0, ...sharp, duration: d(1.5), ease: 'power2.out' }, T + d(0.3))
+      .to(actions, { autoAlpha: 1, x: 0, ...sharp, duration: d(1.5), ease: 'power2.out' }, T + d(0.4))
+      .to(cards, { autoAlpha: 1, y: 0, duration: d(1.5), stagger: 0.14, ease: 'power2.out' }, T + d(0.45))
+      .to(cardInner, { autoAlpha: 1, duration: d(1.3), stagger: 0.04, ease: 'power1.out' }, T + d(0.85))
+      .to(proof, { autoAlpha: 1, x: 0, duration: d(1.4), ease: 'power2.out' }, T + d(0.9))
+      .to(proofInner, { autoAlpha: 1, duration: d(1.2), stagger: 0.05, ease: 'power1.out' }, T + d(1.25));
     return tl;
   };
 
