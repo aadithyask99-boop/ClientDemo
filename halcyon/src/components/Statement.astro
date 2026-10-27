@@ -3,7 +3,7 @@ import { statement } from '../data/content';
 const lines = statement.map((l) => l.split(' ').map((w) => ({ w: w.replace(/\*/g, ''), u: w.includes('*') })));
 ---
 
-<section class="stmt" data-stmt aria-label="What we do">
+<section class="stmt" id="about" data-stmt aria-label="What we do">
   <p class="stmt__text">
     {lines.map((line) => (
       <span class="stmt__line">

@@ -33,23 +33,33 @@ ul { list-style: none; }
 /* Intro: everything below starts hidden only while the script is about to play it */
 html.js [data-reveal] { opacity: 0; visibility: hidden; }
 
-/* ---------- Header ---------- */
+/* ---------- Header: one nav for the whole page, fixed, recoloured over dark sections ---------- */
 .nav {
-  position: absolute;
+  --nav-ink: var(--ink);
+  --nav-mute: var(--mute);
+  --nav-chip: rgb(255 255 255 / 0.42);
+  --nav-line: var(--glass-line);
+  position: fixed;
   inset: 0 0 auto 0;
-  z-index: 6;
+  z-index: 40;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   padding: clamp(1rem, 2.2vw, 1.9rem) var(--pad);
+  color: var(--nav-ink);
+  transition: color 0.5s;
 }
+.nav.is-dark { --nav-ink: #eef3f9; --nav-mute: rgb(238 243 249 / 0.62); --nav-chip: rgb(255 255 255 / 0.14); --nav-line: rgb(255 255 255 / 0.26); }
 .nav__brand { display: inline-flex; align-items: center; gap: 0.6rem; justify-self: start; font-weight: 500; letter-spacing: 0.02em; font-size: 1.15rem; }
 .nav__links { display: flex; gap: clamp(0.2rem, 1vw, 0.8rem); }
-.nav__link { padding: 0.45rem 0.95rem; border-radius: 999px; font-size: 0.82rem; font-weight: 400; color: var(--mute); transition: color 0.3s, background 0.3s; }
-.nav__link:hover { color: var(--ink); background: rgb(255 255 255 / 0.35); }
-.nav__link.is-current { color: var(--ink); background: rgb(255 255 255 / 0.42); box-shadow: inset 0 0 0 1px var(--glass-line); }
-.nav__cta { justify-self: end; padding: 0.55rem 1.3rem; border-radius: 999px; background: #fff; font-size: 0.85rem; font-weight: 500; box-shadow: 0 6px 22px rgb(30 70 110 / 0.14); transition: transform 0.3s var(--ease); }
-.nav__cta:hover { transform: translateY(-2px); }
+.nav__link { padding: 0.45rem 0.95rem; border-radius: 999px; font-size: 0.82rem; font-weight: 400; color: var(--nav-mute); transition: color 0.3s, background 0.3s, box-shadow 0.3s; }
+.nav__link:hover { color: var(--nav-ink); background: var(--nav-chip); }
+.nav__link.is-current { color: var(--nav-ink); background: var(--nav-chip); box-shadow: inset 0 0 0 1px var(--nav-line); }
+.nav__cta, .nav__menu { justify-self: end; padding: 0.55rem 1.3rem; border: 0; border-radius: 999px; background: #fff; color: #0c2340; font: 500 0.85rem/1 var(--font); box-shadow: 0 6px 22px rgb(30 70 110 / 0.14); transition: transform 0.3s var(--ease); cursor: pointer; }
+.nav__cta:hover, .nav__menu:hover { transform: translateY(-2px); }
+.nav__menu { display: none; align-items: center; gap: 0.7rem; padding: 0.4rem 0.45rem 0.4rem 1.1rem; }
+.nav__dot { position: relative; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: #050b16; }
+.nav__dot::before { content: ''; position: absolute; left: 50%; top: 50%; width: 3px; height: 3px; margin: -1.5px 0 0 -6px; border-radius: 50%; background: #fff; box-shadow: 6px 0 0 #fff; }
 
 /* ---------- Hero ---------- */
 .hero {
@@ -167,7 +177,8 @@ html.no-video .hero__video { display: none; }
 /* ---------- Tablet and phone ---------- */
 @media (max-width: 1000px) {
   .nav { grid-template-columns: 1fr auto; }
-  .nav__links { display: none; }
+  .nav__links, .nav__cta { display: none; }
+  .nav__menu { display: inline-flex; }
   /* The phone clip is a 9:16 render sized by width, centred and feathered so it blends into the sky on wider screens */
   .hero__video {
     inset: 0 auto auto 50%; translate: -50% 0; width: min(100%, 32rem); height: auto; aspect-ratio: 9 / 16;

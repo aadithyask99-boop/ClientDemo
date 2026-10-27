@@ -29,11 +29,11 @@ html.sky-fades .stmt { padding-top: 38svh; }
 html.js .stmt .w { opacity: 0.16; }
 
 /* ---------- Work ---------- */
-.work { position: relative; height: calc(var(--n) * 105svh + 60svh); }
+.work { position: relative; height: calc(var(--n) * 150svh + 80svh); }
 .work__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; perspective: 1600px; display: grid; place-items: center; }
 .work__all { position: absolute; z-index: 4; top: 13svh; left: 50%; translate: -50% 0; padding: 0.4rem 1rem; border: 1px solid var(--night-line); border-radius: 999px; font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.14em; color: rgb(238 243 249 / 0.8); transition: background 0.3s, color 0.3s; }
 .work__all:hover { background: var(--night-ink); color: var(--night); }
-.tile { position: absolute; width: min(58vw, 780px); aspect-ratio: 16 / 9; overflow: hidden; background: var(--night); will-change: transform; box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 50%, transparent), 0 -28px 90px -24px var(--accent), 0 40px 90px rgb(0 0 0 / 0.5); }
+.tile { position: absolute; width: min(58vw, 780px); aspect-ratio: 16 / 9; overflow: hidden; background: var(--night); will-change: transform; box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 50%, transparent), 0 -18px 60px -22px var(--accent), 0 30px 60px rgb(0 0 0 / 0.45); }
 .tile__art, .tile__art svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .tile::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to top, rgb(5 11 22 / 0.78), transparent 48%); }
 .tile__corner { position: absolute; z-index: 2; width: 14px; height: 14px; border: 0 solid rgb(238 243 249 / 0.7); }
@@ -95,16 +95,16 @@ html.js .stmt .w { opacity: 0.16; }
 @media (hover: none) { .svc__thumb { left: 50%; top: 14svh; translate: -50% 0; } .svc__cap { display: none; } }
 
 /* ---------- Contact ---------- */
-.contact { position: relative; z-index: 3; min-height: 128svh; overflow: hidden; color: var(--night-ink); background: linear-gradient(to bottom, #050b16 0%, #050b16 18%, #0b2850 46%, color-mix(in srgb, var(--bottom, #59c8ff) 50%, #0b2850) 72%, var(--bottom, #59c8ff) 100%); }
-.contact__body { position: relative; z-index: 2; padding: 15svh var(--pad) 0; }
+.contact { position: relative; z-index: 3; min-height: 100svh; overflow: hidden; color: var(--night-ink); background: linear-gradient(to bottom, #050b16 0%, #050b16 18%, #0b2850 46%, color-mix(in srgb, var(--bottom, #59c8ff) 50%, #0b2850) 72%, var(--bottom, #59c8ff) 100%); }
+.contact__body { position: relative; z-index: 2; padding: 13svh var(--pad) 0; }
 .contact__mail { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(3.4rem, 9.6vw, 10.4rem); line-height: 0.94; text-transform: uppercase; }
 .contact__tag { margin: 1.3rem 0 0; font-family: var(--display); font-size: clamp(1rem, 1.7vw, 1.8rem); text-transform: uppercase; }
-.contact__links { margin: 9svh 0 0; display: grid; gap: 1.3rem; font-size: 0.66rem; }
+.contact__links { margin: 6svh 0 0; display: grid; gap: 1.3rem; font-size: 0.66rem; }
 .contact__links > div { display: grid; grid-template-columns: 9rem 1fr; }
 .contact__links dt { font-weight: 500; }
 .contact__links dd { margin: 0; display: grid; gap: 0.2rem; color: rgb(238 243 249 / 0.68); }
 .contact__links a:hover { color: #fff; }
-.contact__keys { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; height: 44svh; pointer-events: none; }
+.contact__keys { position: absolute; z-index: 4; inset: 0; pointer-events: none; }
 .contact__keys canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
 .contact__legal { position: absolute; z-index: 3; left: var(--pad); right: var(--pad); bottom: 0.9rem; display: flex; justify-content: space-between; font-size: 0.62rem; color: rgb(11 18 32 / 0.7); }
 .contact__cross { position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; transition: opacity 0.4s; }
@@ -114,21 +114,17 @@ html.js .stmt .w { opacity: 0.16; }
 .contact__v { top: 0; bottom: 0; left: var(--cx, 50%); width: 1px; }
 .contact__xy { position: absolute; top: 5.4rem; right: var(--pad); font-size: 0.62rem; color: rgb(238 243 249 / 0.6); }
 
-/* ---------- Dock (fixed bar once the hero has scrolled away) and menu ---------- */
-.pillbar { position: fixed; inset: 0 0 auto 0; z-index: 40; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0.85rem var(--pad); pointer-events: none; opacity: 0; visibility: hidden; transform: translateY(-14px); transition: opacity 0.5s, transform 0.5s var(--ease), visibility 0.5s; }
-.pillbar.is-on { opacity: 1; visibility: visible; transform: none; }
-.pillbar__pill { pointer-events: auto; display: inline-flex; align-items: center; gap: 0.7rem; padding: 0.38rem 0.4rem 0.38rem 1rem; border: 0; border-radius: 999px; background: #fff; color: #050b16; font: 500 0.8rem/1 var(--font); cursor: pointer; justify-self: start; }
-.pillbar__pill--menu { justify-self: end; }
-.pillbar__dot { width: 1.55rem; height: 1.55rem; border-radius: 50%; background: #e7edf3; position: relative; }
-.pillbar__dot--dark { background: #050b16; }
-.pillbar__dot--dark::before { content: ''; position: absolute; left: 50%; top: 50%; width: 3px; height: 3px; margin: -1.5px 0 0 -6px; border-radius: 50%; background: #fff; box-shadow: 6px 0 0 #fff; }
-.pillbar__logo { pointer-events: auto; justify-self: center; color: #fff; mix-blend-mode: difference; }
+/* ---------- Menu overlay (the nav itself is fixed in global.css) ---------- */
 .menu { position: fixed; inset: 0; z-index: 35; display: grid; place-items: center; background: rgb(5 11 22 / 0.97); }
 .menu[hidden] { display: none; }
 .menu__nav a { display: block; text-align: center; font-family: var(--display); font-size: clamp(3rem, 11vw, 9rem); line-height: 1.02; text-transform: uppercase; color: rgb(238 243 249 / 0.28); transition: color 0.3s; }
 .menu__nav a:hover, .menu__nav a:focus-visible { color: #fff; }
 .menu__note { position: absolute; bottom: 1.4rem; left: 50%; translate: -50% 0; color: rgb(238 243 249 / 0.5); }
 
+/* On wide screens the links sit top right, beside the address, so the keys that land along the bottom never cover them */
+@media (min-width: 1001px) {
+  .contact__links { position: absolute; top: 16svh; right: var(--pad); width: min(21rem, 26vw); margin: 0; }
+}
 @media (max-width: 760px) {
   .tile { width: 86vw; }
   .eng__row td:nth-child(2), .eng__row td:nth-child(3) { display: none; }

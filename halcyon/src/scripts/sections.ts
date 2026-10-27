@@ -7,7 +7,7 @@ import { mountScenes } from './scenes';
 const q = <T extends Element>(sel: string, root: ParentNode = document) => root.querySelector<T>(sel);
 const qa = <T extends Element>(sel: string, root: ParentNode = document) => [...root.querySelectorAll<T>(sel)];
 
-export function initSections(reduce: boolean): { warm: () => Promise<void> } {
+export function initSections(reduce: boolean): { warm: () => Promise<void>; drop: () => void } {
   gsap.registerPlugin(ScrollTrigger);
 
   // Smooth scrolling on desktop pointers. Touch devices keep their native feel.
@@ -19,13 +19,15 @@ export function initSections(reduce: boolean): { warm: () => Promise<void> } {
     gsap.ticker.lagSmoothing(0);
   }
 
-  initDock(lenis);
+  initNav(lenis, !reduce);
   const scenes = mountScenes(reduce);
   if (reduce) return scenes;
+  // The keys fall as the footer comes into view
+  ScrollTrigger.create({ trigger: '[data-contact]', start: 'top 30%', once: true, onEnter: () => scenes.drop() });
 
   skyFade();
   statement();
-  work();
+  work(lenis);
   manifesto();
   props();
   services();
@@ -33,25 +35,45 @@ export function initSections(reduce: boolean): { warm: () => Promise<void> } {
   return scenes;
 }
 
-/** Fixed pill bar that appears once the hero has scrolled away, and its full-screen menu */
-function initDock(lenis?: Lenis) {
-  const dock = q<HTMLElement>('[data-dock]');
+/**
+ * The one nav: it stays fixed through the whole page. It recolours for the dark sections, its links follow the
+ * section you are in, and on small screens its Menu button opens a full-screen menu.
+ */
+function initNav(lenis: Lenis | undefined, animated: boolean) {
+  const nav = q<HTMLElement>('[data-nav]');
   const menu = q<HTMLElement>('[data-menu]');
   const btn = q<HTMLButtonElement>('[data-menu-btn]');
-  if (!dock || !menu || !btn) return;
+  if (!nav) return;
 
+  // Light text once the sky has turned to dusk. Without the scroll fade, as soon as the hero has gone.
+  let past = false;
+  const paint = () => nav.classList.toggle('is-dark', past || Boolean(menu && !menu.hidden));
   ScrollTrigger.create({
     trigger: '[data-hero]',
-    start: 'bottom top+=70',
-    onEnter: () => dock.classList.add('is-on'),
-    onLeaveBack: () => dock.classList.remove('is-on'),
+    start: animated ? '50% top' : 'bottom top+=90',
+    onEnter: () => { past = true; paint(); },
+    onLeaveBack: () => { past = false; paint(); },
   });
 
+  // Highlight the link for the section in view
+  const links = qa<HTMLAnchorElement>('[data-nav-link]');
+  const mark = (id: string) => links.forEach((a) => {
+    const on = a.getAttribute('href') === `#${id}`;
+    a.classList.toggle('is-current', on);
+    if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+  });
+  ['top', 'about', 'work', 'industries', 'services', 'contact'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) ScrollTrigger.create({ trigger: el, start: 'top 55%', end: 'bottom 55%', onToggle: (self) => { if (self.isActive) mark(id); } });
+  });
+
+  if (!menu || !btn) return;
   const set = (open: boolean) => {
     menu.hidden = !open;
     btn.setAttribute('aria-expanded', String(open));
     if (open) lenis?.stop(); else lenis?.start();
     document.documentElement.style.overflow = open ? 'hidden' : '';
+    paint();
   };
   btn.addEventListener('click', () => set(Boolean(menu.hidden)));
   qa('[data-menu-link]').forEach((a) => a.addEventListener('click', () => set(false)));
@@ -68,29 +90,35 @@ function statement() {
   });
 }
 
-/** Case-study tiles glide up through the centre in perspective. The next one peeks in from below first. */
-function work() {
+/**
+ * Case-study tiles glide up through the centre in perspective. The next tile shows only as a sliver below the
+ * current one, rises as the current one tilts back and fades, and each move spans plenty of scroll so it never
+ * outruns the wheel. Units below are timeline units; the whole thing is scrubbed to the section's scroll.
+ */
+function work(lenis?: Lenis) {
   const section = q<HTMLElement>('[data-work]');
   const tiles = qa<HTMLElement>('[data-tile]');
   if (!section || !tiles.length) return;
   const last = tiles.length - 1;
-  gsap.set(tiles, { y: '125vh', rotateX: 40, transformOrigin: '50% 50%' });
-  gsap.set(tiles[0], { y: '70vh', rotateX: 24 });
+  gsap.set(tiles, { y: '125vh', rotateX: 40, scale: 0.94, transformOrigin: '50% 50%', force3D: true });
+  gsap.set(tiles[0], { y: '70vh', rotateX: 24, scale: 0.96 });
 
   const tl = gsap.timeline({
-    defaults: { ease: 'none', immediateRender: false },
-    scrollTrigger: { trigger: section, start: 'top top', end: 'bottom bottom', scrub: 0.6 },
+    defaults: { ease: 'power1.inOut', immediateRender: false },
+    // Lenis already smooths the wheel, so the scrub follows it directly; without Lenis it adds its own easing
+    scrollTrigger: { trigger: section, start: 'top top', end: 'bottom bottom', scrub: lenis ? true : 0.5 },
   });
   tiles.forEach((tile, i) => {
     const main = 1 + i;
-    if (i === 0) tl.to(tile, { y: 0, rotateX: 0, duration: 1 }, 0);
+    if (i === 0) tl.to(tile, { y: 0, rotateX: 0, scale: 1, duration: 1 }, 0);
     else {
-      tl.to(tile, { y: '46vh', rotateX: 28, duration: 0.4 }, main - 1.5);
-      tl.to(tile, { y: 0, rotateX: 0, duration: 0.5 }, main - 0.5);
+      // A thin sliver below the current tile: its top edge stays under the current tile's title
+      tl.to(tile, { y: '62vh', rotateX: 30, scale: 0.95, duration: 0.4 }, main - 1.6);
+      tl.to(tile, { y: 0, rotateX: 0, scale: 1, duration: 0.6 }, main - 0.6);
     }
-    if (i < last) tl.to(tile, { y: '-120vh', rotateX: -32, duration: 0.5 }, main + 0.5);
+    if (i < last) tl.to(tile, { y: '-105vh', rotateX: -26, scale: 0.9, opacity: 0.15, duration: 0.6 }, main + 0.4);
   });
-  tl.to({}, { duration: 0.01 }, 1 + last + 0.7);
+  tl.to({}, { duration: 0.01 }, 1 + last + 0.8);
 }
 
 /** Dot-matrix headline: lit by scroll, glowing at the pointer */

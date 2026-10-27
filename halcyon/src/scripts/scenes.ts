@@ -67,12 +67,15 @@ function letterTexture(k: Kit, ch: string, fg: string) {
   return tex;
 }
 
-/** The firm's name on loose 3D keycaps along the bottom of the footer, hopping when the pointer comes near */
+/** The firm's name on loose 3D keycaps. They fall from the top of the footer, tumble, bounce and settle, then hop when the pointer nears. */
+let dropKeys: (() => void) | undefined;
+let dropWanted = false;
+
 async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
   const { THREE } = k;
   const { renderer, scene } = makeStage(k, host);
-  const camera = new THREE.PerspectiveCamera(26, 1, 0.1, 80);
-  camera.position.set(0, 8, 14);
+  const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
+  camera.position.set(0, 6.5, 15);
   camera.lookAt(0, 0, 0);
 
   const letters = [...'HALCYON'];
@@ -91,14 +94,24 @@ async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
     c.width = c.height = 128;
     const g = c.getContext('2d')!;
     const r = g.createRadialGradient(64, 64, 4, 64, 64, 62);
-    r.addColorStop(0, 'rgba(8,18,40,.5)');
+    r.addColorStop(0, 'rgba(8,18,40,.55)');
     r.addColorStop(1, 'rgba(8,18,40,0)');
     g.fillStyle = r;
     g.fillRect(0, 0, 128, 128);
     return new THREE.CanvasTexture(c);
   })();
 
-  const caps = letters.map((ch, i) => {
+  type Key = {
+    grp: import('three').Group;
+    shadow: import('three').Mesh;
+    x: number; y: number; vx: number; vy: number;
+    av: import('three').Vector3;
+    rest: import('three').Euler;
+    start: number; started: boolean; settled: boolean; cool: number;
+  };
+  const rnd = (i: number, n: number) => { const v = Math.sin(i * 12.9898 + n * 78.233) * 43758.5453; return v - Math.floor(v); };
+
+  const keys: Key[] = letters.map((ch, i) => {
     const grp = new THREE.Group();
     const body = new THREE.Mesh(
       new k.RoundedBoxGeometry(1.5, 0.85, 1.5, 6, 0.22),
@@ -110,18 +123,65 @@ async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
     );
     top.rotation.x = -Math.PI / 2;
     top.position.y = 0.432;
-    const shadow = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 2.6), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
-    shadow.rotation.x = -Math.PI / 2;
-    shadow.position.y = -1.05;
-    grp.add(shadow, body, top);
-    // Each key rests at its own angle, as if tipped out of a box
-    const seed = Math.sin(i * 12.9898) * 43758.5453;
-    const rnd = (n: number) => ((seed * (n + 1)) % 1 + 1) % 1;
-    grp.rotation.set((rnd(1) - 0.5) * 0.3, (rnd(2) - 0.5) * 0.9, (rnd(3) - 0.5) * 0.5);
-    grp.userData = { base: grp.rotation.clone(), lift: 0 };
+    grp.add(body, top);
     scene.add(grp);
-    return grp;
+    // The shadow stays on the floor and weakens as its key rises
+    const shadow = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
+    shadow.rotation.x = -Math.PI / 2;
+    scene.add(shadow);
+    return {
+      grp, shadow, x: 0, y: 99, vx: 0, vy: 0, av: new THREE.Vector3(),
+      rest: new THREE.Euler((rnd(i, 1) - 0.5) * 0.35, (rnd(i, 2) - 0.5) * 0.9, (rnd(i, 3) - 0.5) * 0.5),
+      start: 0, started: false, settled: false, cool: 0,
+    };
   });
+
+  // Where the key row sits, from the camera, so it fits at any screen shape
+  const ray = new THREE.Vector3();
+  let floorY = 0;
+  let spawnY = 0;
+  let size = 1;
+  let rowX: number[] = [];
+  let g = 20;
+  const layout = () => {
+    // Work on the plane z = 0: find the world y of a screen row by intersecting the view ray with it
+    const planeY = (ny: number) => {
+      ray.set(0, ny, 0.5).unproject(camera).sub(camera.position).normalize();
+      return camera.position.y + ray.y * (-camera.position.z / ray.z);
+    };
+    const planeX = (nx: number, ny: number) => {
+      ray.set(nx, ny, 0.5).unproject(camera).sub(camera.position).normalize();
+      return camera.position.x + ray.x * (-camera.position.z / ray.z);
+    };
+    const rowNy = camera.aspect < 1 ? -0.5 : -0.66;
+    floorY = planeY(rowNy);
+    spawnY = planeY(1.7);
+    const left = planeX(-0.74, rowNy);
+    const right = planeX(0.74, rowNy);
+    const gap = (right - left) / (letters.length - 1);
+    rowX = letters.map((_, i) => left + gap * i);
+    size = Math.min(gap * 0.82, (spawnY - floorY) * 0.34);
+    g = (spawnY - floorY) * 1.5; // a fall from the top takes just over a second
+    keys.forEach((kk) => { kk.grp.scale.setScalar(size / 1.5); kk.shadow.scale.setScalar(size * 1.9); });
+  };
+
+  const restY = () => floorY + 0.425 * (size / 1.5);
+  const resetAbove = () => keys.forEach((kk, i) => { kk.x = rowX[i]; kk.y = spawnY * 1.4; kk.vy = kk.vx = 0; kk.started = kk.settled = false; });
+  const landNow = () => keys.forEach((kk, i) => { kk.x = rowX[i]; kk.y = restY(); kk.started = kk.settled = true; kk.grp.rotation.copy(kk.rest); });
+
+  let dropAt = -1;
+  dropKeys = () => {
+    if (dropAt >= 0) return;
+    dropAt = performance.now() / 1000;
+    keys.forEach((kk, i) => {
+      kk.x = rowX[i] + (rnd(i, 4) - 0.5) * size * 0.4;
+      kk.y = spawnY * 1.15 + rnd(i, 5) * size;
+      kk.vy = 0;
+      kk.vx = (rowX[i] - kk.x) * 0.5;
+      kk.start = dropAt + i * 0.09 + rnd(i, 6) * 0.08;
+      kk.av.set((rnd(i, 7) - 0.5) * 9, (rnd(i, 8) - 0.5) * 5, (rnd(i, 9) - 0.5) * 9);
+    });
+  };
 
   let ptr: { x: number; y: number } | null = null;
   const contact = host.closest('[data-contact]') ?? host;
@@ -131,42 +191,78 @@ async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
   });
   contact.addEventListener('pointerleave', () => { ptr = null; });
 
-  const layout = () => {
-    const narrow = camera.aspect < 1.2;
-    caps.forEach((c, i) => {
-      const nx = -0.8 + (i * 1.6) / (letters.length - 1);
-      const p = onPlane(camera, nx, narrow ? -0.3 : -0.28);
-      const size = Math.min(p.halfH * 0.62, (p.halfH * camera.aspect * 2) / (letters.length * 1.5));
-      c.position.x = p.x;
-      c.userData.y0 = p.y + (i % 2 ? 0.3 : -0.1) * size;
-      c.scale.setScalar(size / 1.5);
-      c.position.z = (i % 3) * 0.6 - 0.6;
-    });
-  };
-
+  let lastT = 0;
+  const v = new THREE.Vector3();
   register({
     host, renderer, scene, camera, visible: false,
     update: (t) => {
+      const dt = Math.min(0.05, lastT ? t - lastT : 0.016);
+      lastT = t;
       layout();
-      caps.forEach((c, i) => {
-        const ud = c.userData as { base: { x: number; y: number; z: number }; lift: number; y0: number };
-        // Is the pointer near this key? Compare in screen space.
-        let near = 0;
-        if (ptr && !reduce) {
-          const v = c.position.clone().project(camera);
-          const sx = (v.x * 0.5 + 0.5);
-          const sy = 1 - (v.y * 0.5 + 0.5);
-          near = Math.max(0, 1 - Math.hypot((sx - ptr.x) * camera.aspect, sy - ptr.y) / 0.16);
+      if (dropAt < 0 && !reduce) resetAbove();
+      const floor = restY();
+      const now = performance.now() / 1000;
+
+      keys.forEach((kk, i) => {
+        if (!kk.started && dropAt >= 0 && now >= kk.start) kk.started = true;
+        if (kk.started && !kk.settled) {
+          // Falling, tumbling, bouncing
+          kk.vy -= g * dt;
+          kk.y += kk.vy * dt;
+          kk.x += kk.vx * dt;
+          kk.grp.rotation.x += kk.av.x * dt;
+          kk.grp.rotation.y += kk.av.y * dt;
+          kk.grp.rotation.z += kk.av.z * dt;
+          if (kk.y <= floor) {
+            kk.y = floor;
+            if (kk.vy < -(spawnY - floorY) * 0.32) {
+              kk.vy = -kk.vy * 0.36;
+              kk.vx += (rnd(i, now * 7) - 0.5) * size * 0.8;
+              kk.av.multiplyScalar(0.5);
+            } else {
+              kk.vy = 0;
+              kk.settled = true;
+            }
+          }
+        } else if (kk.settled) {
+          // Resting: ease into a small random tilt, then bob a little
+          const e = 1 - Math.exp(-10 * dt);
+          const wrap = (a: number) => Math.atan2(Math.sin(a), Math.cos(a));
+          kk.grp.rotation.x += wrap(kk.rest.x - kk.grp.rotation.x) * e;
+          kk.grp.rotation.y += wrap(kk.rest.y - kk.grp.rotation.y) * e;
+          kk.grp.rotation.z += wrap(kk.rest.z - kk.grp.rotation.z) * e;
+          kk.x += (rowX[i] - kk.x) * (1 - Math.exp(-3 * dt)); // drift back to its place in the row
+          kk.vx *= 0.9;
+          kk.x += kk.vx * dt;
+          kk.cool -= dt;
+          if (ptr && !reduce && kk.cool <= 0) {
+            v.set(kk.x, kk.y, 0).project(camera);
+            const sx = v.x * 0.5 + 0.5;
+            const sy = 1 - (v.y * 0.5 + 0.5);
+            const near = 1 - Math.hypot((sx - ptr.x) * camera.aspect, sy - ptr.y) / 0.15;
+            if (near > 0) {
+              // Flicked: it hops, spins and slides away from the pointer
+              kk.settled = false;
+              kk.cool = 0.6;
+              kk.vy = (spawnY - floorY) * (0.42 + near * 0.3);
+              kk.vx = Math.sign(sx - ptr.x || 1) * size * (0.8 + near);
+              kk.av.set((rnd(i, now) - 0.5) * 8, (rnd(i, now + 1) - 0.5) * 6, (rnd(i, now + 2) - 0.5) * 8);
+            }
+          }
         }
-        ud.lift += (near - ud.lift) * 0.12;
-        const bob = reduce ? 0 : Math.sin(t * 1.1 + i * 1.3) * 0.04;
-        c.position.y = ud.y0 + (ud.lift * 0.55 + bob) * c.scale.x;
-        c.rotation.x = ud.base.x + ud.lift * 0.5;
-        c.rotation.y = ud.base.y + Math.sin(t * 9 + i) * 0.06 * ud.lift;
-        c.rotation.z = ud.base.z;
+        kk.grp.position.set(kk.x, kk.y, ((i % 3) - 1) * size * 0.25);
+
+        // Shadow on the floor, fainter and wider the higher the key is
+        const h = Math.max(0, (kk.y - floor) / (spawnY - floorY));
+        kk.shadow.position.set(kk.x, floorY + 0.02, kk.grp.position.z);
+        (kk.shadow.material as import('three').MeshBasicMaterial).opacity = kk.started || reduce ? Math.max(0, 1 - h * 3.2) : 0;
       });
     },
   });
+  // The keys are built when the page is idle, so a drop asked for earlier happens now
+  layout();
+  if (reduce) landNow();
+  else if (dropWanted) dropKeys();
 }
 
 /**
@@ -187,6 +283,8 @@ export function mountScenes(reduce: boolean) {
     jobs.push(run);
   }
   return {
+    /** Let the keys fall. Safe to call before the scene exists; it happens as soon as it is built. */
+    drop() { dropWanted = true; dropKeys?.(); },
     async warm() {
       for (const run of jobs) {
         await new Promise((r) => setTimeout(r, 1200));
