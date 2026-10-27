@@ -177,7 +177,7 @@ async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
     }
     minX = planeX(-0.9, rowNy);
     maxX = planeX(0.9, rowNy);
-    g = (spawnY - floorY) * 1.5; // a fall from the top takes just over a second
+    g = (spawnY - floorY) * 3.4; // a fall from the top takes about three quarters of a second
     keys.forEach((kk) => { kk.grp.scale.setScalar(size / 1.5); kk.shadow.scale.setScalar(size * 1.9); });
   };
 
@@ -191,10 +191,10 @@ async function keycaps(k: Kit, host: HTMLElement, reduce: boolean) {
     dropAt = performance.now() / 1000;
     keys.forEach((kk, i) => {
       kk.x = rowX[i] + (rnd(i, 4) - 0.5) * size * 0.4;
-      kk.y = spawnY * 1.15 + rnd(i, 5) * size;
+      kk.y = spawnY * 1.05 + rnd(i, 5) * size;
       kk.vy = 0;
       kk.vx = (rowX[i] - kk.x) * 0.5;
-      kk.start = dropAt + i * 0.09 + rnd(i, 6) * 0.08;
+      kk.start = dropAt + i * 0.05 + rnd(i, 6) * 0.06;
       kk.av.set((rnd(i, 7) - 0.5) * 9, (rnd(i, 8) - 0.5) * 5, (rnd(i, 9) - 0.5) * 9);
     });
   };

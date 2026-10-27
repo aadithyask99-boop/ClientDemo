@@ -22,7 +22,7 @@ html.sky-fades .stmt { padding-top: 16svh; }
 
 /* ---------- Statement ---------- */
 .stmt { padding: 8svh var(--pad) 24svh; text-align: center; }
-.stmt__text { margin: 0 auto; max-width: 70rem; font-family: var(--display); font-size: clamp(2.1rem, 5.4vw, 5.6rem); line-height: 1.04; text-transform: uppercase; letter-spacing: 0.005em; text-wrap: balance; }
+.stmt__text { margin: 0 auto; max-width: 70rem; font-family: var(--display); font-size: clamp(2.1rem, 6vw, 6.4rem); line-height: 1.1; text-transform: uppercase; letter-spacing: 0.005em; text-wrap: balance; }
 .stmt__line { display: block; }
 .stmt .w { display: inline-block; margin: 0 0.13em; }
 .stmt .w.u { text-decoration: underline; text-decoration-thickness: 0.055em; text-underline-offset: 0.13em; }
@@ -131,7 +131,8 @@ html.js .stmt .w { opacity: 0.16; }
 @media (max-width: 760px) {
   /* Phones: tall tiles that fill the screen, and spacing sized for a short, narrow viewport */
   html.sky-fades .stmt { padding-top: 12svh; }
-  .stmt { padding-bottom: 6svh; }
+  .stmt { min-height: 88svh; padding-bottom: 6svh; display: grid; align-content: center; }
+  .stmt__text { font-size: clamp(2.7rem, 12.4vw, 4.6rem); line-height: 1.12; }
   .work { height: calc(var(--n) * 105svh + 10svh); }
   .work__all { top: 11svh; }
   .tile { width: 84vw; aspect-ratio: 4 / 5; max-height: 64svh; }

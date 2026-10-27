@@ -123,9 +123,8 @@ html.no-video .hero__video { display: none; }
    It sits behind the copy and the cards (z-index 3) but over the bird. */
 .hero__mist {
   position: absolute; left: 0; right: 0; bottom: 0; height: 22svh; z-index: 2; pointer-events: none;
+  /* A plain gradient: no backdrop blur, which Safari can paint over neighbouring layers */
   background: linear-gradient(to top, #d7e8f1 0%, rgb(215 232 241 / 0.78) 22%, rgb(215 232 241 / 0.3) 58%, rgb(215 232 241 / 0) 100%);
-  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-  -webkit-mask-image: linear-gradient(to top, #000 0%, #000 30%, transparent 100%); mask-image: linear-gradient(to top, #000 0%, #000 30%, transparent 100%);
 }
 
 /* Copy */
@@ -189,7 +188,7 @@ html.no-video .hero__video { display: none; }
 
 /* ---------- Tablet and phone ---------- */
 @media (max-width: 1000px) {
-  .hero__mist { height: 14svh; }
+  .hero__mist { display: none; } /* on a phone the bird is at the top, so there is nothing to fade down here */
   .nav { grid-template-columns: 1fr auto; }
   .nav__links, .nav__cta { display: none; }
   .nav__menu { display: inline-flex; }
