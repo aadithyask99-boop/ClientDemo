@@ -241,8 +241,19 @@ function props() {
 function skyFade() {
   const fade = q<HTMLElement>('[data-skyfade]');
   if (!fade) return;
-  document.documentElement.classList.add('sky-fades');
-  gsap.timeline({ scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom 40%', scrub: 0.5 } })
+  const root = document.documentElement;
+  root.classList.add('sky-fades');
+  // Where the browser can tie the fade to the scroll position itself (it then runs off the main thread, so it
+  // can never trail a fast flick and show the pale ground for a moment), CSS does it. Otherwise GSAP does, unsmoothed.
+  if (window.CSS?.supports?.('animation-timeline: scroll()')) {
+    const hero = q<HTMLElement>('[data-hero]');
+    const size = () => hero && root.style.setProperty('--hero-h', `${hero.offsetHeight}px`);
+    size();
+    window.addEventListener('resize', size);
+    fade.classList.add('is-css');
+    return;
+  }
+  gsap.timeline({ scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom 40%', scrub: true } })
     .to(fade, { opacity: 0.9, ease: 'power1.in', duration: 0.62 })
     .to(fade, { opacity: 1, backgroundColor: '#050b16', ease: 'none', duration: 0.38 });
 }
