@@ -5,6 +5,12 @@ const bird = (n: string) => `${base}/bird/${n}.webp`;
 const avatars = ['AK', 'MR', 'JT', 'LS'];
 ---
 
+<svg class="hero__defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <filter id="motion" x="-35%" y="-35%" width="170%" height="170%" color-interpolation-filters="sRGB">
+    <feGaussianBlur data-motion stdDeviation="0 0" />
+  </filter>
+</svg>
+
 <section class="hero" data-hero aria-labelledby="hero-title">
   <div class="hero__glow" data-glow aria-hidden="true"></div>
 
@@ -23,11 +29,12 @@ const avatars = ['AK', 'MR', 'JT', 'LS'];
   </div>
 
   <div class="flyer" data-flyer aria-hidden="true">
-    <div class="flyer__flutter" data-flutter>
-      <img class="flyer__pose flyer__pose--fly" data-pose="fly" src={bird('fly')} width="1540" height="1107" alt="" />
-      <img class="flyer__pose flyer__pose--bank" data-pose="bank" src={bird('bank')} width="1505" height="1187" alt="" />
-      <img class="flyer__pose flyer__pose--dive" data-pose="dive" src={bird('dive')} width="967" height="1136" alt="" />
-    </div>
+    <img class="flyer__pose" data-pose="hover_up" src={bird('hover_up')} width="1600" height="1298" alt="" />
+    <img class="flyer__pose" data-pose="hover_out" src={bird('hover_out')} width="1600" height="982" alt="" />
+    <img class="flyer__pose" data-pose="fly" src={bird('fly')} width="1540" height="1107" alt="" />
+    <img class="flyer__pose" data-pose="fly_l" src={bird('fly_l')} width="1540" height="1107" alt="" />
+    <img class="flyer__pose" data-pose="bank" src={bird('bank')} width="1505" height="1187" alt="" />
+    <img class="flyer__pose" data-pose="swoop" src={bird('swoop')} width="1600" height="1132" alt="" />
   </div>
 
   <div class="hero__copy">

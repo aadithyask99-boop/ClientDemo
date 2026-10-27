@@ -13,11 +13,11 @@ npm run dev
 
 ## How the hero works
 
-- **Intro** (`src/scripts/intro.ts`): one GSAP timeline on load, about 3.5 s. A blurred kingfisher flies in from the left (`fly` pose), banks across the page (`bank`), dives (`dive`), then lands as the portrait in the centre, where it stays. The copy and cards stagger in around it. After landing it breathes slowly and follows the pointer.
-- **Poses** live in `public/bird/` as transparent WebP. The flying poses are positioned by the timeline; the portrait is positioned by CSS, and the timeline reads that position to know where to land, so the same code works on phones and desktops.
+- **Intro** (`src/scripts/intro.ts`): one GSAP timeline on load, about 4.2 s, that follows a reference animation frame by frame. The kingfisher drops in at the top left and hovers, crosses to the right and hovers, passes back close to the camera heading left, shrinks to a small hover, drifts right and banks, then swings left and flies at the camera with its wings wide. That approach dissolves into the portrait, head on head, and the bird stays there. The copy slides in from the left, the cards rise and the chip comes from the right. After landing it breathes slowly and follows the pointer. The flight is the `PATH` array at the top of the file: one keyframe per sixth of a second, so retiming a move means editing a row.
+- **Poses** live in `public/bird/` as transparent WebP: `hover_up` and `hover_out` (alternated quickly to read as wingbeats), `fly` and `fly_l` (side view, facing right and left), `bank`, `swoop` and `portrait`. The flying poses are positioned by the timeline. The portrait is positioned by CSS, and the timeline reads that position to know where to land, so the same code works on phones and desktops. Motion blur is an SVG blur stretched along the direction of travel.
 - **Glass objects** (`src/scripts/glass.ts`): the padlock and the orb are Three.js scenes, loaded after the page is up. Static fallbacks show until they are ready, or if WebGL is unavailable.
 - **Fallbacks**: with JavaScript off, or `prefers-reduced-motion`, the page shows its final state with no intro. A 6 s safety timeout restores the page if the script never starts.
-- `public/bird/flap.webm` is a transparent wing-flap loop (VP9 alpha) that is not used by the page yet. Safari does not play VP9 alpha.
+- `public/bird/flap.webm` is a transparent wing-flap loop (VP9 alpha) that the page does not use. Safari does not play VP9 alpha.
 
 ## Copy
 
