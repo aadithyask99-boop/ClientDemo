@@ -355,6 +355,12 @@ html.lenis body {
 .mm__text {
   white-space: pre-wrap;
 }
+/* a roomier hover zone than the text itself, so the face does not pop out the moment the pointer drifts off a letter */
+.mm::before {
+  content: '';
+  position: absolute;
+  inset: -1.3rem -2.2rem;
+}
 /* --p (0 to 1) is set per letter by scripts/hero.ts from its distance to the pointer: 58% ink at rest, full ink under the cursor */
 .ch {
   display: inline-block;
@@ -367,9 +373,9 @@ html.lenis body {
   left: 0;
   top: 0;
   z-index: 3;
-  width: 3.5rem;
-  height: 3.5rem;
-  margin: -4rem 0 0 -1.7rem;
+  width: 4.5rem;
+  height: 4.5rem;
+  margin: -2.25rem 0 0 -2.25rem; /* centred on the pointer */
   pointer-events: none;
   opacity: 0;
   transform: scale(0);
