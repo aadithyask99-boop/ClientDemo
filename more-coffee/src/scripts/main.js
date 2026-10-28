@@ -11,6 +11,7 @@ import Swiper from 'swiper';
 import { Navigation, Controller, EffectCreative } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/effect-creative';
+import { X0, X1, L, R, makeCurve, samples, cumulative, px, py, fmtHour, REG, BM, W as CW, STEP } from './energy-data.js';
 
 gsap.registerPlugin(ScrollTrigger, SplitText, CustomEase, DrawSVGPlugin, InertiaPlugin);
 
@@ -356,13 +357,188 @@ function sequence() {
   mobile(() => $$('.statement-card, .sequence-title', sec).forEach((el) => gsap.from(el, { opacity: 0, y: 40, duration: 0.8, scrollTrigger: { trigger: el, start: 'top 88%', once: true } })));
 }
 
+
+// ---- "The 3pm test": a scroll-drawn energy curve (illustrative data) ---------------------------------
+function energy() {
+  const sec = $('[data-energy]'); if (!sec) return;
+  const svg = $('.energy-svg', sec), chart = $('[data-energy-chart]', sec), hit = $('[data-energy-hit]', sec), cursor = $('[data-energy-cursor]', sec);
+  const pReg = $('[data-energy-reg]', sec), pBm = $('[data-energy-bm]', sec), clipRect = $('[data-energy-clip]', sec);
+  const line = $('.energy-cursor-line', cursor), dotR = $('.energy-dot.is-reg', cursor), dotB = $('.energy-dot.is-bm', cursor);
+  const clock = $('[data-energy-clock]', sec), nReg = $('[data-energy-num-reg]', sec), nBm = $('[data-energy-num-bm]', sec), notes = $$('[data-energy-note]', sec);
+  const fReg = makeCurve(REG), fBm = makeCurve(BM), cReg = cumulative(samples(fReg)), cBm = cumulative(samples(fBm));
+  const frac = (h, c) => { const i = (h - X0) / STEP, i0 = Math.min(c.length - 1, Math.floor(i)), i1 = Math.min(c.length - 1, i0 + 1); return (c[i0] + (c[i1] - c[i0]) * (i - i0)) / c[c.length - 1]; };
+  const shown = new Set(), state = { h: X0 }; let hover = null;
+  gsap.set(notes, { opacity: 0, scale: 0.6, transformOrigin: '0% 100%' });
+
+  const set = (h0) => {
+    const h = Math.min(X1, Math.max(X0, h0)), x = px(h);
+    gsap.set(pReg, { drawSVG: `0% ${frac(h, cReg) * 100}%` }); gsap.set(pBm, { drawSVG: `0% ${frac(h, cBm) * 100}%` });
+    clipRect.setAttribute('width', Math.max(0, x - L));
+    line.setAttribute('x1', x); line.setAttribute('x2', x);
+    dotR.setAttribute('cx', x); dotR.setAttribute('cy', py(fReg(h))); dotB.setAttribute('cx', x); dotB.setAttribute('cy', py(fBm(h)));
+    clock.textContent = fmtHour(h); nReg.textContent = Math.round(fReg(h)); nBm.textContent = Math.round(fBm(h));
+    cursor.style.opacity = h <= X0 + 0.02 ? 0 : 1;
+    notes.forEach((n) => {                                                  // each note pops in when the line reaches its hour
+      const on = h >= +n.dataset.energyNote; if (on === shown.has(n)) return;
+      on ? shown.add(n) : shown.delete(n);
+      gsap.to(n, on ? { opacity: 1, scale: 1, duration: 0.7, ease: 'elastic-ease-out-soft', overwrite: true } : { opacity: 0, scale: 0.6, duration: 0.25, overwrite: true });
+    });
+  };
+  set(X0);
+
+  // hover / touch: scrub the day by hand
+  const hourAt = (e) => { const r = svg.getBoundingClientRect(), u = ((e.clientX - r.left) / r.width) * CW; return X0 + ((u - L) / (R - L)) * (X1 - X0); };
+  hit.addEventListener('pointermove', (e) => { hover = hourAt(e); set(hover); });
+  hit.addEventListener('pointerdown', (e) => { hover = hourAt(e); set(hover); });
+  hit.addEventListener('pointerleave', () => { hover = null; set(state.h); });
+
+  desktop(() => {
+    if (RM) { state.h = X1; set(X1); return; }
+    // pinned: hold, draw the day, hold
+    gsap.timeline({ scrollTrigger: { trigger: $('[data-energy-scroll]', sec), start: 'top top', end: 'bottom bottom', scrub: 0.5 }, onUpdate: () => hover === null && set(state.h) })
+      .to(state, { h: X0 + 0.01, duration: 0.08 }).to(state, { h: X1, duration: 0.82, ease: 'none' }).to(state, { h: X1, duration: 0.1 });
+  });
+  mobile(() => {
+    if (RM) { state.h = X1; set(X1); return; }
+    gsap.to(state, { h: X1, duration: 2.8, ease: 'power1.inOut', onUpdate: () => hover === null && set(state.h), scrollTrigger: { trigger: chart, start: 'top 78%', once: true } });
+  });
+}
+
+// ---- "Mix your own": canvas glass, a sachet that pours, live numbers ------------------------------------
+function mixer() {
+  const sec = $('[data-mixer]'); if (!sec) return;
+  const mixes = JSON.parse(sec.dataset.mixes), stage = $('[data-mixer-stage]', sec), canvas = $('[data-mixer-canvas]', sec), ctx = canvas.getContext('2d');
+  const tubImg = $('[data-mixer-tub]', sec), sachet = $('[data-mixer-sachet]', sec), sachetImg = $('[data-mixer-sachet-img]', sec);
+  const chips = $$('.mixer-chip', sec), gramsIn = $('[data-mixer-grams]', sec), gramsOut = $('[data-mixer-grams-out]', sec), nameEl = $('[data-mixer-name]', sec);
+  const nums = {}, bars = {}; $$('[data-mixer-n]', sec).forEach((e) => (nums[e.dataset.mixerN] = e)); $$('[data-mixer-bar]', sec).forEach((e) => (bars[e.dataset.mixerBar] = e));
+  const MAX = { protein: 30, caffeine: 150, sugar: 4, kcal: 200 }, vals = { protein: 25, caffeine: 90, sugar: 0.8, kcal: 128 };
+  const state = { mix: mixes[0], grams: 3 };
+  const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const vis = { pour: 0, ribbon: 0, mul: 0, tint: hex(mixes[0].color), t: 0 };
+  const GL = { cx: 17, topY: 7.8, botY: 33.4, topHW: 7.2, botHW: 5.5, fill: 11.6 };            // glass geometry in stage units (stage = 34 x 38)
+  const REST = { cx: 28.6, cy: 11.5, rot: -10 }, W_S = 3.6;
+  let u = 16, visible = false, tl = null, last = performance.now();
+  const strength = () => 0.35 + (0.65 * (state.grams - 1)) / 4;
+
+  const size = () => {
+    u = stage.clientWidth / 34; stage.style.setProperty('--u', `${u}px`);
+    canvas.width = Math.round(stage.clientWidth * DPR); canvas.height = Math.round(stage.clientHeight * DPR);
+    const w = sachet.offsetWidth, h = sachetImg.offsetHeight || w * 2.7;
+    if (!tl || !tl.isActive()) gsap.set(sachet, { x: REST.cx * u - w / 2, y: REST.cy * u - h / 2, rotation: REST.rot });
+  };
+
+  // ----- drawing -----
+  const glassPath = (inset = 0) => {
+    const { cx, topY, botY, topHW, botHW } = GL, r = 1.6;
+    ctx.beginPath(); ctx.moveTo((cx - topHW + inset) * u, (topY + inset * 0.2) * u); ctx.lineTo((cx + topHW - inset) * u, (topY + inset * 0.2) * u);
+    ctx.lineTo((cx + botHW - inset) * u, (botY - r) * u); ctx.quadraticCurveTo((cx + botHW - inset) * u, (botY - inset) * u, (cx + botHW - r - inset) * u, (botY - inset) * u);
+    ctx.lineTo((cx - botHW + r + inset) * u, (botY - inset) * u); ctx.quadraticCurveTo((cx - botHW + inset) * u, (botY - inset) * u, (cx - botHW + inset) * u, (botY - r) * u); ctx.closePath();
+  };
+  const rr = (x, y, w, h, r) => { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); };
+  const rgba = (c, a) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a})`;
+
+  const draw = () => {
+    if (!visible) return;
+    const now = performance.now(), dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!RM) vis.t += dt;
+    const t = vis.t, tint = vis.tint, { cx, botY, fill } = GL;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.clearRect(0, 0, 34 * u, 38 * u);
+    // glass body
+    ctx.save(); glassPath(0.3); ctx.clip();
+    const g = ctx.createLinearGradient(0, fill * u, 0, botY * u);
+    [[0, '#3b2214'], [0.22, '#6b4129'], [0.52, '#b88a60'], [0.8, '#e0c9a6'], [1, '#efe1c8']].forEach(([o, c]) => g.addColorStop(o, c));
+    ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(0, (fill + Math.sin(t * 2) * 0.1) * u);
+    for (let x = 0; x <= 34; x += 1) ctx.lineTo(x * u, (fill + Math.sin(x * 0.9 + t * 2) * 0.11) * u);
+    ctx.lineTo(34 * u, botY * u); ctx.lineTo(0, botY * u); ctx.closePath(); ctx.fill();
+    ctx.globalAlpha = 0.2 * vis.mul; ctx.fillStyle = rgba(tint, 1); ctx.fillRect(0, fill * u, 34 * u, (botY - fill) * u); ctx.globalAlpha = 1;   // the drink takes on the flavour
+    ctx.fillStyle = 'rgba(243,228,201,.5)'; ctx.fillRect(0, (fill + 0.05) * u, 34 * u, 0.5 * u);                                                       // crema
+    // swirl ribbons: the flavour spreading down through the drink
+    if (vis.mul > 0.01 && vis.ribbon > 0.01) {
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      for (let i = 0; i < 5; i++) {
+        const len = (botY - fill - 1.5) * vis.ribbon * (0.5 + i * 0.11), n = 26;
+        for (let k = 0; k < n; k++) {
+          const a = k / n, b = (k + 1) / n, amp = 1.3 + a * 2.6;
+          const x1 = cx + (i - 2) * 1.15 + Math.sin(a * 5 + t * 0.9 + i * 1.3) * amp, x2 = cx + (i - 2) * 1.15 + Math.sin(b * 5 + t * 0.9 + i * 1.3) * (1.3 + b * 2.6);
+          ctx.strokeStyle = rgba(tint, 0.6 * vis.mul * (1 - a * 0.55)); ctx.lineWidth = (1.35 - a * 1.05) * u * (0.7 + vis.mul * 0.5);
+          ctx.beginPath(); ctx.moveTo(x1 * u, (fill + a * len) * u); ctx.lineTo(x2 * u, (fill + b * len) * u); ctx.stroke();
+        }
+      }
+    }
+    // ice
+    [[14.6, 13.1, 2.6, 0.2], [19.2, 12.5, 2.5, -0.3], [16.7, 16.4, 2.7, 0.1]].forEach(([x, y, s, r], i) => {
+      ctx.save(); ctx.translate(x * u, (y + Math.sin(t * 1.1 + i * 2) * 0.18) * u); ctx.rotate(r + Math.sin(t * 0.8 + i) * 0.05);
+      rr(-s * 0.5 * u, -s * 0.5 * u, s * u, s * u, 0.55 * u); ctx.fillStyle = 'rgba(255,255,255,.26)'; ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 0.12 * u; ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,.4)'; ctx.fillRect(-s * 0.35 * u, -s * 0.38 * u, s * 0.4 * u, 0.18 * u); ctx.restore();
+    });
+    ctx.restore();
+    // glass shell
+    glassPath(0); ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 0.22 * u; ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(GL.cx * u, GL.topY * u, GL.topHW * u, 0.6 * u, 0, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 0.12 * u; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo((GL.cx - GL.topHW + 1.3) * u, (GL.topY + 1.6) * u); ctx.lineTo((GL.cx - GL.topHW + 2.3) * u, (GL.topY + 1.6) * u); ctx.lineTo((GL.cx - GL.botHW + 2) * u, (GL.botY - 3) * u); ctx.lineTo((GL.cx - GL.botHW + 1.1) * u, (GL.botY - 3) * u); ctx.closePath(); ctx.fillStyle = 'rgba(255,255,255,.17)'; ctx.fill();
+    // the pour: syrupy stream from the open end of the sachet down to the surface
+    if (vis.pour > 0.01) {
+      const sx = gsap.getProperty(sachet, 'x'), sy = gsap.getProperty(sachet, 'y'), rot = (gsap.getProperty(sachet, 'rotation') * Math.PI) / 180;
+      const w = sachet.offsetWidth, h = sachetImg.offsetHeight || w * 2.7, ox = (sx + w / 2) / u + (Math.sin(rot) * h) / 2 / u, oy = (sy + h / 2) / u - (Math.cos(rot) * h) / 2 / u;
+      const ex = GL.cx + 0.6 + Math.sin(t * 6) * 0.15, ey = fill + 0.2;
+      ctx.lineCap = 'round'; ctx.strokeStyle = rgba(tint, 0.95); ctx.lineWidth = (0.5 + 0.18 * Math.sin(t * 9)) * u * vis.pour * (0.7 + strength() * 0.5);
+      ctx.setLineDash([0.9 * u, 0.35 * u]); ctx.lineDashOffset = -t * 18 * u;
+      ctx.beginPath(); ctx.moveTo(ox * u, oy * u); ctx.quadraticCurveTo((ox + 0.5) * u, ((oy + ey) / 2) * u, ex * u, ey * u); ctx.stroke(); ctx.setLineDash([]);
+      for (let i = 0; i < 6; i++) { const a = t * 7 + i * 1.7, r = (0.12 + 0.1 * ((i * 7) % 3)) * u; ctx.fillStyle = rgba(tint, 0.7 * vis.pour); ctx.beginPath(); ctx.arc((ex + Math.cos(a) * 0.9) * u, (ey - Math.abs(Math.sin(a * 1.3)) * 0.8) * u, r, 0, 7); ctx.fill(); }
+    }
+  };
+  gsap.ticker.add(draw);
+  new IntersectionObserver((e) => e.forEach((x) => (visible = x.isIntersecting)), { rootMargin: '80px' }).observe(stage);
+
+  // ----- numbers -----
+  const target = () => { const m = state.mix, k = m.k === 'plain' ? 0 : state.grams; return { protein: 25, caffeine: 90, sugar: +(0.8 + m.sugar * k).toFixed(1), kcal: Math.round(128 + m.kcal * k) }; };
+  const render = () => { nums.protein.textContent = Math.round(vals.protein); nums.caffeine.textContent = Math.round(vals.caffeine); nums.sugar.textContent = vals.sugar.toFixed(1); nums.kcal.textContent = Math.round(vals.kcal); for (const k in bars) bars[k].style.width = `${Math.min(100, (vals[k] / MAX[k]) * 100)}%`; };
+  const updateNumbers = () => { RM ? (Object.assign(vals, target()), render()) : gsap.to(vals, { ...target(), duration: 0.8, ease: 'power2.out', onUpdate: render, overwrite: true }); };
+  const label = () => { nameEl.textContent = state.mix.k === 'plain' ? 'Plain protein iced latte' : `${state.mix.name} iced latte · ${state.grams}g shot`; };
+  const fillRange = () => gramsIn.style.setProperty('--fill', `${((state.grams - 1) / 4) * 100}%`);
+  render(); fillRange();
+
+  // ----- choosing a flavour -----
+  const swap = (img, src) => { if (RM) { img.src = src; return; } gsap.timeline().to(img, { opacity: 0, y: 10, scale: 0.92, duration: 0.18 }).add(() => (img.src = src)).to(img, { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'elastic-ease-out' }); };
+  const pose = () => { const w = sachet.offsetWidth, h = sachetImg.offsetHeight || w * 2.7; return { w, h, rest: { x: REST.cx * u - w / 2, y: REST.cy * u - h / 2, rotation: REST.rot }, pour: { x: 16.2 * u - w / 2, y: 2.4 * u - h / 2, rotation: 150 } }; };
+  const choose = (m) => {
+    if (m.k === state.mix.k) return;
+    state.mix = m; chips.forEach((c) => { const on = c.dataset.mix === m.k; c.classList.toggle('is-active', on); c.setAttribute('aria-checked', on); });
+    gramsIn.disabled = m.k === 'plain'; sec.classList.toggle('is-plain', m.k === 'plain');
+    swap(tubImg, IMG(m.tub)); swap(sachetImg, IMG(m.pack)); label(); updateNumbers();
+    const P = pose(); tl?.kill();
+    if (m.k === 'plain') { gsap.to(vis, { mul: 0, ribbon: 0, pour: 0, duration: 0.9 }); RM ? gsap.set(sachet, P.rest) : gsap.to(sachet, { ...P.rest, duration: 0.7 }); return; }
+    const to = hex(m.color); gsap.to(vis.tint, { 0: to[0], 1: to[1], 2: to[2], duration: 0.8, overwrite: true });
+    if (RM) { vis.mul = strength(); vis.ribbon = 1; vis.pour = 0; return; }
+    tl = gsap.timeline()
+      .to(sachet, { ...P.pour, duration: 0.8, ease: 'elastic-ease-out-soft' })
+      .to(vis, { pour: 1, mul: strength(), duration: 0.4, ease: 'power2.out' }, '>-.15')
+      .to(vis, { ribbon: 1, duration: 2, ease: 'power1.out' }, '<+.05')
+      .to(vis, { pour: 0, duration: 0.45 }, '>-.6')
+      .to(sachet, { ...P.rest, duration: 0.8 }, '>-.1');
+  };
+  chips.forEach((c, i) => {
+    c.addEventListener('click', () => choose(mixes.find((m) => m.k === c.dataset.mix)));
+    c.addEventListener('keydown', (e) => {                                   // radiogroup: arrows move the choice
+      const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0; if (!d) return;
+      e.preventDefault(); const n = chips[(i + d + chips.length) % chips.length]; n.focus(); n.click();
+    });
+  });
+  gramsIn.addEventListener('input', () => {
+    state.grams = +gramsIn.value; gramsOut.textContent = `${state.grams}g`; fillRange(); label(); updateNumbers();
+    if (state.mix.k !== 'plain') RM ? (vis.mul = strength()) : gsap.to(vis, { mul: strength(), duration: 0.5 });
+  });
+  gramsIn.disabled = true; sec.classList.add('is-plain');
+  size(); onResize(size); if (sachetImg.complete) size(); else sachetImg.addEventListener('load', size, { once: true });
+}
+
 // ---- boot -----------------------------------------------------------------------
 addEventListener('load', async () => {
   initLenis();
   await document.fonts.ready;
   root.classList.add('fonts-loaded');
   initInertia();
-  sequence(); marquee(); smileys(); fillLine(); benefitTable(); rings(); payment(); parallax(); reviewsSlider(); flavours(); highlightText();
+  sequence(); marquee(); smileys(); fillLine(); benefitTable(); energy(); mixer(); rings(); payment(); parallax(); reviewsSlider(); flavours(); highlightText();
   await hero();
   ScrollTrigger.refresh();
   // rebuild the right timelines if the breakpoint, orientation or motion preference changes

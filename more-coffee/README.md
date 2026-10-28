@@ -29,3 +29,7 @@ Keys: copy `.env.example` to `.env` and fill in `OPENROUTER_API_KEY`. `.env` is 
 ## Phones
 
 Below 992px the page switches to a lighter version (no pinning): the cards stack and fade up, the jar canvas is dropped, and the sliders stay. The page reloads when the breakpoint, orientation or the reduced-motion preference changes so the right timelines are rebuilt. With `prefers-reduced-motion` the intro and the boil are skipped.
+
+## The 3pm test and Mix your own
+- **The 3pm test** (`#energy`): a scroll-drawn chart of felt energy across a working day, a regular coffee against a Brew More latte. The curve points live in `src/scripts/energy-data.js` (monotone-cubic interpolated, shared by the build-time SVG paths and the runtime readout). The numbers are illustrative, and the page says so. On phones the section is unpinned and the line draws once on entry.
+- **Mix your own** (`#mix`): pick a Flavour Shot and the tub, sachet and drink colour change, the macros count to their new values and a canvas swirl pours in. The flavour table is in the `mixes` array in `src/pages/index.astro` (per-gram sugar and kcal); the canvas and timeline are `mixer()` in `src/scripts/main.js`. Chips are a keyboard-navigable radiogroup.
