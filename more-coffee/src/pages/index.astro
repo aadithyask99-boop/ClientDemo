@@ -3,9 +3,26 @@ import Base from '../layouts/Base.astro';
 import Button from '../components/Button.astro';
 import Sketch from '../components/Sketch.astro';
 
+import { REG, BM, makeCurve, samples, toPath, gapPath, px, py, W, H, L, R, T, B } from '../scripts/energy-data.js';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const img = (p: string) => `${base}/img/${p}`;
 const BUY = '#shop';
+
+// ---- "The 3pm test": illustrative energy curves, drawn on the server so the chart exists without JS
+const regS = samples(makeCurve(REG)), bmS = samples(makeCurve(BM));
+const regD = toPath(regS), bmD = toPath(bmS), gapD = gapPath(regS, bmS);
+const hourTicks = [7, 9, 11, 13, 15, 17, 19, 21].map((h) => ({ x: px(h), label: h < 12 ? `${h}am` : h === 12 ? '12pm' : `${h - 12}pm` }));
+const pct = (x, y) => ({ left: `${(px(x) / W) * 100}%`, top: `${(py(y) / H) * 100}%` });
+
+// ---- "Mix your own": per-gram values are illustrative
+const mixes = [
+  { k: 'plain', name: 'Plain', color: '#d9b98e', tub: 'hero/seq_1_7.webp', pack: 'sachet.webp', kcal: 0, sugar: 0 },
+  { k: 'salted-caramel', name: 'Salted Caramel', color: '#d98a2f', kcal: 3.4, sugar: 0.25 },
+  { k: 'hazelnut-crunch', name: 'Hazelnut Crunch', color: '#b78a5e', kcal: 4.0, sugar: 0.12 },
+  { k: 'vanilla-bean', name: 'Vanilla Bean', color: '#f0d788', kcal: 3.2, sugar: 0.15 },
+  { k: 'mocha-fudge', name: 'Mocha Fudge', color: '#6e3045', kcal: 3.8, sugar: 0.22 },
+  { k: 'cinnamon-swirl', name: 'Cinnamon Swirl', color: '#b5481f', kcal: 2.6, sugar: 0.05 },
+].map((m) => (m.k === 'plain' ? m : { ...m, tub: `flavour-${m.k}-dose.webp`, pack: `flavour-${m.k}-pack.webp` }));
 
 const reviews = [
   ['Best iced coffee ever!', 'Swapped my daily café run for this and my wallet says thank you.', 'Maya R.'],
@@ -229,6 +246,60 @@ const curveArrow = '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" s
       </div>
     </section>
 
+    <!-- ENERGY CURVE -->
+    <section id="energy" class="energy-section" data-energy>
+      <div class="stage-grain"></div>
+      <div class="energy-scroll" data-energy-scroll>
+        <div class="energy-sticky">
+          <div class="energy-container">
+            <div class="energy-head">
+              <div class="energy-head-text">
+                <Sketch><span class="hand">Same caffeine.<br />Different afternoon.</span></Sketch>
+                <h2 class="energy-title">The 3pm test.</h2>
+                <p class="paragraph energy-lede">Felt energy across a working day: one regular coffee, or one Brew More latte with 25g of protein and fibre in it.</p>
+              </div>
+              <div class="energy-readout" aria-live="off">
+                <div class="energy-clock" data-energy-clock>7:00 am</div>
+                <div class="energy-readout-row is-reg"><span class="energy-key"></span><span class="energy-readout-label">Regular coffee</span><span class="energy-readout-num" data-energy-num-reg>36</span></div>
+                <div class="energy-readout-row is-bm"><span class="energy-key"></span><span class="energy-readout-label">Brew More latte</span><span class="energy-readout-num" data-energy-num-bm>36</span></div>
+              </div>
+            </div>
+            <div class="energy-chart" data-energy-chart>
+              <svg class="energy-svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Illustrative felt-energy curves from 7am to 9pm. A regular coffee spikes at about 8am, rises again after a second coffee, then falls to its lowest point near 3pm. A Brew More latte rises more slowly and stays higher and steadier through the afternoon.">
+                <defs><clipPath id="energy-clip"><rect data-energy-clip x={L} y="0" width="0" height={H} /></clipPath></defs>
+                <g class="energy-grid">
+                  {[0, 25, 50, 75, 100].map((v) => <line x1={L} x2={R} y1={py(v)} y2={py(v)} />)}
+                  {hourTicks.map((t) => <line x1={t.x} x2={t.x} y1={T - 10} y2={B} />)}
+                </g>
+                <g class="energy-axis">
+                  {hourTicks.map((t) => <text x={t.x} y={B + 30} text-anchor="middle">{t.label}</text>)}
+                  <text x={L - 14} y={py(100) + 5} text-anchor="end">high</text>
+                  <text x={L - 14} y={py(0) + 5} text-anchor="end">low</text>
+                </g>
+                <path class="energy-gap" d={gapD} clip-path="url(#energy-clip)" data-energy-gap />
+                <path class="energy-line is-reg" d={regD} data-energy-reg />
+                <path class="energy-line is-bm" d={bmD} data-energy-bm />
+                <g data-energy-cursor>
+                  <line class="energy-cursor-line" x1="0" x2="0" y1={T - 10} y2={B} />
+                  <circle class="energy-dot is-reg" r="7" cx="0" cy="0" />
+                  <circle class="energy-dot is-bm" r="9" cx="0" cy="0" />
+                </g>
+                <rect class="energy-hit" x={L} y={T - 20} width={R - L} height={B - T + 40} fill="transparent" data-energy-hit />
+              </svg>
+              <div class="energy-note is-a" data-energy-note="8.4" style={pct(8.25, 92)}><Sketch><span class="hand">first coffee:<br />big spike</span></Sketch></div>
+              <div class="energy-note is-b" data-energy-note="15" style={pct(15, 27)}><Sketch delay=".1s"><span class="hand">the 3pm<br />crash</span></Sketch></div>
+              <div class="energy-note is-c" data-energy-note="18" style={pct(18, 54)}><Sketch delay=".2s"><span class="hand">still going<br />at 6pm</span></Sketch></div>
+              <div class="energy-note is-d" data-energy-note="16.6" style={pct(15.4, 46)}><Sketch delay=".05s"><span class="hand">extra steady<br />energy</span></Sketch></div>
+            </div>
+            <div class="energy-foot">
+              <div class="energy-legend"><span class="energy-legend-item is-reg"><i></i>A regular coffee</span><span class="energy-legend-item is-bm"><i></i>A Brew More latte</span></div>
+              <p class="energy-fine">Illustrative curves drawn for this concept demo, not clinical data. Everyone responds differently.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- REVIEWS -->
     <section id="reviews" class="testimonial-section">
       <div data-testimonial-parallax class="bg-img-wrapper">
@@ -318,6 +389,55 @@ const curveArrow = '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" s
           <div class="flavour-navigation">
             <button type="button" data-flavour-slider-left-button class="flavour-slider-button is-left" aria-label="Previous flavour"><svg class="flavour-slider-button-arrow" viewBox="0 0 20 20" width="20" height="20"><path d="M12 4 6 10l6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
             <button type="button" data-flavour-slider-right-button class="flavour-slider-button is-right" aria-label="Next flavour"><svg class="flavour-slider-button-arrow" viewBox="0 0 20 20" width="20" height="20"><path d="m8 4 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MIX YOUR OWN -->
+    <section id="mix" class="mixer" data-mixer data-mixes={JSON.stringify(mixes)}>
+      <div class="stage-grain"></div>
+      <div class="mixer-container">
+        <div class="mixer-head">
+          <Sketch><span class="hand">Your turn ↓</span></Sketch>
+          <h2 class="mixer-title">Mix your own.</h2>
+          <p class="paragraph mixer-lede">Pick a Flavour Shot, set how bold you like it, and watch it go in. Your numbers update as you mix.</p>
+        </div>
+        <div class="mixer-grid">
+          <div class="mixer-stage" data-mixer-stage>
+            <div class="mixer-ring" aria-hidden="true"><svg viewBox="0 0 700 700"><circle cx="350" cy="350" r="318" fill="none" stroke="#fff" stroke-width="40" /></svg></div>
+            <canvas class="mixer-canvas" data-mixer-canvas aria-label="An iced latte in a glass, with your chosen flavour swirling in"></canvas>
+            <div class="mixer-tub"><img data-mixer-tub src={img('hero/seq_1_7.webp')} alt="" width="1200" height="1467" /></div>
+            <div class="mixer-sachet" data-mixer-sachet><img data-mixer-sachet-img src={img('sachet.webp')} alt="" /></div>
+          </div>
+          <div class="mixer-controls">
+            <div class="mixer-label">1. Pick a flavour</div>
+            <div class="mixer-chips" role="radiogroup" aria-label="Flavour Shot">
+              {mixes.map((m, i) => (
+                <button type="button" role="radio" aria-checked={i === 0 ? 'true' : 'false'} data-mix={m.k} class:list={['mixer-chip', { 'is-active': i === 0 }]}>
+                  <span class="mixer-chip-img"><img src={img(m.tub)} alt="" loading="lazy" /></span>
+                  <span class="mixer-chip-name">{m.name}</span>
+                  <span class="mixer-chip-dot" style={`background:${m.color}`}></span>
+                </button>
+              ))}
+            </div>
+            <div class="mixer-label">2. How bold?</div>
+            <div class="mixer-strength">
+              <input type="range" id="mixer-grams" data-mixer-grams min="1" max="5" step="1" value="3" aria-label="Shot strength in grams" />
+              <div class="mixer-strength-scale"><span>light</span><output for="mixer-grams" data-mixer-grams-out>3g</output><span>bold</span></div>
+            </div>
+            <div class="mixer-label">3. Your numbers</div>
+            <div class="mixer-macros" aria-live="polite">
+              <div class="mixer-macro"><div class="mixer-macro-num"><b data-mixer-n="protein">25</b><i>g</i></div><div class="mixer-macro-name">protein</div><div class="mixer-bar"><span data-mixer-bar="protein"></span></div></div>
+              <div class="mixer-macro"><div class="mixer-macro-num"><b data-mixer-n="caffeine">90</b><i>mg</i></div><div class="mixer-macro-name">caffeine</div><div class="mixer-bar"><span data-mixer-bar="caffeine"></span></div></div>
+              <div class="mixer-macro"><div class="mixer-macro-num"><b data-mixer-n="sugar">0.8</b><i>g</i></div><div class="mixer-macro-name">sugar</div><div class="mixer-bar"><span data-mixer-bar="sugar"></span></div></div>
+              <div class="mixer-macro"><div class="mixer-macro-num"><b data-mixer-n="kcal">128</b><i>kcal</i></div><div class="mixer-macro-name">energy</div><div class="mixer-bar"><span data-mixer-bar="kcal"></span></div></div>
+            </div>
+            <div class="mixer-cta">
+              <div class="mixer-name" data-mixer-name>Plain protein iced latte</div>
+              <Button label="Buy this mix" href={BUY} />
+            </div>
+            <p class="mixer-fine">Illustrative values for this concept demo. One 300g serving, with the shot stirred in.</p>
           </div>
         </div>
       </div>
