@@ -11,9 +11,9 @@ const root = document.documentElement;
 
    Story: "Hi, I'm Aadi and I make [cool] websites." > [cool] fades out, [SEO-friendly] fades in > [cool,] comes back beside it.
 --------------------------------------------------------------------------------------------- */
-export function initHero() {
+export function initHero(pixel: Pixel | null = null) {
   const title = q('[data-hero-title]');
-  if (!title) return { play() {} };
+  if (!title) return { play() {}, show() {}, hide() {} };
   const words = qa('[data-wd]', title);
   const cool = words.find((w) => w.dataset.wd === 'cool')!;
   const seo = words.find((w) => w.dataset.wd === 'seo')!;
@@ -77,6 +77,26 @@ export function initHero() {
     tl.set(words, { filter: 'none' });
   }
 
+  /* The work section takes the page over: the headline leaves as the first project becomes active, and builds itself again when you scroll back */
+  const rest = () => [q('.hero__mid'), q('.hero__foot')].filter(Boolean) as HTMLElement[];
+  function hide() {
+    if (reduced || !root.classList.contains('js')) return;
+    tl?.kill();
+    gsap.to(words, { opacity: 0, y: -14, duration: 0.25, stagger: 0.015, overwrite: true });
+    gsap.to(rest(), { opacity: 0, duration: 0.25, overwrite: true });
+  }
+  function show() {
+    if (reduced || !root.classList.contains('js')) return;
+    tl?.kill();
+    visible = new Set(words);
+    gsap.set(words, { opacity: 0, scale: 0.35, y: 0, filter: 'none' });
+    gsap.set(comma, { opacity: 1 });
+    layout(visible, 0);
+    gsap.to(words, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.6)', stagger: 0.04, overwrite: true });
+    gsap.to(rest(), { opacity: 1, duration: 0.4, overwrite: true });
+    pixel?.burst();
+  }
+
   // Keep the centring right if the window changes size
   let rz = 0;
   window.addEventListener('resize', () => {
@@ -87,7 +107,7 @@ export function initHero() {
   // Click the headline to watch it build again
   title.addEventListener('click', () => play());
 
-  return { play };
+  return { play, show, hide };
 }
 
 /* ---------------------------------------------------------------------------------------------

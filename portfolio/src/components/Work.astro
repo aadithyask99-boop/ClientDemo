@@ -4,37 +4,36 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const arrow = 'M110 47.42 66.064 95 54.92 83.702l26.108-27.848H0V38.987h81.028L54.92 11.139 66.064 0z';
 ---
 
+<!-- Selected work, built on the mechanism of the reference: the frames scroll past in a column, and only the project crossing the middle of the screen
+     shows its name, arrow and "View". The others fly out as the next one flies in (scripts/work.ts). Without JavaScript, and on phones, every name shows. -->
 <section class="work" id="work" data-world-section="light" aria-labelledby="work-title">
   <h2 id="work-title" class="work__label">
-    Selected work
-    <span>Concept builds, made to show how I work</span>
+    <span class="tag-b">Selected work</span>
+    <span class="work__sub">Concept builds, made to show how I work</span>
   </h2>
 
-  <ol class="work__list">
+  <ol class="work__list" data-work-list>
     {
       projects.map((p, i) => (
         <li class="wi" data-wi>
           <a class="wi__link" href={`${site.demosUrl}${p.path}`} target="_blank" rel="noopener" data-cursor="View" aria-label={`${p.name}: ${p.kind}. Opens the full site.`}>
-            <div class="wi__name">
-              <span class="wi__n">{String(i + 1).padStart(2, '0')}</span>
-              <h3>{p.name}</h3>
-              <p class="wi__blurb">{p.blurb}</p>
-              <span class="wi__tag">{p.kind}</span>
+            <div class="wi__name" data-wi-heading>
+              <span class="wi__n" data-wi-small>{String(i + 1).padStart(2, '0')}</span>
+              <h3 data-wi-title>{p.name}</h3>
+              <p class="wi__blurb" data-wi-small>{p.blurb}</p>
+              <span class="wi__tag" data-wi-small>{p.kind}</span>
             </div>
 
             <div class="wi__frame" data-frame>
-              <div class="wi__media" data-media>
-                {/* the picture is fetched by scripts/work.ts once the headline has painted; without JavaScript the noscript copy is used */}
-                <img class="wi__poster" data-src={`${base}/work/${p.slug}.webp`} alt="" width="960" height="600" decoding="async" />
-                <noscript><img class="wi__poster" src={`${base}/work/${p.slug}.webp`} alt="" width="960" height="600" loading="lazy" /></noscript>
-                <video muted loop playsinline preload="none" data-video={`${base}/work/${p.slug}.mp4`} aria-hidden="true" tabindex="-1" />
-                <canvas class="wi__px" aria-hidden="true" />
-              </div>
+              {/* the picture is fetched by scripts/work.ts once the headline has painted; without JavaScript the noscript copy is used */}
+              <img class="wi__poster" data-src={`${base}/work/${p.slug}.webp`} alt="" width="960" height="600" decoding="async" />
+              <noscript><img class="wi__poster" src={`${base}/work/${p.slug}.webp`} alt="" width="960" height="600" loading="lazy" /></noscript>
+              <video muted loop playsinline preload="none" data-video={`${base}/work/${p.slug}.mp4`} aria-hidden="true" tabindex="-1" />
             </div>
 
-            <div class="wi__cta" aria-hidden="true">
-              <svg viewBox="0 0 110 95"><path fill="currentColor" d={arrow} /></svg>
-              <span>View</span>
+            <div class="wi__cta" data-wi-cta aria-hidden="true">
+              <span class="wi__icon" data-wi-icon><svg class="wi__arrow" data-wi-arrow viewBox="0 0 110 95"><path fill="currentColor" d={arrow} /></svg></span>
+              <span class="wi__view" data-wi-view>View</span>
             </div>
           </a>
         </li>

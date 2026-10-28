@@ -3,30 +3,32 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { q, qa } from './util';
 
 /* Site Chemistry, scrubbed by the scroll while the screen stays pinned. It tells the story in the order a client would ask the questions:
-     0.05-0.65  four ideas, one at a time: its circle appears, its name and words arrive, and its line in the list on the left lights up
+     0.05-0.65  four ideas, one at a time: the title in the ring gives way, then each circle appears with its name, its words and a caption underneath
      0.66-0.72  where all four meet, the orange core and the word it stands for: ENQUIRIES
      0.72-0.84  the view zooms into that core and the rest steps back
      0.84-1.00  the orange fills the screen and says what it means
    Without .fx, below 900px wide, or with reduced motion, none of this runs and the finished diagram is just shown. */
 const ORDER = ['design', 'build', 'seo', 'marketing'];
+const CAPTIONS = [...ORDER, 'all']; // the fifth caption is the one that goes with the core
 
 export function initChem() {
   const root = document.documentElement;
   if (!root.classList.contains('fx') || !window.matchMedia('(min-width: 900px)').matches) return;
   const sec = q('.chem');
   const pin = q('[data-chem-pin]');
-  const text = q('[data-chem-text]');
+  const copy = q('[data-chem-copy]');
+  const list = q('[data-chem-list]');
   const ring = q('[data-ring]');
   const venn = q('[data-venn]');
   const body = q('[data-venn-body]');
   const core = q('[data-vcore]');
   const mid = q('[data-vm]');
   const verdict = q('[data-chem-verdict]');
-  const items = ORDER.map((id) => q(`[data-ci="${id}"]`)!);
+  const items = CAPTIONS.map((id) => q(`[data-ci="${id}"]`)!);
   const circles = ORDER.map((id) => q(`[data-vc="${id}"]`)!);
   const labels = ORDER.map((id) => q(`[data-vl="${id}"]`)!);
   const arcs = ORDER.map((id) => q(`[data-va="${id}"]`)!);
-  if (!sec || !pin || !text || !ring || !venn || !body || !core || !mid || !verdict || [...items, ...circles, ...labels, ...arcs].some((e) => !e)) return;
+  if (!sec || !pin || !copy || !list || !ring || !venn || !body || !core || !mid || !verdict || [...items, ...circles, ...labels, ...arcs].some((e) => !e)) return;
 
   gsap.registerPlugin(ScrollTrigger);
   gsap.set(circles, { opacity: 0, scale: 0.86 });
@@ -37,10 +39,7 @@ export function initChem() {
   // which line of the list is lit, and which header colour reads on the screen at this point
   const mark = (p: number) => {
     const idx = p < 0.05 ? -1 : p >= 0.66 ? 4 : Math.min(3, Math.floor((p - 0.05) / 0.15));
-    items.forEach((li, i) => {
-      li.classList.toggle('is-on', i === idx);
-      li.classList.toggle('is-seen', i < idx);
-    });
+    items.forEach((li, i) => li.classList.toggle('is-on', i === idx)); // one caption at a time
     root.dataset.world = p > 0.86 ? 'light' : 'dark'; // ink on the orange, cream on the black
   };
 
@@ -48,6 +47,7 @@ export function initChem() {
     defaults: { ease: 'none' },
     scrollTrigger: { trigger: sec, start: 'top top', end: '+=520%', pin, scrub: true, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1, onUpdate: (self) => mark(self.progress) },
   });
+  tl.to(copy, { opacity: 0, scale: 0.92, duration: 0.05 }, 0.04); // the title in the ring steps aside for the first circle
   ORDER.forEach((_, i) => {
     const s = 0.05 + i * 0.15;
     tl.to(circles[i], { opacity: 1, scale: 1, duration: 0.08, ease: 'power2.out' }, s)
@@ -57,7 +57,8 @@ export function initChem() {
   tl.to(core, { opacity: 1, duration: 0.06 }, 0.66)
     .to(mid, { opacity: 1, duration: 0.05 }, 0.7)
     .to(body, { scale: 16, rotation: -10, duration: 0.16, ease: 'power2.in' }, 0.72)
-    .to([ring, text], { opacity: 0, duration: 0.1 }, 0.72)
+    .to(ring, { opacity: 0, duration: 0.1 }, 0.72)
+    .to(list, { opacity: 0, duration: 0.04 }, 0.72)
     .to(verdict, { opacity: 1, duration: 0.08 }, 0.84)
     .to(venn, { opacity: 0, duration: 0.06 }, 0.86) // the zoomed diagram is gone before the verdict is read, so nothing ghosts through it
     // The scrub maps the timeline's whole length onto the scroll distance, so it must end at exactly 1: this empty tween holds the verdict on screen

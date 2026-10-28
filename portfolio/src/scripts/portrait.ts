@@ -1,9 +1,16 @@
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { q, clamp, reduced } from './util';
+import { clamp, q, reduced } from './util';
 
-/* The picture is driven by the scroll, both ways. In the middle of the screen it is sharp; as it moves toward the top or bottom edge it breaks into
-   bigger and bigger pixels, and it puts itself back together when you scroll back. Works for a photo or for the pixel-art stand-in. */
+/* "Every detail, one designer": the picture is built by the scroll, and taken apart again when you scroll back up.
+   A front sweeps down the picture. Ahead of it there is nothing; on it, blocks flash orange (a few dark) as they arrive; just behind it they settle
+   into flat blocks of the picture's average colour; behind that, the real picture. Progress is the scroll position, so it reverses exactly.
+   Works for a photo or for the pixel-art stand-in. Without JS, with reduced motion, or if anything fails, the finished picture simply sits there. */
+const COLS = 16;
+const JITTER = 0.12; // how ragged the front is
+const EDGE = 0.05; // orange band
+const MOSAIC = 0.16; // flat-colour band behind it
+const FULL = 1 + JITTER + MOSAIC;
+
 export async function initPortrait() {
   const fig = q('[data-portrait]');
   if (!fig || reduced || !document.documentElement.classList.contains('js')) return;
@@ -12,62 +19,104 @@ export async function initPortrait() {
   const svg = q<SVGSVGElement>('.portrait__face', fig);
 
   const src = await source(img, svg);
-  if (!src) return; // anything goes wrong: the finished picture simply stays
-  gsap.registerPlugin(ScrollTrigger);
+  if (!src) return;
 
   const dpr = Math.min(2, window.devicePixelRatio || 1);
-  const W = Math.max(2, Math.round(fig.clientWidth * dpr));
-  const H = Math.max(2, Math.round(fig.clientHeight * dpr));
-  cv.width = W;
-  cv.height = H;
-  const ctx = cv.getContext('2d')!;
-  const full = document.createElement('canvas');
-  full.width = W;
-  full.height = H;
-  const f = full.getContext('2d')!;
-  f.imageSmoothingEnabled = !svg; // the pixel-art stand-in stays crisp
-  const k = Math.max(W / src.w, H / src.h);
-  f.drawImage(src.el, (W - src.w * k) / 2, (H - src.h * k) / 2, src.w * k, src.h * k);
-  const small = document.createElement('canvas');
-  const s = small.getContext('2d')!;
+  let W = 0;
+  let H = 0;
+  let cell = 0;
+  let rows = 0;
+  let jit: number[] = [];
+  let tone: number[] = [];
+  let avg: string[] = [];
+  let full: HTMLCanvasElement;
 
-  const maxBlock = fig.clientWidth / 9; // coarsest: about nine blocks across
-  let target = 1;
-  let level = 1;
+  const measure = () => {
+    W = Math.max(COLS, Math.round(fig.clientWidth * dpr));
+    H = Math.max(2, Math.round(fig.clientHeight * dpr));
+    cv.width = W;
+    cv.height = H;
+    cell = W / COLS;
+    rows = Math.ceil(H / cell);
+    full = document.createElement('canvas');
+    full.width = W;
+    full.height = H;
+    const f = full.getContext('2d')!;
+    f.imageSmoothingEnabled = !svg; // the pixel-art stand-in stays crisp
+    const k = Math.max(W / src.w, H / src.h);
+    f.drawImage(src.el, (W - src.w * k) / 2, (H - src.h * k) / 2, src.w * k, src.h * k);
+    // one average colour per block
+    const small = document.createElement('canvas');
+    small.width = COLS;
+    small.height = rows;
+    const s = small.getContext('2d')!;
+    s.imageSmoothingEnabled = true;
+    s.drawImage(full, 0, 0, COLS, rows);
+    const d = s.getImageData(0, 0, COLS, rows).data;
+    avg = [];
+    for (let i = 0; i < COLS * rows; i++) avg.push(`rgb(${d[i * 4]},${d[i * 4 + 1]},${d[i * 4 + 2]})`);
+  };
+  measure();
+  // a fixed random pattern, so scrolling back and forth always gives the same picture
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  jit = Array.from({ length: COLS * 64 }, () => rnd() * JITTER);
+  tone = Array.from({ length: COLS * 64 }, () => rnd());
+
+  const ctx = cv.getContext('2d')!;
+  fig.classList.add('is-fx');
+  let level = 0; // eased progress 0..1
+  let target = 0;
   let shown = -1;
 
   const render = () => {
-    if (Math.abs(level - shown) < 0.003) return;
+    if (Math.abs(level - shown) < 0.0015 && level !== 1 && level !== 0) return;
+    if (level === shown) return;
     shown = level;
-    if (level < 0.02) { cv.style.visibility = 'hidden'; return; }
-    const block = Math.max(1, 1 + Math.pow(level, 1.15) * (maxBlock - 1)) * dpr;
-    const bw = Math.max(2, Math.round(W / block));
-    const bh = Math.max(2, Math.round(H / block));
-    small.width = bw;
-    small.height = bh;
-    s.imageSmoothingEnabled = true; // averaging down gives each block its average colour
-    s.drawImage(full, 0, 0, bw, bh);
-    ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(small, 0, 0, bw, bh, 0, 0, W, H);
+    if (level >= 0.9995) {
+      // finished: the real picture takes over
+      fig.classList.add('is-done');
+      cv.style.visibility = 'hidden';
+      return;
+    }
+    fig.classList.remove('is-done');
     cv.style.visibility = 'visible';
+    ctx.clearRect(0, 0, W, H);
+    const front = level * FULL;
+    for (let r = 0; r < rows; r++) {
+      const y = r / rows;
+      for (let c = 0; c < COLS; c++) {
+        const i = r * COLS + c;
+        const s = front - y - jit[i];
+        if (s < 0) continue;
+        const x = Math.floor(c * cell);
+        const yy = Math.floor(r * cell);
+        const w = Math.ceil(cell) + 1;
+        if (s < EDGE) {
+          ctx.fillStyle = tone[i] < 0.18 ? '#2b2b2b' : '#ff5a1f';
+          ctx.fillRect(x, yy, w, w);
+        } else if (s < MOSAIC) {
+          ctx.fillStyle = avg[i];
+          ctx.fillRect(x, yy, w, w);
+        } else {
+          ctx.drawImage(full, x, yy, w, w, x, yy, w, w);
+        }
+      }
+    }
   };
 
-  // 0 at the centre of the screen, 1 at the edges; the picture stays fully sharp across the middle band, then breaks up toward the edges
-  ScrollTrigger.create({
-    trigger: fig,
-    start: 'top bottom',
-    end: 'bottom top',
-    onUpdate: (self) => {
-      const d = Math.abs(self.progress - 0.5) * 2;
-      const t = clamp((d - 0.3) / 0.6);
-      target = t * t * (3 - 2 * t);
-    },
-  });
+  // scroll position decides: starts as the top edge climbs past 92% of the screen, finishes after 70% of a screen of travel
+  const progress = () => clamp((window.innerHeight * 0.92 - fig.getBoundingClientRect().top) / (window.innerHeight * 0.7));
+  target = progress();
+  level = target;
+  render();
+  window.addEventListener('scroll', () => { target = progress(); }, { passive: true });
+  window.addEventListener('resize', () => { measure(); shown = -1; target = progress(); }, { passive: true });
   gsap.ticker.add(() => {
-    level += (target - level) * 0.14; // eases, so it never snaps
+    level += (target - level) * 0.16; // eases, so it never snaps
+    if (Math.abs(target - level) < 0.0008) level = target;
     render();
   });
-  render();
 }
 
 async function source(img: HTMLImageElement | null, svg: SVGSVGElement | null): Promise<{ el: CanvasImageSource; w: number; h: number } | null> {

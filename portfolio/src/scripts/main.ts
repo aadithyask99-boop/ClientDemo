@@ -67,7 +67,7 @@ initScroll();
 initCursor();
 initClock();
 initCopy();
-const hero = initHero();
+const hero = initHero(heroPixel);
 initCredits(heroPixel);
 
 let belowFold = false;
@@ -78,7 +78,7 @@ function setUpBelowFold() {
   initRing();
   initDeck();
   void initPortrait();
-  initWork();
+  initWork(hero);
   initEggs();
   initFace();
   ScrollTrigger.refresh();

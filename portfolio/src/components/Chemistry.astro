@@ -1,6 +1,6 @@
 ---
 /* Site Chemistry: why a website needs four things at once.
-   Left, plain words for a client. Right, four circles that appear one by one as each idea is read; a ring of ticks swells toward the pointer.
+   A ring of ticks swells toward the pointer around the title. Scrolling, four circles arrive one at a time, each with a plain-language caption underneath.
    Where all four meet (the orange core) is the point: enquiries. The scene ends by zooming into it, and the page says what it means.
    Without the scroll scene (touch, small windows, reduced motion, no JS) everything is simply shown, finished. */
 const N = 96;
@@ -26,6 +26,7 @@ const points = [
   { id: 'build', title: 'Build', text: 'It loads fast, works on every device and is easy to use, so nobody gives up.' },
   { id: 'seo', title: 'SEO', text: 'It shows up when people search for what you do.' },
   { id: 'marketing', title: 'Marketing', text: 'It brings the right people in and makes it easy for them to get in touch.' },
+  { id: 'all', title: 'All four', text: 'Together they are where enquiries come from.' },
 ];
 /* Text runs along the outside of each circle. The bottom one runs the other way round so it still reads left to right. */
 function arcPath(c: (typeof circles)[number]) {
@@ -40,23 +41,13 @@ function arcPath(c: (typeof circles)[number]) {
 
 <section class="chem" id="service" data-world-section="dark" aria-labelledby="chem-title">
   <div class="chem__pin" data-chem-pin>
-    <div class="chem__grid">
-      <div class="chem__text" data-chem-text>
-        <p class="chem__eyebrow">Site Chemistry</p>
+    <div class="chem__stage">
+      <div class="chem__copy" data-chem-copy>
+        <p class="chem__eyebrow tag-b">Site Chemistry</p>
         <h2 id="chem-title" class="chem__title">A good website needs four things at once.</h2>
-        <ol class="chem__list" data-chem-list>
-          {
-            points.map((p) => (
-              <li data-ci={p.id}>
-                <strong>{p.title}</strong>
-                <span>{p.text}</span>
-              </li>
-            ))
-          }
-        </ol>
       </div>
 
-      <div class="chem__stage">
+      <div class="chem__diagram">
         <svg class="chem__ring" data-ring viewBox="0 0 676 676" aria-hidden="true">
           {ticks.map((t) => <line data-a={t.a} x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2} stroke="currentColor" stroke-width="2" />)}
         </svg>
@@ -103,6 +94,17 @@ function arcPath(c: (typeof circles)[number]) {
         </svg>
       </div>
     </div>
+
+    <ol class="chem__list" data-chem-list>
+      {
+        points.map((p) => (
+          <li data-ci={p.id}>
+            <strong>{p.title}</strong>
+            <span>{p.text}</span>
+          </li>
+        ))
+      }
+    </ol>
 
     <p class="chem__verdict" data-chem-verdict>
       <span>Pretty is easy. Pretty that gets you enquiries is the job.</span>

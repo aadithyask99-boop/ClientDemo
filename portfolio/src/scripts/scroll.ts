@@ -31,6 +31,13 @@ export function initScroll() {
     else window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
   });
 
+  // other scripts can ask for a smooth scroll to a position (keyboard focus on a project, a button that goes to a section)
+  window.addEventListener('aadi:scrollto', (e) => {
+    const y = (e as CustomEvent<number>).detail;
+    if (lenis) lenis.scrollTo(y, { duration: 1.2, easing: ease });
+    else window.scrollTo({ top: y, behavior: reduced ? 'auto' : 'smooth' });
+  });
+
   // overlays (the "seo" easter egg) pause the page scroll while they are open
   window.addEventListener('aadi:lock', (e) => {
     const on = (e as CustomEvent<boolean>).detail;

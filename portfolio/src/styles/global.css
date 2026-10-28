@@ -352,8 +352,9 @@ html.lenis body {
 }
 
 /* ------------------------------------------------------------------ Chemistry (black world)
-   Default (touch, small windows, reduced motion, no JS): the points, the finished diagram, the verdict.
-   .fx at 900px and up: one pinned screen that scripts/chem.ts scrubs with the scroll, ending on the orange verdict. */
+   Default (touch, small windows, reduced motion, no JS): title, the finished diagram, the five captions, the verdict.
+   .fx at 900px and up: one pinned screen that scripts/chem.ts scrubs with the scroll: the title sits in the ring, four circles arrive one at a time
+   with a caption each, the core turns orange, the view zooms into it and the screen ends on the verdict. */
 .chem {
   position: relative;
   z-index: 2;
@@ -365,13 +366,18 @@ html.lenis body {
 .chem__pin {
   position: relative;
   display: grid;
+  justify-items: center;
   gap: clamp(2rem, 5vw, 3.5rem);
   padding: clamp(4rem, 9vw, 8rem) var(--gx-r) clamp(4rem, 9vw, 7rem) var(--gx-l);
 }
-.chem__grid {
+.chem__stage {
   display: grid;
-  align-items: center;
-  gap: clamp(2rem, 5vw, 4rem);
+  justify-items: center;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+  width: min(100%, 640px);
+}
+.chem__copy {
+  text-align: center;
 }
 .chem__eyebrow {
   font-family: var(--font-mono);
@@ -382,52 +388,17 @@ html.lenis body {
 }
 .chem__title {
   max-width: 11em;
-  margin-top: 0.8rem;
-  font-size: clamp(2rem, 1rem + 3.4vw, 4.2rem);
+  margin: 0.8rem auto 0;
+  font-size: clamp(1.7rem, 1rem + 2.6vw, 3rem);
   font-weight: 600;
-  line-height: 1.02;
+  line-height: 1.04;
   letter-spacing: -0.06em;
   text-wrap: balance;
 }
-.chem__list {
-  display: grid;
-  gap: 1.15rem;
-  max-width: 30rem;
-  margin-top: clamp(1.5rem, 3vw, 2.2rem);
-}
-.chem__list li {
-  display: grid;
-  grid-template-columns: 0.6rem 1fr;
-  column-gap: 0.95rem;
-  font-size: 0.9375rem;
-  line-height: 1.45;
-  color: color-mix(in srgb, var(--cream) 74%, transparent);
-}
-.chem__list li::before {
-  content: '';
-  grid-row: 1 / span 2;
-  width: 0.6rem;
-  height: 0.6rem;
-  margin-top: 0.4rem;
-  border-radius: 0.15rem;
-  background: var(--accent);
-  transition: background-color 0.3s;
-}
-.chem__list strong {
-  grid-column: 2;
-  color: var(--cream);
-  font-size: 1.0625rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-}
-.chem__list span {
-  grid-column: 2;
-}
-.chem__stage {
+.chem__diagram {
   position: relative;
-  width: min(100%, 640px);
+  width: 100%;
   aspect-ratio: 1;
-  justify-self: center;
 }
 .chem__ring {
   display: none;
@@ -478,8 +449,47 @@ html.lenis body {
   font: 600 9px var(--font-mono);
   letter-spacing: 0.12em;
 }
+/* the captions: a plain list when everything is shown, one big line at a time in the pinned scene */
+.chem__list {
+  display: grid;
+  gap: 1.1rem 2.5rem;
+  width: min(100%, 44rem);
+}
+.chem__list li {
+  display: grid;
+  grid-template-columns: 0.6rem 1fr;
+  column-gap: 0.95rem;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--cream) 74%, transparent);
+}
+.chem__list li::before {
+  content: '';
+  grid-row: 1 / span 2;
+  width: 0.6rem;
+  height: 0.6rem;
+  margin-top: 0.4rem;
+  border-radius: 0.15rem;
+  background: var(--accent);
+}
+.chem__list strong {
+  grid-column: 2;
+  color: var(--cream);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+.chem__list span {
+  grid-column: 2;
+}
+@media (min-width: 700px) {
+  .chem__list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
 /* the verdict: orange is where the four meet, so orange is what the page ends on */
 .chem__verdict {
+  width: min(100%, 44rem);
   padding: clamp(1.4rem, 4vw, 2.6rem);
   border-radius: 1rem;
   background: var(--accent);
@@ -491,29 +501,77 @@ html.lenis body {
   text-wrap: balance;
 }
 @media (min-width: 900px) {
-  .chem__grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-  }
   .fx .chem__pin {
     height: 100svh;
-    padding-block: 0;
+    padding-block: 3.5rem 1.5rem;
     align-content: center;
+    gap: 1.2rem;
   }
   .fx .chem__stage {
-    width: min(100%, 78svh);
+    position: relative;
+    display: block;
+    width: min(100%, 64svh);
+    aspect-ratio: 1;
+  }
+  .fx .chem__diagram {
+    position: absolute;
+    inset: 0;
   }
   .fx .chem__ring {
     display: block;
   }
-  .fx .chem__list li {
-    opacity: 0.28;
-    transition: opacity 0.4s var(--ease-out);
+  .fx .chem__copy {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: grid;
+    place-content: center;
+    padding-inline: 18%;
+    pointer-events: none;
   }
-  .fx .chem__list li.is-seen {
-    opacity: 0.72;
+  .fx .chem__title {
+    font-size: clamp(1.4rem, 0.9rem + 1.5vw, 2.3rem);
+  }
+  .fx .chem__list {
+    position: relative;
+    display: block;
+    width: min(100%, 38rem);
+    height: 5.6rem;
+    text-align: center;
+  }
+  .fx .chem__list li {
+    position: absolute;
+    inset: 0 0 auto 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    row-gap: 0.35rem;
+    font-size: clamp(1.05rem, 0.8rem + 0.7vw, 1.4rem);
+    line-height: 1.3;
+    letter-spacing: -0.03em;
+    color: var(--cream);
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.45s var(--ease-out), transform 0.6s var(--ease-out);
   }
   .fx .chem__list li.is-on {
     opacity: 1;
+    transform: none;
+  }
+  .fx .chem__list li::before {
+    display: none;
+  }
+  .fx .chem__list strong,
+  .fx .chem__list span {
+    grid-column: 1;
+  }
+  .fx .chem__list strong {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
   }
   .fx .chem__verdict {
     position: absolute;
@@ -521,6 +579,7 @@ html.lenis body {
     z-index: 5;
     display: grid;
     place-content: center;
+    width: auto;
     padding: var(--gx-l);
     border-radius: 0;
     text-align: center;
@@ -759,10 +818,16 @@ html:not(.fx) .hint--touch {
 .portrait__img {
   object-fit: cover;
 }
-/* the canvas sits over the finished picture and shows it as pixels; it hides itself once the picture is sharp */
+/* with JS the canvas draws the picture as the scroll builds it; the real picture is shown only once it is complete, and nothing is there before */
 .portrait__cv {
   visibility: hidden;
-  image-rendering: pixelated;
+}
+.portrait.is-fx {
+  background: transparent;
+}
+.portrait.is-fx:not(.is-done) .portrait__img,
+.portrait.is-fx:not(.is-done) .portrait__face {
+  visibility: hidden;
 }
 .about__copy {
   display: grid;
@@ -788,7 +853,8 @@ html:not(.fx) .hint--touch {
 }
 
 /* ------------------------------------------------------------------ Work
-   One project per row: the name, a black frame with the site playing in it, then the arrow. At rest the picture is pixels; on hover it resolves. */
+   The frames scroll past in a tight column, just the clip with nothing around it. Only the project that has crossed the middle of the screen shows
+   its name, arrow and "View" (scripts/work.ts); the others have flown out. Under 700px, or without JS, every name shows. */
 .work {
   position: relative;
   z-index: 3;
@@ -800,28 +866,28 @@ html:not(.fx) .hint--touch {
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.2rem 1rem;
-  padding-top: 1rem;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-.work__label span {
-  font-family: var(--font-mono);
+  padding-block: 1rem clamp(1.5rem, 4vw, 3rem);
   font-size: 0.6875rem;
   font-weight: 450;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+}
+.work__sub {
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
   color: var(--muted);
+}
+.work__list {
+  display: grid;
+  gap: 1.3rem;
 }
 .wi__link {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, clamp(19rem, 38vw, 38rem)) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, clamp(19rem, 40vw, 42rem)) minmax(0, 1fr);
+  grid-template-areas: 'name frame cta';
   align-items: center;
   gap: clamp(1rem, 3vw, 3rem);
-  min-height: min(70svh, 44rem);
-  padding-block: clamp(1rem, 3vw, 2rem);
 }
 .wi__name {
+  grid-area: name;
   display: grid;
   gap: 0.75rem;
   justify-items: start;
@@ -838,6 +904,10 @@ html:not(.fx) .hint--touch {
   line-height: 1;
   letter-spacing: -0.065em;
 }
+.wd2 {
+  display: inline-block;
+  white-space: pre;
+}
 .wi__blurb {
   max-width: 16rem;
   font-size: 0.9375rem;
@@ -852,24 +922,17 @@ html:not(.fx) .hint--touch {
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
+/* just the picture: no matte, no border */
 .wi__frame {
+  grid-area: frame;
   position: relative;
-  aspect-ratio: 3 / 2;
-  border-radius: 0.9rem;
-  background: #030303;
-  box-shadow: 0 30px 60px -34px #000a;
-  will-change: transform;
-}
-.wi__media {
-  position: absolute;
-  inset: 7% 6%;
+  aspect-ratio: 8 / 5;
   overflow: hidden;
-  border-radius: 0.3rem;
-  background: #111;
+  border-radius: 0.6rem;
+  background: #e9e1d2;
 }
 .wi__poster,
-.wi__media video,
-.wi__px {
+.wi__frame video {
   position: absolute;
   inset: 0;
   display: block;
@@ -877,18 +940,15 @@ html:not(.fx) .hint--touch {
   height: 100%;
   object-fit: cover;
 }
-.wi__media video {
+.wi__frame video {
   opacity: 0;
   transition: opacity 0.4s;
 }
-.wi__media video.is-playing {
+.wi__frame video.is-playing {
   opacity: 1;
 }
-.wi__px {
-  visibility: hidden;
-  image-rendering: pixelated;
-}
 .wi__cta {
+  grid-area: cta;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -897,35 +957,36 @@ html:not(.fx) .hint--touch {
   font-weight: 600;
   letter-spacing: -0.06em;
 }
-.wi__cta svg {
+.wi__icon {
+  display: inline-flex;
+}
+.wi__arrow {
   width: 1.5em;
   height: auto;
   color: var(--accent-ink);
-  transition: transform 0.5s var(--ease-out);
 }
-@media (hover: hover) {
-  .wi__link:hover .wi__cta svg {
-    transform: translateX(0.35em);
+.wi__view {
+  display: inline-block;
+}
+/* with the effect running only the active project can be clicked, as in the reference */
+.work.is-live .wi__link {
+  pointer-events: none;
+}
+.work.is-live .wi__link.is-active {
+  pointer-events: auto;
+}
+@media (max-width: 699px) {
+  .work__list {
+    gap: 2.6rem;
   }
-}
-@media (max-width: 799px) {
   .wi__link {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas: 'name cta' 'frame frame';
     align-items: start;
-    min-height: 0;
-    gap: 1.1rem;
-    padding-block: 1.6rem;
-  }
-  .wi__name {
-    grid-area: name;
+    gap: 1rem;
   }
   .wi__cta {
-    grid-area: cta;
     padding-top: 0.4rem;
-  }
-  .wi__frame {
-    grid-area: frame;
   }
 }
 
@@ -1050,6 +1111,15 @@ html:not(.fx) .hint--touch {
 }
 
 /* ------------------------------------------------------------------ Utilities */
+/* small mono labels in square brackets, as in the PRODUX navigation: [ LABEL ] */
+.tag-b::before {
+  content: '[ ';
+  white-space: pre;
+}
+.tag-b::after {
+  content: ' ]';
+  white-space: pre;
+}
 .sr-only {
   position: absolute;
   width: 1px;
