@@ -1,0 +1,55 @@
+---
+import { site } from '../data/site';
+import Pixel from './Pixel.astro';
+
+/* The headline is real text in the page. The words are separate so the intro can build the sentence one word at a time,
+   but screen readers get the whole sentence from the label and search engines read the text as written. */
+const label = `Hi, I'm ${site.short} and I make cool, SEO-friendly websites.`;
+---
+
+<section class="hero" id="top" data-theme-section="light">
+  <h1 class="hero__title" data-hero-title aria-label={label} data-cursor="Replay">
+    <span class="wd" data-wd>Hi,</span>{' '}
+    <span class="wd" data-wd>I'm</span>{' '}
+    <span class="wd" data-wd>{site.short}</span><span class="brk brk--m"></span>{' '}
+    <span class="wd" data-wd>and</span>{' '}
+    <span class="wd" data-wd>I</span>{' '}
+    <span class="wd" data-wd>make</span><span class="brk"></span>{' '}
+    <span class="wd wd--cool" data-wd="cool">cool<span class="comma" data-comma>,</span></span>{' '}
+    <span class="wd wd--seo" data-wd="seo">SEO-friendly</span><span class="brk brk--m"></span>{' '}
+    <span class="wd" data-wd>websites.</span>
+  </h1>
+
+  <div class="hero__mid">
+    <Pixel class="hero__pixel" />
+    <p class="hero__credits">
+      <span class="mm" data-mm>
+        <span class="mm__av" data-mm-av aria-hidden="true">
+          <!-- Stand-in avatar. Swap for the portrait (see scripts/hero.ts) -->
+          <svg viewBox="0 0 9 9" shape-rendering="crispEdges">
+            <rect width="9" height="9" rx=".7" fill="#ff5a1f"></rect>
+            <g fill="#0a0a0a">
+              <rect x="2" y="2" width="2" height="2"></rect>
+              <rect x="5" y="2" width="2" height="2"></rect>
+              <rect x="1" y="5" width="1" height="1"></rect>
+              <rect x="7" y="5" width="1" height="1"></rect>
+              <rect x="2" y="6" width="5" height="1"></rect>
+            </g>
+          </svg>
+        </span>
+        <span class="mm__text" data-mm-text>{site.owner} · {site.role}</span>
+      </span>
+    </p>
+  </div>
+
+  <div class="hero__foot">
+    <p class="hero__note">Design, development, SEO and marketing. One person, one brief.</p>
+    <p class="hero__loc">
+      {site.location || 'Remote worldwide'}
+      <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <circle cx="10" cy="10" r="8"></circle>
+        <path d="M2 10h16M10 2c-3 3-3 13 0 16M10 2c3 3 3 13 0 16"></path>
+      </svg>
+    </p>
+  </div>
+</section>

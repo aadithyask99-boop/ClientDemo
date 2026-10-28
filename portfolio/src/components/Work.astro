@@ -1,0 +1,29 @@
+---
+import { site, projects } from '../data/site';
+---
+
+<section class="work" id="work" data-theme-section="light" aria-labelledby="work-title">
+  <div class="work__head">
+    <h2 id="work-title" class="work__title">Selected work</h2>
+    <p class="work__lede">Real businesses and made-up ones, all built with the same care. Each opens a full site.</p>
+  </div>
+  <ul class="work__list">
+    {
+      projects.map((p, i) => (
+        <li>
+          <a class="row" href={`${site.demosUrl}${p.path}`} target="_blank" rel="noopener" data-cursor="View">
+            <span class="row__n">{String(i + 1).padStart(2, '0')}</span>
+            <span class="row__name">{p.name}</span>
+            <span class="row__meta">
+              <span class={`row__kind${p.kind === 'Concept' ? ' is-concept' : ''}`}>{p.kind}</span>
+              {p.blurb}
+            </span>
+            <svg class="row__arrow" viewBox="0 0 110 95" aria-hidden="true">
+              <path fill="currentColor" d="M110 47.42 66.064 95 54.92 83.702l26.108-27.848H0V38.987h81.028L54.92 11.139 66.064 0z" />
+            </svg>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>

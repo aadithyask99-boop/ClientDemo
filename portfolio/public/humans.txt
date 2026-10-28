@@ -1,0 +1,10 @@
+/* TEAM */
+Designer, developer, marketer: Aadithya Sunil
+
+/* THANKS */
+Coffee, view-source, and everyone who ever read a robots.txt for fun.
+
+/* SITE */
+Built with: Astro, GSAP, Lenis, plain CSS
+Standards: semantic HTML, structured data, and a sitemap that tells the truth
+Hint: type "seo" anywhere on the page.

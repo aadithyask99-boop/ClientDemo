@@ -1,0 +1,22 @@
+---
+/* Scene one of Site Chemistry: a ring of ticks that swells toward the pointer. The scroll-driven Venn comes next. */
+const N = 96;
+const C = 338;
+const R = 330;
+const ticks = Array.from({ length: N }, (_, i) => {
+  const a = (i / N) * Math.PI * 2;
+  return { a, x1: C + R * Math.sin(a), y1: C - R * Math.cos(a), x2: C + (R - 9) * Math.sin(a), y2: C - (R - 9) * Math.cos(a) };
+});
+---
+
+<section class="chem" id="service" data-theme-section="dark" aria-labelledby="chem-title">
+  <div class="chem__stage">
+    <svg class="chem__ring" data-ring viewBox="0 0 676 676" aria-hidden="true">
+      {ticks.map((t) => <line data-a={t.a} x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2} stroke="currentColor" stroke-width="2" />)}
+    </svg>
+    <div class="chem__copy">
+      <h2 id="chem-title" class="chem__title">Site Chemistry</h2>
+      <p class="chem__sub">Design · Build · SEO · Marketing</p>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,15 @@
+---
+import { site } from '../data/site';
+---
+
+<header class="hdr" data-header>
+  <nav class="hdr__nav" aria-label="Primary">
+    <a class="pillink" href="#service" data-nav>Service</a>
+    <a class="pillink" href="#work" data-nav>Work</a>
+    <a class="pillink" href="#connect" data-nav>Connect</a>
+  </nav>
+  <p class="hdr__clock" title={`Local time (${site.timezone})`}>
+    <span class="hdr__dot" aria-hidden="true"></span>
+    <span class="hdr__time" data-clock data-tz={site.timezone}>--:--</span>
+  </p>
+</header>

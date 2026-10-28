@@ -1,0 +1,13 @@
+---
+import { PATTERNS } from '../scripts/patterns';
+
+interface Props {
+  class?: string;
+}
+const { class: cls = '' } = Astro.props;
+---
+
+<!-- Rendered as the "spark" pattern so it is there without JavaScript; scripts/pixel.ts animates it -->
+<span class:list={['pixel', cls]} data-pixel aria-hidden="true">
+  {PATTERNS.spark.flatMap((row) => [...row].map((c) => <i data-on={c === '#' ? '' : undefined} />))}
+</span>

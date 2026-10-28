@@ -1,0 +1,35 @@
+---
+import { site } from '../data/site';
+const year = new Date().getFullYear();
+---
+
+<section class="connect" id="connect" data-theme-section="dark" aria-labelledby="connect-title">
+  <div class="connect__inner">
+    <h2 id="connect-title" class="connect__title">Got a site in mind?</h2>
+    {
+      site.email ? (
+        <button class="connect__mail" type="button" data-copy={site.email} data-cursor="Copy">
+          <span class="connect__mail-text">{site.email}</span>
+          <span class="connect__mail-hint" aria-live="polite" data-copy-hint>Click to copy</span>
+        </button>
+      ) : (
+        <p class="connect__soon">Email address goes here (set PUBLIC_CONTACT_EMAIL in .env).</p>
+      )
+    }
+    {
+      site.socials.length > 0 && (
+        <ul class="connect__social">
+          {site.socials.map((s) => (
+            <li>
+              <a href={s.href} target="_blank" rel="noopener me">{s.label}</a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+  <footer class="connect__foot">
+    <p>©{year} {site.owner}</p>
+    <p>Crafted by {site.short}</p>
+  </footer>
+</section>
