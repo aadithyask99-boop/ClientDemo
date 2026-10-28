@@ -7,18 +7,18 @@ html,body{margin:0;background:transparent}canvas{display:block}</style>
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
-const SIZE = +new URLSearchParams(location.search).get("size") || 1000;
+const QP = new URLSearchParams(location.search), W_ = +QP.get("w") || 1000, H_ = +QP.get("h") || 1000;
 const R = 1, LABEL_H = 3.0;                       // tub radius, label band height
 const cv = document.getElementById("c");
 const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true, preserveDrawingBuffer: true });
-renderer.setPixelRatio(1); renderer.setSize(SIZE, SIZE, false);
+renderer.setPixelRatio(1); renderer.setSize(W_, H_, false);
 renderer.setClearColor(0x000000, 0);
 renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 const scene = new THREE.Scene();
 const pm = new THREE.PMREMGenerator(renderer);
 scene.environment = pm.fromScene(new RoomEnvironment(), 0.03).texture;
-const cam = new THREE.PerspectiveCamera(22, 1, 0.1, 100); cam.position.set(0, 0.4, 15.5); cam.lookAt(0, 0, 0);
+const cam = new THREE.PerspectiveCamera(22, W_ / H_, 0.1, 100); cam.position.set(0, 0.4, 15.5); cam.lookAt(0, 0, 0);
 const key = new THREE.DirectionalLight(0xfff1de, 2.2); key.position.set(-4, 6, 6); scene.add(key);
 const rim = new THREE.DirectionalLight(0xffd9b0, 1.6); rim.position.set(6, 2, -4); scene.add(rim);
 
@@ -30,12 +30,15 @@ async function makeLabel(flavour) {
   const cx = W / 2, F = W / 3.2, cream = "#f3e6d0", brown = "#2b160c", ac = "#e8a25c";   // F = visible front width
   const bg = g.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, "#1f0f08"); bg.addColorStop(1, "#4a2616"); g.fillStyle = bg; g.fillRect(0, 0, W, H);
   const wy = F * 0.98;                                   // wave line
+  g.fillStyle = "#f39a3d"; g.beginPath(); g.moveTo(0, wy - F * 0.035);
+  for (let x = 0; x <= W; x += 16) g.lineTo(x, wy - F * 0.035 + Math.sin(x / W * Math.PI * 6) * F * 0.03);
+  g.lineTo(W, H); g.lineTo(0, H); g.fill();
   g.fillStyle = cream; g.beginPath(); g.moveTo(0, wy);
   for (let x = 0; x <= W; x += 16) g.lineTo(x, wy + Math.sin(x / W * Math.PI * 6) * F * 0.03);
   g.lineTo(W, H); g.lineTo(0, H); g.fill();
   g.textAlign = "center"; g.textBaseline = "alphabetic"; g.fillStyle = cream;
-  g.font = `${F * 0.40}px Anton`; g.fillText("BREW", cx, F * 0.50); g.fillText("MORE", cx, F * 0.88);
-  g.font = `${F * 0.058}px Anton`; g.letterSpacing = `${F * 0.012}px`; g.fillStyle = ac; g.fillText("PROTEIN ICED LATTE", cx, F * 0.96 - F * 0.0);
+  g.font = `${F * 0.40}px Anton`; g.fillText("BREW", cx, F * 0.50); g.fillStyle = "#f39a3d"; g.fillText("MORE", cx, F * 0.88); g.fillStyle = cream;
+  g.font = `${F * 0.058}px Anton`; g.letterSpacing = `${F * 0.012}px`; g.fillStyle = cream; g.fillText("PROTEIN ICED LATTE", cx, F * 0.96);
   const ph = await loadImg("../public/img/label/latte-photo.png"), pw = ph.width, hh = F * 0.50, ww = hh * 0.64;
   g.globalCompositeOperation = "multiply"; g.drawImage(ph, pw * 0.2, pw * 0.04, pw * 0.6, pw * 0.92, cx - F * 0.22 - ww / 2, wy + F * 0.04, ww, hh); g.globalCompositeOperation = "source-over";
   g.fillStyle = brown; g.textAlign = "left"; g.letterSpacing = "0px";
@@ -44,13 +47,14 @@ async function makeLabel(flavour) {
     g.font = `${F * 0.034}px Anton`; g.letterSpacing = `${F * 0.004}px`; g.fillStyle = "#8a4a22"; g.fillText(t, cx + F * 0.06, y + F * 0.04); g.fillStyle = brown; g.letterSpacing = "0px";
   });
   g.font = `${F * 0.036}px Anton`; g.fillStyle = "#8a4a22"; g.textAlign = "center"; g.fillText(flavour, cx - F * 0.12, wy + F * 0.58);
+  g.fillStyle = "#f39a3d"; g.fillRect(0, H - F * 0.09, W, F * 0.09);                       // orange hem
   g.fillStyle = brown; g.textAlign = "center"; g.font = `${F * 0.12}px Anton`; for (const x of [0, W]) g.fillText("COFFEE, BUT MORE.", x, F * 0.5);
   g.fillStyle = "rgba(43,22,12,.5)"; for (let i = 0; i < 10; i++) g.fillRect(W * 0.015, wy + F * (0.1 + i * 0.045), F * 0.5 * (0.5 + (i % 3) * 0.2), F * 0.016);
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; t.wrapS = THREE.RepeatWrapping; t.offset.x = 0.5; return t;
 }
 
 // ---------- tub ----------
-const jar = new THREE.Group(); scene.add(jar);
+const jar = new THREE.Group();
 const plastic = new THREE.MeshPhysicalMaterial({ color: 0x2b160c, roughness: 0.28, clearcoat: 1, clearcoatRoughness: 0.12 });
 const white = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.32, clearcoat: 0.8, clearcoatRoughness: 0.2 });
 const half = LABEL_H / 2, v = (x, y) => new THREE.Vector2(x, y);
@@ -62,16 +66,19 @@ jar.add(new THREE.Mesh(new THREE.LatheGeometry(lid, 160), white));
 const ribs = new THREE.InstancedMesh(new THREE.BoxGeometry(0.022, lidH - 0.14, 0.03), white, 96), m4 = new THREE.Matrix4();
 for (let i = 0; i < 96; i++) { const a = i / 96 * Math.PI * 2; m4.compose(new THREE.Vector3(Math.sin(a) * lidR * 1.002, lidY + lidH / 2 - 0.01, Math.cos(a) * lidR * 1.002), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, a, 0)), new THREE.Vector3(1, 1, 1)); ribs.setMatrixAt(i, m4); }
 jar.add(ribs);
-let labelMesh;
+let labelMesh; const jars = [];
 window.ready = (async () => {
   const tex = await makeLabel("ICED VANILLA LATTE");
   labelMesh = new THREE.Mesh(new THREE.CylinderGeometry(R * 1.006, R * 1.006, LABEL_H, 160, 1, true), new THREE.MeshPhysicalMaterial({ map: tex, roughness: 0.35, clearcoat: 0.6, clearcoatRoughness: 0.18 }));
-  jar.add(labelMesh); jar.position.y = -0.2; return true;
+  jar.add(labelMesh); jars.push(jar, jar.clone(), jar.clone()); jars.forEach((j) => scene.add(j)); return true;
 })();
 
-// pose: rotY spin, rotZ roll (tilt), rotX pitch, x/y offset, scale
-window.pose = ({ ry = 0, rz = 0, rx = 0, x = 0, y = 0, s = 1 } = {}) => {
-  jar.rotation.set(rx * Math.PI / 180, ry * Math.PI / 180, rz * Math.PI / 180, "ZXY"); jar.position.set(x, y - 0.2, 0); jar.scale.setScalar(s);
+// poses: array of {ry,rz,rx,x,y,s}; missing/null entries hide that jar
+window.poses = (list) => {
+  jars.forEach((j, i) => { const p = list[i]; j.visible = !!p && (p.s ?? 1) > 0.001; if (!j.visible) return;
+    const { ry = 0, rz = 0, rx = 0, x = 0, y = 0, s = 1, z = 0 } = p;
+    j.rotation.set(rx * Math.PI / 180, ry * Math.PI / 180, rz * Math.PI / 180, "ZXY"); j.position.set(x, y - 0.2, z); j.scale.setScalar(s); });
   renderer.render(scene, cam); return cv.toDataURL("image/png");
 };
+window.pose = (p) => window.poses([p]);
 </script>
