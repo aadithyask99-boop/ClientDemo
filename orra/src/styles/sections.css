@@ -233,7 +233,7 @@ html.fx .ring__group { z-index: 1; }
 .ring__year span { font-size: clamp(1.4rem, 3vw, 3rem); font-weight: 500; line-height: 1; letter-spacing: -0.03em; }
 .ring__notes { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 1.4rem; font-size: 0.7rem; line-height: 1.5; color: rgb(255 255 255 / 0.55); text-align: left; }
 .ring__notes p { margin: 0; }
-.ring__stats { position: absolute; right: 7vw; top: 50%; translate: 0 -50%; display: grid; gap: clamp(1rem, 3.5svh, 2.4rem); width: min(32vw, 36rem); opacity: 0; }
+.ring__stats { position: absolute; right: 11vw; top: 50%; translate: 0 -50%; display: grid; gap: clamp(1rem, 3.5svh, 2.4rem); width: min(32vw, 36rem); opacity: 0; }
 .ring__stats li { display: grid; gap: 0.1rem; opacity: 0.28; transition: opacity 0.5s; }
 .ring__stats li.is-on { opacity: 1; }
 .ring__stats strong { font-size: clamp(3rem, 7vw, 7rem); font-weight: 500; line-height: 0.95; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }

@@ -209,7 +209,7 @@ function ring() {
     const H = innerHeight;
     const pw = W * 0.15;
     const ph = pw * 1.25;
-    const cx = lerp(W * 0.5, -W * 0.1, ease(st.side));
+    const cx = lerp(W * 0.5, W * 0.07, ease(st.side));
     const cy = lerp(H * 1.22, H * 0.5, ease(st.rise));
     const R = lerp(H * 0.4, H * 0.62, ease(st.side));
     photos.forEach((el, i) => {
@@ -229,7 +229,7 @@ function ring() {
       const x = lerp(sx, rx, m);
       const y = lerp(by, ry, m);
       const a = lerp(bAng, rAng, m);
-      const sc = lerp(1, 0.4, m);
+      const sc = lerp(1, lerp(0.4, 0.68, ease(st.side)), m);
       el.style.transform = `translate(${x - pw / 2}px, ${y - ph / 2}px) rotate(${a}deg) scale(${sc})`;
     });
     core.style.transform = `translate(-50%, calc(-50% + ${cy - H * 0.5}px))`;
