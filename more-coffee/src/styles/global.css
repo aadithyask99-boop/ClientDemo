@@ -520,6 +520,7 @@ html.has-seq-ready .loader::after { opacity: 0; }
 .energy-legend-item { display: inline-flex; align-items: center; gap: .6em; } .energy-legend-item i { display: block; width: 2.2em; height: .4em; border-radius: 1em; }
 .energy-legend-item.is-reg i { background: var(--espresso-deep); } .energy-legend-item.is-bm i { background: #fff; box-shadow: 0 0 0 .1em var(--espresso); }
 .energy-fine { opacity: .75; max-width: 34em; text-align: right; }
+.energy-callouts { display: none; }
 
 /* ------------------------------------------------------------------ mix your own */
 .mixer { position: relative; z-index: 3; background: var(--caramel); padding: 7em 0 7.5em; overflow: clip; }
@@ -574,8 +575,8 @@ html.has-seq-ready .loader::after { opacity: 0; }
   .energy-container { padding: 0 1.2em; gap: 1em; } .energy-head { flex-flow: column; align-items: stretch; gap: 1.2em; } .energy-head-text .hand { font-size: 1.7em; }
   .energy-title { font-size: 3.9em; } .energy-lede { font-size: 1em; max-width: none; }
   .energy-readout { min-width: 0; display: grid; grid-template-columns: auto 1fr; gap: 0 1.2em; align-items: center; padding: .8em 1em; } .energy-clock { font-size: 2.2em; grid-row: span 2; } .energy-readout-row { margin-top: .15em; }
-  .energy-chart { width: 100%; } .energy-axis text { font-size: 19px; } .energy-note .hand { font-size: 1.05em; } .energy-note.is-d { display: none; }
-  .energy-note.is-a { translate: -.2em -.4em; } .energy-note.is-b { translate: -3em 1em; } .energy-note.is-c { translate: -4.4em -3em; }
+  .energy-chart { width: 100%; } .energy-axis text { font-size: 30px; } .energy-note { display: none; }
+  .energy-callouts { display: flex; flex-flow: column; gap: .05em; margin: -.2em 0 0; padding: 0; list-style: none; } .energy-callouts .hand { font-size: 1.25em; }
   .energy-foot { flex-flow: column; align-items: flex-start; gap: .6em; } .energy-fine { text-align: left; }
   .mixer { padding: 3.6em 0 3.6em; } .mixer-container { padding: 0 1.2em; } .mixer-head .hand { font-size: 1.6em; } .mixer-title { font-size: 3.9em; } .mixer-lede { font-size: 1em; }
   .mixer-grid { grid-template-columns: 1fr; gap: 1.2em; margin-top: 1.6em; } .mixer-stage { max-width: 24em; margin: 0 auto; }

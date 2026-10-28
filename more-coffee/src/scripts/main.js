@@ -500,7 +500,7 @@ function mixer() {
 
   // ----- choosing a flavour -----
   const swap = (img, src) => { if (RM) { img.src = src; return; } gsap.timeline().to(img, { opacity: 0, y: 10, scale: 0.92, duration: 0.18 }).add(() => (img.src = src)).to(img, { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'elastic-ease-out' }); };
-  const pose = () => { const w = sachet.offsetWidth, h = sachetImg.offsetHeight || w * 2.7; return { w, h, rest: { x: REST.cx * u - w / 2, y: REST.cy * u - h / 2, rotation: REST.rot }, pour: { x: 16.2 * u - w / 2, y: 2.4 * u - h / 2, rotation: 150 } }; };
+  const pose = () => { const w = sachet.offsetWidth, h = sachetImg.offsetHeight || w * 2.7; return { w, h, rest: { x: REST.cx * u - w / 2, y: REST.cy * u - h / 2, rotation: REST.rot }, pour: { x: 16.2 * u - w / 2, y: (innerWidth < 992 ? 3.6 : 2.4) * u - h / 2, rotation: 150 } }; };
   const choose = (m) => {
     if (m.k === state.mix.k) return;
     state.mix = m; chips.forEach((c) => { const on = c.dataset.mix === m.k; c.classList.toggle('is-active', on); c.setAttribute('aria-checked', on); });
