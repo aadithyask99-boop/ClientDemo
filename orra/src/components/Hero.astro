@@ -1,0 +1,95 @@
+---
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const img = (n: string) => `${base}/img/${n}.webp`;
+const letters = ['O', 'R', 'R', 'A'];
+const links = ['Home', 'Residences', 'Studio', 'Journal', 'Contact'];
+---
+
+<main class="page" data-page>
+  <section class="card" data-card aria-labelledby="orra-title" style={`--house: url(${img('house')}); --neon: url(${img('neon')});`}>
+    <div class="scene" aria-hidden="true" data-scene>
+      <div class="layer" data-depth="0.012">
+        <img class="plate" src={img('plate')} alt="" width="1376" height="768" decoding="async" fetchpriority="high" />
+      </div>
+      <div class="tint"></div>
+
+      <div class="layer letters" data-depth="-0.016">
+        <p class="word word--solid">{letters.map((l, i) => <span class="l" data-i={i}>{l}</span>)}</p>
+      </div>
+
+      <div class="layer home" data-depth="0.034">
+        <div class="reflect" data-reflect>
+          <img src={img('house')} alt="" width="1278" height="577" decoding="async" />
+        </div>
+        <div class="house">
+          <img src={img('house')} alt="" width="1278" height="577" decoding="async" fetchpriority="high" />
+          <div class="neon neon--base"></div>
+          <div class="lamp"></div>
+          <div class="neon neon--hot"></div>
+        </div>
+      </div>
+
+      <div class="layer letters letters--front" data-depth="-0.016">
+        <p class="word word--line">{letters.map((l, i) => <span class="l" data-i={i}>{l}</span>)}</p>
+      </div>
+
+      <canvas class="ripples" data-ripples></canvas>
+    </div>
+
+    <h1 class="sr-only" id="orra-title">Orra</h1>
+
+    <header class="top" data-ui>
+      <a class="logo" href="#top" aria-label="Orra, home">
+        <svg viewBox="0 0 32 32" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M6 21v-7c0-4 3-6 7-6h9c2 0 4 1 4 3v10c0 2-1 3-3 3H9c-2 0-3-1-3-3z"></path><path d="M3 27h26" stroke="#ff9a52"></path></svg>
+      </a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="orra-nav" data-menu>Menu</button>
+      <nav class="nav" id="orra-nav" aria-label="Primary" data-nav>
+        <span class="nav__pill" data-pill></span>
+        {links.map((l, i) => <a href="#top" class:list={['nav__link', { 'is-active': i === 0 }]} aria-current={i === 0 ? 'page' : undefined}>{l}</a>)}
+      </nav>
+    </header>
+
+    <div class="left" data-ui>
+      <p class="blurb">Discover architectural residences, curated for quiet, modern living.</p>
+      <div class="mode" role="group" aria-label="Time of day" data-mode-group>
+        <button type="button" class="mode__btn is-on" data-mode="dusk" aria-pressed="true"><i></i>Dusk</button>
+        <button type="button" class="mode__btn" data-mode="night" aria-pressed="false"><i></i>Night</button>
+      </div>
+    </div>
+
+    <p class="headline" data-ui>
+      <span>Live where</span>
+      <span>the horizon</span>
+      <span>begins</span>
+    </p>
+
+    <aside class="stats" aria-label="Orra in numbers">
+      <div class="stat stat--a" data-ui data-tilt>
+        <strong><span data-count="180">180</span>+</strong>
+        <span>Signature homes</span>
+      </div>
+      <div class="stat stat--b" data-ui data-tilt>
+        <strong><span data-count="17">17</span></strong>
+        <span>Coastlines</span>
+      </div>
+    </aside>
+
+    <a class="cta" href="#top" data-ui data-magnet>
+      <span>Book a viewing</span>
+      <i aria-hidden="true"><svg viewBox="0 0 12 12" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l6-6M4 3h5v5"></path></svg></i>
+    </a>
+
+    <ul class="thumbs" aria-label="Featured residences" data-ui>
+      {[1, 2, 3, 4].map((n) => <li><img src={img(`t${n}`)} alt="" width="96" height="96" loading="lazy" /></li>)}
+    </ul>
+  </section>
+
+  <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <filter id="orra-water" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.004 0.05" numOctaves="2" seed="4" result="n">
+        <animate attributeName="baseFrequency" dur="14s" values="0.004 0.05;0.006 0.07;0.004 0.05" repeatCount="indefinite"></animate>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="8" xChannelSelector="R" yChannelSelector="G" data-disp></feDisplacementMap>
+    </filter>
+  </svg>
+</main>

@@ -1,0 +1,211 @@
+:root {
+  --night: 0;
+  --ink: #fff;
+  --font: 'Outfit Variable', 'Outfit', system-ui, sans-serif;
+  --glass: rgb(255 255 255 / 0.14);
+  --glass-line: rgb(255 255 255 / 0.3);
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  min-height: 100svh;
+  font-family: var(--font);
+  color: var(--ink);
+  background: linear-gradient(160deg, #8a979d 0%, #77848b 55%, #6a777e 100%);
+  overflow-x: hidden;
+}
+/* The room around the card darkens with the night */
+body::before { content: ''; position: fixed; inset: 0; background: #0b1218; opacity: calc(var(--night) * 0.78); pointer-events: none; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+ul { list-style: none; margin: 0; padding: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.defs { position: absolute; }
+
+.page { position: relative; min-height: 100svh; display: grid; place-items: center; padding: 1.5rem 0; }
+
+/* ---------- The card: everything inside is sized in container units, so the composition scales as one ---------- */
+.card {
+  position: relative;
+  width: min(94vw, calc((100svh - 3rem) * 16 / 9));
+  aspect-ratio: 16 / 9;
+  container-type: size;
+  border: 6px solid #fff;
+  border-radius: 28px;
+  overflow: hidden;
+  isolation: isolate;
+  background: #6f7c84;
+  box-shadow: 0 40px 90px -30px rgb(10 20 30 / 0.55), 0 0 0 1px rgb(255 255 255 / 0.4);
+  touch-action: pan-y;
+}
+
+.scene { position: absolute; inset: 0; z-index: 0; }
+.layer { position: absolute; inset: 0; will-change: transform; }
+
+.plate { position: absolute; max-width: none; left: -2%; top: -2%; width: 104%; height: 104%; object-fit: cover; object-position: 50% 50%; filter: brightness(calc(1 - var(--night) * 0.5)) saturate(calc(1 - var(--night) * 0.2)) contrast(calc(1 + var(--night) * 0.1)); }
+.tint { position: absolute; inset: 0; background: linear-gradient(180deg, #0a1730 0%, #14243a 60%, #1a2430 100%); opacity: calc(var(--night) * 0.38); mix-blend-mode: multiply; }
+
+/* ---------- Giant name, behind the house, and an outline copy across its glass ---------- */
+.word {
+  position: absolute;
+  left: 52%;
+  top: 12cqh;
+  translate: -50% 0;
+  margin: 0;
+  display: flex;
+  font-size: 25cqw;
+  font-weight: 500;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  user-select: none;
+}
+.word--solid { color: #fff; opacity: 0.96; }
+.word--line { color: transparent; -webkit-text-stroke: 1px rgb(255 255 255 / 0.55); }
+.l { display: inline-block; will-change: transform; }
+
+/* ---------- House, its light and its reflection ---------- */
+.home { pointer-events: none; }
+.house { position: absolute; left: 20cqw; bottom: 12.5cqh; width: 72cqw; aspect-ratio: 1278 / 577; }
+.house img { width: 100%; height: 100%; filter: brightness(calc(1 - var(--night) * 0.2)); }
+.reflect {
+  position: absolute;
+  left: 20cqw;
+  top: calc(100cqh - 12.5cqh);
+  width: 72cqw;
+  aspect-ratio: 1278 / 577;
+  transform: scaleY(-1);
+  opacity: 0.42;
+  -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 42%);
+  mask-image: linear-gradient(to top, #000 0%, transparent 42%);
+  filter: blur(1.2px) url(#orra-water);
+}
+.reflect img { width: 100%; height: 100%; }
+
+.neon { position: absolute; inset: 0; -webkit-mask-image: var(--neon); mask-image: var(--neon); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; mix-blend-mode: screen; pointer-events: none; }
+/* Strips and lit windows, bloomed. Stronger at night, and brightest where the pointer is. */
+.neon--base { background: #ff9d52; filter: blur(0.5cqw); opacity: calc(0.18 + var(--night) * 0.62); }
+.neon--hot {
+  background: #ff7d2e;
+  opacity: var(--hot, 0);
+  -webkit-mask-image: var(--neon), radial-gradient(circle 17cqw at var(--nx, 50%) var(--ny, 50%), #000 0%, transparent 100%);
+  mask-image: var(--neon), radial-gradient(circle 17cqw at var(--nx, 50%) var(--ny, 50%), #000 0%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+  -webkit-mask-size: 100% 100%, 100% 100%;
+  mask-size: 100% 100%, 100% 100%;
+  filter: blur(0.8cqw) brightness(1.5);
+}
+/* A warm pool of light on the shell itself, wherever the pointer is */
+.lamp {
+  position: absolute;
+  inset: 0;
+  opacity: var(--hot, 0);
+  background: radial-gradient(circle 16cqw at var(--nx, 50%) var(--ny, 50%), rgb(255 160 80 / 0.6), rgb(255 160 80 / 0) 100%);
+  -webkit-mask-image: var(--house);
+  mask-image: var(--house);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+
+.ripples { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+/* ---------- Interface ---------- */
+.top { position: absolute; z-index: 5; left: 0; right: 0; top: 0; display: flex; align-items: center; justify-content: space-between; padding: 4.2cqh 3.4cqw 0; }
+.logo { display: grid; place-items: center; width: 2.6rem; height: 2.6rem; color: #fff; transition: transform 0.4s; }
+.logo:hover { transform: translateY(-2px) rotate(-4deg); }
+.menu-btn { display: none; }
+
+.nav { position: relative; display: flex; gap: 0.4rem; }
+.nav__link { position: relative; z-index: 1; padding: 0.38rem 0.85rem; border: 1px solid rgb(255 255 255 / 0.7); border-radius: 99px; font-size: clamp(0.62rem, 0.95cqw, 0.85rem); letter-spacing: 0.01em; color: #fff; transition: color 0.3s, border-color 0.3s; }
+.nav__link.is-active { border-color: transparent; }
+.nav__pill { position: absolute; z-index: 0; left: 0; top: 0; height: 100%; width: 0; border-radius: 99px; background: #fff; box-shadow: 0 6px 18px -8px rgb(0 0 0 / 0.5); transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.2, 1), width 0.55s cubic-bezier(0.2, 0.9, 0.2, 1); }
+.nav__link.is-under { color: #1d262c; border-color: transparent; }
+
+.left { position: absolute; z-index: 5; left: 4.6cqw; top: 30cqh; width: 15cqw; }
+.blurb { margin: 0; font-size: clamp(0.72rem, 1.18cqw, 1.05rem); line-height: 1.45; font-weight: 400; color: rgb(255 255 255 / 0.92); }
+.mode { display: inline-flex; margin-top: 1.4cqh; padding: 0.22rem; border-radius: 99px; background: var(--glass); border: 1px solid var(--glass-line); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.mode__btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.8rem 0.3rem 0.6rem; border: 0; border-radius: 99px; background: transparent; font-size: clamp(0.6rem, 0.9cqw, 0.8rem); color: rgb(255 255 255 / 0.85); transition: background 0.4s, color 0.4s; }
+.mode__btn i { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: #ffd9b0; box-shadow: 0 0 8px #ffb877; }
+.mode__btn[data-mode='night'] i { background: #1b2a44; box-shadow: inset -2px -1px 0 #9bb4e0; }
+.mode__btn.is-on { background: #fff; color: #1d262c; }
+
+.headline { position: absolute; z-index: 5; left: 4.6cqw; bottom: 8cqh; margin: 0; display: grid; font-size: clamp(1.1rem, 2.75cqw, 2.4rem); font-weight: 500; line-height: 1.03; text-transform: uppercase; letter-spacing: 0.005em; text-shadow: 0 2px 18px rgb(10 20 30 / 0.28); }
+.headline span { display: block; }
+
+.stats { position: absolute; z-index: 5; right: 3.4cqw; top: 46cqh; width: 17cqw; height: 34cqh; }
+.stat { position: absolute; display: grid; gap: 0.1rem; padding: 1.4cqh 1.2cqw 1.5cqh; width: 14.2cqw; border-radius: 16px; background: var(--glass); border: 1px solid var(--glass-line); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); box-shadow: 0 18px 40px -20px rgb(10 20 30 / 0.5), inset 0 1px 0 rgb(255 255 255 / 0.25); transform-style: preserve-3d; transition: background 0.4s; will-change: transform; }
+.stat:hover { background: rgb(255 255 255 / 0.22); }
+.stat strong { font-size: clamp(1.1rem, 2.25cqw, 2.1rem); font-weight: 500; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stat > span { font-size: clamp(0.6rem, 0.95cqw, 0.85rem); color: rgb(255 255 255 / 0.88); }
+.stat--a { right: 0; top: 0; }
+.stat--b { right: 0; top: 13.5cqh; width: 13.2cqw; margin-right: 1.6cqw; }
+.stat--b { right: 3.2cqw; }
+
+.cta { position: absolute; z-index: 6; left: 50%; bottom: 8.2cqh; translate: -50% 0; display: inline-flex; align-items: center; gap: 0.7rem; padding: 0.4rem 0.4rem 0.4rem 1.1rem; border-radius: 99px; background: #fff; color: #11181d; font-size: clamp(0.66rem, 1cqw, 0.9rem); font-weight: 500; box-shadow: 0 14px 34px -14px rgb(0 0 0 / 0.55); will-change: transform; }
+.cta i { display: grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 50%; background: #0c1114; color: #fff; transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.2, 1), background 0.3s; }
+.cta:hover i { transform: rotate(45deg); background: #ff7a2e; }
+
+.thumbs { position: absolute; z-index: 5; right: 3.4cqw; bottom: 6.5cqh; display: flex; }
+.thumbs li { width: 4.2cqw; height: 4.2cqw; min-width: 2.2rem; min-height: 2.2rem; margin-left: -1.1cqw; border-radius: 50%; border: 2px solid #fff; overflow: hidden; background: #ccc; box-shadow: 0 8px 18px -8px rgb(0 0 0 / 0.5); transition: transform 0.5s cubic-bezier(0.2, 0.9, 0.2, 1), margin 0.5s cubic-bezier(0.2, 0.9, 0.2, 1); }
+.thumbs li:first-child { margin-left: 0; }
+.thumbs li img { width: 100%; height: 100%; object-fit: cover; }
+.thumbs:hover li { margin-left: 0.5cqw; }
+.thumbs:hover li:first-child { margin-left: 0; }
+.thumbs li:hover { transform: translateY(-5px) scale(1.12); }
+
+/* ---------- Night ---------- */
+html[data-mode='night'] .stat, html[data-mode='night'] .mode { background: rgb(8 14 22 / 0.35); }
+
+/* ---------- Intro (only with scripting): everything starts soft, then settles ---------- */
+html.js .layer:not(.letters), html.js .l, html.js .top, html.js .left, html.js .headline, html.js .stat, html.js .cta, html.js .thumbs { opacity: 0; }
+
+/* ---------- Phones and tall screens ---------- */
+@media (max-width: 760px), (max-aspect-ratio: 5 / 6) {
+  .page { padding: 0.6rem; }
+  .card { width: 100%; max-width: 46rem; aspect-ratio: auto; height: calc(100svh - 1.2rem); min-height: 34rem; border-width: 4px; border-radius: 24px; }
+  /* The art is sized by the card's width, so it is placed from the card's vertical centre, whatever the height */
+  .word { font-size: 34cqw; top: calc(50cqh - 54cqw); }
+  .house { left: -12cqw; width: 126cqw; bottom: calc(50cqh - 15cqw); }
+  .reflect { left: -12cqw; width: 126cqw; top: calc(50cqh + 15cqw); }
+  .plate { object-position: 50% 50%; }
+  .top { padding: 2.6cqh 5cqw 0; }
+  .menu-btn { display: inline-flex; padding: 0.5rem 1.15rem; border: 1px solid rgb(255 255 255 / 0.75); border-radius: 99px; background: rgb(255 255 255 / 0.12); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); font-size: 0.82rem; }
+  .nav { position: absolute; right: 5cqw; top: 100%; margin-top: 0.4rem; flex-direction: column; gap: 0.3rem; padding: 0.6rem; border-radius: 18px; background: rgb(10 18 26 / 0.62); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); opacity: 0; pointer-events: none; transform: translateY(-6px); transition: opacity 0.3s, transform 0.3s; }
+  .nav.is-open { opacity: 1; pointer-events: auto; transform: none; }
+  .nav__link { font-size: 0.85rem; padding: 0.5rem 1.1rem; }
+  .nav__pill { display: none; }
+  .nav__link.is-active { background: #fff; color: #1d262c; }
+  .left { left: 5cqw; top: 11cqh; width: 62cqw; }
+  .blurb { font-size: 0.92rem; }
+  .mode { margin-top: 1.2cqh; }
+  .headline { left: 5cqw; bottom: auto; top: 63cqh; font-size: clamp(1.5rem, 8.6cqw, 2.4rem); }
+  .stats { position: absolute; left: 5cqw; right: 5cqw; top: auto; bottom: 14.5cqh; width: auto; height: auto; display: flex; gap: 0.6rem; }
+  .stat { position: static; width: auto; flex: 1; margin: 0; padding: 0.8rem 0.9rem; }
+  .stat--b { right: auto; width: auto; margin: 0; }
+  .stat strong { font-size: 1.5rem; }
+  .stat > span { font-size: 0.78rem; }
+  .cta { left: 5cqw; translate: none; bottom: 4.5cqh; font-size: 0.9rem; }
+  .thumbs { right: 5cqw; bottom: 4.5cqh; }
+  .thumbs li { width: 2.5rem; height: 2.5rem; margin-left: -0.7rem; }
+}
+
+/* Short phones: tighter type and stacking so nothing collides */
+@media (max-width: 760px) and (max-height: 720px) {
+  .blurb { font-size: 0.82rem; }
+  .headline { top: 56cqh; font-size: clamp(1.25rem, 7cqw, 1.8rem); }
+  .stats { bottom: 15cqh; }
+  .stat { padding: 0.55rem 0.8rem; }
+  .stat strong { font-size: 1.25rem; }
+  .cta { bottom: 3.5cqh; }
+  .thumbs { bottom: 3.5cqh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: 0.01ms !important; }
+}
