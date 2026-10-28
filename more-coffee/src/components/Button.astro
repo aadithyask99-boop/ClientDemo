@@ -1,0 +1,10 @@
+---
+// The ref's button: [first circle + arrow] [pill] [second circle + arrow]. All motion is CSS (see global.css, "button").
+const { label = 'Buy now', href = '#', white = false, ...rest } = Astro.props;
+const arrow = `<svg class="button-arrow" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 8.8 8.8 3.2M4 3.2h4.8V8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+---
+<a href={href} class:list={['button', { 'is-white': white }]} {...rest}>
+  <div class="button-cycle is-first"><Fragment set:html={arrow} /><div class="button-cycle-bg"></div></div>
+  <div class="button-bg"><div class="button-text">{label}</div></div>
+  <div class="button-cycle is-second"><Fragment set:html={arrow} /><div class="button-cycle-bg"></div></div>
+</a>

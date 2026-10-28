@@ -8,25 +8,30 @@ const ss = (t) => t * t * (3 - 2 * t), lerp = (a, b, t) => a + (b - a) * t;
 const hero = (i) => { const t = i / 22; return [{ ry: lerp(-34, 18, t), rx: lerp(5, -3, t), s: 1.38, y: -0.15 }]; };
 
 // ---- scroll sequence: 200 frames, jar choreography keyed to the card timeline ----
+// positions (smoothstep between keys). Card centres cross at p = .03 (R), .20 (L), .37 (R), .53 (L); title rises .64-.9
+const L = -2.7, R_ = 2.7;
 const K0 = [
-  [0.00, { s: 0, x: -2.7, y: -4.8, ry: -40, rz: -14 }],
-  [0.03, { s: .88, x: -2.7, y: -4.6, ry: -30, rz: -14 }],
-  [0.15, { s: .88, x: -2.7, y: -0.15, ry: 20, rz: -11 }],
-  [0.31, { s: .88, x: -2.7, y: 0.0, ry: 170, rz: -9 }],
-  [0.37, { s: .88, x: 2.7, y: 0.1, ry: 215, rz: 9 }],
-  [0.52, { s: .88, x: 2.7, y: 0.0, ry: 330, rz: 10 }],
-  [0.58, { s: .88, x: -2.7, y: 0.1, ry: 380, rz: -10 }],
-  [0.72, { s: .88, x: -2.7, y: 0.0, ry: 500, rz: -9 }],
-  [0.78, { s: .88, x: 2.7, y: 0.1, ry: 545, rz: 9 }],
-  [0.87, { s: .88, x: 2.7, y: 0.0, ry: 640, rz: 12 }],
-  [0.92, { s: 1.15, x: 0, y: 0.2, ry: 700, rz: -22, rx: 8 }],
-  [0.96, { s: 1.2, x: 0, y: -0.1, ry: 720, rz: 0, rx: 0 }],
-  [1.00, { s: 1.2, x: 0, y: -0.9, ry: 720, rz: 0, rx: 0 }],
+  [0.000, { s: 0, x: L, y: -4.8, rz: -14 }],
+  [0.015, { s: .88, x: L, y: -4.6, rz: -14 }],
+  [0.100, { s: .88, x: L, y: -0.15, rz: -11 }],
+  [0.105, { s: .88, x: L, y: 0, rz: -10 }],
+  [0.150, { s: .88, x: R_, y: 0.1, rz: 9 }],
+  [0.260, { s: .88, x: R_, y: 0, rz: 10 }],
+  [0.310, { s: .88, x: L, y: 0.1, rz: -10 }],
+  [0.425, { s: .88, x: L, y: 0, rz: -9 }],
+  [0.475, { s: .88, x: R_, y: 0.1, rz: 9 }],
+  [0.585, { s: .88, x: R_, y: 0, rz: 12 }],
+  [0.660, { s: 1.15, x: 0, y: 0.2, rz: -20, rx: 8 }],
+  [0.720, { s: 1.2, x: 0, y: -0.1, rz: 0, rx: 0 }],
+  [0.900, { s: 1.2, x: 0, y: -0.1, rz: 0, rx: 0 }],
+  [1.000, { s: 1.2, x: 0, y: -0.9, rz: 0, rx: 0 }],
 ];
-const K1 = [[0, { s: 0, x: -3, y: -6, ry: 730, rz: 14 }], [0.90, { s: 0, x: -3, y: -6, ry: 730, rz: 14 }], [0.94, { s: 1.0, x: -3.0, y: -6, ry: 730, rz: 14 }], [1, { s: 1.0, x: -2.6, y: -2.3, ry: 700, rz: 12 }]];
-const K2 = [[0, { s: 0, x: 3, y: -6, ry: 710, rz: -14 }], [0.90, { s: 0, x: 3, y: -6, ry: 710, rz: -14 }], [0.94, { s: 1.0, x: 3.0, y: -6, ry: 710, rz: -14 }], [1, { s: 1.0, x: 2.6, y: -2.3, ry: 740, rz: -12 }]];
+const RY = [[0, -40], [0.015, -30], [0.1, 20], [0.72, 720], [1, 720]];                 // continuous spin, ends facing front
+const K1 = [[0, { s: 0, x: -3, y: -6, rz: 14 }], [0.90, { s: 0, x: -3, y: -6, rz: 14 }], [0.94, { s: 1.0, x: -3.0, y: -6, rz: 14 }], [1, { s: 1.0, x: -2.6, y: -2.3, rz: 12 }]];
+const K2 = [[0, { s: 0, x: 3, y: -6, rz: -14 }], [0.90, { s: 0, x: 3, y: -6, rz: -14 }], [0.94, { s: 1.0, x: 3.0, y: -6, rz: -14 }], [1, { s: 1.0, x: 2.6, y: -2.3, rz: -12 }]];
+const ryAt = (p) => { let i = 0; while (i < RY.length - 2 && p > RY[i + 1][0]) i++; const [p0, a] = RY[i], [p1, b] = RY[i + 1]; return lerp(a, b, Math.min(1, Math.max(0, (p - p0) / (p1 - p0)))); };
 const at = (K, p, z) => { let i = 0; while (i < K.length - 2 && p > K[i + 1][0]) i++; const [p0, a] = K[i], [p1, b] = K[i + 1]; const t = Math.min(1, Math.max(0, (p - p0) / (p1 - p0)));
-  const o = { z }; for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) o[k] = lerp(a[k] ?? 0, b[k] ?? 0, k === "ry" ? t : ss(t)); return o; };
+  const o = { z }; for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) o[k] = lerp(a[k] ?? 0, b[k] ?? 0, ss(t)); o.ry = ryAt(p) + (z < 0 ? (K === K1 ? 10 : -10) : 0); return o; };
 const seq = (i) => { const p = i / 199; return [at(K0, p, 0.5), at(K1, p, -0.4), at(K2, p, -0.4)]; };
 
 const cfg = mode === "hero" ? { n: 23, w: 900, h: 1100, f: hero } : { n: 200, w: 1200, h: 750, f: seq };
