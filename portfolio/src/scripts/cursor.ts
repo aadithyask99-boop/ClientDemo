@@ -31,4 +31,6 @@ export function initCursor() {
     }
   }, { passive: true });
   document.documentElement.addEventListener('pointerleave', hide);
+  // scrolling moves content under a still pointer, so the label would be left pointing at the wrong thing until the next move
+  window.addEventListener('scroll', hide, { passive: true });
 }

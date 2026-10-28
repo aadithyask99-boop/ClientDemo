@@ -1,8 +1,9 @@
 ---
 import { site, projects } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
-<section class="work" id="work" data-theme-section="light" aria-labelledby="work-title">
+<section class="work" id="work" data-world-section="light" aria-labelledby="work-title">
   <div class="work__head">
     <h2 id="work-title" class="work__title">Selected work</h2>
     <p class="work__lede">Real businesses and made-up ones, all built with the same care. Each opens a full site.</p>
@@ -11,7 +12,7 @@ import { site, projects } from '../data/site';
     {
       projects.map((p, i) => (
         <li>
-          <a class="row" href={`${site.demosUrl}${p.path}`} target="_blank" rel="noopener" data-cursor="View">
+          <a class="row" href={`${site.demosUrl}${p.path}`} target="_blank" rel="noopener" data-cursor="View" data-peek={p.slug}>
             <span class="row__n">{String(i + 1).padStart(2, '0')}</span>
             <span class="row__name">{p.name}</span>
             <span class="row__meta">
@@ -26,4 +27,9 @@ import { site, projects } from '../data/site';
       ))
     }
   </ul>
+
+  <!-- A floating preview that follows the pointer over the list. Images load when the browser is idle, and only with a mouse. -->
+  <div class="peek" data-peek-box aria-hidden="true">
+    {projects.map((p) => <img data-peek-img={p.slug} data-src={`${base}/work/${p.slug}.webp`} alt="" width="960" height="600" decoding="async" />)}
+  </div>
 </section>

@@ -40,14 +40,14 @@ export function initScroll() {
 
   // header colour and the active nav link follow the section under the header
   const links = qa<HTMLAnchorElement>('[data-nav]');
-  qa('[data-theme-section]').forEach((sec) => {
+  qa('[data-world-section]').forEach((sec) => {
     ScrollTrigger.create({
       trigger: sec,
       start: 'top 40px',
       end: 'bottom 40px',
       onToggle: (self) => {
         if (!self.isActive) return;
-        root.dataset.theme = sec.dataset.themeSection === 'dark' ? 'dark' : 'light';
+        root.dataset.world = sec.dataset.worldSection === 'dark' ? 'dark' : 'light';
         links.forEach((l) => {
           const on = sec.id !== '' && l.getAttribute('href') === `#${sec.id}`;
           l.classList.toggle('is-active', on);

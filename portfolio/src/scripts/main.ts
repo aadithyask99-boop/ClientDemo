@@ -6,6 +6,10 @@ import { initHero, initCredits } from './hero';
 import { initCursor } from './cursor';
 import { initRing } from './ring';
 import { initEggs } from './eggs';
+import { initChem } from './chem';
+import { initDeck } from './deck';
+import { initPortrait } from './portrait';
+import { initWork } from './work';
 
 (window as unknown as { __aadi: boolean }).__aadi = true;
 const root = document.documentElement;
@@ -57,8 +61,12 @@ const prePixel = prePixelEl ? initPixel(prePixelEl) : null;
 const heroPixel = heroPixelEl ? initPixel(heroPixelEl) : null;
 
 initScroll();
+initChem(); // creates the pinned scene; kept in page order with the other scroll triggers
 initCursor();
 initRing();
+initDeck();
+void initPortrait();
+initWork();
 initClock();
 initCopy();
 initEggs();

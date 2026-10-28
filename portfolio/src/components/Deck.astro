@@ -1,0 +1,68 @@
+---
+import Pixel from './Pixel.astro';
+import CardBack from './CardBack.astro';
+
+/* Three services, as a hand of cards. With a mouse you can drag them about and flick one hard: each flick plays a small scene
+   (a build log, a search results page, incoming enquiries). Tap or press Enter on any card for the same scene without the throw. */
+const cards = [
+  {
+    id: 'dev',
+    title: 'Website Development',
+    pattern: 'build',
+    body: 'Fast, accessible sites built by hand in Astro. Clean HTML first, motion on top, nothing you do not need.',
+  },
+  {
+    id: 'seo',
+    title: 'Search Engine Optimisation',
+    pattern: 'search',
+    body: 'Structure, speed and search intent built in from the first wireframe, so the site is easy to find and easy to read.',
+  },
+  {
+    id: 'marketing',
+    title: 'Marketing',
+    pattern: 'growth',
+    body: 'Positioning, content and campaigns that point at the site and bring in the right people.',
+  },
+] as const;
+const fan = [-8, 0, 8];
+---
+
+<section class="deck" id="services" data-world-section="dark" aria-labelledby="deck-title">
+  <h2 id="deck-title" class="deck__lede">
+    Every project includes <span class="k" data-k="0">development</span>, <span class="k" data-k="1">search engine optimisation</span> and <span class="k" data-k="2">marketing</span>.
+  </h2>
+
+  <div class="deck__stage" data-deck>
+    <CardBack side="l" />
+    <CardBack side="r" />
+    {
+      cards.map((c, i) => (
+        <article
+          class="card"
+          data-card={c.id}
+          data-fan={fan[i]}
+          tabindex="0"
+          role="button"
+          aria-label={`${c.title}. Press to play a small scene.`}
+          data-cursor="Drag"
+        >
+          <div class="card__in">
+            <header class="card__top">
+              <h3>{c.title}</h3>
+              <Pixel class="pixel--card" pattern={c.pattern} />
+            </header>
+            <p class="card__body">{c.body}</p>
+            <footer class="card__foot">
+              <span class="card__tag">Flick me</span>
+              <span class="card__flip" aria-hidden="true">{c.title}</span>
+            </footer>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+  <p class="deck__hint" data-deck-hint>
+    <span class="hint--fx">Drag a card. Flick it hard.</span>
+    <span class="hint--touch">Tap a card.</span>
+  </p>
+</section>

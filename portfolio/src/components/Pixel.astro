@@ -1,13 +1,15 @@
 ---
-import { PATTERNS } from '../scripts/patterns';
+import { PATTERNS, type PatternName } from '../scripts/patterns';
 
 interface Props {
   class?: string;
+  /** which of the four shapes to draw; the animated hero icon starts as the spark */
+  pattern?: PatternName;
 }
-const { class: cls = '' } = Astro.props;
+const { class: cls = '', pattern = 'spark' } = Astro.props;
 ---
 
-<!-- Rendered as the "spark" pattern so it is there without JavaScript; scripts/pixel.ts animates it -->
-<span class:list={['pixel', cls]} data-pixel aria-hidden="true">
-  {PATTERNS.spark.flatMap((row) => [...row].map((c) => <i data-on={c === '#' ? '' : undefined} />))}
+<!-- Rendered as a real pattern so it is there without JavaScript; scripts/pixel.ts animates the ones marked data-pixel -->
+<span class:list={['pixel', cls]} aria-hidden="true" data-pixel={cls.includes('card') ? undefined : ''}>
+  {PATTERNS[pattern].flatMap((row) => [...row].map((c) => <i data-on={c === '#' ? '' : undefined} />))}
 </span>

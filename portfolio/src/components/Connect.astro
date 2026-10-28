@@ -1,9 +1,10 @@
 ---
 import { site } from '../data/site';
 const year = new Date().getFullYear();
+/* Until PUBLIC_CONTACT_EMAIL is set in .env, the email button is replaced by a placeholder line */
 ---
 
-<section class="connect" id="connect" data-theme-section="dark" aria-labelledby="connect-title">
+<section class="connect" id="connect" data-world-section="dark" aria-labelledby="connect-title">
   <div class="connect__inner">
     <h2 id="connect-title" class="connect__title">Got a site in mind?</h2>
     {
@@ -13,7 +14,7 @@ const year = new Date().getFullYear();
           <span class="connect__mail-hint" aria-live="polite" data-copy-hint>Click to copy</span>
         </button>
       ) : (
-        <p class="connect__soon">Email address goes here (set PUBLIC_CONTACT_EMAIL in .env).</p>
+        <p class="connect__soon">Your email address goes here.</p>
       )
     }
     {

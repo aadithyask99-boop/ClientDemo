@@ -31,10 +31,10 @@ export const description = `${site.short} builds cool, SEO-friendly websites: de
 
 /* The Work list. Kinds follow the READMEs in this repo: the first three were built for real businesses as demos, the rest are concepts. */
 export const projects = [
-  { name: 'Doves UK', kind: 'Client demo', blurb: 'Funeral and repatriation cover, one page', path: '/doves-uk/' },
-  { name: 'ILÉ IFÉ', kind: 'Client demo', blurb: 'Facials studio, South London', path: '/ileife/' },
-  { name: 'DJ ESKA', kind: 'Client demo', blurb: 'DJ and events, Hampshire', path: '/djeska/' },
-  { name: 'Halcyon', kind: 'Concept', blurb: 'Cyber security landing page, Three.js', path: '/halcyon/' },
-  { name: 'Orra', kind: 'Concept', blurb: 'Architectural residences, scroll-driven', path: '/orra/' },
-  { name: 'Brew More', kind: 'Concept', blurb: 'Protein iced coffee, motion study', path: '/more-coffee/' },
+  { name: 'Doves UK', slug: 'doves-uk', kind: 'Client demo', blurb: 'Funeral and repatriation cover, one page', path: '/doves-uk/' },
+  { name: 'ILÉ IFÉ', slug: 'ileife', kind: 'Client demo', blurb: 'Facials studio, South London', path: '/ileife/' },
+  { name: 'DJ ESKA', slug: 'djeska', kind: 'Client demo', blurb: 'DJ and events, Hampshire', path: '/djeska/' },
+  { name: 'Halcyon', slug: 'halcyon', kind: 'Concept', blurb: 'Cyber security landing page, Three.js', path: '/halcyon/' },
+  { name: 'Orra', slug: 'orra', kind: 'Concept', blurb: 'Architectural residences, scroll-driven', path: '/orra/' },
+  { name: 'Brew More', slug: 'more-coffee', kind: 'Concept', blurb: 'Protein iced coffee, motion study', path: '/more-coffee/' },
 ] as const;
