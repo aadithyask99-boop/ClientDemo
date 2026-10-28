@@ -21,18 +21,23 @@ Because both pictures show the same scene, **Dusk / Night** is one variable (`--
 
 ## Below the hero
 
-A calm, light-on-motion page in paper blue-grey, with deep night blue for two sections and orange used sparingly (active states, hover, the selected principle). Type is Outfit for headings and Instrument Serif for statements and paragraphs. The layout is inspired by the pacing of an editorial architecture site (the structure and order of ideas, not its words, pictures or code); everything here is new content for Orra. The images were generated with Seedream (about 2 cents each): eight residences, two pen sketches and six studio photographs, all in `public/img/r`, `s` and `p`.
+Two versions of the same page. **Big screens with a mouse** (`html.fx`: width over 900px, hover and fine pointer) get the full scroll-driven page, modelled on the pacing and mechanics of an editorial architecture site (the structure and the way things move, not its words, pictures or code). **Phones and touch screens** keep a light version: simple fades, slow strips and rows, no pinning. Both use the same content. Smooth, eased scrolling (Lenis) runs only in the full version.
 
-1. **Studio**: a big headline, small meta columns and a serif paragraph, then awards and publications as fine print, then a large serif statement.
-2. **Coastlines**: a table of twelve homes. The row under the pointer turns to a dark bar with an orange arrow.
-3. **Two process chapters**, each with a pen sketch that is drawn in from left to right when it scrolls into view (a clip-path wipe, no scripting beyond adding a class).
-4. **Selected residences**: an uneven grid (a single column on phones). Each picture fades in from an empty frame; hover zooms it slightly and shows "Visit".
-5. **Principles** (dark): eight numbered nodes round one idea. The idea in the middle changes every few seconds, or when you hover, focus or tap a node.
-6. **People** (dark): a slow strip of studio photographs, the founding year, and four figures that count up once.
-7. **Partners**: two slow rows of round wordmarks (invented names, made of text).
-8. **Footer** (dark): contact columns and a giant ORRA ticker.
+Palette: calm blue-grey paper, deep night blue for the dark sections, orange used sparingly. Type: Outfit for headings, Instrument Serif for statements and paragraphs. Images (Seedream, about 2 cents each): eight residences, two pen sketches (turned into transparent ink on paper) and six studio photographs, in `public/img/r`, `s` and `p`.
 
-The header is fixed. It is white over the picture and the dark sections and turns to ink over the light ones (a scroll check against each section's `data-theme`), and its pill follows the section you are in. Everything eases in with the same soft blur as the hero. The Dusk / Night switch belongs to the hero only.
+The page, with what happens on big screens (and what phones get):
+
+1. **Hero to page**: the hero stays pinned, steps back and darkens while the page slides up over it like a curtain.
+2. **Studio**: headline, small meta columns, serif paragraph, awards and publications, a large serif statement. Everything eases in with a soft blur.
+3. **Coastlines**: a table of twelve homes. The row under the pointer turns into a dark bar with an orange arrow.
+4. **Two process chapters, pinned**: the title leaves and the sketch is revealed through scattered patches of ink that grow together (a canvas mask built from the sketch), then the drawing slowly pushes in and a text panel rises over it. All scrubbed to the scroll. (Phones: the sketch wipes in left to right.)
+5. **Selected residences**: an uneven grid whose tiles drift at different speeds as you scroll, fading in from empty frames. Hover zooms and shows "Visit". (Phones: a single column, no drift.)
+6. **Principles, pinned**: eight numbered nodes round one idea. The page turns from paper to night as it begins, the ring of nodes turns with the scroll, and the idea in the middle follows the scroll; clicking a node jumps to it. (Phones: the idea cycles by itself, or on tap.)
+7. **People, pinned**: a ring of tilted photographs turns round the founding year, then slides aside and the four figures light up one after another. (Phones: a slow strip, the year, and figures that count up.)
+8. **Partners, pinned**: the names ride an oval ring round the heading as you scroll. (Phones: two slow rows.)
+9. **Footer**: contact columns and a giant ORRA ticker.
+
+The header is fixed. It is white over the picture and the dark sections and turns to ink over the light ones, and its pill follows the section you are in. Links scroll with an eased glide. The Dusk / Night switch belongs to the hero only.
 
 ## Interaction
 

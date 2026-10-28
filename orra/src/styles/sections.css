@@ -23,8 +23,8 @@ main { display: block; }
 .label sup { font-size: 0.7em; margin-left: 0.2em; }
 
 /* ---------- Reveal: a gentle blur-in as things scroll into view (only with scripting) ---------- */
-html.js [data-reveal] { opacity: 0; transform: translateY(22px); filter: blur(6px); transition: opacity 1s ease, transform 1s cubic-bezier(0.2, 0.7, 0.2, 1), filter 1s ease; }
-html.js [data-reveal].is-in { opacity: 1; transform: none; filter: none; }
+html.js [data-reveal], html.js:not(.fx) [data-mreveal] { opacity: 0; transform: translateY(22px); filter: blur(6px); transition: opacity 1s ease, transform 1s cubic-bezier(0.2, 0.7, 0.2, 1), filter 1s ease; }
+html.js [data-reveal].is-in, html.js:not(.fx) [data-mreveal].is-in { opacity: 1; transform: none; filter: none; }
 
 /* ---------- About ---------- */
 .about .display { max-width: 12ch; }
@@ -58,9 +58,9 @@ html.js [data-reveal].is-in { opacity: 1; transform: none; filter: none; }
 /* ---------- Process: a sketch that is drawn in left to right ---------- */
 .process .display { margin-bottom: clamp(2.5rem, 6vw, 5rem); }
 .sketch { margin: 0 auto; width: min(64rem, 100%); }
-.sketch img { width: 100%; height: auto; mix-blend-mode: multiply; }
-html.js .sketch img { clip-path: inset(0 100% 0 0); transition: clip-path 2.6s cubic-bezier(0.6, 0, 0.2, 1); }
-html.js .sketch.is-in img { clip-path: inset(0 0 0 0); }
+.sketch img { width: 100%; height: auto; }
+html.js:not(.fx) .sketch img { clip-path: inset(0 100% 0 0); transition: clip-path 2.6s cubic-bezier(0.6, 0, 0.2, 1); }
+html.js:not(.fx) .sketch.is-in img { clip-path: inset(0 0 0 0); }
 .process__text { width: min(34rem, 100%); margin: clamp(2rem, 5vw, 4rem) 0 0 auto; display: grid; gap: 1rem; font-size: 0.95rem; line-height: 1.6; color: #3c4954; }
 .process__text--left { margin-left: 0; }
 .process__text p { margin: 0; }
@@ -94,18 +94,19 @@ html.js .tile.is-in .tile__frame img { opacity: 1; }
 .tile__link:hover .tile__area { opacity: 0; }
 
 /* ---------- Principles: eight nodes round one idea ---------- */
-.radial-sec { background: var(--navy); color: #fff; padding: clamp(4rem, 9vw, 8rem) 0; }
+.radial-sec { --rbg: var(--navy); --rfg: #fff; --rot: 0deg; background: var(--rbg); color: var(--rfg); padding: clamp(4rem, 9vw, 8rem) 0; }
 .radial { --size: min(92vw, 44rem); position: relative; width: var(--size); height: var(--size); margin-inline: auto; }
 .radial__nodes { position: absolute; inset: 0; }
 .radial__nodes li { position: absolute; inset: 0; pointer-events: none; }
-.spoke { position: absolute; left: 50%; top: 50%; width: 1px; height: calc(var(--size) * 0.2); background: linear-gradient(to bottom, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0.28)); transform-origin: 50% 0; transform: rotate(calc(var(--a) + 180deg)) translateY(calc(var(--size) * 0.2)); transition: background 0.4s; }
-.node { pointer-events: auto; position: absolute; left: 50%; top: 50%; width: 2.6rem; height: 2.6rem; margin: -1.3rem; border-radius: 50%; border: 1px solid rgb(255 255 255 / 0.28); background: var(--navy); color: rgb(255 255 255 / 0.7); font-size: 0.66rem; letter-spacing: 0.04em; transform: rotate(var(--a)) translateY(calc(var(--size) * -0.45)) rotate(calc(var(--a) * -1)); transition: background 0.4s, color 0.4s, border-color 0.4s, scale 0.4s; }
-.node:hover, .node:focus-visible { border-color: #fff; color: #fff; }
+.spoke { position: absolute; left: 50%; top: 50%; width: 1px; height: calc(var(--size) * 0.2); background: linear-gradient(to bottom, color-mix(in srgb, currentColor 5%, transparent), color-mix(in srgb, currentColor 28%, transparent)); transform-origin: 50% 0; transform: rotate(calc(var(--a) + var(--rot) + 180deg)) translateY(calc(var(--size) * 0.2)); transition: background 0.4s; }
+.node { pointer-events: auto; position: absolute; left: 50%; top: 50%; width: 2.6rem; height: 2.6rem; margin: -1.3rem; border-radius: 50%; border: 1px solid color-mix(in srgb, currentColor 28%, transparent); background: var(--rbg); color: color-mix(in srgb, currentColor 70%, transparent); font-size: 0.66rem; letter-spacing: 0.04em; transform: rotate(calc(var(--a) + var(--rot))) translateY(calc(var(--size) * -0.45)) rotate(calc((var(--a) + var(--rot)) * -1)); transition: background 0.4s, color 0.4s, border-color 0.4s, scale 0.4s; }
+.node:hover, .node:focus-visible { border-color: currentColor; color: var(--rfg); }
 .node.is-on { background: var(--orange); border-color: var(--orange); color: #11181d; scale: 1.18; }
 li:has(.node.is-on) .spoke { background: linear-gradient(to bottom, rgb(255 122 46 / 0.1), rgb(255 122 46 / 0.8)); }
+.node.is-on { color: #11181d; }
 .radial__core { position: absolute; inset: 22%; display: grid; place-content: center; text-align: center; gap: 1rem; }
 .radial__title { margin: 0; font-size: clamp(1.9rem, 5vw, 3.6rem); font-weight: 500; line-height: 1; letter-spacing: -0.03em; transition: opacity 0.35s, transform 0.35s; }
-.radial__desc { margin: 0 auto; max-width: 18rem; font-size: 0.8rem; line-height: 1.5; color: rgb(255 255 255 / 0.62); transition: opacity 0.35s; }
+.radial__desc { margin: 0 auto; max-width: 18rem; font-size: 0.8rem; line-height: 1.5; color: color-mix(in srgb, currentColor 62%, transparent); transition: opacity 0.35s; }
 .radial__core.is-swap .radial__title, .radial__core.is-swap .radial__desc { opacity: 0; transform: translateY(6px); }
 
 /* ---------- People ---------- */
@@ -126,13 +127,14 @@ li:has(.node.is-on) .spoke { background: linear-gradient(to bottom, rgb(255 122 
 .figures .serif { font-size: clamp(1.05rem, 1.7vw, 1.5rem); color: rgb(255 255 255 / 0.62); }
 
 /* ---------- Partners ---------- */
+.partners { background: var(--navy); color: #fff; }
 .partners .display { margin-bottom: clamp(2.5rem, 6vw, 5rem); max-width: 16ch; }
 .marquee { overflow: hidden; margin-top: 1rem; -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); }
 .marquee__track { display: flex; gap: 1rem; width: max-content; animation: marquee 60s linear infinite; }
 .marquee--rev .marquee__track { animation-direction: reverse; animation-duration: 75s; }
 .marquee:hover .marquee__track { animation-play-state: paused; }
-.logo-dot { display: grid; place-items: center; width: clamp(6.5rem, 11vw, 9rem); aspect-ratio: 1; padding: 0.8rem; border-radius: 50%; background: var(--paper-2); color: #3c4954; font-size: clamp(0.62rem, 0.9vw, 0.8rem); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; text-align: center; line-height: 1.25; transition: background 0.35s, color 0.35s; }
-.logo-dot:hover { background: var(--sink); color: #fff; }
+.logo-dot { display: grid; place-items: center; width: clamp(6.5rem, 11vw, 9rem); aspect-ratio: 1; padding: 0.8rem; border-radius: 50%; background: #dde4e8; color: #1b2733; font-size: clamp(0.62rem, 0.9vw, 0.8rem); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; text-align: center; line-height: 1.25; transition: background 0.35s, color 0.35s; }
+.logo-dot:hover { background: var(--orange); color: #11181d; }
 @keyframes marquee { to { transform: translateX(-25%); } }
 
 /* ---------- Footer ---------- */
@@ -177,3 +179,64 @@ li:has(.node.is-on) .spoke { background: linear-gradient(to bottom, rgb(255 122 
   html.js [data-reveal], html.js .sketch img, html.js .tile__frame img { opacity: 1; transform: none; filter: none; clip-path: none; }
   .rail__track, .marquee__track, .ticker__track { animation: none; }
 }
+
+/* ====================================================================================
+   Big screens (html.fx): pinned, scroll-driven versions of the sketch chapters, the
+   principles, the photo ring and the partner ring. Phones keep the light versions above.
+   ==================================================================================== */
+.ring, .orbit { display: none; }
+
+html.fx { scroll-behavior: auto; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* The picture stays put and the page slides up over it like a curtain */
+html.fx .page { position: sticky; top: 0; z-index: 0; }
+html.fx .paper { margin-top: 0; box-shadow: 0 -30px 60px -30px rgb(10 20 30 / 0.45); }
+html.fx .card { transform-origin: 50% 0; will-change: transform, filter; }
+
+/* ---------- Sketch chapters ---------- */
+html.fx .process { padding: 0; }
+html.fx .process__stage { position: relative; height: 100svh; overflow: hidden; }
+html.fx .process__wrap { position: relative; height: 100%; }
+html.fx .process .display { position: absolute; left: 0; right: 0; top: 13svh; margin: 0 auto; z-index: 3; }
+html.fx .sketch { position: absolute; inset: 0; width: auto; margin: 0; display: grid; place-items: center; transform-origin: 50% 50%; will-change: transform; }
+html.fx .sketch img { display: none; }
+
+html.fx .sketch canvas { display: block; width: min(112rem, 98vw); height: auto; max-height: 96svh; }
+html.fx .process__text { position: absolute; right: 0; bottom: 9svh; width: min(35rem, 38vw); margin: 0; padding: 1.6rem 1.8rem 1.8rem; background: rgb(236 239 241 / 0.86); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); z-index: 3; }
+html.fx .process__text--left { right: auto; left: 0; }
+
+/* ---------- Principles: pinned; the page turns from paper to night as the ring starts to turn ---------- */
+html.fx .radial-sec { --rbg: var(--paper); --rfg: var(--sink); padding: 0; }
+html.fx .radial-stage { height: 100svh; display: grid; place-items: center; }
+html.fx .radial { --size: min(88vh, 62vw, 50rem); }
+
+/* ---------- People: a ring of photographs turns round the year ---------- */
+html.fx .people { padding-bottom: 0; }
+html.fx .people__light { display: none; }
+html.fx .ring { display: block; position: relative; height: 100svh; overflow: hidden; }
+.ring__group { position: absolute; inset: 0; will-change: transform; }
+.ring__photos { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+.ring__photos img { position: absolute; max-width: none; left: -6.5vw; top: -8.1vw; width: 13vw; height: 16.2vw; object-fit: cover; box-shadow: 0 20px 40px -22px rgb(0 0 0 / 0.8); will-change: transform; }
+.ring__core { position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: min(34vw, 40rem); text-align: center; }
+.ring__year { margin: 0; display: grid; justify-items: center; gap: 0.2rem; }
+.ring__year strong { font-size: clamp(3.4rem, 7vw, 7.5rem); font-weight: 500; line-height: 0.95; letter-spacing: -0.04em; }
+.ring__year span { font-size: clamp(1.4rem, 3vw, 3rem); font-weight: 500; line-height: 1; letter-spacing: -0.03em; }
+.ring__notes { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 1.4rem; font-size: 0.7rem; line-height: 1.5; color: rgb(255 255 255 / 0.55); text-align: left; }
+.ring__notes p { margin: 0; }
+.ring__stats { position: absolute; right: 7vw; top: 50%; translate: 0 -50%; display: grid; gap: clamp(1rem, 3.5svh, 2.4rem); width: min(32vw, 36rem); opacity: 0; }
+.ring__stats li { display: grid; gap: 0.1rem; opacity: 0.28; transition: opacity 0.5s; }
+.ring__stats li.is-on { opacity: 1; }
+.ring__stats strong { font-size: clamp(3rem, 7vw, 7rem); font-weight: 500; line-height: 0.95; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+.ring__stats .serif { font-size: clamp(1.2rem, 2.2vw, 2.1rem); line-height: 1; padding-left: 1.4em; }
+
+/* ---------- Partners: names ride a ring round the heading ---------- */
+html.fx .partners { padding: 0; }
+html.fx .partners__light { display: none; }
+html.fx .orbit { display: block; position: relative; height: 100svh; overflow: hidden; }
+.orbit__title { position: absolute; left: 50%; top: 50%; translate: -50% -50%; margin: 0; width: min(46vw, 56rem); text-align: center; font-family: var(--serif); font-weight: 400; font-size: clamp(2.6rem, 6vw, 6.2rem); line-height: 0.98; letter-spacing: -0.01em; }
+.orbit__ring { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+.orbit__ring .logo-dot { position: absolute; left: calc(var(--d) / -2); top: calc(var(--d) / -2); --d: clamp(5.5rem, 9vw, 8.5rem); width: var(--d); will-change: transform; }
+.shade { position: absolute; inset: 0; z-index: 20; background: #0a121a; opacity: 0; pointer-events: none; }

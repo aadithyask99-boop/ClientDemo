@@ -1,4 +1,5 @@
 import { gsap } from 'gsap';
+import { initScroll } from './scroll';
 
 (window as unknown as { __orra: boolean }).__orra = true;
 
@@ -6,6 +7,7 @@ const q = <T extends Element = HTMLElement>(s: string, r: ParentNode = document)
 const qa = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => [...r.querySelectorAll<T>(s)];
 const root = document.documentElement;
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const full = root.classList.contains('fx');
 const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
 /* ---------- Time of day: one variable, --night, takes the picture from dusk (lights off) to night (lights on) ---------- */
@@ -67,7 +69,7 @@ let ticking = false;
 function onScroll() {
   ticking = false;
   const y = 36;
-  const under = themed.find((el) => { const r = el.getBoundingClientRect(); return r.top <= y && r.bottom > y; });
+  const under = [...themed].reverse().find((el) => { const r = el.getBoundingClientRect(); return r.top <= y && r.bottom > y; });
   top.classList.toggle('is-light', under?.dataset.theme === 'light');
   let cur = spy[0];
   for (const x of spy) if (x.el.getBoundingClientRect().top <= innerHeight * 0.4) cur = x;
@@ -85,7 +87,7 @@ const seen = new IntersectionObserver((entries) => {
     if (e.target.matches('.figures')) countUp(e.target as HTMLElement);
   });
 }, { rootMargin: '0px 0px -12% 0px', threshold: 0.12 });
-qa('[data-reveal], [data-sketch], [data-tile]').forEach((el) => seen.observe(el));
+qa('[data-reveal], [data-mreveal], [data-sketch], [data-tile]').forEach((el) => seen.observe(el));
 function countUp(box: HTMLElement) {
   if (reduce) return;
   qa('[data-count]', box).forEach((c) => {
@@ -98,7 +100,7 @@ function countUp(box: HTMLElement) {
 
 /* ---------- Principles: eight nodes round one idea; it changes by itself, or when you point at one ---------- */
 const radial = q('[data-radial]');
-if (radial) {
+if (radial && !full) {
   const data: [string, string][] = JSON.parse(q('[data-principles]')?.textContent || '[]');
   const nodes = qa<HTMLButtonElement>('[data-node]', radial);
   const core = q('.radial__core', radial)!;
@@ -175,6 +177,7 @@ function intro() {
 }
 
 /* ---------- Start ---------- */
+if (full && !reduce) initScroll();
 setMode('dusk');
 gsap.set(root, { '--night': 0 });
 movePill(active);

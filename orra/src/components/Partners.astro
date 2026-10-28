@@ -4,16 +4,27 @@ const a = partners.slice(0, 7);
 const b = partners.slice(7);
 ---
 
-<section class="sec partners" data-theme="light">
-  <div class="wrap">
-    <h2 class="display center" data-reveal>Studios, developers and hotels build with Orra</h2>
-  </div>
-  {[a, b].map((row, k) => (
-    <div class={`marquee ${k ? 'marquee--rev' : ''}`} aria-hidden="true">
-      <div class="marquee__track">
-        {[...row, ...row, ...row, ...row].map((n) => <span class="logo-dot">{n}</span>)}
-      </div>
+<section class="sec partners" data-theme="dark">
+  <!-- Phones and touch screens: two slow rows -->
+  <div class="partners__light">
+    <div class="wrap">
+      <h2 class="display center" data-reveal>Studios, developers and hotels build with Orra</h2>
     </div>
-  ))}
+    {[a, b].map((row, k) => (
+      <div class={`marquee ${k ? 'marquee--rev' : ''}`} aria-hidden="true">
+        <div class="marquee__track">
+          {[...row, ...row, ...row, ...row].map((n) => <span class="logo-dot">{n}</span>)}
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- Big screens: the same names ride a ring round the heading as you scroll -->
+  <div class="orbit" data-orbit aria-hidden="true">
+    <h2 class="orbit__title">Studios, developers and hotels build with Orra</h2>
+    <div class="orbit__ring" data-orbit-ring>
+      {partners.map((n) => <span class="logo-dot">{n}</span>)}
+    </div>
+  </div>
   <p class="sr-only">{partners.join(', ')}</p>
 </section>

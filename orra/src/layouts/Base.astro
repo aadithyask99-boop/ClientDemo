@@ -30,9 +30,11 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         var d = document.documentElement;
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         d.classList.add('js');
+        // Big screens with a mouse get the full scroll-driven page (fx); phones and touch screens get the light one
+        if (window.matchMedia('(min-width: 901px) and (hover: hover) and (pointer: fine)').matches) d.classList.add('fx');
         // If the script never started, never leave the page hidden
         window.setTimeout(function () {
-          if (!window.__orra) d.classList.remove('js');
+          if (!window.__orra) { d.classList.remove('js'); d.classList.remove('fx'); }
         }, 6000);
       })();
     </script>
