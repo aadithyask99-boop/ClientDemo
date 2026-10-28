@@ -40,6 +40,7 @@ export function initScroll() {
   curtain();
   sketches();
   tiles();
+  statements();
   principles();
   ring();
   orbit();
@@ -132,7 +133,8 @@ function tiles() {
   });
 }
 
-/* Principles: pinned. The page turns from paper to night, the ring of nodes turns, and the idea in the middle follows your scroll */
+/* Principles: pinned. It opens on a plain white page with a centred heading and thin lines radiating out; as you scroll the page turns to night,
+   the heading changes, the ring turns, and each node takes its turn at the centre. */
 function principles() {
   const sec = q('[data-radial-sec]');
   const stage = q('[data-rstage]');
@@ -144,38 +146,44 @@ function principles() {
   const title = q('[data-core-title]', radial)!;
   const desc = q('[data-core-desc]', radial)!;
   sec.dataset.theme = 'light';
-  let cur = -1;
+  const steps: [string, string][] = [['Quiet & Bold<br>Essential', ''], ...data.map(([t, d]) => [t, d] as [string, string])];
+  title.innerHTML = steps[0][0];
+  desc.textContent = '';
+  let cur = 0;
   const show = (i: number) => {
     if (i === cur) return;
     cur = i;
-    nodes.forEach((n, k) => n.classList.toggle('is-on', k === i));
+    nodes.forEach((n, k) => n.classList.toggle('is-on', k === i - 1));
     core.classList.add('is-swap');
-    window.setTimeout(() => { title.textContent = data[i][0]; desc.textContent = data[i][1]; core.classList.remove('is-swap'); }, 240);
+    window.setTimeout(() => { title.innerHTML = steps[i][0]; desc.textContent = steps[i][1]; core.classList.remove('is-swap'); }, 240);
   };
-  nodes.forEach((n, i) => n.addEventListener('click', () => {
-    const st = tl.scrollTrigger!;
-    lenisJump(st.start + (st.end - st.start) * (0.12 + (i + 0.5) * (0.88 / nodes.length)));
-  }));
   const tl = gsap.timeline({
     defaults: { ease: 'none' },
     scrollTrigger: {
-      trigger: sec, start: 'top top', end: '+=560%', pin: stage, scrub: true, anticipatePin: 1,
+      trigger: sec, start: 'top top', end: '+=620%', pin: stage, scrub: true, anticipatePin: 1,
       onUpdate: (self) => {
-        sec.dataset.theme = self.progress > 0.05 ? 'dark' : 'light';
-        show(Math.min(nodes.length - 1, Math.floor(clamp((self.progress - 0.1) / 0.9) * nodes.length)));
+        const p = self.progress;
+        sec.dataset.theme = p > 0.2 ? 'dark' : 'light';
+        const k = p < 0.2 ? 0 : 1 + Math.min(nodes.length - 1, Math.floor(clamp((p - 0.2) / 0.8) * nodes.length));
+        show(k);
       },
     },
   });
-  tl.fromTo(sec, { '--rbg': '#eceff1', '--rfg': '#131c26' }, { '--rbg': '#0b1622', '--rfg': '#ffffff', duration: 0.12 }, 0)
-    .fromTo(sec, { '--rot': '0deg' }, { '--rot': '135deg', duration: 1 }, 0);
-  show(0);
+  nodes.forEach((n, i) => n.addEventListener('click', () => {
+    const st = tl.scrollTrigger!;
+    lenisJump(st.start + (st.end - st.start) * (0.2 + ((i + 0.5) / nodes.length) * 0.8));
+  }));
+  tl.fromTo(radial, { scale: 0.86, opacity: 0.2 }, { scale: 1, opacity: 1, duration: 0.14 }, 0)
+    .fromTo(sec, { '--rbg': '#eceff1', '--rfg': '#131c26' }, { '--rbg': '#0b1622', '--rfg': '#ffffff', duration: 0.1 }, 0.16)
+    .fromTo(sec, { '--rot': '0deg' }, { '--rot': '165deg', duration: 1 }, 0);
 }
 
 function lenisJump(y: number) {
   window.scrollTo({ top: y, behavior: 'smooth' });
 }
 
-/* People: a ring of photographs turns round the founding year. Then it slides aside and the figures take over, one at a time. */
+/* People: the statement opens the section with a curve of photographs sweeping across beneath it. The curve rises into a ring round the founding
+   year, which turns; then the ring slides aside and the figures light up one after another. */
 function ring() {
   const root = q('[data-ring]');
   if (!root) return;
@@ -184,10 +192,14 @@ function ring() {
   const core = q('[data-ring-core]', root)!;
   const statsBox = q('[data-ring-stats]', root)!;
   const stats = qa('li', statsBox);
+  const statement = q('[data-ring-statement]', root)!;
+  splitWords(statement);
+  const words = qa('.w', statement);
   const tilts = [-8, 6, -4, 9, -6, 4];
   const s = { a: 0 };
+  const radius = () => Math.min(innerHeight * 0.42, innerWidth * 0.3);
   const place = () => {
-    const r = Math.min(innerHeight * 0.42, innerWidth * 0.3);
+    const r = radius();
     photos.forEach((el, i) => {
       el.style.transform = `rotate(${s.a + (i * 360) / photos.length}deg) translateY(${-r}px) rotate(${tilts[i % tilts.length]}deg)`;
     });
@@ -198,17 +210,40 @@ function ring() {
   const tl = gsap.timeline({
     defaults: { ease: 'none' },
     scrollTrigger: {
-      trigger: root, start: 'top top', end: '+=640%', pin: true, scrub: true, anticipatePin: 1,
+      trigger: root, start: 'top top', end: '+=720%', pin: true, scrub: true, anticipatePin: 1,
       onUpdate: (self) => {
-        const k = self.progress < 0.56 ? -1 : Math.min(stats.length - 1, Math.floor(((self.progress - 0.56) / 0.44) * stats.length));
+        const k = self.progress < 0.66 ? -1 : Math.min(stats.length - 1, Math.floor(((self.progress - 0.66) / 0.34) * stats.length));
         if (k !== on) { on = k; stats.forEach((li, j) => li.classList.toggle('is-on', j === Math.max(0, k))); }
       },
     },
   });
-  tl.to(s, { a: 420, duration: 1, onUpdate: place }, 0)
-    .to(core, { opacity: 0, duration: 0.14 }, 0.4)
-    .to(group, { xPercent: -34, scale: 1.12, duration: 0.3, ease: 'power2.inOut' }, 0.44)
-    .fromTo(statsBox, { opacity: 0, xPercent: 6 }, { opacity: 1, xPercent: 0, duration: 0.16 }, 0.54);
+  // the ring starts low, so only its top curve crosses the page under the statement; the statement itself is read word by word
+  gsap.set(group, { y: () => innerHeight * 0.74 + radius() * 0.1, scale: 1.06 });
+  tl.fromTo(words, { opacity: 0.14 }, { opacity: 1, stagger: 0.04, duration: 0.2 }, 0)
+    .to(s, { a: 520, duration: 1, onUpdate: place }, 0)
+    .to(group, { y: 0, scale: 1, duration: 0.3, ease: 'power2.inOut' }, 0.22)
+    .to(statement, { opacity: 0, y: -60, duration: 0.1 }, 0.24)
+    .fromTo(core, { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.16 }, 0.4)
+    .to(core, { opacity: 0, duration: 0.1 }, 0.56)
+    .to(group, { xPercent: -34, scale: 1.12, duration: 0.2, ease: 'power2.inOut' }, 0.58)
+    .fromTo(statsBox, { opacity: 0, xPercent: 6 }, { opacity: 1, xPercent: 0, duration: 0.12 }, 0.66);
+}
+
+function splitWords(el: HTMLElement) {
+  const text = el.textContent || '';
+  el.setAttribute('aria-label', text);
+  el.innerHTML = text.split(/\s+/).map((w) => `<span class="w" aria-hidden="true">${w}</span>`).join(' ');
+}
+
+/* Big statements are read word by word as you scroll */
+function statements() {
+  qa('.statement .big, .about .lede').forEach((el) => {
+    el.removeAttribute('data-reveal');
+    el.classList.add('sw');
+    el.style.opacity = '1'; el.style.transform = 'none'; el.style.filter = 'none';
+    splitWords(el);
+    gsap.fromTo(qa('.w', el), { opacity: 0.14 }, { opacity: 1, stagger: 0.05, ease: 'none', scrollTrigger: { trigger: el, start: 'top 82%', end: 'bottom 48%', scrub: true } });
+  });
 }
 
 /* Partners: the names ride a ring round the heading */

@@ -98,7 +98,7 @@ html.js .tile.is-in .tile__frame img { opacity: 1; }
 .radial { --size: min(92vw, 44rem); position: relative; width: var(--size); height: var(--size); margin-inline: auto; }
 .radial__nodes { position: absolute; inset: 0; }
 .radial__nodes li { position: absolute; inset: 0; pointer-events: none; }
-.spoke { position: absolute; left: 50%; top: 50%; width: 1px; height: calc(var(--size) * 0.2); background: linear-gradient(to bottom, color-mix(in srgb, currentColor 5%, transparent), color-mix(in srgb, currentColor 28%, transparent)); transform-origin: 50% 0; transform: rotate(calc(var(--a) + var(--rot) + 180deg)) translateY(calc(var(--size) * 0.2)); transition: background 0.4s; }
+.spoke { position: absolute; left: 50%; top: 50%; width: 1px; height: calc(var(--size) * 0.2); border-radius: 50%; background: linear-gradient(to bottom, color-mix(in srgb, currentColor 5%, transparent), color-mix(in srgb, currentColor 28%, transparent)); transform-origin: 50% 0; transform: rotate(calc(var(--a) + var(--rot) + 180deg)) translateY(calc(var(--size) * 0.2)); transition: background 0.4s; }
 .node { pointer-events: auto; position: absolute; left: 50%; top: 50%; width: 2.6rem; height: 2.6rem; margin: -1.3rem; border-radius: 50%; border: 1px solid color-mix(in srgb, currentColor 28%, transparent); background: var(--rbg); color: color-mix(in srgb, currentColor 70%, transparent); font-size: 0.66rem; letter-spacing: 0.04em; transform: rotate(calc(var(--a) + var(--rot))) translateY(calc(var(--size) * -0.45)) rotate(calc((var(--a) + var(--rot)) * -1)); transition: background 0.4s, color 0.4s, border-color 0.4s, scale 0.4s; }
 .node:hover, .node:focus-visible { border-color: currentColor; color: var(--rfg); }
 .node.is-on { background: var(--orange); border-color: var(--orange); color: #11181d; scale: 1.18; }
@@ -211,16 +211,21 @@ html.fx .process__text--left { right: auto; left: 0; }
 /* ---------- Principles: pinned; the page turns from paper to night as the ring starts to turn ---------- */
 html.fx .radial-sec { --rbg: var(--paper); --rfg: var(--sink); padding: 0; }
 html.fx .radial-stage { height: 100svh; display: grid; place-items: center; }
+html.fx .radial__title { font-size: clamp(2.4rem, 5.6vw, 5.6rem); letter-spacing: -0.035em; }
+html.fx .radial__desc { font-size: 0.85rem; }
+.sw .w { display: inline-block; margin-right: 0.24em; text-indent: 0; }
 html.fx .radial { --size: min(88vh, 62vw, 50rem); }
 
 /* ---------- People: a ring of photographs turns round the year ---------- */
 html.fx .people { padding-bottom: 0; }
-html.fx .people__light { display: none; }
+html.fx .people__light, html.fx .people__lightstate { display: none; }
 html.fx .ring { display: block; position: relative; height: 100svh; overflow: hidden; }
+.ring__statement { position: absolute; left: clamp(1.25rem, 4.6vw, 4rem); top: 17svh; max-width: 17ch; z-index: 3; text-indent: 1.6em; font-size: clamp(2.4rem, 5.4vw, 5.6rem); line-height: 1.02; margin: 0; }
+.ring__statement .w { display: inline-block; margin-right: 0.22em; text-indent: 0; }
 .ring__group { position: absolute; inset: 0; will-change: transform; }
 .ring__photos { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
 .ring__photos img { position: absolute; max-width: none; left: -6.5vw; top: -8.1vw; width: 13vw; height: 16.2vw; object-fit: cover; box-shadow: 0 20px 40px -22px rgb(0 0 0 / 0.8); will-change: transform; }
-.ring__core { position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: min(34vw, 40rem); text-align: center; }
+.ring__core { opacity: 0; position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: min(34vw, 40rem); text-align: center; }
 .ring__year { margin: 0; display: grid; justify-items: center; gap: 0.2rem; }
 .ring__year strong { font-size: clamp(3.4rem, 7vw, 7.5rem); font-weight: 500; line-height: 0.95; letter-spacing: -0.04em; }
 .ring__year span { font-size: clamp(1.4rem, 3vw, 3rem); font-weight: 500; line-height: 1; letter-spacing: -0.03em; }

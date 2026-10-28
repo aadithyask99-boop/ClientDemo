@@ -21,19 +21,19 @@ Because both pictures show the same scene, **Dusk / Night** is one variable (`--
 
 ## Below the hero
 
-Two versions of the same page. **Big screens with a mouse** (`html.fx`: width over 900px, hover and fine pointer) get the full scroll-driven page, modelled on the pacing and mechanics of an editorial architecture site (the structure and the way things move, not its words, pictures or code). **Phones and touch screens** keep a light version: simple fades, slow strips and rows, no pinning. Both use the same content. Smooth, eased scrolling (Lenis) runs only in the full version.
+Two versions of the same page. **Anything with a mouse or trackpad** (`html.fx`: at least 700px wide with a fine pointer, or at least 1100px with hover; this also covers a narrow preview panel) get the full scroll-driven page, modelled on the pacing and mechanics of an editorial architecture site (the structure and the way things move, not its words, pictures or code). **Phones and touch screens** keep a light version: simple fades, slow strips and rows, no pinning. Both use the same content. Smooth, eased scrolling (Lenis) runs only in the full version.
 
 Palette: calm blue-grey paper, deep night blue for the dark sections, orange used sparingly. Type: Outfit for headings, Instrument Serif for statements and paragraphs. Images (Seedream, about 2 cents each): eight residences, two pen sketches (turned into transparent ink on paper) and six studio photographs, in `public/img/r`, `s` and `p`.
 
 The page, with what happens on big screens (and what phones get):
 
 1. **Hero to page**: the hero stays pinned, steps back and darkens while the page slides up over it like a curtain.
-2. **Studio**: headline, small meta columns, serif paragraph, awards and publications, a large serif statement. Everything eases in with a soft blur.
+2. **Studio**: headline, small meta columns, serif paragraph, awards and publications, a large serif statement. The two serif passages are read word by word as you scroll; the rest eases in with a soft blur.
 3. **Coastlines**: a table of twelve homes. The row under the pointer turns into a dark bar with an orange arrow.
 4. **Two process chapters, pinned**: the title leaves and the sketch is revealed through scattered patches of ink that grow together (a canvas mask built from the sketch), then the drawing slowly pushes in and a text panel rises over it. All scrubbed to the scroll. (Phones: the sketch wipes in left to right.)
 5. **Selected residences**: an uneven grid whose tiles drift at different speeds as you scroll, fading in from empty frames. Hover zooms and shows "Visit". (Phones: a single column, no drift.)
-6. **Principles, pinned**: eight numbered nodes round one idea. The page turns from paper to night as it begins, the ring of nodes turns with the scroll, and the idea in the middle follows the scroll; clicking a node jumps to it. (Phones: the idea cycles by itself, or on tap.)
-7. **People, pinned**: a ring of tilted photographs turns round the founding year, then slides aside and the four figures light up one after another. (Phones: a slow strip, the year, and figures that count up.)
+6. **Principles, pinned**: opens on a plain white page, a centred heading and thin lines radiating to eight numbered nodes. Scrolling changes the heading, turns the page from white to night, turns the ring, and gives each node its turn at the centre; clicking a node jumps to it. (Phones: the idea cycles by itself, or on tap.)
+7. **People, pinned**: the statement is read word by word while a curve of photographs sweeps across beneath it; the curve rises into a ring round the founding year, which turns, then slides aside as the four figures light up one after another. (Phones: a slow strip, the year, and figures that count up.)
 8. **Partners, pinned**: the names ride an oval ring round the heading as you scroll. (Phones: two slow rows.)
 9. **Footer**: contact columns and a giant ORRA ticker.
 

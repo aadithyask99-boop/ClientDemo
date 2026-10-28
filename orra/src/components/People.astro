@@ -5,7 +5,7 @@ const rail = [...people.photos, ...people.photos];
 ---
 
 <section class="sec people" data-theme="dark">
-  <div class="wrap">
+  <div class="wrap people__lightstate">
     <p class="serif big" data-reveal>{people.statement}</p>
   </div>
 
@@ -27,8 +27,9 @@ const rail = [...people.photos, ...people.photos];
   </div>
 
   <!-- Big screens: a ring of photographs turns round the founding year as you scroll, then the figures take over -->
-  <div class="ring" data-ring aria-hidden="true">
-    <div class="ring__group" data-ring-group>
+  <div class="ring" data-ring>
+    <p class="serif big ring__statement" data-ring-statement>{people.statement}</p>
+    <div class="ring__group" data-ring-group aria-hidden="true">
       <div class="ring__photos" data-ring-photos>
         {[...people.photos, ...people.photos].map((p) => <img src={`${base}/img/p/${p}.webp`} alt="" width="560" height="700" loading="lazy" decoding="async" />)}
       </div>
@@ -37,7 +38,7 @@ const rail = [...people.photos, ...people.photos];
         <div class="ring__notes"><p>Design grounded in passive strategies, material logic and environmental responsibility.</p><p>Lifecycle-minded architecture with efficient systems, honest materials and long-term value.</p></div>
       </div>
     </div>
-    <ol class="ring__stats" data-ring-stats>
+    <ol class="ring__stats" data-ring-stats aria-hidden="true">
       {people.stats.map((s) => (
         <li><strong>{s.n}{s.plus ? '+' : ''}</strong><span class="serif">{s.label}</span></li>
       ))}
