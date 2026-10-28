@@ -1,0 +1,18 @@
+---
+import { faceRows, FACE_W, PALETTE } from '../data/pixelFace';
+
+interface Props {
+  class?: string;
+  /** first and last row to show; the hover avatar crops to the head, the portrait shows all 25 rows */
+  from?: number;
+  to?: number;
+}
+const { class: cls = '', from = 0, to = 25 } = Astro.props;
+const rows = faceRows().slice(from, to);
+const cells = rows.flatMap((r, y) => [...r].map((c, x) => ({ c, x, y })).filter((p) => p.c !== 'O'));
+---
+
+<svg class={cls} viewBox={`0 0 ${FACE_W} ${rows.length}`} shape-rendering="crispEdges" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <rect width={FACE_W} height={rows.length} fill={PALETTE.O}></rect>
+  {cells.map((p) => <rect x={p.x} y={p.y} width="1.02" height="1.02" fill={PALETTE[p.c]}></rect>)}
+</svg>

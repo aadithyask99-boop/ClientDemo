@@ -18,11 +18,14 @@ npm run build:single     # the whole site as ONE self-contained HTML file in dis
 ## Things you will want to change
 
 - **Your email, links, timezone, names:** `.env` (see `.env.example`; every value is commented). `PUBLIC_*` values reach the browser, the rest never do.
-- **Your photo:** put it at `public/portrait.jpg` (or `.jpeg`, `.webp`, `.png`, `.avif`, portrait orientation, about 800x1000). It replaces the stand-in
-  monogram and assembles out of pixels when it scrolls into view. The little face that follows the cursor in the hero is a stand-in too:
-  put an `<img>` inside `[data-mm-av]` in `src/components/Hero.astro`.
-- **Copy:** the headline words are in `Hero.astro`, the service cards in `Deck.astro`, the circle words in `Chemistry.astro`, the project list in `src/data/site.ts`.
-- **Work previews:** `public/work/<slug>.webp`, one per project, 960 px wide.
+  `PUBLIC_LOCATION_LABEL` ("Based in the UK") is shown in the header just before the clock.
+- **Your photo:** put it at `public/portrait.jpg` (or `.jpeg`, `.webp`, `.png`, `.avif`, portrait orientation, about 800x1000). It replaces the pixel-art
+  stand-in in two places: the little face that follows the cursor over your name (your photo reduced to a 22 x 22 grid of pixels) and the portrait section,
+  which breaks into pixels as it leaves the middle of the screen and sharpens as it returns (scripts/portrait.ts).
+- **Copy:** the headline words and the "nothing generic" line are in `Hero.astro`, the four points and the verdict in `Chemistry.astro`, the service cards in
+  `Deck.astro`, the about text in `About.astro`, the project list (every project is a "Concept build") in `src/data/site.ts`.
+- **Work clips:** each project needs `public/work/<slug>.mp4` (a 9 second loop, 720 px wide, no audio) and `<slug>.webp` (its poster).
+  `node scripts/record-demo.mjs <slug> <url>` records both for a live site (needs Playwright and ffmpeg).
 - **Launch:** set `PUBLIC_SITE_URL` and `PUBLIC_NOINDEX=false`. While `PUBLIC_NOINDEX=true` the site tells search engines to stay away.
 
 ## Design language
@@ -37,13 +40,16 @@ npm run build:single     # the whole site as ONE self-contained HTML file in dis
 
 ## The page, top to bottom
 
-1. **Hero:** the sentence builds, "cool" gives way to "SEO-friendly", then both sit together.
-2. **Site Chemistry** (pinned, scrubbed by scroll): tick ring that swells toward the pointer, the orange core grows until it floods the screen, the view pulls back to four circles
-   (design, build, SEO, marketing) with words along each, and the one place they meet: COOL + FOUND.
-3. **Services:** three cards you can drag and flick. The heading's words follow the card you are on.
-4. **Every detail, one designer:** the portrait assembles out of pixels.
-5. **Work:** six demos, tagged client demo or concept, with a picture of each following the pointer.
-6. **Connect:** click-to-copy email, links, a live clock in the header.
+The order follows what a client asks: who is this, show me, why would it work for my business, what do I get, who am I hiring, how do I reach them.
+
+1. **Hero:** the sentence builds, "cool" gives way to "SEO-friendly", then both sit together. Hover the name for a pixel face.
+2. **Selected work:** one row per project in the manner of the reference: the name, a black frame, an arrow and "View". The picture is pixels at rest (the
+   real clip, as big blocks, still moving); hover and it resolves to the site playing. On touch it resolves as the row reaches the middle of the screen.
+3. **Site Chemistry** (pinned, scrubbed by scroll): the four things a site needs (design, build, SEO, marketing) light up in a list on the left as their
+   circles arrive. Where all four meet is the orange core, ENQUIRIES. The view zooms into it and the screen ends on the verdict.
+4. **Services:** three cards you can drag and flick. The heading's words follow the card you are on.
+5. **Every detail, one designer:** who you would be working with.
+6. **Connect:** click-to-copy email and links.
 
 ## Where things are
 
@@ -56,12 +62,13 @@ npm run build:single     # the whole site as ONE self-contained HTML file in dis
 | `src/scripts/hero.ts` | Headline sequence and the name hover |
 | `src/scripts/chem.ts`, `ring.ts` | The Site Chemistry scene |
 | `src/scripts/deck.ts`, `deck-eggs.ts` | Card dragging, flick physics, the three card scenes |
-| `src/scripts/portrait.ts` | Pixel-assembling portrait |
-| `src/scripts/work.ts` | Work list hover preview |
+| `src/scripts/portrait.ts` | Scroll-driven pixelation of the portrait |
+| `src/scripts/work.ts` | Work rows: clip loading, the pixel-to-sharp resolve |
 | `src/scripts/pixel.ts`, `patterns.ts` | The pixel icon and its four shapes |
 | `src/scripts/scroll.ts` | Lenis smooth scroll, section-aware header |
 | `src/scripts/eggs.ts`, `serp.ts` | The other easter eggs |
-| `scripts/single-file.mjs` | Bundles the built site into one HTML file |
+| `scripts/single-file.mjs` | Bundles the built site into one HTML file (videos included) |
+| `scripts/record-demo.mjs` | Records a Work clip and poster from a live site |
 
 ## Easter eggs
 
@@ -73,10 +80,15 @@ npm run build:single     # the whole site as ONE self-contained HTML file in dis
 
 ## Performance
 
-Measured on a production build (Chromium, three runs each): largest contentful paint 2.3 s on desktop and 2.2 s on a throttled phone
-(4x CPU, slow 4G), cumulative layout shift about 0. JavaScript is 57 KB gzipped (the search-page egg and its animation helper load only when
-triggered), CSS 5 KB. The intro is deliberately quick so the longest word of the headline paints before the 2.5 s line. If you lengthen the
-intro, re-measure.
+Measured on a production build (Chromium, three runs each): largest contentful paint 2.3 s on desktop and 2.3 s on a throttled phone
+(4x CPU, slow 4G), cumulative layout shift about 0. JavaScript is 58 KB gzipped (the search-page egg and its animation helper load only when
+triggered), CSS 6 KB. Two things keep it there, and both are easy to undo by accident:
+
+- The intro is deliberately quick so the longest word of the headline paints before the 2.5 s line.
+- Everything below the first screen (the pinned scene, the cards, the Work pictures and clips) is set up and fetched only after the headline has painted
+  (`setUpBelowFold` in `src/scripts/main.ts`). Fetching five posters and a clip at the start cost about 0.4 s on the throttled phone.
+
+If you change the intro or add images near the top, re-measure.
 
 ## Not built yet
 

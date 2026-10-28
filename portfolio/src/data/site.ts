@@ -12,7 +12,8 @@ export const site = {
   short: str(env.PUBLIC_OWNER_SHORT_NAME, 'Aadi'),
   role: str(env.PUBLIC_OWNER_ROLE, 'Digital Marketer & Web Designer'),
   timezone: str(env.PUBLIC_TIMEZONE, 'Europe/London'),
-  location: str(env.PUBLIC_LOCATION_LABEL),
+  /* Shown before the clock in the header */
+  location: str(env.PUBLIC_LOCATION_LABEL, 'Based in the UK'),
   email: str(env.PUBLIC_CONTACT_EMAIL),
   /* Preview builds stay out of search results until PUBLIC_NOINDEX=false */
   noindex: str(env.PUBLIC_NOINDEX, 'true') !== 'false',
@@ -29,12 +30,12 @@ export const site = {
 
 export const description = `${site.short} builds cool, SEO-friendly websites: design, development, SEO and marketing in one place.`;
 
-/* The Work list. Kinds follow the READMEs in this repo: the first three were built for real businesses as demos, the rest are concepts. */
+/* The Work list. Every project is a concept build: made to show how I work, whether or not a real business was in mind. */
 export const projects = [
-  { name: 'Doves UK', slug: 'doves-uk', kind: 'Client demo', blurb: 'Funeral and repatriation cover, one page', path: '/doves-uk/' },
-  { name: 'ILÉ IFÉ', slug: 'ileife', kind: 'Client demo', blurb: 'Facials studio, South London', path: '/ileife/' },
-  { name: 'DJ ESKA', slug: 'djeska', kind: 'Client demo', blurb: 'DJ and events, Hampshire', path: '/djeska/' },
-  { name: 'Halcyon', slug: 'halcyon', kind: 'Concept', blurb: 'Cyber security landing page, Three.js', path: '/halcyon/' },
-  { name: 'Orra', slug: 'orra', kind: 'Concept', blurb: 'Architectural residences, scroll-driven', path: '/orra/' },
-  { name: 'Brew More', slug: 'more-coffee', kind: 'Concept', blurb: 'Protein iced coffee, motion study', path: '/more-coffee/' },
+  { name: 'Doves UK', slug: 'doves-uk', kind: 'Concept build', blurb: 'Funeral and repatriation cover, one page', path: '/doves-uk/' },
+  { name: 'ILÉ IFÉ', slug: 'ileife', kind: 'Concept build', blurb: 'A facials studio in South London', path: '/ileife/' },
+  { name: 'DJ ESKA', slug: 'djeska', kind: 'Concept build', blurb: 'DJ and events in Hampshire', path: '/djeska/' },
+  { name: 'Halcyon', slug: 'halcyon', kind: 'Concept build', blurb: 'A cyber security landing page', path: '/halcyon/' },
+  { name: 'Orra', slug: 'orra', kind: 'Concept build', blurb: 'Architectural residences, driven by scroll', path: '/orra/' },
+  { name: 'Brew More', slug: 'more-coffee', kind: 'Concept build', blurb: 'Protein iced coffee, a motion study', path: '/more-coffee/' },
 ] as const;

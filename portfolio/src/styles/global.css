@@ -77,7 +77,8 @@ button {
   padding: 0;
   cursor: pointer;
 }
-ul {
+ul,
+ol {
   list-style: none;
   padding: 0;
 }
@@ -181,9 +182,26 @@ html.lenis body {
   letter-spacing: 0.02em;
   font-variant-numeric: tabular-nums;
 }
+.hdr__loc {
+  white-space: nowrap;
+}
 .hdr__time {
   display: inline-block;
   min-width: 3.2ch;
+}
+@media (max-width: 520px) {
+  .hdr__clock {
+    gap: 0.4rem;
+    font-size: 0.6875rem;
+  }
+  .pillink {
+    padding: 0.3rem 0.5rem;
+  }
+}
+@media (max-width: 380px) {
+  .hdr__dot {
+    display: none;
+  }
 }
 .hdr__dot {
   width: 7px;
@@ -202,7 +220,7 @@ html.lenis body {
 .hero {
   position: relative;
   z-index: 1;
-  min-height: calc(100svh - var(--peek));
+  min-height: min(62svh, 40rem);
   padding: max(calc(var(--pad) * 3.2), 4.5rem) var(--gx-r) var(--pad) var(--gx-l);
   display: grid;
   grid-template-rows: auto 1fr auto;
@@ -289,17 +307,20 @@ html.lenis body {
   left: 0;
   top: 0;
   z-index: 3;
-  width: 2.25rem;
-  height: 2.25rem;
-  margin: -2.6rem 0 0 -1.1rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: -4rem 0 0 -1.7rem;
   pointer-events: none;
   opacity: 0;
   transform: scale(0);
 }
-.mm__av svg {
+.mm__av svg,
+.mm__face {
+  display: block;
   width: 100%;
   height: 100%;
   border-radius: 0.5rem;
+  image-rendering: pixelated;
   box-shadow: 0 6px 18px -6px hsl(0 0% 0% / 0.35);
 }
 .mm__av img {
@@ -331,8 +352,8 @@ html.lenis body {
 }
 
 /* ------------------------------------------------------------------ Chemistry (black world)
-   Default (touch, reduced motion, no JS): title, then the finished diagram.
-   .fx (mouse): one pinned screen; scripts/chem.ts scrubs the ring, the zoom and the diagram with the scroll. */
+   Default (touch, small windows, reduced motion, no JS): the points, the finished diagram, the verdict.
+   .fx at 900px and up: one pinned screen that scripts/chem.ts scrubs with the scroll, ending on the orange verdict. */
 .chem {
   position: relative;
   z-index: 2;
@@ -343,34 +364,70 @@ html.lenis body {
 }
 .chem__pin {
   position: relative;
-  min-height: 100svh;
   display: grid;
-  align-content: center;
-  justify-items: center;
-  gap: clamp(1.25rem, 3vh, 2.25rem);
-  padding: max(5rem, 12svh) var(--gx-r) 4rem var(--gx-l);
+  gap: clamp(2rem, 5vw, 3.5rem);
+  padding: clamp(4rem, 9vw, 8rem) var(--gx-r) clamp(4rem, 9vw, 7rem) var(--gx-l);
 }
-.chem__copy {
-  text-align: center;
+.chem__grid {
+  display: grid;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4rem);
 }
-.chem__title {
-  font-size: clamp(1.5rem, 1rem + 1.6vw, 2.4rem);
-  font-weight: 450;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-}
-.chem__sub {
-  margin-top: 0.7rem;
+.chem__eyebrow {
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--cream) 55%, transparent);
+  color: var(--accent);
+}
+.chem__title {
+  max-width: 11em;
+  margin-top: 0.8rem;
+  font-size: clamp(2rem, 1rem + 3.4vw, 4.2rem);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.06em;
+  text-wrap: balance;
+}
+.chem__list {
+  display: grid;
+  gap: 1.15rem;
+  max-width: 30rem;
+  margin-top: clamp(1.5rem, 3vw, 2.2rem);
+}
+.chem__list li {
+  display: grid;
+  grid-template-columns: 0.6rem 1fr;
+  column-gap: 0.95rem;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--cream) 74%, transparent);
+}
+.chem__list li::before {
+  content: '';
+  grid-row: 1 / span 2;
+  width: 0.6rem;
+  height: 0.6rem;
+  margin-top: 0.4rem;
+  border-radius: 0.15rem;
+  background: var(--accent);
+  transition: background-color 0.3s;
+}
+.chem__list strong {
+  grid-column: 2;
+  color: var(--cream);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+.chem__list span {
+  grid-column: 2;
 }
 .chem__stage {
   position: relative;
-  width: min(88vmin, 760px);
+  width: min(100%, 640px);
   aspect-ratio: 1;
+  justify-self: center;
 }
 .chem__ring {
   display: none;
@@ -419,25 +476,61 @@ html.lenis body {
 .venn__mid {
   fill: #050505;
   font: 600 9px var(--font-mono);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
 }
-.fx .chem__pin {
-  height: 100svh;
-  min-height: 0;
-  display: grid;
-  place-items: center;
-  padding: 0 var(--gx-r) 0 var(--gx-l);
+/* the verdict: orange is where the four meet, so orange is what the page ends on */
+.chem__verdict {
+  padding: clamp(1.4rem, 4vw, 2.6rem);
+  border-radius: 1rem;
+  background: var(--accent);
+  color: #050505;
+  font-size: clamp(1.6rem, 1rem + 2.4vw, 3.2rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
 }
-.fx .chem__copy {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-content: center;
-  pointer-events: none;
-  z-index: 2;
-}
-.fx .chem__ring {
-  display: block;
+@media (min-width: 900px) {
+  .chem__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  }
+  .fx .chem__pin {
+    height: 100svh;
+    padding-block: 0;
+    align-content: center;
+  }
+  .fx .chem__stage {
+    width: min(100%, 78svh);
+  }
+  .fx .chem__ring {
+    display: block;
+  }
+  .fx .chem__list li {
+    opacity: 0.28;
+    transition: opacity 0.4s var(--ease-out);
+  }
+  .fx .chem__list li.is-seen {
+    opacity: 0.72;
+  }
+  .fx .chem__list li.is-on {
+    opacity: 1;
+  }
+  .fx .chem__verdict {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: grid;
+    place-content: center;
+    padding: var(--gx-l);
+    border-radius: 0;
+    text-align: center;
+    font-size: clamp(2rem, 1rem + 4vw, 5.4rem);
+    letter-spacing: -0.065em;
+    opacity: 0;
+  }
+  .fx .chem__verdict span {
+    max-width: 12em;
+  }
 }
 
 /* ------------------------------------------------------------------ Services: a hand of cards */
@@ -640,7 +733,7 @@ html:not(.fx) .hint--touch {
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   align-items: center;
   gap: clamp(2rem, 6vw, 6rem);
-  padding: clamp(3rem, 7vw, 6rem) var(--gx-r) calc(clamp(5rem, 10vw, 9rem) + var(--radius)) var(--gx-l);
+  padding: clamp(3rem, 7vw, 6rem) var(--gx-r) clamp(5rem, 10vw, 9rem) var(--gx-l);
   background: var(--night);
   color: var(--cream);
   overflow: clip;
@@ -655,25 +748,21 @@ html:not(.fx) .hint--touch {
   background: var(--cream-2);
 }
 .portrait__img,
-.portrait__mono,
+.portrait__face,
 .portrait__cv {
   position: absolute;
   inset: 0;
   display: block;
   width: 100%;
   height: 100%;
+}
+.portrait__img {
   object-fit: cover;
 }
+/* the canvas sits over the finished picture and shows it as pixels; it hides itself once the picture is sharp */
 .portrait__cv {
-  display: none;
-}
-/* while the pixels assemble, the finished picture waits underneath */
-.portrait[data-armed] .portrait__img,
-.portrait[data-armed] .portrait__mono {
-  opacity: 0;
-}
-.portrait[data-armed] .portrait__cv {
-  display: block;
+  visibility: hidden;
+  image-rendering: pixelated;
 }
 .about__copy {
   display: grid;
@@ -698,118 +787,145 @@ html:not(.fx) .hint--touch {
   }
 }
 
-/* ------------------------------------------------------------------ Work */
+/* ------------------------------------------------------------------ Work
+   One project per row: the name, a black frame with the site playing in it, then the arrow. At rest the picture is pixels; on hover it resolves. */
 .work {
   position: relative;
   z-index: 3;
-  /* the cream page slides up over the black one with rounded corners, like the black sections do over the cream hero */
-  margin-top: calc(var(--radius) * -1);
-  border-radius: var(--radius) var(--radius) 0 0;
   background: var(--cream);
-  padding: clamp(5rem, 10vw, 9rem) var(--gx-r) clamp(4rem, 8vw, 7rem) var(--gx-l);
+  padding: 0 var(--gx-r) clamp(4rem, 8vw, 7rem) var(--gx-l);
 }
-.work__head {
-  display: grid;
-  gap: 1rem;
-  margin-bottom: clamp(2rem, 5vw, 4rem);
-}
-.work__title {
-  font-size: clamp(2.3rem, 1.1rem + 4.6vw, 5.4rem);
+.work__label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 1rem;
+  padding-top: 1rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.065em;
+  letter-spacing: -0.01em;
 }
-.work__lede {
-  max-width: 26rem;
-  font-size: 0.9375rem;
+.work__label span {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 450;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--muted);
 }
-.row {
-  position: relative;
+.wi__link {
   display: grid;
-  grid-template-columns: 2.5rem minmax(0, 1.1fr) minmax(0, 1.4fr) 2.2rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, clamp(19rem, 38vw, 38rem)) minmax(0, 1fr);
   align-items: center;
-  gap: 1rem;
-  padding: clamp(1rem, 2.2vw, 1.6rem) 0;
-  border-top: 1px solid var(--line);
-  transition: padding 0.5s var(--ease-out), background-color 0.4s var(--ease-out);
+  gap: clamp(1rem, 3vw, 3rem);
+  min-height: min(70svh, 44rem);
+  padding-block: clamp(1rem, 3vw, 2rem);
 }
-.work__list li:last-child .row {
-  border-bottom: 1px solid var(--line);
+.wi__name {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: start;
+  align-content: center;
 }
-.row__n {
+.wi__n {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   color: var(--muted);
 }
-.row__name {
-  font-size: clamp(1.5rem, 0.9rem + 2.4vw, 3.2rem);
+.wi__name h3 {
+  font-size: clamp(2rem, 0.9rem + 3.6vw, 4.6rem);
   font-weight: 600;
-  letter-spacing: -0.06em;
-  line-height: 1.05;
-  transition: transform 0.5s var(--ease-out);
+  line-height: 1;
+  letter-spacing: -0.065em;
 }
-.row__meta {
-  display: grid;
-  gap: 0.25rem;
-  font-size: 0.875rem;
+.wi__blurb {
+  max-width: 16rem;
+  font-size: 0.9375rem;
   color: var(--muted);
 }
-.row__kind {
-  width: max-content;
-  padding: 0.1rem 0.5rem;
+.wi__tag {
+  padding: 0.12rem 0.55rem;
   border-radius: 0.4rem;
-  background: var(--cream-2);
-  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--line);
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
-.row__kind.is-concept {
-  background: transparent;
-  box-shadow: inset 0 0 0 1px var(--line);
+.wi__frame {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  border-radius: 0.9rem;
+  background: #030303;
+  box-shadow: 0 30px 60px -34px #000a;
+  will-change: transform;
 }
-.row__arrow {
-  width: 1.7rem;
-  height: auto;
-  justify-self: end;
-  color: var(--accent-ink);
-  transform: translateX(-6px);
+.wi__media {
+  position: absolute;
+  inset: 7% 6%;
+  overflow: hidden;
+  border-radius: 0.3rem;
+  background: #111;
+}
+.wi__poster,
+.wi__media video,
+.wi__px {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.wi__media video {
   opacity: 0;
-  transition: transform 0.5s var(--ease-out), opacity 0.3s;
+  transition: opacity 0.4s;
+}
+.wi__media video.is-playing {
+  opacity: 1;
+}
+.wi__px {
+  visibility: hidden;
+  image-rendering: pixelated;
+}
+.wi__cta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  font-size: clamp(1.4rem, 0.8rem + 2vw, 3rem);
+  font-weight: 600;
+  letter-spacing: -0.06em;
+}
+.wi__cta svg {
+  width: 1.5em;
+  height: auto;
+  color: var(--accent-ink);
+  transition: transform 0.5s var(--ease-out);
 }
 @media (hover: hover) {
-  .row:hover {
-    background: var(--cream-2);
-    padding-inline: 1rem;
-  }
-  .row:hover .row__name {
-    transform: translateX(0.4rem);
-  }
-  .row:hover .row__arrow {
-    transform: none;
-    opacity: 1;
+  .wi__link:hover .wi__cta svg {
+    transform: translateX(0.35em);
   }
 }
-@media (hover: none) {
-  .row__arrow {
-    opacity: 1;
-    transform: none;
+@media (max-width: 799px) {
+  .wi__link {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'name cta' 'frame frame';
+    align-items: start;
+    min-height: 0;
+    gap: 1.1rem;
+    padding-block: 1.6rem;
   }
-}
-@media (max-width: 699px) {
-  .row {
-    grid-template-columns: 1.8rem minmax(0, 1fr) 1.6rem;
-    row-gap: 0.4rem;
+  .wi__name {
+    grid-area: name;
   }
-  .row__meta {
-    grid-column: 2;
-    grid-row: 2;
+  .wi__cta {
+    grid-area: cta;
+    padding-top: 0.4rem;
   }
-  .row__arrow {
-    grid-column: 3;
-    grid-row: 1;
+  .wi__frame {
+    grid-area: frame;
   }
 }
 
@@ -885,39 +1001,6 @@ html:not(.fx) .hint--touch {
   font-size: 0.6875rem;
   letter-spacing: 0.04em;
   color: color-mix(in srgb, var(--cream) 50%, transparent);
-}
-
-/* ------------------------------------------------------------------ Work: floating preview */
-.peek {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 60;
-  width: clamp(15rem, 24vw, 22rem);
-  aspect-ratio: 8 / 5;
-  overflow: hidden;
-  border-radius: 0.7rem;
-  background: #111;
-  box-shadow: 0 24px 50px -22px #0009;
-  pointer-events: none;
-  opacity: 0;
-}
-.peek img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 0.25s;
-}
-.peek img.is-on {
-  opacity: 1;
-}
-@media (hover: none) {
-  .peek {
-    display: none;
-  }
 }
 
 /* ------------------------------------------------------------------ Card scenes (the flick easter eggs) */

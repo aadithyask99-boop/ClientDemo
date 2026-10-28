@@ -1,8 +1,8 @@
 ---
-/* Site Chemistry.
-   Scene one: a ring of ticks that swells toward the pointer. Scrolling, the orange core at the centre grows until it floods the screen,
-   then the view pulls back to the whole diagram: four circles (design, build, SEO, marketing) and the one place they all meet.
-   Without the scroll scene (touch, reduced motion, no JS) the finished diagram is simply shown. */
+/* Site Chemistry: why a website needs four things at once.
+   Left, plain words for a client. Right, four circles that appear one by one as each idea is read; a ring of ticks swells toward the pointer.
+   Where all four meet (the orange core) is the point: enquiries. The scene ends by zooming into it, and the page says what it means.
+   Without the scroll scene (touch, small windows, reduced motion, no JS) everything is simply shown, finished. */
 const N = 96;
 const C = 338;
 const R = 330;
@@ -15,10 +15,17 @@ const r = 150; // circle radius
 const d = 95; // how far each circle sits from the centre
 const rad = (a: number) => (a * Math.PI) / 180;
 const circles = [
-  { id: 'design', cx: 0, cy: -d, out: -90, code: 'De', name: 'Design', arc: 'Layout | Motion | Taste', lx: 0, ly: -176 },
+  { id: 'design', cx: 0, cy: -d, out: -90, code: 'De', name: 'Design', arc: 'Brand | Layout | Motion', lx: 0, ly: -176 },
   { id: 'seo', cx: d, cy: 0, out: 0, code: 'Se', name: 'SEO', arc: 'Intent | Structure | Schema', lx: 176, ly: 0 },
   { id: 'marketing', cx: 0, cy: d, out: 90, code: 'Ma', name: 'Marketing', arc: 'Offer | Audience | Conversion', lx: 0, ly: 176 },
-  { id: 'build', cx: -d, cy: 0, out: 180, code: 'Bu', name: 'Build', arc: 'Astro | Speed | Accessibility', lx: -176, ly: 0 },
+  { id: 'build', cx: -d, cy: 0, out: 180, code: 'Bu', name: 'Build', arc: 'Speed | Accessibility | Clean code', lx: -176, ly: 0 },
+];
+/* The list on the left follows the order the circles appear in */
+const points = [
+  { id: 'design', title: 'Design', text: 'It looks like your business, not like every other site. Visitors trust you within seconds.' },
+  { id: 'build', title: 'Build', text: 'It loads fast, works on every device and is easy to use, so nobody gives up.' },
+  { id: 'seo', title: 'SEO', text: 'It shows up when people search for what you do.' },
+  { id: 'marketing', title: 'Marketing', text: 'It brings the right people in and makes it easy for them to get in touch.' },
 ];
 /* Text runs along the outside of each circle. The bottom one runs the other way round so it still reads left to right. */
 function arcPath(c: (typeof circles)[number]) {
@@ -33,59 +40,72 @@ function arcPath(c: (typeof circles)[number]) {
 
 <section class="chem" id="service" data-world-section="dark" aria-labelledby="chem-title">
   <div class="chem__pin" data-chem-pin>
-    <div class="chem__copy" data-chem-copy>
-      <h2 id="chem-title" class="chem__title">Site Chemistry</h2>
-      <p class="chem__sub">Design · Build · SEO · Marketing</p>
-    </div>
+    <div class="chem__grid">
+      <div class="chem__text" data-chem-text>
+        <p class="chem__eyebrow">Site Chemistry</p>
+        <h2 id="chem-title" class="chem__title">A good website needs four things at once.</h2>
+        <ol class="chem__list" data-chem-list>
+          {
+            points.map((p) => (
+              <li data-ci={p.id}>
+                <strong>{p.title}</strong>
+                <span>{p.text}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
 
-    <div class="chem__stage">
-      <svg class="chem__ring" data-ring viewBox="0 0 676 676" aria-hidden="true">
-        {ticks.map((t) => <line data-a={t.a} x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2} stroke="currentColor" stroke-width="2" />)}
-      </svg>
+      <div class="chem__stage">
+        <svg class="chem__ring" data-ring viewBox="0 0 676 676" aria-hidden="true">
+          {ticks.map((t) => <line data-a={t.a} x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2} stroke="currentColor" stroke-width="2" />)}
+        </svg>
 
-      <svg
-        class="venn"
-        data-venn
-        viewBox="-300 -300 600 600"
-        role="img"
-        aria-label="Four overlapping circles: design, build, SEO and marketing. Where all four meet: cool and found."
-      >
-        <defs>
-          {circles.map((c) => <clipPath id={`clip-${c.id}`}><circle cx={c.cx} cy={c.cy} r={r} /></clipPath>)}
-          {circles.map((c) => <path id={`arc-${c.id}`} d={arcPath(c)} />)}
-        </defs>
-        <g data-venn-body>
-          {circles.map((c) => <circle class="venn__c" data-vc cx={c.cx} cy={c.cy} r={r} />)}
-          <g clip-path="url(#clip-design)">
-            <g clip-path="url(#clip-seo)">
-              <g clip-path="url(#clip-marketing)">
-                <g clip-path="url(#clip-build)">
-                  <rect class="venn__core" data-vcore x="-300" y="-300" width="600" height="600" />
+        <svg
+          class="venn"
+          data-venn
+          viewBox="-300 -300 600 600"
+          role="img"
+          aria-label="Four overlapping circles: design, build, SEO and marketing. Where all four meet: enquiries."
+        >
+          <defs>
+            {circles.map((c) => <clipPath id={`clip-${c.id}`}><circle cx={c.cx} cy={c.cy} r={r} /></clipPath>)}
+            {circles.map((c) => <path id={`arc-${c.id}`} d={arcPath(c)} />)}
+          </defs>
+          <g data-venn-body>
+            {circles.map((c) => <circle class="venn__c" data-vc={c.id} cx={c.cx} cy={c.cy} r={r} />)}
+            <g clip-path="url(#clip-design)">
+              <g clip-path="url(#clip-seo)">
+                <g clip-path="url(#clip-marketing)">
+                  <g clip-path="url(#clip-build)">
+                    <rect class="venn__core" data-vcore x="-300" y="-300" width="600" height="600" />
+                  </g>
                 </g>
               </g>
             </g>
+            {
+              circles.map((c) => (
+                <g data-vl={c.id}>
+                  <text class="venn__code" x={c.lx} y={c.ly + 6} text-anchor="middle">{c.code}</text>
+                  <text class="venn__name" x={c.lx} y={c.ly + 26} text-anchor="middle">{c.name}</text>
+                </g>
+              ))
+            }
+            {
+              circles.map((c) => (
+                <text class="venn__arc" data-va={c.id}>
+                  <textPath href={`#arc-${c.id}`} startOffset="50%" text-anchor="middle">{c.arc}</textPath>
+                </text>
+              ))
+            }
+            <text class="venn__mid" data-vm x="0" y="4" text-anchor="middle">ENQUIRIES</text>
           </g>
-          {
-            circles.map((c) => (
-              <g data-vl>
-                <text class="venn__code" x={c.lx} y={c.ly + 6} text-anchor="middle">{c.code}</text>
-                <text class="venn__name" x={c.lx} y={c.ly + 26} text-anchor="middle">{c.name}</text>
-              </g>
-            ))
-          }
-          {
-            circles.map((c) => (
-              <text class="venn__arc" data-va>
-                <textPath href={`#arc-${c.id}`} startOffset="50%" text-anchor="middle">{c.arc}</textPath>
-              </text>
-            ))
-          }
-          <g data-vm>
-            <text class="venn__mid" x="0" y="-3" text-anchor="middle">COOL</text>
-            <text class="venn__mid" x="0" y="11" text-anchor="middle">+ FOUND</text>
-          </g>
-        </g>
-      </svg>
+        </svg>
+      </div>
     </div>
+
+    <p class="chem__verdict" data-chem-verdict>
+      <span>Pretty is easy. Pretty that gets you enquiries is the job.</span>
+    </p>
   </div>
 </section>

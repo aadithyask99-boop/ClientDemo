@@ -24,7 +24,7 @@ const html = readFileSync(join(dist, 'index.html'), 'utf8');
 const head = html.match(/<head>([\s\S]*?)<\/head>/)?.[1] ?? '';
 let body = html.match(/<body[^>]*>([\s\S]*?)<\/body>/)?.[1] ?? '';
 const dataUri = (file, mime) => `data:${mime};base64,${readFileSync(file).toString('base64')}`;
-const mimeOf = (f) => ({ webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', avif: 'image/avif', svg: 'image/svg+xml' })[f.split('.').pop()] ?? 'application/octet-stream';
+const mimeOf = (f) => ({ webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', avif: 'image/avif', svg: 'image/svg+xml', mp4: 'video/mp4' })[f.split('.').pop()] ?? 'application/octet-stream';
 
 // 2. CSS: linked and inline, with the latin font faces embedded and the other scripts dropped
 let css = '';
@@ -39,11 +39,13 @@ css = css.replace(/@font-face\{[^}]*\}/g, (face) => {
 // 3. the small inline script from the <head> (it adds the js / fx classes before anything paints)
 const headScripts = [...head.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]).join('\n');
 
-// 4. images: Work previews (and a portrait, if there is one) become data URIs
-body = body.replace(/(data-src|src)="\/([^"]+\.(?:webp|png|jpe?g|avif|svg))"/g, (whole, attr, path) => {
+// 4. images and the Work videos (and a portrait, if there is one) become data URIs
+body = body.replace(/(data-src|data-video|src)="\/([^"]+\.(?:webp|png|jpe?g|avif|svg|mp4))"/g, (whole, attr, path) => {
   const file = join(dist, path);
   return existsSync(file) ? `${attr}="${dataUri(file, mimeOf(path))}"` : whole;
 });
+// the no-JavaScript image copies are not needed in a single file that already carries its pictures
+body = body.replace(/<noscript>[\s\S]*?<\/noscript>/g, '');
 // drop the module script, the analytics beacon and any other external script
 body = body.replace(/<script[^>]*\bsrc="[^"]*"[^>]*><\/script>/g, '');
 

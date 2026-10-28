@@ -2,47 +2,65 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { q, qa } from './util';
 
-/* Site Chemistry, scrubbed by the scroll while the screen stays pinned.
-     0.02-0.16  the orange core at the centre of the ring grows until it floods the screen; ring and title step back
-     0.16-0.58  the view pulls back and the four circles come into sight around the core
-     0.52-0.70  circle names, the words along each circle, and the line in the middle arrive
-     0.70-0.84  the finished diagram holds so it can be read
-     0.84-1.00  it softens away as the service cards come up
-   Without .fx (touch, reduced motion, no JS) none of this runs and the finished diagram is just shown. */
+/* Site Chemistry, scrubbed by the scroll while the screen stays pinned. It tells the story in the order a client would ask the questions:
+     0.05-0.65  four ideas, one at a time: its circle appears, its name and words arrive, and its line in the list on the left lights up
+     0.66-0.72  where all four meet, the orange core and the word it stands for: ENQUIRIES
+     0.72-0.84  the view zooms into that core and the rest steps back
+     0.84-1.00  the orange fills the screen and says what it means
+   Without .fx, below 900px wide, or with reduced motion, none of this runs and the finished diagram is just shown. */
+const ORDER = ['design', 'build', 'seo', 'marketing'];
+
 export function initChem() {
-  if (!document.documentElement.classList.contains('fx')) return;
+  const root = document.documentElement;
+  if (!root.classList.contains('fx') || !window.matchMedia('(min-width: 900px)').matches) return;
   const sec = q('.chem');
   const pin = q('[data-chem-pin]');
+  const text = q('[data-chem-text]');
   const ring = q('[data-ring]');
-  const copy = q('[data-chem-copy]');
-  const venn = q<SVGSVGElement>('[data-venn]');
+  const venn = q('[data-venn]');
   const body = q('[data-venn-body]');
+  const core = q('[data-vcore]');
   const mid = q('[data-vm]');
-  if (!sec || !pin || !ring || !copy || !venn || !body || !mid) return;
-  const circles = qa('[data-vc]');
-  const labels = qa('[data-vl]');
-  const arcs = qa('[data-va]');
+  const verdict = q('[data-chem-verdict]');
+  const items = ORDER.map((id) => q(`[data-ci="${id}"]`)!);
+  const circles = ORDER.map((id) => q(`[data-vc="${id}"]`)!);
+  const labels = ORDER.map((id) => q(`[data-vl="${id}"]`)!);
+  const arcs = ORDER.map((id) => q(`[data-va="${id}"]`)!);
+  if (!sec || !pin || !text || !ring || !venn || !body || !core || !mid || !verdict || [...items, ...circles, ...labels, ...arcs].some((e) => !e)) return;
 
   gsap.registerPlugin(ScrollTrigger);
-  gsap.set(venn, { opacity: 0 });
-  // the diagram is symmetric about the middle of its viewBox, so GSAP's default origin (the group's own centre) is the centre of the scene
-  gsap.set(body, { transformOrigin: '50% 50%', scale: 0.25, rotation: 0 });
-  gsap.set([...circles, ...arcs, mid], { opacity: 0 });
-  gsap.set(labels, { opacity: 0, y: 10 });
+  gsap.set(circles, { opacity: 0, scale: 0.86 });
+  gsap.set([...labels, ...arcs, core, mid], { opacity: 0 });
+  gsap.set(body, { transformOrigin: '50% 50%', scale: 1, rotation: 0 }); // the diagram is symmetric about its centre, so this is the centre of the scene
+  gsap.set(verdict, { opacity: 0 });
 
-  gsap
-    .timeline({
-      defaults: { ease: 'none' },
-      scrollTrigger: { trigger: sec, start: 'top top', end: '+=440%', pin, scrub: true, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1 },
-    })
-    .to(venn, { opacity: 1, duration: 0.02 }, 0.02)
-    .to(body, { scale: 8, rotation: -10, duration: 0.14, ease: 'power2.in' }, 0.02)
-    .to(ring, { opacity: 0, scale: 1.25, duration: 0.1 }, 0.03)
-    .to(copy, { opacity: 0, y: -24, duration: 0.08 }, 0.02)
-    .to(body, { scale: 1, rotation: 0, duration: 0.42, ease: 'power3.inOut' }, 0.16)
-    .to(circles, { opacity: 1, duration: 0.14, stagger: 0.04 }, 0.38)
-    .to(labels, { opacity: 1, y: 0, duration: 0.1, stagger: 0.04 }, 0.52)
-    .to(arcs, { opacity: 1, duration: 0.12, stagger: 0.04 }, 0.56)
-    .to(mid, { opacity: 1, duration: 0.08 }, 0.68)
-    .to(venn, { opacity: 0, scale: 0.94, filter: 'blur(10px)', duration: 0.16, ease: 'power2.in' }, 0.84);
+  // which line of the list is lit, and which header colour reads on the screen at this point
+  const mark = (p: number) => {
+    const idx = p < 0.05 ? -1 : p >= 0.66 ? 4 : Math.min(3, Math.floor((p - 0.05) / 0.15));
+    items.forEach((li, i) => {
+      li.classList.toggle('is-on', i === idx);
+      li.classList.toggle('is-seen', i < idx);
+    });
+    root.dataset.world = p > 0.86 ? 'light' : 'dark'; // ink on the orange, cream on the black
+  };
+
+  const tl = gsap.timeline({
+    defaults: { ease: 'none' },
+    scrollTrigger: { trigger: sec, start: 'top top', end: '+=520%', pin, scrub: true, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1, onUpdate: (self) => mark(self.progress) },
+  });
+  ORDER.forEach((_, i) => {
+    const s = 0.05 + i * 0.15;
+    tl.to(circles[i], { opacity: 1, scale: 1, duration: 0.08, ease: 'power2.out' }, s)
+      .to(labels[i], { opacity: 1, duration: 0.06 }, s + 0.04)
+      .to(arcs[i], { opacity: 1, duration: 0.07 }, s + 0.06);
+  });
+  tl.to(core, { opacity: 1, duration: 0.06 }, 0.66)
+    .to(mid, { opacity: 1, duration: 0.05 }, 0.7)
+    .to(body, { scale: 16, rotation: -10, duration: 0.16, ease: 'power2.in' }, 0.72)
+    .to([ring, text], { opacity: 0, duration: 0.1 }, 0.72)
+    .to(verdict, { opacity: 1, duration: 0.08 }, 0.84)
+    .to(venn, { opacity: 0, duration: 0.06 }, 0.86) // the zoomed diagram is gone before the verdict is read, so nothing ghosts through it
+    // The scrub maps the timeline's whole length onto the scroll distance, so it must end at exactly 1: this empty tween holds the verdict on screen
+    // from 0.92 to the end, and keeps every position above equal to the share of the scroll it takes.
+    .to({}, { duration: 0.08 }, 0.92);
 }

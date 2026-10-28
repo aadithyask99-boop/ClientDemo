@@ -149,3 +149,23 @@ export function initCredits(pixel: Pixel | null) {
     chars.forEach((c) => c.style.setProperty('--p', '0'));
   });
 }
+
+/* With a photo in public/portrait.jpg, the little face that follows the cursor is that photo reduced to a 22 x 22 grid of pixels. */
+export function initFace() {
+  const cv = q<HTMLCanvasElement>('[data-face-src]');
+  if (!cv) return;
+  const img = new Image();
+  img.src = cv.dataset.faceSrc ?? '';
+  img.decode().then(() => {
+    const n = 22;
+    const off = document.createElement('canvas');
+    off.width = n;
+    off.height = n;
+    // a square from the upper middle of the photo, where the face usually is
+    const side = Math.min(img.naturalWidth, img.naturalHeight * 0.82);
+    off.getContext('2d')!.drawImage(img, (img.naturalWidth - side) / 2, img.naturalHeight * 0.04, side, side, 0, 0, n, n);
+    const c = cv.getContext('2d')!;
+    c.imageSmoothingEnabled = false;
+    c.drawImage(off, 0, 0, n, n, 0, 0, cv.width, cv.height);
+  }).catch(() => undefined);
+}

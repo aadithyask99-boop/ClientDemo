@@ -1,10 +1,13 @@
 ---
 import { site } from '../data/site';
+import { portraitFile } from '../data/portrait';
 import Pixel from './Pixel.astro';
+import PixelFace from './PixelFace.astro';
 
 /* The headline is real text in the page. The words are separate so the intro can build the sentence one word at a time,
    but screen readers get the whole sentence from the label and search engines read the text as written. */
 const label = `Hi, I'm ${site.short} and I make cool, SEO-friendly websites.`;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <section class="hero" id="top" data-world-section="light">
@@ -25,17 +28,14 @@ const label = `Hi, I'm ${site.short} and I make cool, SEO-friendly websites.`;
     <p class="hero__credits">
       <span class="mm" data-mm>
         <span class="mm__av" data-mm-av aria-hidden="true">
-          <!-- Stand-in avatar. Swap for the portrait (see scripts/hero.ts) -->
-          <svg viewBox="0 0 9 9" shape-rendering="crispEdges">
-            <rect width="9" height="9" rx=".7" fill="#ff5a1f"></rect>
-            <g fill="#0a0a0a">
-              <rect x="2" y="2" width="2" height="2"></rect>
-              <rect x="5" y="2" width="2" height="2"></rect>
-              <rect x="1" y="5" width="1" height="1"></rect>
-              <rect x="7" y="5" width="1" height="1"></rect>
-              <rect x="2" y="6" width="5" height="1"></rect>
-            </g>
-          </svg>
+          {
+            portraitFile ? (
+              /* with a photo: the face is that photo, pixelated (scripts/hero.ts) */
+              <canvas class="mm__face" data-face-src={`${base}/${portraitFile}`} width="88" height="88" />
+            ) : (
+              <PixelFace class="mm__face" from={2} to={22} />
+            )
+          }
         </span>
         <span class="mm__text" data-mm-text>{site.owner} · {site.role}</span>
       </span>
@@ -43,9 +43,9 @@ const label = `Hi, I'm ${site.short} and I make cool, SEO-friendly websites.`;
   </div>
 
   <div class="hero__foot">
-    <p class="hero__note">Design, development, SEO and marketing. One person, one brief.</p>
+    <p class="hero__note">Built for your business, never from a template. Nothing generic.</p>
     <p class="hero__loc">
-      {site.location || 'Remote worldwide'}
+      Remote worldwide
       <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
         <circle cx="10" cy="10" r="8"></circle>
         <path d="M2 10h16M10 2c-3 3-3 13 0 16M10 2c3 3 3 13 0 16"></path>

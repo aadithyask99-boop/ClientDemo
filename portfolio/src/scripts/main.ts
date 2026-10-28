@@ -1,8 +1,9 @@
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { q, qa, reduced, fine } from './util';
 import { initPixel } from './pixel';
 import { initScroll } from './scroll';
-import { initHero, initCredits } from './hero';
+import { initHero, initCredits, initFace } from './hero';
 import { initCursor } from './cursor';
 import { initRing } from './ring';
 import { initEggs } from './eggs';
@@ -60,23 +61,37 @@ const [prePixelEl, heroPixelEl] = [q('.pre__pixel'), q('.hero__pixel')];
 const prePixel = prePixelEl ? initPixel(prePixelEl) : null;
 const heroPixel = heroPixelEl ? initPixel(heroPixelEl) : null;
 
+/* Only what the first screen needs is set up straight away. Everything below the fold waits until the headline has painted, so that none of it
+   competes with the page's largest paint (the longest word of the headline) on a slow phone. */
 initScroll();
-initChem(); // creates the pinned scene; kept in page order with the other scroll triggers
 initCursor();
-initRing();
-initDeck();
-void initPortrait();
-initWork();
 initClock();
 initCopy();
-initEggs();
 const hero = initHero();
 initCredits(heroPixel);
+
+let belowFold = false;
+function setUpBelowFold() {
+  if (belowFold) return;
+  belowFold = true;
+  initChem(); // the pinned scene; created before the others so its scroll distance is counted
+  initRing();
+  initDeck();
+  void initPortrait();
+  initWork();
+  initEggs();
+  initFace();
+  ScrollTrigger.refresh();
+}
+// ...at the latest 3 seconds after load, in case the intro never runs; sooner if the person starts scrolling
+window.setTimeout(setUpBelowFold, 3000);
+window.addEventListener('scroll', setUpBelowFold, { once: true, passive: true });
 
 async function intro() {
   const pre = q('[data-pre]');
   if (!js || reduced || !pre) {
     pre?.remove();
+    setUpBelowFold();
     return;
   }
   prePixel?.start(520);
@@ -86,5 +101,7 @@ async function intro() {
   prePixel?.stop();
   gsap.to(pre, { yPercent: -100, duration: 0.8, ease: 'power4.inOut', onComplete: () => pre.remove() });
   gsap.delayedCall(fine ? 0.3 : 0.12, () => { hero.play(fine ? 1 : 1.7); heroPixel?.start(); });
+  // the key word lands about 1.5s into the sequence; set the rest up just after it
+  gsap.delayedCall(fine ? 2.1 : 1.4, setUpBelowFold);
 }
 void intro();

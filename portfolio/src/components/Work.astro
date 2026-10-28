@@ -1,35 +1,44 @@
 ---
 import { site, projects } from '../data/site';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const arrow = 'M110 47.42 66.064 95 54.92 83.702l26.108-27.848H0V38.987h81.028L54.92 11.139 66.064 0z';
 ---
 
 <section class="work" id="work" data-world-section="light" aria-labelledby="work-title">
-  <div class="work__head">
-    <h2 id="work-title" class="work__title">Selected work</h2>
-    <p class="work__lede">Real businesses and made-up ones, all built with the same care. Each opens a full site.</p>
-  </div>
-  <ul class="work__list">
+  <h2 id="work-title" class="work__label">
+    Selected work
+    <span>Concept builds, made to show how I work</span>
+  </h2>
+
+  <ol class="work__list">
     {
       projects.map((p, i) => (
-        <li>
-          <a class="row" href={`${site.demosUrl}${p.path}`} target="_blank" rel="noopener" data-cursor="View" data-peek={p.slug}>
-            <span class="row__n">{String(i + 1).padStart(2, '0')}</span>
-            <span class="row__name">{p.name}</span>
-            <span class="row__meta">
-              <span class={`row__kind${p.kind === 'Concept' ? ' is-concept' : ''}`}>{p.kind}</span>
-              {p.blurb}
-            </span>
-            <svg class="row__arrow" viewBox="0 0 110 95" aria-hidden="true">
-              <path fill="currentColor" d="M110 47.42 66.064 95 54.92 83.702l26.108-27.848H0V38.987h81.028L54.92 11.139 66.064 0z" />
-            </svg>
+        <li class="wi" data-wi>
+          <a class="wi__link" href={`${site.demosUrl}${p.path}`} target="_blank" rel="noopener" data-cursor="View" aria-label={`${p.name}: ${p.kind}. Opens the full site.`}>
+            <div class="wi__name">
+              <span class="wi__n">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{p.name}</h3>
+              <p class="wi__blurb">{p.blurb}</p>
+              <span class="wi__tag">{p.kind}</span>
+            </div>
+
+            <div class="wi__frame" data-frame>
+              <div class="wi__media" data-media>
+                {/* the picture is fetched by scripts/work.ts once the headline has painted; without JavaScript the noscript copy is used */}
+                <img class="wi__poster" data-src={`${base}/work/${p.slug}.webp`} alt="" width="960" height="600" decoding="async" />
+                <noscript><img class="wi__poster" src={`${base}/work/${p.slug}.webp`} alt="" width="960" height="600" loading="lazy" /></noscript>
+                <video muted loop playsinline preload="none" data-video={`${base}/work/${p.slug}.mp4`} aria-hidden="true" tabindex="-1" />
+                <canvas class="wi__px" aria-hidden="true" />
+              </div>
+            </div>
+
+            <div class="wi__cta" aria-hidden="true">
+              <svg viewBox="0 0 110 95"><path fill="currentColor" d={arrow} /></svg>
+              <span>View</span>
+            </div>
           </a>
         </li>
       ))
     }
-  </ul>
-
-  <!-- A floating preview that follows the pointer over the list. Images load when the browser is idle, and only with a mouse. -->
-  <div class="peek" data-peek-box aria-hidden="true">
-    {projects.map((p) => <img data-peek-img={p.slug} data-src={`${base}/work/${p.slug}.webp`} alt="" width="960" height="600" decoding="async" />)}
-  </div>
+  </ol>
 </section>

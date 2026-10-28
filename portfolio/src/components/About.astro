@@ -1,31 +1,20 @@
 ---
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
 import { site } from '../data/site';
+import { portraitFile } from '../data/portrait';
+import PixelFace from './PixelFace.astro';
 
-/* Drop a photo at public/portrait.jpg (or .jpeg .webp .png .avif) and it replaces the stand-in monogram automatically.
-   Either way it assembles out of pixels when it scrolls into view. */
-const photo = ['jpg', 'jpeg', 'webp', 'png', 'avif'].map((e) => `portrait.${e}`).find((f) => existsSync(join(process.cwd(), 'public', f)));
+/* Who you would be working with. Drop a photo at public/portrait.jpg and it replaces the pixel-art stand-in. As you scroll past, the picture
+   goes from pixels to sharp as it reaches the middle of the screen and back to pixels as it leaves (scripts/portrait.ts). */
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const monogram = ['..###..', '.#...#.', '#.....#', '#.....#', '#######', '#.....#', '#.....#', '#.....#', '#.....#'];
-const cells = monogram.flatMap((row, y) => [...row].map((c, x) => (c === '#' ? { x: x + 2, y: y + 2 } : null)).filter(Boolean)) as { x: number; y: number }[];
 ---
 
 <section class="about" id="about" data-world-section="dark" aria-labelledby="about-title">
   <figure class="portrait" data-portrait>
     {
-      photo ? (
-        <img class="portrait__img" src={`${base}/${photo}`} alt={`Portrait of ${site.owner}`} width="800" height="1000" loading="lazy" decoding="async" />
+      portraitFile ? (
+        <img class="portrait__img" src={`${base}/${portraitFile}`} alt={`Portrait of ${site.owner}`} width="800" height="1000" loading="lazy" decoding="async" />
       ) : (
-        <svg class="portrait__mono" viewBox="0 0 11 13.75" shape-rendering="crispEdges" role="img" aria-label={`Monogram for ${site.owner}`} preserveAspectRatio="xMidYMid slice">
-          <rect width="11" height="13.75" fill="#f9f4ec" />
-          <g fill="#0a0a0a">{cells.map((c) => <rect x={c.x} y={c.y + 0.9} width="1" height="1" />)}</g>
-          <g fill="#ff5a1f">
-            <rect x="9" y="0.9" width="1" height="1" />
-            <rect x="8" y="1.9" width="3" height="1" />
-            <rect x="9" y="2.9" width="1" height="1" />
-          </g>
-        </svg>
+        <PixelFace class="portrait__face" />
       )
     }
     <canvas class="portrait__cv" aria-hidden="true"></canvas>
@@ -34,9 +23,12 @@ const cells = monogram.flatMap((row, y) => [...row].map((c, x) => (c === '#' ? {
   <div class="about__copy">
     <h2 id="about-title" class="about__title">Every detail, one designer.</h2>
     <p>
-      I'm {site.owner}, a {site.role.toLowerCase()}. I design the site, build it, set it up so search engines can read it, and help
-      get it in front of the right people.
+      I'm {site.owner}, a {site.role.toLowerCase()} based in the UK. I design the site, build it, set it up so search engines can read it, and
+      help get it in front of the right people.
     </p>
-    <p>One person from the first sketch to launch day, so nothing gets lost in a hand-off.</p>
+    <p>
+      Nothing templated, and nothing that looks like every other AI-generated site. One person from the first sketch to launch day, so nothing
+      gets lost in a hand-off.
+    </p>
   </div>
 </section>
