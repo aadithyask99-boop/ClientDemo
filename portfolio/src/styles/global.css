@@ -648,6 +648,7 @@ html.lenis body {
     width: auto;
     padding: var(--gx-l);
     border-radius: 0;
+    background: transparent; /* the section itself has turned orange by now */
     text-align: center;
     font-size: clamp(2rem, 1rem + 4vw, 5.4rem);
     letter-spacing: -0.065em;

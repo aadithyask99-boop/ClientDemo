@@ -48,7 +48,8 @@ The order follows what a client asks: who is this, show me, why would it work fo
    returns when you scroll back above the first project. Name and arrow drift against the frames; only the active project is clickable; tabbing to a project
    scrolls it to the middle. Under 700px wide, with reduced motion, or without JS, every project shows its name. Every project is a "Concept build".
 3. **Site Chemistry** (pinned, scrubbed by scroll): the four things a site needs arrive one circle at a time, each with a plain-language caption. Where all four
-   meet is the orange core, ENQUIRIES. The view zooms into it and the screen ends on the verdict.
+   meet is the orange core, ENQUIRIES. The view zooms into it until the whole screen is orange with ENQUIRIES standing on it, which holds; the next scroll
+   gives way to the verdict.
 4. **Services:** three cards you can drag and flick. They are dealt face down (a symmetric pattern of bevelled pixels) and turned over as the section arrives.
    Three small tabs under the sentence bring a card forward; the words in the sentence follow the card you are on.
 5. **Every detail, one designer:** the portrait is built from the top down by a front of orange blocks, tied to the scroll and fully reversible. The title is
