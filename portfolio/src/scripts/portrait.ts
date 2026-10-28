@@ -3,10 +3,10 @@ import { clamp, q, reduced } from './util';
 
 /* "Every detail, one designer": the picture is resolved by the scroll, both ways. As it enters from the bottom it is a few huge blocks; each bit of scroll
    makes the blocks smaller until the real picture is there (about a third of the way up the screen). Scroll back and it breaks down into blocks again.
-   A few blocks flash orange while it is changing. Progress is the scroll position, so it reverses exactly. Works for a photo or for the pixel-art
-   stand-in (which is already pixels, so the change is easiest to see with a real photo). Without JS, with reduced motion, or on any failure, the finished
+   A few blocks flash orange while it is changing. Progress is the scroll position, so it reverses exactly. Works for a photo or for the illustrated
+   stand-in (a smooth drawing on purpose: a pixel-art picture is already pixels, so there would be nothing to resolve). Without JS, with reduced motion, or on any failure, the finished
    picture simply sits there. */
-const LEVELS = [3, 4, 6, 9, 14, 22, 36]; // blocks across, coarse to fine; after the last one comes the real picture
+const LEVELS = [3, 4, 6, 8, 12, 18, 28, 44]; // blocks across, coarse to fine; after the last one comes the real picture
 
 export async function initPortrait() {
   const fig = q('[data-portrait]');
@@ -34,7 +34,7 @@ export async function initPortrait() {
     full.width = W;
     full.height = H;
     const f = full.getContext('2d')!;
-    f.imageSmoothingEnabled = !svg; // the pixel-art stand-in stays crisp
+    f.imageSmoothingEnabled = true;
     const k = Math.max(W / src.w, H / src.h);
     f.drawImage(src.el, (W - src.w * k) / 2, (H - src.h * k) / 2, src.w * k, src.h * k);
   };
@@ -78,8 +78,8 @@ export async function initPortrait() {
     }
   };
 
-  // starts as the top edge climbs past 95% of the screen, finishes with the top edge a third of the way down (62% of a screen of travel)
-  const progress = () => clamp((window.innerHeight * 0.95 - fig.getBoundingClientRect().top) / (window.innerHeight * 0.62));
+  // starts as the top edge climbs past 95% of the screen, finishes with the top edge about a fifth of the way down (72% of a screen of travel)
+  const progress = () => clamp((window.innerHeight * 0.95 - fig.getBoundingClientRect().top) / (window.innerHeight * 0.72));
   target = progress();
   level = target;
   render();

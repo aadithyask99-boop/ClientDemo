@@ -22,7 +22,7 @@ npm run build:single     # the whole site as ONE self-contained HTML file in dis
 - **Your photo:** put it at `public/portrait.jpg` (or `.jpeg`, `.webp`, `.png`, `.avif`, portrait orientation, about 800x1000). It replaces the pixel-art
   stand-in in two places: the little face that follows the cursor over your name (your photo reduced to a 22 x 22 grid of pixels) and the portrait section,
   which resolves from a few huge blocks to the real picture as you scroll it up the screen, and breaks back into blocks as you scroll down past it (scripts/portrait.ts).
-  The pixel-art stand-in is already pixels, so the effect is far easier to see with a real photo.
+  Until then a smooth illustration stands in (not pixel art, so there is something to resolve).
 - **Copy:** the headline words and the "nothing generic" line are in `Hero.astro`, the four points and the verdict in `Chemistry.astro`, the service cards in
   `Deck.astro`, the about text in `About.astro`, the project list (every project is a "Concept build") in `src/data/site.ts`.
 - **Work clips:** each project needs `public/work/<slug>.mp4` (a 9 second loop, 720 px wide, no audio) and `<slug>.webp` (its poster).

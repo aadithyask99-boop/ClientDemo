@@ -1,7 +1,7 @@
 ---
 import { site } from '../data/site';
 import { portraitFile } from '../data/portrait';
-import PixelFace from './PixelFace.astro';
+import PortraitArt from './PortraitArt.astro';
 
 /* Who you would be working with. Drop a photo at public/portrait.jpg and it replaces the pixel-art stand-in. As you scroll past, the picture
    goes from pixels to sharp as it reaches the middle of the screen and back to pixels as it leaves (scripts/portrait.ts). */
@@ -14,7 +14,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       portraitFile ? (
         <img class="portrait__img" src={`${base}/${portraitFile}`} alt={`Portrait of ${site.owner}`} width="800" height="1000" loading="lazy" decoding="async" />
       ) : (
-        <PixelFace class="portrait__face" />
+        <PortraitArt class="portrait__face" />
       )
     }
     <canvas class="portrait__cv" aria-hidden="true"></canvas>
