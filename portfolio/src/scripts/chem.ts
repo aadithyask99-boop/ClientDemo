@@ -34,6 +34,7 @@ export function initChem() {
   gsap.registerPlugin(ScrollTrigger);
   gsap.set(circles, { opacity: 0, scale: 0.86 });
   gsap.set([...labels, ...arcs, core, mid], { opacity: 0 });
+  gsap.set(ring, { transformOrigin: '50% 50%', scale: 1 });
   gsap.set(body, { transformOrigin: '50% 50%', scale: 1, rotation: 0 }); // the diagram is symmetric about its centre, so this is the centre of the scene
   gsap.set(verdict, { opacity: 0 });
 
@@ -58,7 +59,9 @@ export function initChem() {
   tl.to(core, { opacity: 1, duration: 0.06 }, 0.66)
     .to(mid, { opacity: 1, duration: 0.05 }, 0.7)
     .to(body, { scale: 18, duration: 0.14, ease: 'power2.in' }, 0.72)
-    .to(ring, { opacity: 0, duration: 0.1 }, 0.72)
+    // the dotted ring zooms with the diagram (same centre, same pace), so it sweeps past the edges of the screen instead of just fading
+    .to(ring, { scale: 18, duration: 0.14, ease: 'power2.in' }, 0.72)
+    .to(ring, { opacity: 0, duration: 0.05 }, 0.79)
     .to(list, { opacity: 0, duration: 0.04 }, 0.72)
     // the orange takes the whole screen and ENQUIRIES stands on it, upright, on its own...
     .to(sec, { backgroundColor: '#ff5a1f', duration: 0.05 }, 0.8)

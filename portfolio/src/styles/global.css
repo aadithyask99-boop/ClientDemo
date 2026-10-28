@@ -258,36 +258,20 @@ html.lenis body {
     padding: 0.3rem 0.5rem;
   }
 }
-@media (max-width: 380px) {
-  .hdr__dot {
-    display: none;
-  }
-}
-.hdr__dot {
-  width: 7px;
-  height: 7px;
-  background: var(--accent);
-  border-radius: 50%;
-  animation: blink 2.4s ease-in-out infinite;
-}
-@keyframes blink {
-  50% {
-    opacity: 0.25;
-  }
-}
 
 /* ------------------------------------------------------------------ Hero */
 .hero {
   position: relative;
   z-index: 1;
-  min-height: min(62svh, 40rem);
+  min-height: 100svh; /* the hero is the whole first screen: headline in the middle, credits under it, the small notes at the foot */
   padding: max(calc(var(--pad) * 3.2), 4.5rem) var(--gx-r) var(--pad) var(--gx-l);
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: 1fr auto 1fr auto;
   justify-items: center;
   background: var(--cream);
 }
 .hero__title {
+  grid-row: 2;
   position: relative; /* the headline intro measures each word's offsetLeft against this box */
   display: flex;
   flex-wrap: wrap;
@@ -333,7 +317,8 @@ html.lenis body {
 }
 
 .hero__mid {
-  align-self: center;
+  grid-row: 3;
+  align-self: start;
   display: grid;
   justify-items: center;
   gap: clamp(1.25rem, 3vh, 2.25rem);
@@ -373,9 +358,9 @@ html.lenis body {
   left: 0;
   top: 0;
   z-index: 3;
-  width: 4.5rem;
-  height: 4.5rem;
-  margin: -2.25rem 0 0 -2.25rem; /* centred on the pointer */
+  width: 2.75rem;
+  height: 2.75rem;
+  margin: -3.7rem 0 0 -1.375rem; /* sits above the words, centred on the pointer's x */
   pointer-events: none;
   opacity: 0;
   transform: scale(0);
@@ -397,6 +382,7 @@ html.lenis body {
 }
 
 .hero__foot {
+  grid-row: 4;
   width: 100%;
   display: flex;
   align-items: flex-end;
@@ -980,8 +966,7 @@ html:not(.fx) .hint--touch {
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.2rem 1rem;
-  /* generous on purpose: the first frame starts below the first screen, so the headline stays the page's largest paint (and the frames arrive from below, as in the reference) */
-  padding-block: 1rem clamp(1.5rem, 34svh, 22rem);
+  padding-block: 1rem clamp(1.5rem, 4vw, 3rem);
   font-size: 0.6875rem;
   font-weight: 450;
 }
@@ -1555,6 +1540,8 @@ html[data-world='dark'] .cur {
   z-index: 3;
   display: grid;
   align-content: center;
+  justify-items: center;
+  text-align: center;
   gap: clamp(1.5rem, 4vw, 3rem);
   min-height: 100svh;
   padding: clamp(5rem, 10vw, 8rem) var(--gx-r) clamp(4rem, 8vw, 6rem) var(--gx-l);
@@ -1602,7 +1589,7 @@ html[data-world='dark'] .cur {
 }
 .next__title {
   display: grid;
-  justify-items: start;
+  justify-items: center;
   font-size: clamp(3.4rem, 1rem + 12.5vw, 12.5rem);
   font-weight: 600;
   line-height: 0.92;
@@ -1646,6 +1633,7 @@ html[data-world='dark'] .cur {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   font-family: var(--font-mono);
   font-size: 0.8125rem;

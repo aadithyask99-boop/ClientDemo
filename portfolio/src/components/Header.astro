@@ -19,7 +19,6 @@ const links = [
   </nav>
   <!-- the clock is also the way into the local-time panel (scripts/clock-panel.ts); the location label folds to a thin line once the page is scrolled -->
   <button class="hdr__clock" type="button" data-open-clock aria-haspopup="dialog" title={`Local time (${site.timezone})`}>
-    <span class="hdr__dot" aria-hidden="true"></span>
     {
       site.location && (
         <span class="hdr__loc">

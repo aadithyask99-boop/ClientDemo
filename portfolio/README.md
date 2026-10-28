@@ -21,7 +21,8 @@ npm run build:single     # the whole site as ONE self-contained HTML file in dis
   `PUBLIC_LOCATION_LABEL` ("Based in the UK") is shown in the header just before the clock; `PUBLIC_TIMEZONE` drives the clock and the clock panel.
 - **Your photo:** put it at `public/portrait.jpg` (or `.jpeg`, `.webp`, `.png`, `.avif`, portrait orientation, about 800x1000). It replaces the pixel-art
   stand-in in two places: the little face that follows the cursor over your name (your photo reduced to a 22 x 22 grid of pixels) and the portrait section,
-  which is built from the top down by a front of orange blocks as you scroll to it, and taken apart again if you scroll back up (scripts/portrait.ts).
+  which resolves from a few huge blocks to the real picture as you scroll it up the screen, and breaks back into blocks as you scroll down past it (scripts/portrait.ts).
+  The pixel-art stand-in is already pixels, so the effect is far easier to see with a real photo.
 - **Copy:** the headline words and the "nothing generic" line are in `Hero.astro`, the four points and the verdict in `Chemistry.astro`, the service cards in
   `Deck.astro`, the about text in `About.astro`, the project list (every project is a "Concept build") in `src/data/site.ts`.
 - **Work clips:** each project needs `public/work/<slug>.mp4` (a 9 second loop, 720 px wide, no audio) and `<slug>.webp` (its poster).
@@ -42,7 +43,7 @@ npm run build:single     # the whole site as ONE self-contained HTML file in dis
 
 The order follows what a client asks: who is this, show me, why would it work for my business, what do I get, who am I hiring, how do I reach them.
 
-1. **Hero:** the sentence builds, "cool" gives way to "SEO-friendly", then both sit together. Hover the name for a pixel face.
+1. **Hero:** fills the first screen. The sentence builds, "cool" gives way to "SEO-friendly", then both sit together. Hover the name for a pixel face.
 2. **Selected work:** built on the mechanism of the reference. The frames (just the clip, no border) scroll past in a tight column; only the project that has
    crossed the middle of the screen shows its name, arrow and "View", the previous one flies out as the next flies in, and the hero text steps aside and
    returns when you scroll back above the first project. Name and arrow drift against the frames; only the active project is clickable; tabbing to a project
@@ -52,8 +53,8 @@ The order follows what a client asks: who is this, show me, why would it work fo
    gives way to the verdict.
 4. **Services:** three cards you can drag and flick. They are dealt face down (a symmetric pattern of bevelled pixels) and turned over as the section arrives.
    Three small tabs under the sentence bring a card forward; the words in the sentence follow the card you are on.
-5. **Every detail, one designer:** the portrait is built from the top down by a front of orange blocks, tied to the scroll and fully reversible. The title is
-   built from pixels the same way.
+5. **Every detail, one designer:** the portrait goes from a few huge blocks to the real picture as the scroll carries it up the screen, and back again
+   in reverse (a few blocks flash orange on the way). The title is built from pixels.
 6. **Next chapter:** "Start your next website today" in huge type, built from pixels as it scrolls in. Two small slots roll through words
    ("Make it Fast and Clear"). Point at "today" and the arrow swaps sides with the word.
 7. **Connect:** click-to-copy email (the hint text rolls to "Copied"), a stack of tinted project tiles that fly in and then cycle, a sitemap and channels
@@ -103,7 +104,7 @@ when used), CSS 7 KB. Three things keep it there, and all are easy to undo by ac
 - The intro is deliberately quick so the longest word of the headline paints before the 2.5 s line.
 - Everything below the first screen (the pinned scene, the cards, the Work pictures and clips) is set up and fetched only after the headline has painted
   (`setUpBelowFold` in `src/scripts/main.ts`); the closing sections wait a little longer still.
-- The first Work frame starts below the first screen (the generous padding under "Selected work"). If it sits inside the first screen, its picture becomes
+- The first Work frame starts below the first screen (the hero is a full screen tall). If a frame ever sits inside the first screen, its picture becomes
   the largest paint and LCP rises to about 3 s on desktop and 4 s on a phone.
 
 If you change the intro or add images near the top, re-measure.

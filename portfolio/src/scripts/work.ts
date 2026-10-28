@@ -7,7 +7,8 @@ import { q, qa, fine, reduced } from './util';
      titles fly in sideways from 80px out (compact 40px) while growing from nothing, 350ms, 17ms between words; they leave the same way, shrinking
      the arrow comes from 100px on the left, "View" from 80px on the right
      name and arrow/View drift against the frames: translateY -50% to +40% of their own height, linear, in step with the scroll
-     the arrow nudges 40px right and back, looping, while the pointer is on the project (on touch: while it is in the middle of the screen)
+     the arrow nudges to the right and back, looping, while the pointer is on the project (on touch: while it is in the middle of the screen); in the
+     reference it travels 40px, here under 10px, because 40px runs it into the word View
    Only the active project is clickable. Tabbing to a project scrolls it to the middle. Under 700px wide, with reduced motion, or without JS,
    every project simply shows its name. */
 export interface HeroHandle {
@@ -83,7 +84,7 @@ export function initWork(hero: HeroHandle) {
     return {
       start(delay = 0.1) {
         tl?.kill();
-        tl = gsap.timeline({ repeat: -1, delay }).to(arrow, { x: compact() ? 20 : 40, duration: 0.36, ease: 'power3.in' }).to(arrow, { x: 0, duration: 0.34, ease: EASE });
+        tl = gsap.timeline({ repeat: -1, delay, repeatDelay: 0.25 }).to(arrow, { x: compact() ? 5 : 9, duration: 0.5, ease: 'sine.inOut' }).to(arrow, { x: 0, duration: 0.5, ease: 'sine.inOut' });
       },
       stop() {
         tl?.kill();

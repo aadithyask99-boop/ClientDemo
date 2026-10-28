@@ -147,7 +147,8 @@ export function initCredits(pixel: Pixel | null) {
   const follow = () => {
     const r = mm.getBoundingClientRect();
     const tx = px - r.left;
-    const ty = py - r.top;
+    const tr = text.getBoundingClientRect();
+    const ty = tr.top + tr.height / 2 - r.top; // only the sideways position follows the pointer: the face rides along the top of the words
     const dx = (tx - fx) * 0.2;
     fx += dx;
     fy += (ty - fy) * 0.2;
@@ -170,8 +171,9 @@ export function initCredits(pixel: Pixel | null) {
     const r = mm.getBoundingClientRect();
     px = e.clientX;
     py = e.clientY;
+    const tr = text.getBoundingClientRect();
     fx = px - r.left;
-    fy = py - r.top;
+    fy = tr.top + tr.height / 2 - r.top;
     tilt = 0;
     hover = true;
     gsap.set(av, { x: fx, y: fy, rotate: 0 });
