@@ -27,13 +27,13 @@ Palette: calm blue-grey paper, deep night blue for the dark sections, orange use
 
 The page, with what happens on big screens (and what phones get):
 
-1. **Hero to page**: the hero stays pinned, steps back and darkens while the page slides up over it like a curtain.
+1. **Hero to page**: the hero stays pinned, softens (a gentle blur, slightly enlarged so its edges never show) and darkens while the page slides up over it like a curtain.
 2. **Studio**: headline, small meta columns, serif paragraph, awards and publications, a large serif statement. The two serif passages are read word by word as you scroll; the rest eases in with a soft blur.
 3. **Coastlines**: a table of twelve homes. The row under the pointer turns into a dark bar with an orange arrow.
 4. **Two process chapters, pinned**: the title leaves and the sketch is revealed through scattered patches of ink that grow together (a canvas mask built from the sketch), then the drawing slowly pushes in and a text panel rises over it. All scrubbed to the scroll. (Phones: the sketch wipes in left to right.)
 5. **Selected residences**: an uneven grid whose tiles drift at different speeds as you scroll, fading in from empty frames. Hover zooms and shows "Visit". (Phones: a single column, no drift.)
 6. **Principles, pinned**: opens on a plain white page, a centred heading and thin lines radiating to eight numbered nodes. Scrolling changes the heading, turns the page from white to night, turns the ring, and gives each node its turn at the centre; clicking a node jumps to it. (Phones: the idea cycles by itself, or on tap.)
-7. **People, pinned**: the statement is read word by word while a curve of photographs sweeps across beneath it; the curve rises into a ring round the founding year, which turns, then slides aside as the four figures light up one after another. (Phones: a slow strip, the year, and figures that count up.)
+7. **People, pinned**: the statement is read word by word while a curve of photographs sweeps across beneath it; the curve rises into a ring round the founding year (it turns a little, holds still while you read the year, then turns on as it slides aside) as the four figures light up one after another. (Phones: a slow strip, the year, and figures that count up.)
 8. **Partners, pinned**: the names ride an oval ring round the heading as you scroll. (Phones: two slow rows.)
 9. **Footer**: contact columns and a giant ORRA ticker.
 

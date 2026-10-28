@@ -53,13 +53,15 @@ export function initScroll() {
 function curtain() {
   const card = q('[data-card]');
   const paper = q('.paper');
-  if (!card || !paper) return;
+  const scene = q('[data-scene]');
+  if (!card || !paper || !scene) return;
   const shade = document.createElement('div');
   shade.className = 'shade';
   card.appendChild(shade);
-  gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: paper, start: 'top bottom', end: 'top top', scrub: true } })
-    .to(card, { scale: 0.94, yPercent: 3 }, 0)
-    .to(shade, { opacity: 0.55 }, 0);
+  // the picture is enlarged a little so a blur never shows the edges of the hero
+  gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: paper, start: 'top bottom', end: 'top 12%', scrub: true } })
+    .fromTo(scene, { filter: 'blur(0px)', scale: 1, yPercent: 0 }, { filter: 'blur(7px)', scale: 1.07, yPercent: 3 }, 0)
+    .to(shade, { opacity: 0.5 }, 0);
 }
 
 /* Pinned sketch: ink appears in scattered patches that grow together, then the drawing slowly pushes in and the text rises over it */
@@ -210,7 +212,7 @@ function ring() {
   const tl = gsap.timeline({
     defaults: { ease: 'none' },
     scrollTrigger: {
-      trigger: root, start: 'top top', end: '+=720%', pin: true, scrub: true, anticipatePin: 1,
+      trigger: root, start: 'top top', end: '+=560%', pin: true, scrub: true, anticipatePin: 1,
       onUpdate: (self) => {
         const k = self.progress < 0.66 ? -1 : Math.min(stats.length - 1, Math.floor(((self.progress - 0.66) / 0.34) * stats.length));
         if (k !== on) { on = k; stats.forEach((li, j) => li.classList.toggle('is-on', j === Math.max(0, k))); }
@@ -220,7 +222,10 @@ function ring() {
   // the ring starts low, so only its top curve crosses the page under the statement; the statement itself is read word by word
   gsap.set(group, { y: () => innerHeight * 0.74 + radius() * 0.1, scale: 1.06 });
   tl.fromTo(words, { opacity: 0.14 }, { opacity: 1, stagger: 0.04, duration: 0.2 }, 0)
-    .to(s, { a: 520, duration: 1, onUpdate: place }, 0)
+    .to(s, { a: 36, duration: 0.22, onUpdate: place }, 0)
+    .to(s, { a: 96, duration: 0.3, onUpdate: place }, 0.22)
+    .to(s, { a: 106, duration: 0.1, onUpdate: place }, 0.52)
+    .to(s, { a: 196, duration: 0.38, onUpdate: place }, 0.62)
     .to(group, { y: 0, scale: 1, duration: 0.3, ease: 'power2.inOut' }, 0.22)
     .to(statement, { opacity: 0, y: -60, duration: 0.1 }, 0.24)
     .fromTo(core, { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.16 }, 0.4)

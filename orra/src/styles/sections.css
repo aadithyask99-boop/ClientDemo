@@ -194,7 +194,8 @@ html.lenis, html.lenis body { height: auto; }
 /* The picture stays put and the page slides up over it like a curtain */
 html.fx .page { position: sticky; top: 0; z-index: 0; }
 html.fx .paper { margin-top: 0; box-shadow: 0 -30px 60px -30px rgb(10 20 30 / 0.45); }
-html.fx .card { transform-origin: 50% 0; will-change: transform, filter; }
+.scene { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+html.fx .scene { will-change: transform, filter; }
 
 /* ---------- Sketch chapters ---------- */
 html.fx .process { padding: 0; }
@@ -245,3 +246,30 @@ html.fx .orbit { display: block; position: relative; height: 100svh; overflow: h
 .orbit__ring { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
 .orbit__ring .logo-dot { position: absolute; left: calc(var(--d) / -2); top: calc(var(--d) / -2); --d: clamp(5.5rem, 9vw, 8.5rem); width: var(--d); will-change: transform; }
 .shade { position: absolute; inset: 0; z-index: 20; background: #0a121a; opacity: 0; pointer-events: none; }
+
+/* ---------- Phones: tighter vertical rhythm ---------- */
+@media (max-width: 760px) {
+  .paper { margin-top: -1.4rem; border-radius: 22px 22px 0 0; }
+  .sec { padding: clamp(2.6rem, 11vw, 3.4rem) 0; }
+  .about__grid { margin-top: 2rem; gap: 1.5rem; }
+  .facts { margin-top: 2rem; gap: 1.6rem; }
+  .statement { padding-top: 0; padding-bottom: 2.6rem; }
+  .coast__head { margin-bottom: 1rem; }
+  .process .display { margin-bottom: 1.4rem; }
+  .process__text { margin-top: 1.2rem; }
+  html.js:not(.fx) .sketch img { clip-path: none; }
+  .resid__head { margin-bottom: 1.6rem; }
+  .grid { row-gap: 1.6rem; }
+  .tile--port, .tile--2, .tile--4, .tile--6, .tile--8 { width: 78%; }
+  .radial-sec { padding: 2.4rem 0 1rem; }
+  .radial { --size: min(94vw, 26rem); }
+  .people { padding: 0.5rem 0 2.8rem; }
+  .people .big { font-size: clamp(1.9rem, 8vw, 2.6rem); }
+  .rail { margin: 1.4rem 0 1.6rem; }
+  .founded { margin-bottom: 1.4rem; }
+  .partners { padding: 2.6rem 0 2.4rem; }
+  .partners .display { margin-bottom: 1.4rem; }
+  .foot { padding-top: 2.6rem; }
+  .foot__lead { margin-bottom: 1.8rem; }
+  .ticker { margin-top: 1.8rem; }
+}
