@@ -10,7 +10,6 @@ const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
 const card = q('[data-card]')!;
 const scene = q('[data-scene]')!;
-const stage = q('[data-stage]')!;
 
 /** Pointer position over the card, -0.5 to 0.5 on each axis (drifts by itself when nobody is moving the pointer) */
 const pointer = { x: 0, y: 0, px: 0, py: 0, inside: false, last: performance.now() };
@@ -63,85 +62,10 @@ function applyDepth() {
   });
 }
 
-/* ---------- Light: neon blooms around the pointer ---------- */
-const houseEl = q('.house', scene)!;
-const lit = { v: 0 };
-const setLit = gsap.quickTo(lit, 'v', { duration: 0.6, ease: 'power2.out', onUpdate: () => houseEl.style.setProperty('--hot', lit.v.toFixed(3)) });
-function applyLight(cx: number, cy: number) {
-  const b = houseEl.getBoundingClientRect();
-  const over = cx > b.left - 20 && cx < b.right + 20 && cy > b.top - 20 && cy < b.bottom + 20;
-  houseEl.style.setProperty('--nx', `${cx - b.left}px`);
-  houseEl.style.setProperty('--ny', `${cy - b.top}px`);
-  setLit(over ? 1 : 0);
-}
-
-/* ---------- Water: rings spread from the pointer, and the reflection wobbles with its speed ---------- */
-const canvas = q<HTMLCanvasElement>('[data-ripples]', scene)!;
-const ctx = canvas.getContext('2d')!;
-type Ring = { x: number; y: number; r: number; max: number; a: number; speed: number };
-const rings: Ring[] = [];
-let dpr = 1;
-let cw = 0;
-let ch = 0;
-let running = false;
-const horizon = () => ch * 0.56;
-const fitCanvas = () => {
-  dpr = Math.min(window.devicePixelRatio || 1, 2);
-  cw = canvas.clientWidth;
-  ch = canvas.clientHeight;
-  canvas.width = Math.round(cw * dpr);
-  canvas.height = Math.round(ch * dpr);
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-};
-function spawn(x: number, y: number, big = 1) {
-  rings.push({ x, y, r: 2, max: (50 + Math.random() * 40) * big * (cw / 1100 + 0.4), a: 0.5, speed: 38 + Math.random() * 18 });
-  if (rings.length > 40) rings.shift();
-  kick();
-}
-function kick() {
-  if (running) return;
-  running = true;
-  let t0 = performance.now();
-  const frame = (t: number) => {
-    const dt = Math.min(0.05, (t - t0) / 1000);
-    t0 = t;
-    ctx.clearRect(0, 0, cw, ch);
-    ctx.lineWidth = 1.2;
-    for (let i = rings.length - 1; i >= 0; i--) {
-      const g = rings[i];
-      g.r += g.speed * dt * (1 - g.r / g.max * 0.55);
-      const k = g.r / g.max;
-      if (k >= 1) { rings.splice(i, 1); continue; }
-      const a = g.a * (1 - k) ** 1.6;
-      ctx.strokeStyle = `rgba(255,255,255,${a.toFixed(3)})`;
-      ctx.beginPath();
-      ctx.ellipse(g.x, g.y, g.r, g.r * 0.2, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      if (g.r > 14) {
-        ctx.strokeStyle = `rgba(255,255,255,${(a * 0.45).toFixed(3)})`;
-        ctx.beginPath();
-        ctx.ellipse(g.x, g.y, g.r * 0.62, g.r * 0.62 * 0.2, 0, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-    }
-    if (rings.length) requestAnimationFrame(frame);
-    else { running = false; ctx.clearRect(0, 0, cw, ch); }
-  };
-  requestAnimationFrame(frame);
-}
-
-const disp = q('[data-disp]');
-const wobble = { v: 8 };
-const setWobble = () => disp?.setAttribute('scale', wobble.v.toFixed(1));
-let lastRing = { x: -999, y: -999 };
-
 /* ---------- Pointer input (mouse, pen or a finger dragging) ---------- */
 let rect = card.getBoundingClientRect();
-// The stage is the art's 16:9 box, which can be larger than the viewport (cropped), so the water is measured on it
-let srect = stage.getBoundingClientRect();
-const measure = () => { rect = card.getBoundingClientRect(); srect = stage.getBoundingClientRect(); measureLetters(); fitCanvas(); moveNav(); };
+const measure = () => { rect = card.getBoundingClientRect(); measureLetters(); moveNav(); };
 
-let prev = { x: 0, y: 0, t: 0 };
 function onMove(e: PointerEvent) {
   const nx = (e.clientX - rect.left) / rect.width;
   const ny = (e.clientY - rect.top) / rect.height;
@@ -151,48 +75,18 @@ function onMove(e: PointerEvent) {
   pointer.last = performance.now();
   if (reduce) return;
   applyDepth();
-  if (!pointer.inside) { setLit(0); return; }
-  applyLight(e.clientX, e.clientY);
-
-  const cx = e.clientX - srect.left;
-  const cy = e.clientY - srect.top;
-  const now = performance.now();
-  const speed = Math.hypot(e.clientX - prev.x, e.clientY - prev.y) / Math.max(8, now - prev.t);
-  prev = { x: e.clientX, y: e.clientY, t: now };
-  if (cy > horizon()) {
-    gsap.to(wobble, { v: Math.min(26, 8 + speed * 14), duration: 0.25, overwrite: true, onUpdate: setWobble, onComplete: () => { gsap.to(wobble, { v: 8, duration: 2.2, ease: 'power2.out', onUpdate: setWobble }); } });
-    if (Math.hypot(cx - lastRing.x, cy - lastRing.y) > 46) { lastRing = { x: cx, y: cy }; spawn(cx, cy, 0.8); }
-  }
 }
 window.addEventListener('pointermove', onMove, { passive: true });
-window.addEventListener('pointerdown', (e) => {
-  if (reduce) return;
-  const cx = e.clientX - srect.left;
-  const cy = e.clientY - srect.top;
-  if (cy > horizon() && e.clientX >= rect.left && e.clientX <= rect.right) {
-    spawn(cx, cy, 1.5);
-    window.setTimeout(() => spawn(cx, cy, 1.1), 160);
-    window.setTimeout(() => spawn(cx, cy, 0.8), 340);
-  }
-}, { passive: true });
-card.addEventListener('pointerleave', () => { pointer.inside = false; setLit(0); applyDepth(); });
+card.addEventListener('pointerleave', () => { pointer.inside = false; applyDepth(); });
 
 /* With nobody at the controls the scene drifts slowly, so it never looks frozen */
 if (!reduce) {
-  let nextDrop = 0;
   gsap.ticker.add((time) => {
     if (performance.now() - pointer.last < 2800) return;
     pointer.x = Math.sin(time * 0.32) * 0.14;
     pointer.y = Math.cos(time * 0.24) * 0.08;
     pointer.inside = false;
     applyDepth();
-    if (time > nextDrop && rect.width) {
-      nextDrop = time + 2.4 + Math.random() * 1.8;
-      // somewhere on the water that is actually on screen
-      const top = Math.max(horizon() + ch * 0.1, rect.top - srect.top);
-      const bottom = Math.min(ch * 0.97, rect.bottom - srect.top);
-      if (bottom > top) spawn(Math.max(0, rect.left - srect.left) + Math.min(rect.width, srect.width) * (0.1 + Math.random() * 0.8), top + Math.random() * (bottom - top), 0.9);
-    }
   });
 }
 

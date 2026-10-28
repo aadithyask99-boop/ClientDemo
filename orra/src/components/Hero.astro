@@ -19,24 +19,26 @@ const links = ['Home', 'Residences', 'Studio', 'Journal', 'Contact'];
         </div>
 
         <div class="layer home" data-depth="0.034">
-          <div class="reflect" data-reflect>
+          <div class="reflect">
             <img src={img('house_off')} alt="" width="1278" height="577" decoding="async" />
             <img class="on" src={img('house')} alt="" width="1278" height="577" decoding="async" />
           </div>
           <div class="house" data-house>
+            <div class="glow"></div>
+            <div class="cast cast--wide"></div>
+            <div class="cast cast--tight"></div>
             <img src={img('house_off')} alt="" width="1278" height="577" decoding="async" fetchpriority="high" />
             <img class="on" src={img('house')} alt="" width="1278" height="577" decoding="async" fetchpriority="high" />
-            <div class="lit"></div>
             <div class="neon neon--base"></div>
-            <div class="neon neon--hot"></div>
           </div>
         </div>
+
+        <div class="mist mist--a"></div>
+        <div class="mist mist--b"></div>
 
         <div class="layer letters letters--front" data-depth="-0.016">
           <p class="word word--line">{letters.map((l, i) => <span class="l" data-i={i}>{l}</span>)}</p>
         </div>
-
-        <canvas class="ripples" data-ripples></canvas>
       </div>
     </div>
 
@@ -88,12 +90,4 @@ const links = ['Home', 'Residences', 'Studio', 'Journal', 'Contact'];
     </ul>
   </section>
 
-  <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
-    <filter id="orra-water" x="-5%" y="-5%" width="110%" height="110%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.004 0.05" numOctaves="2" seed="4" result="n">
-        <animate attributeName="baseFrequency" dur="14s" values="0.004 0.05;0.006 0.07;0.004 0.05" repeatCount="indefinite"></animate>
-      </feTurbulence>
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="8" xChannelSelector="R" yChannelSelector="G" data-disp></feDisplacementMap>
-    </filter>
-  </svg>
-</main>
+  </main>

@@ -20,7 +20,6 @@ img { display: block; max-width: 100%; }
 ul { list-style: none; margin: 0; padding: 0; }
 button { font: inherit; color: inherit; cursor: pointer; }
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-.defs { position: absolute; }
 
 .page { position: relative; min-height: 100svh; }
 
@@ -66,56 +65,35 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .word--line { color: transparent; -webkit-text-stroke: 1px rgb(255 255 255 / 0.55); }
 .l { display: inline-block; will-change: transform; }
 
-/* ---------- House, its light and its reflection ----------
-   Dusk: the lights are off (house_off). Night: the lit picture fades in over it, and the strips and windows bloom.
-   The pointer is a torch: wherever it is over the house, the lit picture shows through in a soft circle. */
+/* ---------- House ----------
+   Dusk: the lights are off (house_off). Night: the lit picture fades in over it, the strips and windows bloom,
+   and the ground around the platform picks up their orange light. One variable, --night, drives all of it. */
 .home { pointer-events: none; }
 .house { position: absolute; left: 22cqw; bottom: 12.5cqh; width: 68cqw; aspect-ratio: 1278 / 577; }
 .house img { position: absolute; inset: 0; width: 100%; height: 100%; }
 .house .on { opacity: var(--night); }
-.reflect {
-  position: absolute;
-  left: 22cqw;
-  top: calc(100cqh - 12.5cqh);
-  width: 68cqw;
-  aspect-ratio: 1278 / 577;
-  transform: scaleY(-1);
-  opacity: 0.42;
-  -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 42%);
-  mask-image: linear-gradient(to top, #000 0%, transparent 42%);
-  filter: blur(1.2px) url(#orra-water);
-}
+
+/* The glossy floor mirrors the house: flipped, faded, and tucked up under the platform so there is no gap */
+.reflect { position: absolute; left: 22cqw; top: calc(100cqh - 12.5cqh - 3.4cqw); width: 68cqw; aspect-ratio: 1278 / 577; transform: scaleY(-1); opacity: 0.5; -webkit-mask-image: linear-gradient(to top, #000 8%, transparent 52%); mask-image: linear-gradient(to top, #000 8%, transparent 52%); filter: blur(1.4px); pointer-events: none; }
 .reflect img { position: absolute; inset: 0; width: 100%; height: 100%; }
 .reflect .on { opacity: var(--night); }
 
-/* The lit picture, revealed in a circle around the pointer */
-.lit {
-  position: absolute;
-  inset: 0;
-  background: var(--house) center / 100% 100% no-repeat;
-  opacity: var(--hot, 0);
-  -webkit-mask-image: radial-gradient(circle 15cqw at var(--nx, 50%) var(--ny, 50%), #000 0%, #000 30%, transparent 100%);
-  mask-image: radial-gradient(circle 15cqw at var(--nx, 50%) var(--ny, 50%), #000 0%, #000 30%, transparent 100%);
-  pointer-events: none;
-}
+/* The platform's shadow on the ground: a soft wide one, and a tight dark one right at its edge */
+.cast { position: absolute; inset: 0; background: #06080b; -webkit-mask-image: var(--house), linear-gradient(to bottom, transparent 66%, #000 84%); mask-image: var(--house), linear-gradient(to bottom, transparent 66%, #000 84%); -webkit-mask-composite: source-in; mask-composite: intersect; -webkit-mask-size: 100% 100%, 100% 100%; mask-size: 100% 100%, 100% 100%; transform-origin: 50% 100%; pointer-events: none; }
+.cast--wide { filter: blur(1.3cqw); transform: translateY(1.6cqh) scale(1.035, 1.08); opacity: 0.55; }
+.cast--tight { filter: blur(0.3cqw); transform: translateY(0.55cqh); opacity: 0.6; }
+
+/* Orange light spilling onto the stone at night */
+.glow { position: absolute; left: -2%; right: -2%; bottom: -14%; height: 46%; background: radial-gradient(ellipse 50% 50% at 50% 45%, rgb(255 140 60 / 0.6), rgb(255 140 60 / 0.18) 55%, rgb(255 140 60 / 0) 100%); mix-blend-mode: screen; opacity: calc(var(--night) * 0.9); pointer-events: none; }
 
 .neon { position: absolute; inset: 0; -webkit-mask-image: var(--neon); mask-image: var(--neon); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; mix-blend-mode: screen; pointer-events: none; }
 /* Bloom around the strips and lit windows: off at dusk, full at night */
 .neon--base { background: #ff9d52; filter: blur(0.7cqw); opacity: calc(var(--night) * 0.8); }
-/* ...and an extra halo wherever the pointer is */
-.neon--hot {
-  background: #ff7d2e;
-  opacity: calc(var(--hot, 0) * 0.9);
-  -webkit-mask-image: var(--neon), radial-gradient(circle 15cqw at var(--nx, 50%) var(--ny, 50%), #000 0%, transparent 100%);
-  mask-image: var(--neon), radial-gradient(circle 15cqw at var(--nx, 50%) var(--ny, 50%), #000 0%, transparent 100%);
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
-  -webkit-mask-size: 100% 100%, 100% 100%;
-  mask-size: 100% 100%, 100% 100%;
-  filter: blur(0.8cqw) brightness(1.5);
-}
 
-.ripples { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+/* Low mist that drifts across the foot of the building, hiding the seam between platform and ground */
+.mist { position: absolute; left: -20%; width: 140%; bottom: 3cqh; height: 26cqh; background: radial-gradient(ellipse 40% 50% at 30% 60%, rgb(215 224 230 / 0.34), transparent 70%), radial-gradient(ellipse 34% 44% at 72% 50%, rgb(215 224 230 / 0.28), transparent 70%); filter: blur(1.4cqw); opacity: calc(1 - var(--night) * 0.55); pointer-events: none; animation: mist-drift 46s ease-in-out infinite alternate; }
+.mist--b { bottom: -1cqh; height: 20cqh; opacity: calc(0.8 - var(--night) * 0.5); animation-duration: 62s; animation-direction: alternate-reverse; }
+@keyframes mist-drift { from { transform: translateX(-4cqw); } to { transform: translateX(4cqw); } }
 
 /* ---------- Interface ---------- */
 .top { position: absolute; z-index: 5; left: 0; right: 0; top: 0; display: flex; align-items: center; justify-content: space-between; padding: 4.2cqh 3.4cqw 0; }
@@ -131,7 +109,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 .left { position: absolute; z-index: 5; left: 4.6cqw; top: 30cqh; width: 12.5cqw; }
 .blurb { margin: 0; font-size: clamp(0.72rem, 1.18cqw, 1.05rem); line-height: 1.45; font-weight: 400; color: rgb(255 255 255 / 0.92); }
-.mode { display: inline-flex; margin-top: 1.4cqh; padding: 0.22rem; border-radius: 99px; background: var(--glass); border: 1px solid var(--glass-line); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.mode { display: inline-flex; margin-top: 1.4cqh; padding: 0.22rem; border-radius: 99px; background: rgb(18 28 38 / 0.34); border: 1px solid var(--glass-line); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 .mode__btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.8rem 0.3rem 0.6rem; border: 0; border-radius: 99px; background: transparent; font-size: clamp(0.6rem, 0.9cqw, 0.8rem); color: rgb(255 255 255 / 0.85); transition: background 0.4s, color 0.4s; }
 .mode__btn i { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: #ffd9b0; box-shadow: 0 0 8px #ffb877; }
 .mode__btn[data-mode='night'] i { background: #1b2a44; box-shadow: inset -2px -1px 0 #9bb4e0; }
@@ -174,7 +152,7 @@ html.js .layer:not(.letters), html.js .l, html.js .top, html.js .left, html.js .
   /* The art is sized by the card's width, so it is placed from the card's vertical centre, whatever the height */
   .word { font-size: 34cqw; top: calc(50cqh - 54cqw); }
   .house { left: -12cqw; width: 126cqw; bottom: calc(50cqh - 15cqw); }
-  .reflect { left: -12cqw; width: 126cqw; top: calc(50cqh + 15cqw); }
+  .reflect { left: -12cqw; width: 126cqw; top: calc(50cqh + 15cqw - 6.3cqw); }
   .plate { object-position: 50% 50%; }
   .top { padding: 2.6cqh 5cqw 0; }
   .menu-btn { display: inline-flex; padding: 0.5rem 1.15rem; border: 1px solid rgb(255 255 255 / 0.75); border-radius: 99px; background: rgb(255 255 255 / 0.12); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); font-size: 0.82rem; }
