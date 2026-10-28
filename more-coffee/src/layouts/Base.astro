@@ -1,0 +1,25 @@
+---
+import '@fontsource/anton/400.css';
+import '@fontsource/barlow-condensed/400.css';
+import '@fontsource/barlow-condensed/500.css';
+import '@fontsource/barlow-condensed/600.css';
+import '@fontsource/reenie-beanie/400.css';
+import '../styles/global.css';
+const { title, description } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#d9b98e" />
+    <link rel="icon" href={`data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#3a2113"/><text x="16" y="24" font-size="22" text-anchor="middle" fill="#f39a3d" font-family="Impact,sans-serif">B</text></svg>')}`} />
+    <meta name="base" content={base} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

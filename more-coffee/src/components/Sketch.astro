@@ -1,0 +1,7 @@
+---
+// Hand-drawn things are two stacked copies; the second one "boils" (stepped 1px jitter, see .is-wiggle).
+const { class: cls = '', delay = '0s' } = Astro.props;
+---
+<span class:list={['sketch', cls]} style={`--animation-delay:${delay}`}>
+  <span class="sk"><slot /></span><span class="sk is-wiggle" aria-hidden="true"><slot /></span>
+</span>

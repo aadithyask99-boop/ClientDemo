@@ -1,0 +1,1 @@
+{ "name": "more-coffee-render", "private": true, "type": "module", "dependencies": { "three": "0.170.0", "@fontsource/anton": "5.1.0" } }

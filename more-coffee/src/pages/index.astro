@@ -1,0 +1,380 @@
+---
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import Sketch from '../components/Sketch.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const img = (p: string) => `${base}/img/${p}`;
+const BUY = '#shop';
+
+const reviews = [
+  ['Best iced coffee ever!', 'Swapped my daily café run for this and my wallet says thank you.', 'Maya R.'],
+  ['Super smooth', 'Mixes in seconds with cold milk. No clumps, tastes like a proper latte.', 'Jonas K.'],
+  ['Risk of addiction 🙈', 'Creamy, not too sweet, and 25g of protein. I am on my third tub.', 'Priya S.'],
+  ['Gym-bag essential', 'I shake one up after training and the caffeine hit is real.', 'Tom B.'],
+  ['Highly recommended!', 'No chalky aftertaste at all. The vanilla shot is unreal.', 'Lena F.'],
+  ['Favourite combo', 'Salted caramel shot plus the iced latte. That is it. That is the review 😌', 'Omar H.'],
+];
+const rows = ['Low in carbs', 'Low in sugar', 'High in protein', 'Supports focus & energy', 'Supports muscle growth', 'Contains dietary fibre', 'Mixes cold in 10 seconds'];
+const flavours = [
+  ['Salted', 'Caramel', 'salted-caramel'],
+  ['Hazelnut', 'Crunch', 'hazelnut-crunch'],
+  ['Vanilla', 'Bean', 'vanilla-bean'],
+  ['Mocha', 'Fudge', 'mocha-fudge'],
+  ['Cinnamon', 'Swirl', 'cinnamon-swirl'],
+];
+const pay = ['Amex', 'Mastercard', 'PayPal', 'Apple Pay', 'G Pay', 'Visa', 'Klarna'];
+
+const ico = {
+  ig: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.6"/><circle cx="16.8" cy="7.2" r="1" fill="currentColor" stroke="none"/></svg>',
+  tt: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 5v9.2a3.2 3.2 0 1 1-3.2-3.2M13.5 5c.4 2.4 1.9 3.8 4.2 4"/></svg>',
+  yt: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3.5" y="6.5" width="17" height="11" rx="3.5"/><path d="M10.5 9.7v4.6l4-2.3z" fill="currentColor"/></svg>',
+};
+const smiley = '<svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="34" fill="#f1e8d8" stroke="#3a2113" stroke-width="3"/><path d="M24 31q4-6 9 0" fill="none" stroke="#3a2113" stroke-width="3" stroke-linecap="round"/><circle cx="50" cy="31" r="3.2" fill="#3a2113"/><path d="M21 46Q40 66 59 46" fill="none" stroke="#3a2113" stroke-width="3" stroke-linecap="round"/><path d="M42 54q4 9 11 4" fill="#f39a3d" stroke="#3a2113" stroke-width="2.6" stroke-linecap="round"/></svg>';
+const underline = '<svg viewBox="0 0 160 30" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M4 18C30 6 52 26 82 14S130 8 156 16"/><path d="M26 26C64 20 100 25 140 22"/></svg>';
+const curveArrow = '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6C8 36 22 58 58 66"/><path d="M46 56 60 67 44 74"/></svg>';
+---
+
+<Base title="Brew More | Coffee meets protein" description="Brew More is a concept site for a fictional protein iced-coffee brand: a motion study of a premium DTC landing page.">
+  <div class="loader" aria-hidden="true"></div>
+
+  <!-- NAV -->
+  <nav class="navbar" data-load-nav aria-label="Main">
+    <div class="nav-container grid-layout">
+      <div class="nav-social-media-inner">
+        {[['ig', 'Instagram'], ['tt', 'TikTok'], ['yt', 'YouTube']].map(([k, n]) => (
+          <a href="#" class="social-media-link" aria-label={n}><div class="social-media-circle"><span class="social-media-icon" set:html={ico[k]} /></div></a>
+        ))}
+      </div>
+      <div class="nav-link-inner">
+        <a href="#nutrition" class="nav-link"><div class="nav-text">Nutrition</div></a>
+        <a href="#benefits" class="nav-link"><div class="nav-text">Benefits</div></a>
+        <a href="#reviews" class="nav-link"><div class="nav-text">Reviews</div></a>
+      </div>
+      <Button label="Shop all" href={BUY} white />
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+    <!-- HERO -->
+    <section data-load-stage data-inertia class="stage">
+      <div class="stage-grain"></div>
+      <div class="stage-container">
+        <div class="stage-inner">
+          <div class="stage-content">
+            <div class="stage-logo" data-load-stage-logo>
+              <svg viewBox="0 0 560 130" role="img" aria-label="Brew More"><text data-logo-text class="logo-text" x="2" y="118" font-size="150" textLength="552" lengthAdjust="spacingAndGlyphs">BREW MORE</text></svg>
+            </div>
+            <div data-load-stage-cta class="stage-cta"><Button href={BUY} /></div>
+            <div class="stage-wrap">
+              <div class="stage-left">
+                <div class="stage-deco">
+                  <div data-load-stage-deco-text class="stage-deco-text-wrap"><Sketch delay=".05s"><span class="hand">Real Coffee,<br />Bold Taste</span></Sketch></div>
+                  <div data-load-stage-deco-arrow class="stage-deco-arrow-wrap"><Sketch delay=".15s"><Fragment set:html={curveArrow} /></Sketch></div>
+                </div>
+                <div class="stage-bg"><svg viewBox="0 0 700 700" aria-hidden="true"><path d="M189 629A322 322 0 1 1 597 557" fill="none" stroke="#fff" stroke-width="40" stroke-linecap="butt" data-load-stage-ring /></svg></div>
+                <div class="stage-visual"><canvas data-load-stage-canvas class="stage-canvas" aria-label="Brew More protein iced latte tub"></canvas></div>
+                <div class="stage-facts">
+                  {[['25', 'g', 'of Protein', 'is-first', .62], ['0', 'g', 'added Sugar', 'is-second', .07], ['90', 'mg', 'of Caffeine', 'is-third', .46]].map(([n, u, t, c, lv]) => (
+                    <div data-inertia-item class={`stage-fact-outer ${c}`}>
+                      <div data-load-stage-fact data-inertia-item-child class={`stage-fact ${c}`}>
+                        <div class="fact-liquid" aria-hidden="true"><div class="tide" data-level={lv}></div></div>
+                        <div class="stage-fact-wrap"><div class="stage-fact-number">{n}</div><div class="stage-fact-unit">{u}</div></div>
+                        <div class="stage-fact-text">{t}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div class="stage-right">
+                <div class="stage-text-wrap">
+                  <h1 data-load-stage-title class="hero-heading"><span class="white-span">Brewed</span><br />to<br />Build</h1>
+                  <div class="stage-paragraph-wrap">
+                    <p data-load-stage-text class="paragraph is-stage-paragraph">Our Protein Iced Latte blends real coffee with whey protein and fibre, for a smooth caffeine lift that keeps you full.</p>
+                    <div data-load-stage-underline class="stage-subline-wrap"><Sketch delay=".2s"><Fragment set:html={underline} /></Sketch></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-marquee class="marquee" aria-hidden="true">
+        <div class="marquee-inner">
+          <svg class="marquee-bg-svg" viewBox="0 0 1440 440" preserveAspectRatio="none"><path d="M-120 336Q720-64 1560 336" fill="none" stroke="currentColor" stroke-width="170" /></svg>
+          <svg class="marquee-text-svg" viewBox="0 0 1440 440" preserveAspectRatio="none">
+            <defs><path id="mq-path" d="M-120 336Q720-64 1560 336" /></defs>
+            <text data-marquee-svg><textPath href="#mq-path" startOffset="-30%" data-marquee-textpath dy="42">IT’S A LATTE(R) · IT’S A LATTE(R) · IT’S A LATTE(R) · IT’S A LATTE(R) · IT’S A LATTE(R) · IT’S A LATTE(R) ·</textPath></text>
+          </svg>
+          <div class="marquee-overlay"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INSIDER / POLAROIDS -->
+    <div data-inertia class="insider-section">
+      <span class="coffee-ring is-a" aria-hidden="true" data-ring></span>
+      <div class="insider-container">
+        <h2 class="insider-heading">You deserve the best.<br />You deserve More:<br /><span class="toffee-span">Protein Iced Latte.</span></h2>
+        <div class="insider-row">
+          <div class="testimonial-wrapper">
+            {[1, 2, 3].map((n) => (
+              <div data-inertia-item class={`testimonial-inner-wrap ${['is-first', 'is-second', 'is-third'][n - 1]}`}>
+                <div data-inertia-item-child class={`testimonial-inner _${n}`}>
+                  <div class="testimonial-media"><img src={img(`polaroid-${n}.webp`)} alt="" loading="lazy" width="1000" height="1333" /></div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div class="insider-text-inner">
+            <h3 class="insider-subheading">We want to make healthy, science-backed nutrition simple and accessible, so you can feel better, perform better, and enjoy life every single day.</h3>
+            <p class="paragraph">Loved by thousands of community members, this creation contains real coffee, premium whey protein and fibre. Irresistibly smooth. Heavenly creamy.</p>
+            <div class="insider-cta">
+              <Button href={BUY} />
+              <div class="rating-inner">
+                <a href={BUY} class="rating-link">
+                  <div class="rating-star-wrap">{[1, 2, 3, 4, 5].map(() => <svg class="rating-star" viewBox="0 0 20 20" aria-hidden="true"><path d="m10 1.6 2.4 5.4 5.9.6-4.4 4 1.3 5.8L10 14.4l-5.2 3 1.3-5.8-4.4-4 5.9-.6z" fill="currentColor" /></svg>)}</div>
+                  <div class="rating-text-wrap"><div class="rating-text">2,412 Reviews</div></div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEQUENCE -->
+    <div id="nutrition" data-sequence class="sequence-section">
+      <div class="sequence-signature">
+        <Sketch><span class="hand">Why people<br />Love it</span></Sketch>
+        <Sketch class="sig-arrow" delay=".1s"><Fragment set:html={curveArrow} /></Sketch>
+      </div>
+      <div data-sequence-trigger class="sequence-scroll-wrap">
+        <div data-sequence-stage class="sequence-sticky">
+          <canvas data-sequence-canvas class="sequence-canvas" aria-hidden="true"></canvas>
+          <div class="sequence-lines" aria-hidden="true">
+            <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" data-sequence-svg>
+              <path d="M-40 160C300-60 520 420 860 300S1300 60 1500 240" />
+              <path d="M-40 760C260 540 540 980 900 700S1280 520 1500 640" />
+              <path d="M-40 420C360 220 700 700 1020 480S1380 330 1500 460" />
+            </svg>
+            <div data-sequence-signature class="sequence-inner-signature"><Sketch><span class="hand">More for<br />Coffee Lovers ♡</span></Sketch></div>
+          </div>
+          <div class="sequence-cards">
+            <div data-sequence-card class="statement-card is-first"><div class="statement-card-wrapper">
+              <div data-sequence-smiley class="top-smiley is-card" set:html={smiley} />
+              <h2 class="statement-heading">More<br />Taste</h2>
+              <p class="paragraph center-align"><span class="circled">Real espresso.<Sketch class="circle-sk"><svg viewBox="0 0 200 70" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M20 38C12 14 70 4 118 8c54 4 78 22 52 44C140 70 50 68 22 54 8 46 16 30 40 20" /></svg></Sketch></span> Smooth &amp; creamy.<br />25g of pure protein per serving, for your<br />ultimate coffee break.</p>
+            </div></div>
+            <div data-sequence-card-left data-sequence-card class="statement-card is-second"><div class="statement-card-wrapper left">
+              <div data-sequence-smiley-left data-sequence-smiley class="top-smiley is-card" set:html={smiley} />
+              <h2 class="statement-heading">More Caffeine</h2>
+              <p class="paragraph center-align"><Sketch class="bolt-sk"><svg viewBox="0 0 40 60" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 4 8 34h14l-8 22 20-32H20z" /></svg></Sketch>90mg of caffeine per serving,<br />about a shot of espresso.<br />Your daily energy boost.</p>
+            </div></div>
+            <div data-sequence-card class="statement-card is-third"><div class="statement-card-wrapper">
+              <div data-sequence-smiley class="top-smiley is-card" set:html={smiley} />
+              <h2 class="statement-heading">More Protein</h2>
+              <p class="paragraph center-align"><Sketch class="arrow-sk"><svg viewBox="0 0 48 40" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 32C14 20 26 14 40 12M32 5l9 7-8 8" /></svg></Sketch>With 25g of whey protein per scoop,<br />to keep you full and support<br />your active lifestyle.</p>
+            </div></div>
+            <div data-sequence-card-left data-sequence-card class="statement-card is-fourth"><div class="statement-card-wrapper left">
+              <div data-sequence-smiley-left data-sequence-smiley class="top-smiley is-card" set:html={smiley} />
+              <h2 class="statement-heading">No added sugar</h2>
+              <p class="paragraph center-align">No added sugar, only naturally occurring,<br />with <span class="circled">90% less<Sketch class="circle-sk"><svg viewBox="0 0 200 70" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M20 38C12 14 70 4 118 8c54 4 78 22 52 44C140 70 50 68 22 54 8 46 16 30 40 20" /></svg></Sketch></span> sugar than a<br />café-bought iced latte.</p>
+            </div></div>
+          </div>
+          <div class="sequence-final">
+            <h2 data-sequence-title class="sequence-title">Coffee, just the<br />way you like it.<br /><span data-sequence-title-split class="toffee-span">What’s your flavour?</span><br /></h2>
+            <div data-sequence-final-signature class="sequence-final-signature is-first"><Sketch delay=".05s"><span class="hand">Salted<br />Caramel</span></Sketch></div>
+            <div data-sequence-final-signature class="sequence-final-signature is-first-arrow"><Sketch><Fragment set:html={curveArrow} /></Sketch></div>
+            <div data-sequence-final-signature class="sequence-final-signature is-second"><Sketch delay=".075s"><span class="hand">Hazelnut<br />Crunch</span></Sketch></div>
+            <div data-sequence-final-signature class="sequence-final-signature is-second-arrow"><Sketch delay=".025s"><Fragment set:html={curveArrow} /></Sketch></div>
+            <img src={img('cookie.webp')} alt="" data-sequence-cookie-first class="sequence-final-cookie" loading="lazy" />
+            <img src={img('cookie.webp')} alt="" data-sequence-cookie-second class="sequence-final-cookie is-second" loading="lazy" />
+            <img src={img('beans2.webp')} alt="" data-sequence-strawberry-first class="sequence-final-bean" loading="lazy" />
+            <img src={img('beans2.webp')} alt="" data-sequence-strawberry-second class="sequence-final-bean is-second" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BENEFITS -->
+    <section id="benefits" class="benefit-section">
+      <div class="top-smiley is-benefit" set:html={smiley} data-smiley />
+      <div class="benefit-grid">
+        <div class="benefit-image">
+          <img src={img('scoop.webp')} alt="A scoop of Brew More protein coffee powder" loading="lazy" width="1200" height="1600" />
+          <div data-fill-line class="fill-line"><svg viewBox="0 0 400 800" preserveAspectRatio="none" aria-hidden="true"><path d="M-20 70C70 20 150 40 130 96S10 150 70 196" fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round" /><path d="M430 760C340 790 270 760 290 712" fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round" /></svg></div>
+        </div>
+        <div class="benefit-content">
+          <h2 class="benefit-title">More for you.<br />See the difference.</h2>
+          <div data-benefit-table class="benefit-table">
+            <div data-benefit-table-line class="line benefit-head">
+              <div class="benefit-head-label">Benefits</div>
+              <div class="benefit-head-brand">BREW MORE</div>
+              <div class="benefit-head-label">Regular Coffee</div>
+            </div>
+            {rows.map((r) => (
+              <div data-benefit-table-line class="line">
+                <div class="benefit-table-item">
+                  <div class="benefit-item-title">{r}</div>
+                  <div class="benefit-checker-inner">
+                    <div class="benefit-item-check"><svg data-benefit-table-check class="check" viewBox="0 0 20 20" aria-label="Yes"><path d="m5 10.5 3.2 3.2L15 6.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></div>
+                    <div class="benefit-item-x"><svg class="check" viewBox="0 0 20 20" aria-label="No"><path d="m6 6 8 8m0-8-8 8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REVIEWS -->
+    <section id="reviews" class="testimonial-section">
+      <div data-testimonial-parallax class="bg-img-wrapper">
+        <img data-testimonial-parallax-item class="bg-img" src={img('glass-bg.webp')} alt="" loading="lazy" width="2200" height="1650" />
+        <div class="bg-shade"></div>
+      </div>
+      <div class="testimonial-container">
+        <div class="big-title-wrapper">
+          <div class="testimonial-signature"><Sketch><span class="hand">Premium Coffee Taste</span></Sketch></div>
+          <h2 class="testimonial-big-heading">Clean. Bold. <br />Brew.</h2>
+        </div>
+        <div class="testimonial-slider">
+          <h3 class="testimonial-heading">don’t take our <br />word for it</h3>
+          <div data-testimonial-inview class="testimonial-slider-wrapper">
+            <div data-slider-interface class="testimonial-slider-interface">
+              <div data-slider-arrows class="testimonial-slider-button-wrapper">
+                <button type="button" class="testimonial-slider-button is-left" aria-label="Previous review"><svg class="testimonial-slider-button-arrow" viewBox="0 0 20 20" width="20" height="20"><path d="M12 4 6 10l6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
+                <button type="button" class="testimonial-slider-button is-right" aria-label="Next review"><svg class="testimonial-slider-button-arrow" viewBox="0 0 20 20" width="20" height="20"><path d="m8 4 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
+              </div>
+            </div>
+            <div data-slider class="testimonial-slider-inner">
+              {reviews.map(([h, t, n]) => (
+                <div class="testimonial-slider-item-wrap">
+                  <div data-slider-item-inner class="testimonial-slider-item">
+                    <div class="testimonial-star-wrap">{[1, 2, 3, 4, 5].map(() => <svg class="testimonial-star" viewBox="0 0 20 20" aria-hidden="true"><path d="m10 1.6 2.4 5.4 5.9.6-4.4 4 1.3 5.8L10 14.4l-5.2 3 1.3-5.8-4.4-4 5.9-.6z" fill="currentColor" /></svg>)}</div>
+                    <div class="testimonial-item-inner-text"><h3 class="testimonial-item-heading">{h}</h3><p class="testimonial-item-text">{t}</p></div>
+                    <div class="testimonial-line"></div>
+                    <div class="testimonial-item-bottom"><div class="testimonial-client-name">{n}</div><div class="testimonial-verified-wrap"><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="m6.5 10.3 2.3 2.3 4.5-4.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg><div class="testimonial-verified-text">Verified</div></div></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FLAVOUR -->
+    <section data-inertia class="flavour">
+      <span class="coffee-ring is-b" aria-hidden="true" data-ring></span>
+      <div class="flavour-container">
+        <div class="flavour-header">
+          <div class="flavour-heading-wrap">
+            <h2 class="flavour-title">Flavour Shots</h2>
+            <h3 data-highlight-text class="flavour-subline">New Taste, Low Sugar</h3>
+            <p class="flavour-paragraph">Simply stir in 3g of a Flavour Shot with your 300g Iced Latte to create a sweeter flavour sensation!</p>
+          </div>
+        </div>
+        <div data-flavour-content class="flavour-content">
+          <div class="flavour-left">
+            <div class="flavour-signature-wrap">
+              <div class="flavour-signature"><Sketch><span class="hand">More Flavour<br />Combinations</span></Sketch></div>
+              <div class="flavour-signature-arrow"><Sketch delay=".15s"><Fragment set:html={curveArrow} /></Sketch></div>
+            </div>
+            <div data-inertia-item class="flavour-left-dose"><img data-inertia-item-child src={img('hero/seq_1_7.webp')} alt="Brew More protein iced latte tub" class="flavour-left-dose-img" loading="lazy" /></div>
+            <div data-inertia-item class="flavour-left-pack is-first"><img data-inertia-item-child src={img('sachet.webp')} alt="" class="flavour-left-pack-img" loading="lazy" /></div>
+            <div data-inertia-item class="flavour-left-pack is-second"><img data-inertia-item-child src={img('sachet.webp')} alt="" class="flavour-left-pack-img" loading="lazy" /></div>
+            <div class="flavour-plus"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 8v84M8 50h84" stroke="#fff" stroke-width="14" stroke-linecap="round" fill="none" /></svg></div>
+          </div>
+          <div class="flavour-right">
+            <div class="flavour-right-bg"><svg viewBox="0 0 700 700" aria-hidden="true"><circle cx="350" cy="350" r="318" fill="none" stroke="#fff" stroke-width="40" data-flavour-content-svg-path /></svg></div>
+            <div data-flavour-slider class="flavour-swiper swiper">
+              <div class="flavour-swiper-wrapper swiper-wrapper">
+                {flavours.map(([a, b, k]) => (
+                  <div class="flavour-slide swiper-slide"><div class="flavour-slide-inner">
+                    <div data-inertia-item class="flavour-slide-dose"><img data-inertia-item-child class="flavour-slide-dose-img" src={img(`flavour-${k}-dose.webp`)} alt={`${a} ${b} flavour shot tub`} loading="lazy" /></div>
+                    <div data-inertia-item class="flavour-slide-pack is-first"><img data-inertia-item-child class="flavour-slide-pack-img" src={img(`flavour-${k}-pack.webp`)} alt="" loading="lazy" /></div>
+                    <div data-inertia-item class="flavour-slide-pack is-second"><img data-inertia-item-child class="flavour-slide-pack-img" src={img(`flavour-${k}-pack.webp`)} alt="" loading="lazy" /></div>
+                  </div></div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div class="flavour-center">
+            <div data-flavour-content-slider class="flavour-content-swiper swiper">
+              <div class="flavour-content-swiper-wrapper swiper-wrapper">
+                {flavours.map(([a, b]) => (
+                  <div class="flavour-content-slide swiper-slide"><div class="flavour-content-slide-inner"><div class="flavour-content-slide-header">
+                    <h3 class="flavour-content-slider-title">{a}<br />{b}</h3>
+                    <p class="flavour-content-slider-subline">Flavour Shot®</p>
+                    <Button href={BUY} />
+                  </div></div></div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div class="flavour-navigation">
+            <button type="button" data-flavour-slider-left-button class="flavour-slider-button is-left" aria-label="Previous flavour"><svg class="flavour-slider-button-arrow" viewBox="0 0 20 20" width="20" height="20"><path d="M12 4 6 10l6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
+            <button type="button" data-flavour-slider-right-button class="flavour-slider-button is-right" aria-label="Next flavour"><svg class="flavour-slider-button-arrow" viewBox="0 0 20 20" width="20" height="20"><path d="m8 4 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAYMENT -->
+    <section class="payment-section">
+      <span class="coffee-ring is-c" aria-hidden="true" data-ring></span>
+      <div class="payment-curves" aria-hidden="true"><svg viewBox="0 0 1440 1000" preserveAspectRatio="xMidYMid slice"><path d="M-60 880C240 640 520 1000 860 760S1300 620 1500 700" /><path d="M-60 120C300-40 600 300 980 180S1360 40 1500 120" /></svg></div>
+      <div class="payment-container">
+        <div class="payment-sig is-left"><Sketch><span class="hand">3–5 Days<br />Delivery</span></Sketch></div>
+        <h2 class="payment-heading">Don’t just crave It.<br /><span class="toffee-span">Get It.</span></h2>
+        <div data-payment class="pament-methods">
+          {pay.map((p, i) => <div data-payment-item class={`payment-item p${i}`}><span>{p}</span></div>)}
+        </div>
+        <div class="payment-sig is-right"><Sketch delay=".1s"><span class="hand">Free Shipping over<br />£40.00</span></Sketch></div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="shop" class="footer">
+      <div class="footer-container">
+        <div class="footer-product">
+          <div class="footer-product-bg"></div>
+          <h2 class="footer-product-title">Brewed<br />to<br />Build</h2>
+          <img class="footer-product-tub is-first" src={img('hero/seq_1_9.webp')} alt="" loading="lazy" />
+          <img class="footer-product-tub is-second" src={img('hero/seq_1_3.webp')} alt="" loading="lazy" />
+          <div class="footer-product-cta"><Button href={BUY} /></div>
+          <a class="footer-product-link" href={BUY} aria-label="Shop Brew More"></a>
+        </div>
+        <div class="footer-cards">
+          <a href={BUY} class="footer-info is-first"><svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M8 18h32l-3 20H11z"/><path d="M16 18l4-9h8l4 9"/></svg><span>Shop all<br />products</span></a>
+          <a href={BUY} class="footer-info is-second"><svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M14 8h10l-1 30H13z"/><path d="M26 12h10l-2 28H24z"/></svg><span>Samples<br />&amp; singles</span></a>
+        </div>
+        <div class="footer-text">
+          <h3 class="footer-title"><span class="toffee-span">Brew More</span><br />Protein Iced Latte</h3>
+          <div class="footer-links"><a href="#" class="shipping-link"><span class="shipping-link-wrap"><span class="shipping-link-text">Shipping and Delivery</span></span></a><a href="#" class="shipping-link"><span class="shipping-link-wrap"><span class="shipping-link-text">Returns and Exchanges</span></span></a></div>
+          <div class="nav-social-media-inner is-footer">
+            {[['ig', 'Instagram'], ['tt', 'TikTok'], ['yt', 'YouTube']].map(([k, n]) => (
+              <a href="#" class="social-media-link" aria-label={n}><div class="social-media-circle"><span class="social-media-icon" set:html={ico[k]} /></div></a>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div class="footer-wordmark" aria-hidden="true">BREW MORE</div>
+      <div class="footer-credits-wrap">
+        <button type="button" class="footer-credits-toggle"><span class="footer-credits-toggle-wrap"><span class="footer-credits-toggle-text">Site Credits</span></span></button>
+        <div class="footer-credits"><div class="footer-credits-inner">
+          <p><strong>Brew More</strong> is a fictional brand.</p>
+          <p>A motion study of a premium DTC landing page. Type, label, 3D tub and artwork were built or generated for this demo.</p>
+          <p>Built with Astro, GSAP, Lenis, Swiper and three.js.</p>
+        </div></div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    import '../scripts/main.js';
+  </script>
+</Base>
