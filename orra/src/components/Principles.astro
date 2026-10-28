@@ -1,0 +1,24 @@
+---
+import { principles } from '../data/content';
+---
+
+<section class="sec radial-sec" data-theme="dark" aria-labelledby="pr-h">
+  <div class="wrap">
+    <h2 class="sr-only" id="pr-h">How we work</h2>
+    <div class="radial" data-radial>
+      <ul class="radial__nodes">
+        {principles.map(([t], i) => (
+          <li style={`--a: ${i * 45 + 22.5}deg`}>
+            <span class="spoke" aria-hidden="true"></span>
+            <button class="node" type="button" data-node={i} aria-label={t}>{String(i + 1).padStart(2, '0')}</button>
+          </li>
+        ))}
+      </ul>
+      <div class="radial__core" aria-live="polite">
+        <h3 class="radial__title" data-core-title>{principles[0][0]}</h3>
+        <p class="radial__desc" data-core-desc>{principles[0][1]}</p>
+      </div>
+    </div>
+  </div>
+  <script type="application/json" data-principles set:html={JSON.stringify(principles)}></script>
+</section>

@@ -1,0 +1,24 @@
+---
+import { coastlines } from '../data/content';
+---
+
+<section class="sec coast" id="coastlines" data-theme="light">
+  <div class="wrap">
+    <div class="coast__head" data-reveal>
+      <h2 class="label">Coastlines <sup>17</sup></h2>
+      <p class="coast__note">Where our homes stand. Hover a row, or tap it on a phone.</p>
+    </div>
+    <ul class="rows" data-reveal>
+      {coastlines.map(([name, place, kind]) => (
+        <li>
+          <a class="row" href="#residences">
+            <span class="row__name">{name}</span>
+            <span class="row__place">{place}</span>
+            <span class="row__kind">{kind}</span>
+            <span class="row__go" aria-hidden="true">↗</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

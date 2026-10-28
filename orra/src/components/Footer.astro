@@ -1,0 +1,18 @@
+---
+import { footer, nav } from '../data/content';
+---
+
+<footer class="foot" id="contact" data-theme="dark">
+  <div class="wrap">
+    <p class="serif foot__lead" data-reveal>Tell us about the coast you have in mind.</p>
+    <div class="foot__grid" data-reveal>
+      <div><h3>Navigation</h3><ul>{nav.map(([l, h]) => <li><a href={h}>{l}</a></li>)}</ul></div>
+      <div><h3>Elsewhere</h3><ul>{footer.social.map((s) => <li><a href="#contact">{s}</a></li>)}</ul></div>
+      <div><h3>Studios</h3><address>{footer.address.map((l) => <span>{l}</span>)}<br />{footer.address2.map((l) => <span>{l}</span>)}</address></div>
+      <div><h3>Hours</h3><ul>{footer.hours.map(([d, t]) => <li><span>{d}</span><span>{t}</span></li>)}</ul></div>
+      <div><h3>Contact</h3><ul>{footer.contact.map((c) => <li><a href="#contact">{c}</a></li>)}</ul></div>
+    </div>
+  </div>
+  <div class="ticker" aria-hidden="true"><div class="ticker__track">{Array.from({ length: 8 }).map(() => <span>ORRA</span>)}</div></div>
+  <div class="wrap foot__legal"><span>Concept site for a fictional studio</span><span>Studio licence no. 000 / 00</span><span>Legal</span><span>© 2026 Orra</span></div>
+</footer>

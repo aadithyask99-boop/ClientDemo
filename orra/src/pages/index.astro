@@ -1,8 +1,30 @@
 ---
 import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
+import About from '../components/About.astro';
+import Coastlines from '../components/Coastlines.astro';
+import Process from '../components/Process.astro';
+import Residences from '../components/Residences.astro';
+import Principles from '../components/Principles.astro';
+import People from '../components/People.astro';
+import Partners from '../components/Partners.astro';
+import Footer from '../components/Footer.astro';
 ---
 
 <Base title="Orra | Residences for the horizon" description="Orra curates architectural residences for quiet, modern living. A concept site for a fictional property studio.">
-  <Hero />
+  <Header />
+  <main id="top">
+    <Hero />
+    <div class="paper">
+      <About />
+      <Coastlines />
+      <Process />
+      <Residences />
+      <Principles />
+      <People />
+      <Partners />
+    </div>
+  </main>
+  <Footer />
 </Base>

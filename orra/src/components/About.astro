@@ -1,0 +1,31 @@
+---
+import { meta, awards, statement } from '../data/content';
+---
+
+<section class="sec about" id="studio" data-theme="light">
+  <div class="wrap">
+    <h2 class="display" data-reveal>Quiet buildings<br />for loud landscapes</h2>
+    <div class="about__grid">
+      <dl class="meta" data-reveal>
+        {meta.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+      </dl>
+      <p class="serif lede" data-reveal>Orra is an architecture studio rooted in place and light. We design homes with a deep sense of context, climate and calm, shaping houses that feel effortless, intuitive and quietly refined. From coastal masterplans to a single guest studio, each residence is made to measure, with care.</p>
+    </div>
+    <div class="facts" data-reveal>
+      <div>
+        <h3>Awards</h3>
+        <ul>{awards.awards.map(([a, b, c]) => <li><strong>{a}</strong><span>{b}</span>{c && <span>{c}</span>}</li>)}</ul>
+      </div>
+      <div>
+        <h3>Publications</h3>
+        <ul>{awards.publications.map(([a, b, c]) => <li><strong>{a}</strong><span>{b}</span>{c && <span>{c}</span>}</li>)}</ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec statement" data-theme="light">
+  <div class="wrap">
+    <p class="serif big" data-reveal>{statement}</p>
+  </div>
+</section>
