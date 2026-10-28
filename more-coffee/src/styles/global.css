@@ -415,7 +415,7 @@ html.has-seq-ready .loader::after { opacity: 0; }
   .stage-bg { left: -2em; top: 1em; width: 25em; height: 25em; } .stage-visual canvas, .stage-canvas { left: 4em; top: 1.5em; width: 18.5em; height: 22.6em; }
   .stage-fact-outer, .stage-fact { width: 5.6em; height: 5.6em; } .stage-fact-number { font-size: 1.7em; } .stage-fact-unit { font-size: .85em; } .stage-fact-text { font-size: .6em; }
   .stage-fact-outer.is-first { left: .6em; top: 1.5em; } .stage-fact-outer.is-second { left: -.4em; top: 9em; } .stage-fact-outer.is-third { left: .4em; top: 16.4em; }
-  .stage-deco-text-wrap { left: auto; right: .6em; top: 3em; } .stage-deco-arrow-wrap { display: none; }
+  .stage-deco-text-wrap { left: auto; right: .8em; top: -2.2em; } .stage-deco-arrow-wrap { display: none; }
   .stage-right { display: block; width: 100%; } .stage-text-wrap, .stage-paragraph-wrap { position: relative; left: auto; top: auto; width: 100%; padding: 0 1.2em; }
   .hero-heading { font-size: 4.9em; } .stage-paragraph-wrap { margin-top: .6em; } .is-stage-paragraph { width: 100%; font-size: 1.05em; margin-top: .8em; } .stage-subline-wrap { position: relative; left: auto; top: auto; width: 7em; margin: .4em auto 0; }
   .insider-heading { font-size: 3.3em; } .insider-row { grid-template-columns: 1fr; gap: 2em; } .insider-container { padding: 0 1.2em; }
