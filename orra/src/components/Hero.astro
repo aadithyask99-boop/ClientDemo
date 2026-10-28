@@ -8,32 +8,36 @@ const links = ['Home', 'Residences', 'Studio', 'Journal', 'Contact'];
 <main class="page" data-page>
   <section class="card" data-card aria-labelledby="orra-title" style={`--house: url(${img('house')}); --neon: url(${img('neon')});`}>
     <div class="scene" aria-hidden="true" data-scene>
-      <div class="layer" data-depth="0.012">
-        <img class="plate" src={img('plate')} alt="" width="1376" height="768" decoding="async" fetchpriority="high" />
-      </div>
-      <div class="tint"></div>
-
-      <div class="layer letters" data-depth="-0.016">
-        <p class="word word--solid">{letters.map((l, i) => <span class="l" data-i={i}>{l}</span>)}</p>
-      </div>
-
-      <div class="layer home" data-depth="0.034">
-        <div class="reflect" data-reflect>
-          <img src={img('house')} alt="" width="1278" height="577" decoding="async" />
+      <div class="stage" data-stage>
+        <div class="layer" data-depth="0.012">
+          <img class="plate" src={img('plate')} alt="" width="1376" height="768" decoding="async" fetchpriority="high" />
+          <img class="plate plate--night" src={img('plate_night')} alt="" width="1376" height="768" decoding="async" />
         </div>
-        <div class="house">
-          <img src={img('house')} alt="" width="1278" height="577" decoding="async" fetchpriority="high" />
-          <div class="neon neon--base"></div>
-          <div class="lamp"></div>
-          <div class="neon neon--hot"></div>
+
+        <div class="layer letters" data-depth="-0.016">
+          <p class="word word--solid">{letters.map((l, i) => <span class="l" data-i={i}>{l}</span>)}</p>
         </div>
-      </div>
 
-      <div class="layer letters letters--front" data-depth="-0.016">
-        <p class="word word--line">{letters.map((l, i) => <span class="l" data-i={i}>{l}</span>)}</p>
-      </div>
+        <div class="layer home" data-depth="0.034">
+          <div class="reflect" data-reflect>
+            <img src={img('house_off')} alt="" width="1278" height="577" decoding="async" />
+            <img class="on" src={img('house')} alt="" width="1278" height="577" decoding="async" />
+          </div>
+          <div class="house" data-house>
+            <img src={img('house_off')} alt="" width="1278" height="577" decoding="async" fetchpriority="high" />
+            <img class="on" src={img('house')} alt="" width="1278" height="577" decoding="async" fetchpriority="high" />
+            <div class="lit"></div>
+            <div class="neon neon--base"></div>
+            <div class="neon neon--hot"></div>
+          </div>
+        </div>
 
-      <canvas class="ripples" data-ripples></canvas>
+        <div class="layer letters letters--front" data-depth="-0.016">
+          <p class="word word--line">{letters.map((l, i) => <span class="l" data-i={i}>{l}</span>)}</p>
+        </div>
+
+        <canvas class="ripples" data-ripples></canvas>
+      </div>
     </div>
 
     <h1 class="sr-only" id="orra-title">Orra</h1>

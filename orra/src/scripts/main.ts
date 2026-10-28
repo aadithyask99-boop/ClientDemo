@@ -10,6 +10,7 @@ const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
 const card = q('[data-card]')!;
 const scene = q('[data-scene]')!;
+const stage = q('[data-stage]')!;
 
 /** Pointer position over the card, -0.5 to 0.5 on each axis (drifts by itself when nobody is moving the pointer) */
 const pointer = { x: 0, y: 0, px: 0, py: 0, inside: false, last: performance.now() };
@@ -136,7 +137,9 @@ let lastRing = { x: -999, y: -999 };
 
 /* ---------- Pointer input (mouse, pen or a finger dragging) ---------- */
 let rect = card.getBoundingClientRect();
-const measure = () => { rect = card.getBoundingClientRect(); measureLetters(); fitCanvas(); moveNav(); };
+// The stage is the art's 16:9 box, which can be larger than the viewport (cropped), so the water is measured on it
+let srect = stage.getBoundingClientRect();
+const measure = () => { rect = card.getBoundingClientRect(); srect = stage.getBoundingClientRect(); measureLetters(); fitCanvas(); moveNav(); };
 
 let prev = { x: 0, y: 0, t: 0 };
 function onMove(e: PointerEvent) {
@@ -151,8 +154,8 @@ function onMove(e: PointerEvent) {
   if (!pointer.inside) { setLit(0); return; }
   applyLight(e.clientX, e.clientY);
 
-  const cx = e.clientX - rect.left;
-  const cy = e.clientY - rect.top;
+  const cx = e.clientX - srect.left;
+  const cy = e.clientY - srect.top;
   const now = performance.now();
   const speed = Math.hypot(e.clientX - prev.x, e.clientY - prev.y) / Math.max(8, now - prev.t);
   prev = { x: e.clientX, y: e.clientY, t: now };
@@ -164,9 +167,9 @@ function onMove(e: PointerEvent) {
 window.addEventListener('pointermove', onMove, { passive: true });
 window.addEventListener('pointerdown', (e) => {
   if (reduce) return;
-  const cx = e.clientX - rect.left;
-  const cy = e.clientY - rect.top;
-  if (cy > horizon() && cx >= 0 && cx <= rect.width) {
+  const cx = e.clientX - srect.left;
+  const cy = e.clientY - srect.top;
+  if (cy > horizon() && e.clientX >= rect.left && e.clientX <= rect.right) {
     spawn(cx, cy, 1.5);
     window.setTimeout(() => spawn(cx, cy, 1.1), 160);
     window.setTimeout(() => spawn(cx, cy, 0.8), 340);
@@ -185,7 +188,10 @@ if (!reduce) {
     applyDepth();
     if (time > nextDrop && rect.width) {
       nextDrop = time + 2.4 + Math.random() * 1.8;
-      spawn(rect.width * (0.15 + Math.random() * 0.7), ch * (0.66 + Math.random() * 0.28), 0.9);
+      // somewhere on the water that is actually on screen
+      const top = Math.max(horizon() + ch * 0.1, rect.top - srect.top);
+      const bottom = Math.min(ch * 0.97, rect.bottom - srect.top);
+      if (bottom > top) spawn(Math.max(0, rect.left - srect.left) + Math.min(rect.width, srect.width) * (0.1 + Math.random() * 0.8), top + Math.random() * (bottom - top), 0.9);
     }
   });
 }

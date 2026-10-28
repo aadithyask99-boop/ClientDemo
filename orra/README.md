@@ -6,24 +6,25 @@ Run it: `npm install`, then `npm run dev`. `npm run build` writes `dist/`. `node
 
 ## How the scene is built
 
-Three generated images (Gemini 3.1 Flash Image through OpenRouter) and two derived ones, all in `public/img/`:
+Generated images (Gemini 3.1 Flash Image through OpenRouter) and derived ones, all in `public/img/`:
 
-- `plate.webp`: the dusk lake and mountains, with an empty middle.
-- `house.webp`: the villa, shot on flat green and keyed out to true alpha (green dominance becomes transparency, spill clamped), so it can sit between the layers.
+- `plate.webp` and `plate_night.webp`: the lake and mountains at dusk and at night (the night one is an edit of the dusk one, so the two line up exactly).
+- `house.webp` and `house_off.webp`: the villa with its lights on and with every light off (an edit of the first; the two silhouettes match to 99.8%). Both were shot on flat green and keyed out to true alpha (green dominance becomes transparency, spill clamped), so they can sit between the layers.
 - `neon.webp`: only the light strips and lit windows of the house, pulled out by brightness and colour. It is used as a mask to make them glow.
 - `t1-4.webp`: crops of a 2x2 sheet of residences, used as the round thumbnails.
 
-Everything inside the card is sized in container units (`cqw`/`cqh`), so the composition scales as one piece. On phones and tall screens the art is sized by width and placed from the card's vertical centre, and the text blocks stack around it.
+The hero fills the viewport. The artwork sits on a 16:9 "stage" that covers the viewport like `background-size: cover` (cropped at the edges, centred), so the plate, name, house and water stay in register at any shape; the text and cards are positioned on the viewport itself. Both are sized in container units (`cqw`/`cqh`). On phones and tall screens the stage is the whole viewport, the art is sized by width and placed from the vertical centre, and the text blocks stack around it.
 
-Layers, back to front: plate, night tint, the name (solid), the house with its reflection, an outline copy of the name (so the letters show through the glass), a canvas for water rings, then the interface.
+Layers, back to front: dusk plate and night plate, the name (solid), the house with its reflection, an outline copy of the name (so the letters show through the glass), a canvas for water rings, then the interface.
 
 ## Interaction
 
 - **Depth**: the plate, name, house and glass cards slide a little with the pointer, the name the opposite way. With nobody at the controls the scene drifts slowly. A finger dragging does the same on touch.
 - **Letters**: the letter under the pointer lifts and swells; its neighbours follow a little.
-- **Light**: a warm pool of light and a stronger neon bloom follow the pointer across the house.
+- **Dusk and night are two states of the building and the backdrop.** Dusk: lights off (`house_off`), dusk sky. Night: the lit house fades in over the unlit one, a halo blooms around the strips and windows (`neon.webp` as a mask), the night sky fades in over the dusk one, and the water reflection follows. One variable, `--night`, from 0 to 1, drives all of it.
+- **The pointer is a torch**: wherever it is over the house, the lit picture shows through in a soft circle with an orange halo around the strips, so at dusk you can switch the lights on locally just by pointing. At night everything is already lit, so it only adds a little extra halo.
 - **Water**: moving over the lake sends out flattened rings; clicking or tapping sends three. The reflection (the house, flipped and faded) is distorted by an SVG turbulence filter that churns harder the faster you move. A ring drops now and then on its own.
-- **Dusk / Night**: a pill switch eases one variable (`--night`) from 0 to 1 over 1.8 s. The plate darkens, the room around the card darkens, the house loses a little brightness and its neon strengthens.
+- **Dusk / Night**: a pill switch eases `--night` from 0 to 1 over 1.8 s (see above).
 - **Nav**: a white pill glides to whichever link you hover and returns to the current page. On phones a Menu button opens a small panel.
 - **Glass cards**: tilt in 3D under the pointer and count up on load. The Book a viewing button leans toward the pointer.
 - **Intro** (only with scripting and without reduced motion): the scene settles out of a soft blur, the name rises letter by letter, the house comes up out of the water, then the interface follows. A 6 s safety timeout restores the page if the script never starts; reduced motion skips the intro and the drift.
