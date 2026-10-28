@@ -182,8 +182,8 @@ function highlightText() {
 }
 function fillLine() {
   $$('[data-fill-line]').forEach((el) => {
-    const path = $('path', el);
-    desktop(() => gsap.timeline({ scrollTrigger: { trigger: el, start: 'top 70%', once: true } }).fromTo(path, { drawSVG: '0% 0%' }, { drawSVG: '100% 0%', ease: 'none', duration: 0.75 }));
+    const paths = $$('path', el);
+    desktop(() => gsap.timeline({ scrollTrigger: { trigger: el, start: 'top 70%', once: true } }).fromTo(paths, { drawSVG: '0% 0%' }, { drawSVG: '100% 0%', ease: 'none', duration: 0.75, stagger: 0.25 }));
   });
 }
 function benefitTable() {
