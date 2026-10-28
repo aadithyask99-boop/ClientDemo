@@ -184,8 +184,9 @@ function lenisJump(y: number) {
   window.scrollTo({ top: y, behavior: 'smooth' });
 }
 
-/* People: the statement opens the section with a curve of photographs sweeping across beneath it. The curve rises into a ring round the founding
-   year, which turns; then the ring slides aside and the figures light up one after another. */
+/* People, as in the reference: the statement opens the section with a wide curved band of large photographs beneath it. Scrolling on, the statement
+   leaves, the band bunches up, the photographs shrink and drop into a ring of small ones that rises with the founding year. The ring then holds still
+   while you read; finally it slides into a half circle at the left and turns only as you scroll, while the figures step through at the right. */
 function ring() {
   const root = q('[data-ring]');
   if (!root) return;
@@ -197,14 +198,41 @@ function ring() {
   const statement = q('[data-ring-statement]', root)!;
   splitWords(statement);
   const words = qa('.w', statement);
-  const tilts = [-8, 6, -4, 9, -6, 4];
-  const s = { a: 0 };
-  const radius = () => Math.min(innerHeight * 0.42, innerWidth * 0.3);
+  const N = photos.length;
+  const jit = photos.map((_, i) => ((i * 53) % 9) - 4);
+  // everything the scroll drives lives in this one object
+  const st = { shift: 0, morph: 0, rise: 0, side: 0, rot: 0 };
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+  const ease = (t: number) => t * t * (3 - 2 * t);
   const place = () => {
-    const r = radius();
+    const W = innerWidth;
+    const H = innerHeight;
+    const pw = W * 0.15;
+    const ph = pw * 1.25;
+    const cx = lerp(W * 0.5, -W * 0.1, ease(st.side));
+    const cy = lerp(H * 1.22, H * 0.5, ease(st.rise));
+    const R = lerp(H * 0.4, H * 0.62, ease(st.side));
     photos.forEach((el, i) => {
-      el.style.transform = `rotate(${s.a + (i * 360) / photos.length}deg) translateY(${-r}px) rotate(${tilts[i % tilts.length]}deg)`;
+      // band: photographs along a curve that rises to the right
+      const sx = -W * 0.04 + i * W * 0.19 - st.shift * W;
+      const k = Math.max(0, sx) / W;
+      const by = H * 0.8 - H * 0.62 * k * k + (sx < 0 ? H * 0.2 * (sx / W) * (sx / W) : 0);
+      const slope = sx > 0 ? -1.24 * H * (sx / (W * W)) : 0.4 * H * (sx / (W * W));
+      const bAng = (Math.atan(slope) * 180) / Math.PI + jit[i] * 0.9;
+      // ring: small photographs round a circle
+      const th = (i / N) * Math.PI * 2 + st.rot - Math.PI / 2;
+      const rx = cx + Math.cos(th) * R;
+      const ry = cy + Math.sin(th) * R;
+      let rAng = (th * 180) / Math.PI + 90 + jit[i];
+      rAng -= 360 * Math.round((rAng - bAng) / 360);
+      const m = ease(clamp((st.morph * 1.5 - (i / N) * 0.5) / 1));
+      const x = lerp(sx, rx, m);
+      const y = lerp(by, ry, m);
+      const a = lerp(bAng, rAng, m);
+      const sc = lerp(1, 0.4, m);
+      el.style.transform = `translate(${x - pw / 2}px, ${y - ph / 2}px) rotate(${a}deg) scale(${sc})`;
     });
+    core.style.transform = `translate(-50%, calc(-50% + ${cy - H * 0.5}px))`;
   };
   place();
   window.addEventListener('resize', place);
@@ -212,26 +240,30 @@ function ring() {
   const tl = gsap.timeline({
     defaults: { ease: 'none' },
     scrollTrigger: {
-      trigger: root, start: 'top top', end: '+=560%', pin: true, scrub: true, anticipatePin: 1,
+      trigger: root, start: 'top top', end: '+=600%', pin: true, scrub: true, anticipatePin: 1,
       onUpdate: (self) => {
-        const k = self.progress < 0.66 ? -1 : Math.min(stats.length - 1, Math.floor(((self.progress - 0.66) / 0.34) * stats.length));
+        const k = self.progress < 0.7 ? -1 : Math.min(stats.length - 1, Math.floor(((self.progress - 0.7) / 0.3) * stats.length));
         if (k !== on) { on = k; stats.forEach((li, j) => li.classList.toggle('is-on', j === Math.max(0, k))); }
       },
     },
   });
-  // the ring starts low, so only its top curve crosses the page under the statement; the statement itself is read word by word
-  gsap.set(group, { y: () => innerHeight * 0.74 + radius() * 0.1, scale: 1.06 });
-  tl.fromTo(words, { opacity: 0.14 }, { opacity: 1, stagger: 0.04, duration: 0.2 }, 0)
-    .to(s, { a: 36, duration: 0.22, onUpdate: place }, 0)
-    .to(s, { a: 96, duration: 0.3, onUpdate: place }, 0.22)
-    .to(s, { a: 106, duration: 0.1, onUpdate: place }, 0.52)
-    .to(s, { a: 196, duration: 0.38, onUpdate: place }, 0.62)
-    .to(group, { y: 0, scale: 1, duration: 0.3, ease: 'power2.inOut' }, 0.22)
-    .to(statement, { opacity: 0, y: -60, duration: 0.1 }, 0.24)
-    .fromTo(core, { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.16 }, 0.4)
-    .to(core, { opacity: 0, duration: 0.1 }, 0.56)
-    .to(group, { xPercent: -34, scale: 1.12, duration: 0.2, ease: 'power2.inOut' }, 0.58)
-    .fromTo(statsBox, { opacity: 0, xPercent: 6 }, { opacity: 1, xPercent: 0, duration: 0.12 }, 0.66);
+  gsap.set(core, { xPercent: 0, yPercent: 0 });
+  // 0 to 0.28: the statement is read, and the band drifts along
+  tl.fromTo(words, { opacity: 0.14 }, { opacity: 1, stagger: 0.03, duration: 0.18 }, 0)
+    .to(st, { shift: 0.3, duration: 0.3, onUpdate: place }, 0)
+    // 0.3 to 0.34: the statement scrolls away
+    .to(statement, { opacity: 0, yPercent: -90, duration: 0.07 }, 0.29)
+    // 0.3 to 0.54: the band bunches and drops into the ring, which rises with the year
+    .to(st, { morph: 1, duration: 0.24, onUpdate: place }, 0.3)
+    .to(st, { rise: 1, duration: 0.24, onUpdate: place }, 0.3)
+    .fromTo(core, { opacity: 0 }, { opacity: 1, duration: 0.1 }, 0.42)
+    // 0.54 to 0.66: nothing moves; the year is read
+    // 0.66 to 0.76: the ring slides into a half circle at the left and the figures arrive
+    .to(core, { opacity: 0, duration: 0.06 }, 0.64)
+    .to(st, { side: 1, duration: 0.12, onUpdate: place }, 0.66)
+    .fromTo(statsBox, { opacity: 0, xPercent: 6 }, { opacity: 1, xPercent: 0, duration: 0.08 }, 0.68)
+    // 0.76 to 1: it turns only as the figures step through
+    .to(st, { rot: -0.9, duration: 0.24, onUpdate: place }, 0.76);
 }
 
 function splitWords(el: HTMLElement) {

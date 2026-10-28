@@ -31,7 +31,7 @@ const rail = [...people.photos, ...people.photos];
     <p class="serif big ring__statement" data-ring-statement>{people.statement}</p>
     <div class="ring__group" data-ring-group aria-hidden="true">
       <div class="ring__photos" data-ring-photos>
-        {[...people.photos, ...people.photos].map((p) => <img src={`${base}/img/p/${p}.webp`} alt="" width="560" height="700" loading="lazy" decoding="async" />)}
+        {[...people.photos, ...people.photos, ...people.photos].map((p) => <img src={`${base}/img/p/${p}.webp`} alt="" width="560" height="700" loading="lazy" decoding="async" />)}
       </div>
       <div class="ring__core" data-ring-core>
         <p class="ring__year"><strong>{people.founded}</strong> <span>Year of<br />Foundation</span></p>
