@@ -8,89 +8,7 @@ const root = document.documentElement;
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-const card = q('[data-card]')!;
-const scene = q('[data-scene]')!;
-
-/** Pointer position over the card, -0.5 to 0.5 on each axis (drifts by itself when nobody is moving the pointer) */
-const pointer = { x: 0, y: 0, px: 0, py: 0, inside: false, last: performance.now() };
-
-/* ---------- Depth: each layer slides a little with the pointer, the letters the opposite way ---------- */
-const layers = qa('[data-depth]', scene).map((el) => ({
-  el,
-  depth: parseFloat(el.dataset.depth || '0'),
-  x: gsap.quickTo(el, 'x', { duration: 1.1, ease: 'power3.out' }),
-  y: gsap.quickTo(el, 'y', { duration: 1.1, ease: 'power3.out' }),
-}));
-
-const letterEls = [0, 1, 2, 3].map((i) => qa(`.l[data-i="${i}"]`, scene));
-const letters = letterEls.map((els) => ({
-  els,
-  y: els.map((e) => gsap.quickTo(e, 'y', { duration: 0.7, ease: 'power3.out' })),
-  s: els.map((e) => gsap.quickTo(e, 'scale', { duration: 0.7, ease: 'power3.out' })),
-}));
-let letterBox: { c: number; w: number }[] = [];
-const measureLetters = () => {
-  const r = card.getBoundingClientRect();
-  letterBox = letterEls.map((els) => {
-    const b = els[0].getBoundingClientRect();
-    return { c: (b.left + b.width / 2 - r.left) / r.width - 0.5, w: b.width / r.width };
-  });
-};
-
-const floaters = qa('.stat', card).map((el) => ({
-  el,
-  x: gsap.quickTo(el, 'x', { duration: 1.1, ease: 'power3.out' }),
-  y: gsap.quickTo(el, 'y', { duration: 1.1, ease: 'power3.out' }),
-}));
-
-function applyDepth() {
-  const w = card.clientWidth;
-  layers.forEach((l) => {
-    l.x(-pointer.x * l.depth * w * 2);
-    l.y(-pointer.y * l.depth * w * 2);
-  });
-  floaters.forEach((f, i) => {
-    f.x(pointer.x * w * (0.012 + i * 0.006));
-    f.y(pointer.y * w * (0.01 + i * 0.005));
-  });
-  // The letter under the pointer lifts, its neighbours follow a little
-  letters.forEach((l, i) => {
-    const b = letterBox[i];
-    const near = pointer.inside && b ? Math.max(0, 1 - Math.abs(pointer.x - b.c) / (b.w * 1.15)) ** 2 : 0;
-    l.y.forEach((fn) => fn(-near * card.clientHeight * 0.022));
-    l.s.forEach((fn) => fn(1 + near * 0.025));
-  });
-}
-
-/* ---------- Pointer input (mouse, pen or a finger dragging) ---------- */
-let rect = card.getBoundingClientRect();
-const measure = () => { rect = card.getBoundingClientRect(); measureLetters(); moveNav(); };
-
-function onMove(e: PointerEvent) {
-  const nx = (e.clientX - rect.left) / rect.width;
-  const ny = (e.clientY - rect.top) / rect.height;
-  pointer.inside = nx >= 0 && nx <= 1 && ny >= 0 && ny <= 1;
-  pointer.x = Math.max(-0.5, Math.min(0.5, nx - 0.5));
-  pointer.y = Math.max(-0.5, Math.min(0.5, ny - 0.5));
-  pointer.last = performance.now();
-  if (reduce) return;
-  applyDepth();
-}
-window.addEventListener('pointermove', onMove, { passive: true });
-card.addEventListener('pointerleave', () => { pointer.inside = false; applyDepth(); });
-
-/* With nobody at the controls the scene drifts slowly, so it never looks frozen */
-if (!reduce) {
-  gsap.ticker.add((time) => {
-    if (performance.now() - pointer.last < 2800) return;
-    pointer.x = Math.sin(time * 0.32) * 0.14;
-    pointer.y = Math.cos(time * 0.24) * 0.08;
-    pointer.inside = false;
-    applyDepth();
-  });
-}
-
-/* ---------- Time of day ---------- */
+/* ---------- Time of day: one variable, --night, takes the picture from dusk (lights off) to night (lights on) ---------- */
 const modeBtns = qa<HTMLButtonElement>('[data-mode]');
 function setMode(mode: 'dusk' | 'night') {
   root.dataset.mode = mode;
@@ -107,13 +25,13 @@ modeBtns.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode
 const nav = q('[data-nav]')!;
 const pill = q('[data-pill]')!;
 const links = qa<HTMLAnchorElement>('.nav__link', nav);
+const menuBtn = q('[data-menu]');
 let active = links.find((l) => l.classList.contains('is-active')) || links[0];
 function movePill(to: HTMLElement) {
   pill.style.width = `${to.offsetWidth}px`;
   pill.style.transform = `translateX(${to.offsetLeft}px)`;
   links.forEach((l) => l.classList.toggle('is-under', l === to));
 }
-function moveNav() { movePill(active); }
 links.forEach((l) => {
   l.addEventListener('mouseenter', () => movePill(l));
   l.addEventListener('focus', () => movePill(l));
@@ -129,7 +47,6 @@ links.forEach((l) => {
   });
 });
 nav.addEventListener('mouseleave', () => movePill(active));
-const menuBtn = q('[data-menu]');
 menuBtn?.addEventListener('click', () => {
   const open = nav.classList.toggle('is-open');
   menuBtn.setAttribute('aria-expanded', String(open));
@@ -137,6 +54,8 @@ menuBtn?.addEventListener('click', () => {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') { nav.classList.remove('is-open'); menuBtn?.setAttribute('aria-expanded', 'false'); }
 });
+window.addEventListener('resize', () => movePill(active));
+document.fonts?.ready.then(() => movePill(active));
 
 /* ---------- Glass cards tilt, and the button leans toward the pointer ---------- */
 if (fine && !reduce) {
@@ -166,44 +85,35 @@ if (fine && !reduce) {
   }
 }
 
-/* ---------- Intro: the scene settles out of a soft blur, then the interface follows ---------- */
-const counters = qa('[data-count]');
+/* ---------- Intro: the scene settles out of a soft blur, the name rises letter by letter, then the interface follows ---------- */
 function intro() {
   const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
   const blurIn = (t: gsap.TweenTarget, blur: number, from: gsap.TweenVars, to: gsap.TweenVars, at: number) =>
     tl.fromTo(t, { opacity: 0, filter: `blur(${blur}px)`, ...from }, { opacity: 1, filter: 'blur(0px)', clearProps: 'filter', ...to }, at);
 
-  blurIn(qa('.layer', scene)[0], 18, { scale: 1.1 }, { scale: 1, duration: 3 }, 0);
-  letters.forEach((l, i) => l.els.forEach((el) => {
-    tl.fromTo(el, { opacity: 0, yPercent: 16, filter: 'blur(22px)' }, { opacity: 1, yPercent: 0, filter: 'blur(0px)', clearProps: 'filter', duration: 2.1 }, 0.5 + i * 0.14);
-  }));
-  const home = q('.home', scene)!;
-  blurIn(home, 14, { scale: 0.96, transformOrigin: '50% 100%' }, { scale: 1, duration: 2.6 }, 1.0);
-  const ui = qa('[data-ui]');
-  ui.forEach((el, i) => blurIn(el, 9, { y: 16 }, { y: 0, duration: 1.5 }, 1.9 + i * 0.12));
-  counters.forEach((c) => {
+  blurIn(q('[data-backdrop]')!, 18, { scale: 1.06 }, { scale: 1, duration: 3 }, 0);
+  qa('.letters:not(.letters--front) .l').forEach((el, i) => {
+    tl.fromTo(el, { opacity: 0, yPercent: 16, filter: 'blur(22px)' }, { opacity: 1, yPercent: 0, filter: 'blur(0px)', clearProps: 'filter', duration: 2.1 }, 0.6 + i * 0.14);
+  });
+  qa('.letters--front .l').forEach((el, i) => {
+    tl.fromTo(el, { opacity: 0, yPercent: 16 }, { opacity: 1, yPercent: 0, duration: 2.1 }, 0.6 + i * 0.14);
+  });
+  qa('[data-ui]').forEach((el, i) => blurIn(el, 9, { y: 16 }, { y: 0, duration: 1.5 }, 1.7 + i * 0.12));
+  qa('[data-count]').forEach((c) => {
     const target = parseInt(c.dataset.count || '0', 10);
     const o = { v: 0 };
     c.textContent = '0';
-    tl.to(o, { v: target, duration: 2.2, ease: 'power2.out', onUpdate: () => { c.textContent = String(Math.round(o.v)); } }, 2.4);
+    tl.to(o, { v: target, duration: 2.2, ease: 'power2.out', onUpdate: () => { c.textContent = String(Math.round(o.v)); } }, 2.2);
   });
-  return tl;
 }
 
 /* ---------- Start ---------- */
-measure();
-window.addEventListener('resize', measure);
-document.fonts?.ready.then(measure);
 setMode('dusk');
 gsap.set(root, { '--night': 0 });
+movePill(active);
 
-if (reduce) {
-  moveNav();
-} else {
-  const imgs = qa<HTMLImageElement>('img', scene);
+if (!reduce) {
+  const imgs = qa<HTMLImageElement>('.plate');
   const ready = Promise.all(imgs.map((i) => (i.decode ? i.decode().catch(() => undefined) : Promise.resolve())));
-  Promise.race([ready, new Promise((r) => window.setTimeout(r, 2500))]).then(() => {
-    measure();
-    intro();
-  });
+  Promise.race([ready, new Promise((r) => window.setTimeout(r, 2500))]).then(intro);
 }

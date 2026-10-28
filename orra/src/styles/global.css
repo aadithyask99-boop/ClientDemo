@@ -37,12 +37,23 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 
 /* The artwork lives on a 16:9 stage that covers the viewport (like background-size: cover), so its parts stay in register at any shape */
-.stage { position: absolute; left: 50%; top: 50%; width: max(100cqw, calc(100cqh * 16 / 9)); aspect-ratio: 16 / 9; translate: -50% -50%; container-type: size; }
-.scene { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
-.layer { position: absolute; inset: 0; will-change: transform; }
+.stage {
+  position: absolute; left: 50%; top: 50%; width: max(100cqw, calc(100cqh * 16 / 9)); aspect-ratio: 16 / 9; translate: -50% -50%; container-type: size;
+  /* Where the building stands in the picture (the picture is 1376 x 768) */
+  --hx: 22cqw; --hw: 68cqw; --hb: 12.5cqh;
+  --hh: calc(var(--hw) * 577 / 1278);
+  /* The picture is placed so the building lands in that spot: the building is 68% of the picture's width, starting 22% in, its top 32.4% down */
+  --pw: calc(var(--hw) / 0.68);
+  --ph: calc(var(--pw) * 0.5625);
+  --pt: calc(100cqh - var(--hb) - var(--hh) - var(--ph) * 0.3242);
+}
+.backdrop { position: absolute; inset: 0; }
+.fill { position: absolute; inset: 0; background: linear-gradient(to bottom, #9cafbe calc(var(--pt) + 6cqw), #515c69 calc(var(--pt) + var(--ph) - 6cqw)); }
+.fill--night { background: linear-gradient(to bottom, #041532 calc(var(--pt) + 6cqw), #0e1420 calc(var(--pt) + var(--ph) - 6cqw)); opacity: var(--night); }
 
-.plate { position: absolute; max-width: none; left: -2%; top: -2%; width: 104%; height: 104%; object-fit: cover; object-position: 50% 50%; }
-/* Night is its own picture, faded in over dusk */
+/* The two pictures (dusk with the lights off, night with them on) are the same scene, so they fade into one another */
+.plates { position: absolute; left: calc(var(--hx) - var(--pw) * 0.22); top: var(--pt); width: var(--pw); height: var(--ph); }
+.plate { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: fill; }
 .plate--night { opacity: var(--night); }
 
 /* ---------- Giant name, behind the house, and an outline copy across its glass ---------- */
@@ -63,37 +74,21 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 .word--solid { color: #fff; opacity: 0.96; }
 .word--line { color: transparent; -webkit-text-stroke: 1px rgb(255 255 255 / 0.55); }
-.l { display: inline-block; will-change: transform; }
-
-/* ---------- House ----------
-   Dusk: the lights are off (house_off). Night: the lit picture fades in over it, the strips and windows bloom,
-   and the ground around the platform picks up their orange light. One variable, --night, drives all of it. */
-.home { pointer-events: none; }
-.house { position: absolute; left: 22cqw; bottom: 12.5cqh; width: 68cqw; aspect-ratio: 1278 / 577; }
-.house img { position: absolute; inset: 0; width: 100%; height: 100%; }
-.house .on { opacity: var(--night); }
-
-/* The glossy floor mirrors the house: flipped, faded, and tucked up under the platform so there is no gap */
-.reflect { position: absolute; left: 22cqw; top: calc(100cqh - 12.5cqh - 3.4cqw); width: 68cqw; aspect-ratio: 1278 / 577; transform: scaleY(-1); opacity: 0.5; -webkit-mask-image: linear-gradient(to top, #000 8%, transparent 52%); mask-image: linear-gradient(to top, #000 8%, transparent 52%); filter: blur(1.4px); pointer-events: none; }
-.reflect img { position: absolute; inset: 0; width: 100%; height: 100%; }
-.reflect .on { opacity: var(--night); }
-
-/* The platform's shadow on the ground: a soft wide one, and a tight dark one right at its edge */
-.cast { position: absolute; inset: 0; background: #06080b; -webkit-mask-image: var(--house), linear-gradient(to bottom, transparent 66%, #000 84%); mask-image: var(--house), linear-gradient(to bottom, transparent 66%, #000 84%); -webkit-mask-composite: source-in; mask-composite: intersect; -webkit-mask-size: 100% 100%, 100% 100%; mask-size: 100% 100%, 100% 100%; transform-origin: 50% 100%; pointer-events: none; }
-.cast--wide { filter: blur(1.3cqw); transform: translateY(1.6cqh) scale(1.035, 1.08); opacity: 0.55; }
-.cast--tight { filter: blur(0.3cqw); transform: translateY(0.55cqh); opacity: 0.6; }
-
-/* Orange light spilling onto the stone at night */
-.glow { position: absolute; left: -2%; right: -2%; bottom: -14%; height: 46%; background: radial-gradient(ellipse 50% 50% at 50% 45%, rgb(255 140 60 / 0.6), rgb(255 140 60 / 0.18) 55%, rgb(255 140 60 / 0) 100%); mix-blend-mode: screen; opacity: calc(var(--night) * 0.9); pointer-events: none; }
-
-.neon { position: absolute; inset: 0; -webkit-mask-image: var(--neon); mask-image: var(--neon); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; mix-blend-mode: screen; pointer-events: none; }
-/* Bloom around the strips and lit windows: off at dusk, full at night */
-.neon--base { background: #ff9d52; filter: blur(0.7cqw); opacity: calc(var(--night) * 0.8); }
-
-/* Low mist that drifts across the foot of the building, hiding the seam between platform and ground */
-.mist { position: absolute; left: -20%; width: 140%; bottom: 3cqh; height: 26cqh; background: radial-gradient(ellipse 40% 50% at 30% 60%, rgb(215 224 230 / 0.34), transparent 70%), radial-gradient(ellipse 34% 44% at 72% 50%, rgb(215 224 230 / 0.28), transparent 70%); filter: blur(1.4cqw); opacity: calc(1 - var(--night) * 0.55); pointer-events: none; animation: mist-drift 46s ease-in-out infinite alternate; }
-.mist--b { bottom: -1cqh; height: 20cqh; opacity: calc(0.8 - var(--night) * 0.5); animation-duration: 62s; animation-direction: alternate-reverse; }
-@keyframes mist-drift { from { transform: translateX(-4cqw); } to { transform: translateX(4cqw); } }
+.l { display: inline-block; }
+.letters { position: absolute; inset: 0; pointer-events: none; }
+/* The solid name sits behind the building: it is cut out wherever the building is */
+.letters:not(.letters--front) {
+  -webkit-mask-image: linear-gradient(#000, #000), var(--house);
+  mask-image: linear-gradient(#000, #000), var(--house);
+  -webkit-mask-size: 100% 100%, var(--hw) var(--hh);
+  mask-size: 100% 100%, var(--hw) var(--hh);
+  -webkit-mask-position: 0 0, var(--hx) calc(100cqh - var(--hb) - var(--hh));
+  mask-position: 0 0, var(--hx) calc(100cqh - var(--hb) - var(--hh));
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
 
 /* ---------- Interface ---------- */
 .top { position: absolute; z-index: 5; left: 0; right: 0; top: 0; display: flex; align-items: center; justify-content: space-between; padding: 4.2cqh 3.4cqw 0; }
@@ -143,7 +138,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 html[data-mode='night'] .stat, html[data-mode='night'] .mode { background: rgb(8 14 22 / 0.38); }
 
 /* ---------- Intro (only with scripting): everything starts soft, then settles ---------- */
-html.js .layer:not(.letters), html.js .l, html.js .top, html.js .left, html.js .headline, html.js .stat, html.js .cta, html.js .thumbs { opacity: 0; }
+html.js .backdrop, html.js .l, html.js .top, html.js .left, html.js .headline, html.js .stat, html.js .cta, html.js .thumbs { opacity: 0; }
 
 /* ---------- Phones and tall screens ---------- */
 @media (max-width: 760px), (max-aspect-ratio: 5 / 6) {
@@ -151,9 +146,9 @@ html.js .layer:not(.letters), html.js .l, html.js .top, html.js .left, html.js .
   .stage { left: 0; top: 0; width: 100%; height: 100%; aspect-ratio: auto; translate: none; }
   /* The art is sized by the card's width, so it is placed from the card's vertical centre, whatever the height */
   .word { font-size: 34cqw; top: calc(50cqh - 54cqw); }
-  .house { left: -12cqw; width: 126cqw; bottom: calc(50cqh - 15cqw); }
-  .reflect { left: -12cqw; width: 126cqw; top: calc(50cqh + 15cqw - 6.3cqw); }
-  .plate { object-position: 50% 50%; }
+  .stage { --hx: -12cqw; --hw: 126cqw; --hb: calc(50cqh - 15cqw); }
+  /* The picture is shorter than the screen here, so its top and bottom melt into a matching flat colour */
+  .plates { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 7cqw, #000 calc(var(--ph) - 7cqw), transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 7cqw, #000 calc(var(--ph) - 7cqw), transparent 100%); }
   .top { padding: 2.6cqh 5cqw 0; }
   .menu-btn { display: inline-flex; padding: 0.5rem 1.15rem; border: 1px solid rgb(255 255 255 / 0.75); border-radius: 99px; background: rgb(255 255 255 / 0.12); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); font-size: 0.82rem; }
   .nav { position: absolute; right: 5cqw; top: 100%; margin-top: 0.4rem; flex-direction: column; gap: 0.3rem; padding: 0.6rem; border-radius: 18px; background: rgb(10 18 26 / 0.62); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); opacity: 0; pointer-events: none; transform: translateY(-6px); transition: opacity 0.3s, transform 0.3s; }
