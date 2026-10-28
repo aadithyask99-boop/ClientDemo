@@ -1,7 +1,15 @@
 ---
-import { site } from '../data/site';
+import { site, projects } from '../data/site';
+import Pixel from './Pixel.astro';
 const year = new Date().getFullYear();
 /* Until PUBLIC_CONTACT_EMAIL is set in .env, the email button is replaced by a placeholder line */
+const tints = ['#1b4b8f', '#7a4a2b', '#d9a82e', '#2b6cd9', '#8fa1b3', '#c9a27a'];
+const sitemap = [
+  ['Work', '#work'],
+  ['Site Chemistry', '#chemistry'],
+  ['Services', '#services'],
+  ['About', '#about'],
+];
 ---
 
 <section class="connect" id="connect" data-world-section="dark" aria-labelledby="connect-title">
@@ -17,20 +25,41 @@ const year = new Date().getFullYear();
         <p class="connect__soon">Your email address goes here.</p>
       )
     }
+
+    <!-- the projects as a little stack of tinted tiles: they fly in, then the top one goes to the back, one by one (scripts/finale.ts) -->
+    <div class="thumbs" data-thumbs aria-hidden="true">
+      {
+        projects.map((p, i) => (
+          <div class="thumb" style={`--tint:${tints[i]}`}>
+            <span class="thumb__n">{String(i + 1).padStart(2, '0')}</span>
+            <span class="thumb__name">{p.name}</span>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <nav class="sitemap" aria-label="Sitemap and channels">
+    <div class="sitemap__col">
+      <p class="tag-b sitemap__h">Sitemap</p>
+      <ul>
+        {sitemap.map(([l, h]) => <li><a href={h}>{l}</a></li>)}
+      </ul>
+    </div>
     {
       site.socials.length > 0 && (
-        <ul class="connect__social">
-          {site.socials.map((s) => (
-            <li>
-              <a href={s.href} target="_blank" rel="noopener me">{s.label}</a>
-            </li>
-          ))}
-        </ul>
+        <div class="sitemap__col">
+          <p class="tag-b sitemap__h">Channels</p>
+          <ul>
+            {site.socials.map((s) => <li><a href={s.href} target="_blank" rel="noopener me">{s.label}</a></li>)}
+          </ul>
+        </div>
       )
     }
-  </div>
+  </nav>
+
   <footer class="connect__foot">
     <p>©{year} {site.owner}</p>
-    <p>Crafted by {site.short}</p>
+    <p class="connect__craft">Crafted by {site.short} <Pixel class="pixel--mini" /></p>
   </footer>
 </section>

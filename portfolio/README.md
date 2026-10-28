@@ -18,10 +18,10 @@ npm run build:single     # the whole site as ONE self-contained HTML file in dis
 ## Things you will want to change
 
 - **Your email, links, timezone, names:** `.env` (see `.env.example`; every value is commented). `PUBLIC_*` values reach the browser, the rest never do.
-  `PUBLIC_LOCATION_LABEL` ("Based in the UK") is shown in the header just before the clock.
+  `PUBLIC_LOCATION_LABEL` ("Based in the UK") is shown in the header just before the clock; `PUBLIC_TIMEZONE` drives the clock and the clock panel.
 - **Your photo:** put it at `public/portrait.jpg` (or `.jpeg`, `.webp`, `.png`, `.avif`, portrait orientation, about 800x1000). It replaces the pixel-art
   stand-in in two places: the little face that follows the cursor over your name (your photo reduced to a 22 x 22 grid of pixels) and the portrait section,
-  which breaks into pixels as it leaves the middle of the screen and sharpens as it returns (scripts/portrait.ts).
+  which is built from the top down by a front of orange blocks as you scroll to it, and taken apart again if you scroll back up (scripts/portrait.ts).
 - **Copy:** the headline words and the "nothing generic" line are in `Hero.astro`, the four points and the verdict in `Chemistry.astro`, the service cards in
   `Deck.astro`, the about text in `About.astro`, the project list (every project is a "Concept build") in `src/data/site.ts`.
 - **Work clips:** each project needs `public/work/<slug>.mp4` (a 9 second loop, 720 px wide, no audio) and `<slug>.webp` (its poster).
@@ -43,13 +43,24 @@ npm run build:single     # the whole site as ONE self-contained HTML file in dis
 The order follows what a client asks: who is this, show me, why would it work for my business, what do I get, who am I hiring, how do I reach them.
 
 1. **Hero:** the sentence builds, "cool" gives way to "SEO-friendly", then both sit together. Hover the name for a pixel face.
-2. **Selected work:** one row per project in the manner of the reference: the name, a black frame, an arrow and "View". The picture is pixels at rest (the
-   real clip, as big blocks, still moving); hover and it resolves to the site playing. On touch it resolves as the row reaches the middle of the screen.
-3. **Site Chemistry** (pinned, scrubbed by scroll): the four things a site needs (design, build, SEO, marketing) light up in a list on the left as their
-   circles arrive. Where all four meet is the orange core, ENQUIRIES. The view zooms into it and the screen ends on the verdict.
-4. **Services:** three cards you can drag and flick. The heading's words follow the card you are on.
-5. **Every detail, one designer:** who you would be working with.
-6. **Connect:** click-to-copy email and links.
+2. **Selected work:** built on the mechanism of the reference. The frames (just the clip, no border) scroll past in a tight column; only the project that has
+   crossed the middle of the screen shows its name, arrow and "View", the previous one flies out as the next flies in, and the hero text steps aside and
+   returns when you scroll back above the first project. Name and arrow drift against the frames; only the active project is clickable; tabbing to a project
+   scrolls it to the middle. Under 700px wide, with reduced motion, or without JS, every project shows its name. Every project is a "Concept build".
+3. **Site Chemistry** (pinned, scrubbed by scroll): the four things a site needs arrive one circle at a time, each with a plain-language caption. Where all four
+   meet is the orange core, ENQUIRIES. The view zooms into it and the screen ends on the verdict.
+4. **Services:** three cards you can drag and flick. They are dealt face down (a symmetric pattern of bevelled pixels) and turned over as the section arrives.
+   Three small tabs under the sentence bring a card forward; the words in the sentence follow the card you are on.
+5. **Every detail, one designer:** the portrait is built from the top down by a front of orange blocks, tied to the scroll and fully reversible. The title is
+   built from pixels the same way.
+6. **Next chapter:** "Start your next website today" in huge type, built from pixels as it scrolls in. Two small slots roll through words
+   ("Make it Fast and Clear"). Point at "today" and the arrow swaps sides with the word.
+7. **Connect:** click-to-copy email (the hint text rolls to "Copied"), a stack of tinted project tiles that fly in and then cycle, a sitemap and channels
+   list (hovered links become white pills), and "Crafted by Aadi" with a pixel icon that keeps changing shape.
+
+Always there: the header links turn over like a cube to an orange copy of themselves on hover, and once you scroll the "Based in the UK" label folds to a thin
+line that opens again on hover. Pressing the clock opens the **local-time panel**: an analogue and digital clock in your time zone, hands you can drag (they
+spring back), and a sound toggle (off until switched on): a synthesised tick, quieter the further the pointer is from the clock.
 
 ## Where things are
 
@@ -62,8 +73,11 @@ The order follows what a client asks: who is this, show me, why would it work fo
 | `src/scripts/hero.ts` | Headline sequence and the name hover |
 | `src/scripts/chem.ts`, `ring.ts` | The Site Chemistry scene |
 | `src/scripts/deck.ts`, `deck-eggs.ts` | Card dragging, flick physics, the three card scenes |
-| `src/scripts/portrait.ts` | Scroll-driven pixelation of the portrait |
-| `src/scripts/work.ts` | Work rows: clip loading, the pixel-to-sharp resolve |
+| `src/scripts/portrait.ts` | The scroll-built portrait (block front, reversible) |
+| `src/scripts/work.ts` | Work: one active project at a time, drift, arrow nudge, clip loading |
+| `src/scripts/pixelreveal.ts` | Headings built from pixels (real text stays in the page) |
+| `src/scripts/finale.ts` | Next-chapter slots, footer tile stack, pixel headings, crafted-by icon |
+| `src/scripts/clock-panel.ts` | The local-time panel (loaded the first time the clock is pressed) |
 | `src/scripts/pixel.ts`, `patterns.ts` | The pixel icon and its four shapes |
 | `src/scripts/scroll.ts` | Lenis smooth scroll, section-aware header |
 | `src/scripts/eggs.ts`, `serp.ts` | The other easter eggs |
@@ -76,17 +90,20 @@ The order follows what a client asks: who is this, show me, why would it work fo
 - **Type `seo`** anywhere (or click the hero pixel icon five times on a phone): a made-up search page opens and the site climbs from 8th to 1st.
 - **Hover the name** in the hero: a face follows the pointer, the pixel icon bursts, letters under the cursor lift.
 - **Click the headline** to watch it build again.
+- **Press the clock** in the header: drag the hands, switch the sound on, listen for the tick as you move toward the clock.
 - **Open the console**, **switch tabs**, read `/robots.txt` and `/humans.txt`.
 
 ## Performance
 
-Measured on a production build (Chromium, three runs each): largest contentful paint 2.3 s on desktop and 2.3 s on a throttled phone
-(4x CPU, slow 4G), cumulative layout shift about 0. JavaScript is 58 KB gzipped (the search-page egg and its animation helper load only when
-triggered), CSS 6 KB. Two things keep it there, and both are easy to undo by accident:
+Measured on a production build (Chromium, three runs each): largest contentful paint about 2.35 s on desktop and 2.5 to 2.7 s on a throttled phone
+(4x CPU, slow 4G), cumulative layout shift about 0. JavaScript is about 60 KB gzipped (the search-page egg, its animation helper and the clock panel load only
+when used), CSS 7 KB. Three things keep it there, and all are easy to undo by accident:
 
 - The intro is deliberately quick so the longest word of the headline paints before the 2.5 s line.
 - Everything below the first screen (the pinned scene, the cards, the Work pictures and clips) is set up and fetched only after the headline has painted
-  (`setUpBelowFold` in `src/scripts/main.ts`). Fetching five posters and a clip at the start cost about 0.4 s on the throttled phone.
+  (`setUpBelowFold` in `src/scripts/main.ts`); the closing sections wait a little longer still.
+- The first Work frame starts below the first screen (the generous padding under "Selected work"). If it sits inside the first screen, its picture becomes
+  the largest paint and LCP rises to about 3 s on desktop and 4 s on a phone.
 
 If you change the intro or add images near the top, re-measure.
 
@@ -94,5 +111,6 @@ If you change the intro or add images near the top, re-measure.
 
 - **A contact form.** The site is static, so a form needs a small server function (the Resend key and addresses are already in `.env`).
   Until then the Connect section copies your email address.
-- **Sound.** Optional; would need an off-by-default toggle.
+- **A language toggle, and Imprint / Privacy links.** There is no second language and there are no such pages yet.
+- **Sound on the rest of the page.** The only sound is the clock panel's tick, and it starts off.
 - **The brand name.** The brand falls back to your own name until `PUBLIC_BRAND_NAME` is set.

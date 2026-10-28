@@ -1,0 +1,38 @@
+---
+import { site } from '../data/site';
+/* The local-time panel: opens from the clock in the header. A working analogue clock in my time zone (scripts/clock-panel.ts), a way to reach me,
+   and a sound toggle (off until you switch it on). The hands can be dragged and spring back to the real time. */
+const ticks = Array.from({ length: 60 }, (_, i) => i);
+---
+
+<div class="clk" data-clock-panel hidden>
+  <div class="clk__veil" data-clock-close></div>
+  <div class="clk__card" role="dialog" aria-modal="true" aria-labelledby="clk-title" tabindex="-1">
+    <button class="clk__x" type="button" data-clock-close aria-label="Close">
+      <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M1 1l10 10M11 1 1 11" stroke="currentColor" stroke-width="1.5" fill="none" /></svg>
+    </button>
+    <p class="clk__eyebrow tag-b" id="clk-title">{site.location || 'Local time'}</p>
+    <svg class="clk__face" viewBox="-100 -100 200 200" data-clock-face role="img" aria-label="Analogue clock showing my local time. Drag a hand; it springs back.">
+      <circle r="96" class="clk__ring" />
+      {ticks.map((i) => <line class={i % 5 === 0 ? 'clk__tick clk__tick--5' : 'clk__tick'} y1="-90" y2={i % 5 === 0 ? -80 : -85} transform={`rotate(${i * 6})`} />)}
+      <g data-hand="h" class="clk__hand clk__hand--h"><line y1="6" y2="-48" /></g>
+      <g data-hand="m" class="clk__hand clk__hand--m"><line y1="8" y2="-72" /></g>
+      <g data-hand="s" class="clk__hand clk__hand--s"><line y1="14" y2="-78" /><circle r="4" /></g>
+    </svg>
+    <p class="clk__digital" data-clock-digital aria-live="off">--:--:--</p>
+    <p class="clk__tz">{site.timezone.replace('_', ' ')}</p>
+    <div class="clk__foot">
+      {
+        site.email ? (
+          <button class="clk__mail" type="button" data-copy={site.email}>
+            <span class="connect__mail-text">{site.email}</span>
+            <span class="connect__mail-hint" data-copy-hint>Click to copy</span>
+          </button>
+        ) : (
+          <p class="clk__mail clk__mail--soon">Your email address goes here.</p>
+        )
+      }
+      <button class="clk__snd" type="button" data-clock-sound aria-pressed="false">Sound off</button>
+    </div>
+  </div>
+</div>

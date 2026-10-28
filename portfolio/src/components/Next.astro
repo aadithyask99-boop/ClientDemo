@@ -1,0 +1,39 @@
+---
+/* The closing call to action: "Start your next website today". The big words are built from pixels as they scroll in (scripts/pixelreveal.ts), two small
+   mono slots rotate through what the site could be, and the arrow swaps sides with the last word when you point at it. */
+const A = ['Fast', 'Findable', 'Distinctive', 'Accessible', 'Yours'];
+const B = ['Clear', 'Playful', 'Precise', 'Smooth', 'Cool'];
+const arrow = 'M110 47.42 66.064 95 54.92 83.702l26.108-27.848H0V38.987h81.028L54.92 11.139 66.064 0z';
+---
+
+<section class="next" id="next" data-world-section="light" aria-labelledby="next-title">
+  <p class="next__label">
+    Next
+    <svg class="book" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+      <g class="book__pages">
+        <rect class="pg pg3" x="6" y="3" width="11" height="16" rx="1.2" />
+        <rect class="pg pg2" x="6" y="3" width="11" height="16" rx="1.2" />
+        <rect class="pg pg1" x="6" y="3" width="11" height="16" rx="1.2" />
+      </g>
+      <rect x="4" y="3" width="2.4" height="17" rx="0.8" fill="currentColor" />
+    </svg>
+    Chapter
+  </p>
+
+  <h2 id="next-title" class="next__title">
+    <span class="nl">Start</span>
+    <span class="nl">your next</span>
+    <span class="nl">website</span>
+    <a class="nl next__cta" href="#connect" data-cursor="Let's talk">
+      <span class="next__word">today</span>
+      <span class="next__arrow" aria-hidden="true"><svg viewBox="0 0 110 95"><path fill="currentColor" d={arrow}></path></svg></span>
+    </a>
+  </h2>
+
+  <p class="next__slots">
+    Make it
+    <span class="slot" data-slot>{A.map((w, i) => <span class:list={['slot__w', i === 0 && 'is-on']} aria-hidden={i === 0 ? undefined : 'true'}>{w}</span>)}</span>
+    and
+    <span class="slot" data-slot>{B.map((w, i) => <span class:list={['slot__w', i === 0 && 'is-on']} aria-hidden={i === 0 ? undefined : 'true'}>{w}</span>)}</span>.
+  </p>
+</section>

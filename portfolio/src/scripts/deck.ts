@@ -1,4 +1,5 @@
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { q, qa, clamp, reduced } from './util';
 import { playEgg, type Egg } from './deck-eggs';
 
@@ -10,6 +11,7 @@ export function initDeck() {
   if (!stage) return;
   const cards = qa('[data-card]', stage);
   const keys = qa('[data-k]');
+  const tabs = qa('[data-tab]');
   const fx = document.documentElement.classList.contains('fx');
   const row = window.matchMedia('(max-width: 699px)').matches; // phones: a sideways row, no fan
   const fans = cards.map((c) => Number(c.dataset.fan ?? 0));
@@ -24,6 +26,7 @@ export function initDeck() {
     if (i === active) return;
     active = i;
     keys.forEach((k, j) => k.classList.toggle('is-on', j === i));
+    tabs.forEach((t, j) => { t.classList.toggle('is-on', j === i); t.setAttribute('aria-pressed', String(j === i)); });
   };
   if (!reduced) {
     setActive(0);
@@ -37,6 +40,14 @@ export function initDeck() {
   };
 
   let z = 10;
+  /* a tab brings its card to the front with a little hop */
+  tabs.forEach((t, i) => t.addEventListener('click', () => {
+    touched = true;
+    setActive(i);
+    cards[i].style.zIndex = String(++z);
+    const y = gsap.getProperty(cards[i], 'y') as number;
+    gsap.fromTo(cards[i], { y }, { y: y - 22, duration: 0.18, yoyo: true, repeat: 1, ease: 'power2.out', overwrite: 'auto' });
+  }));
   const timers: number[] = [];
   const flying: boolean[] = [];
 
@@ -155,4 +166,32 @@ export function initDeck() {
     card.addEventListener('pointerup', release);
     card.addEventListener('pointercancel', release);
   });
+
+  /* ----- dealt face down, then turned over, when the section comes into view ----- */
+  if (!reduced && !row) {
+    const backs = qa('.back', stage);
+    const inners = cards.map((c) => q('.card__in', c)!);
+    const rears = cards.map((c) => q('.card__bk', c)!);
+    const centre = stage.getBoundingClientRect().left + stage.clientWidth / 2;
+    gsap.set(inners, { rotationY: 180, transformPerspective: 800 });
+    gsap.set(rears, { rotationY: 0, transformPerspective: 800, visibility: 'visible' });
+    const fx0 = backs.map((b) => gsap.getProperty(b, 'x') as number);
+    gsap.set(cards, { opacity: 0 });
+    gsap.set(backs, { opacity: 0, x: (i) => fx0[i] * 0.15, rotation: 0 });
+    ScrollTrigger.create({
+      trigger: stage,
+      start: 'top 78%',
+      once: true,
+      onEnter: () => {
+        const tl = gsap.timeline();
+        tl.to(backs, { opacity: 1, x: (i) => fx0[i], rotation: (i) => (i === 0 ? -21 : 21), duration: 0.9, ease: 'back.out(1.4)', stagger: 0.08 }, 0);
+        cards.forEach((c, i) => {
+          const dx = centre - (c.getBoundingClientRect().left + c.offsetWidth / 2);
+          tl.fromTo(c, { x: dx, y: 90, rotation: 0, opacity: 0 }, { x: 0, y: 0, rotation: home(i), opacity: 1, duration: 0.8, ease: 'back.out(1.2)' }, 0.12 + i * 0.1);
+          tl.to(inners[i], { rotationY: 0, duration: 0.8, ease: 'power3.inOut' }, 1.0 + i * 0.14);
+          tl.to(rears[i], { rotationY: -180, duration: 0.8, ease: 'power3.inOut', onComplete: () => { gsap.set(rears[i], { visibility: 'hidden' }); } }, 1.0 + i * 0.14);
+        });
+      },
+    });
+  }
 }

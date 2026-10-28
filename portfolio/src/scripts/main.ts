@@ -11,6 +11,7 @@ import { initChem } from './chem';
 import { initDeck } from './deck';
 import { initPortrait } from './portrait';
 import { initWork } from './work';
+import { initFinale } from './finale';
 
 (window as unknown as { __aadi: boolean }).__aadi = true;
 const root = document.documentElement;
@@ -32,6 +33,34 @@ function initClock() {
   window.setInterval(tick, 5000);
 }
 
+/* ---------- Header: folds its location label once the page moves; the clock opens the local-time panel (loaded on first use) ---------- */
+function initHeader() {
+  const hdr = q('[data-header]');
+  const fold = () => hdr?.classList.toggle('is-scrolled', window.scrollY > 4);
+  fold();
+  window.addEventListener('scroll', fold, { passive: true });
+  const btn = q('[data-open-clock]');
+  btn?.addEventListener('click', () => { void import('./clock-panel').then((m) => m.open(btn)); });
+}
+
+/* A line of small text rolls up and out, and its replacement rolls in from below */
+function roll(el: HTMLElement, text: string, after?: () => void, wait = 0) {
+  if (reduced) { el.textContent = text; if (after) window.setTimeout(after, wait); return; }
+  let inner = q('.roll', el);
+  if (!inner) {
+    inner = document.createElement('span');
+    inner.className = 'roll';
+    inner.textContent = el.textContent;
+    el.textContent = '';
+    el.append(inner);
+  }
+  const t = inner;
+  gsap.to(t, { yPercent: -110, duration: 0.25, ease: 'power2.in', overwrite: true, onComplete: () => {
+    t.textContent = text;
+    gsap.fromTo(t, { yPercent: 110 }, { yPercent: 0, duration: 0.35, ease: 'power3.out', onComplete: () => { if (after) window.setTimeout(after, wait); } });
+  } });
+}
+
 /* ---------- Click to copy ---------- */
 function initCopy() {
   qa<HTMLButtonElement>('[data-copy]').forEach((b) => {
@@ -48,10 +77,7 @@ function initCopy() {
         ta.remove();
       }
       const hint = q('[data-copy-hint]', b);
-      if (hint) {
-        hint.textContent = 'Copied';
-        window.setTimeout(() => { hint.textContent = 'Click to copy'; }, 1800);
-      }
+      if (hint) roll(hint, 'Copied', () => roll(hint, 'Click to copy'), 1800);
     });
   });
 }
@@ -66,6 +92,7 @@ const heroPixel = heroPixelEl ? initPixel(heroPixelEl) : null;
 initScroll();
 initCursor();
 initClock();
+initHeader();
 initCopy();
 const hero = initHero(heroPixel);
 initCredits(heroPixel);
@@ -82,6 +109,8 @@ function setUpBelowFold() {
   initEggs();
   initFace();
   ScrollTrigger.refresh();
+  // the closing sections are far down the page: set them up well after the headline has painted
+  window.setTimeout(() => { initFinale(); ScrollTrigger.refresh(); }, 3200);
 }
 // ...at the latest 3 seconds after load, in case the intro never runs; sooner if the person starts scrolling
 window.setTimeout(setUpBelowFold, 3000);

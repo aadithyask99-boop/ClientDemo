@@ -1,23 +1,13 @@
 ---
-/* The face-down cards behind the fan: the pixel language again, as a card-back pattern */
+/* The face-down side of the cards: one symmetric pattern of little bevelled pixels (light edge top-left, dark edge bottom-right, so each block reads
+   as raised), drawn once in Deck.astro as a symbol and used by every card back. */
 interface Props {
-  side: 'l' | 'r';
+  side?: 'l' | 'r';
+  class?: string;
 }
-const { side } = Astro.props;
-const motif = ['....#....', '...#.#...', '..#...#..', '.#..#..#.', '#..#.#..#', '.#..#..#.', '..#...#..', '...#.#...', '....#....'];
-const cells = motif.flatMap((row, y) => [...row].map((c, x) => (c === '#' ? { x, y } : null)).filter(Boolean)) as { x: number; y: number }[];
-const id = `back-${side}`;
+const { side, class: cls = '' } = Astro.props;
 ---
 
-<div class={`back back--${side}`} aria-hidden="true">
-  <svg viewBox="0 0 100 140" preserveAspectRatio="xMidYMid slice" shape-rendering="crispEdges">
-    <defs>
-      <pattern id={id} width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="scale(1.6)">
-        {cells.map((c) => <rect x={c.x} y={c.y} width="1" height="1" />)}
-      </pattern>
-    </defs>
-    <rect width="100" height="140" fill="var(--cream-2)"></rect>
-    <rect x="6" y="6" width="88" height="128" fill={`url(#${id})`} class="back__ink"></rect>
-    <rect x="6" y="6" width="88" height="128" fill="none" stroke="var(--ink)" stroke-width="1.2"></rect>
-  </svg>
+<div class:list={['back', side && `back--${side}`, cls]} aria-hidden="true">
+  <svg viewBox="0 0 100 140" preserveAspectRatio="xMidYMid slice" shape-rendering="crispEdges"><use href="#cardback-art"></use></svg>
 </div>
