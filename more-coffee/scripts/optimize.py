@@ -9,7 +9,9 @@ PHOTO = {"polaroid-1": (1000, 82), "polaroid-2": (1000, 82), "polaroid-3": (1000
 
 def cutout(im, maxw=900):
     a = np.asarray(im.convert("RGB")).astype(np.float32)
-    white = a.min(axis=2) >= 222
+    # background = near-white, plus low-saturation light grey (cast shadows); both only where connected to the image edge
+    sat = a.max(axis=2) - a.min(axis=2)
+    white = (a.min(axis=2) >= 222) | ((sat < 14) & (a.min(axis=2) >= 150))
     lab, n = ndi.label(white)
     border = set(np.unique(np.concatenate([lab[0], lab[-1], lab[:, 0], lab[:, -1]]))) - {0}
     bg = np.isin(lab, list(border))
@@ -30,3 +32,19 @@ for name in CUT:
 for name, (w, q) in PHOTO.items():
     im = Image.open(f"{RAW}/{name}.png").convert("RGB"); im.thumbnail((w, w * 2), Image.LANCZOS)
     im.save(f"{OUT}/{name}.webp", "WEBP", quality=q, method=6); print("img ", name, im.size, os.path.getsize(f"{OUT}/{name}.webp") // 1024, "KB")
+
+# ---- second pass: candid people photos, label cut-outs (ingredients + latte glass) ----
+PEOPLE = {"ppl-c": "polaroid-1", "ppl-d": "polaroid-2", "ppl-a": "polaroid-3"}
+for src, dst in PEOPLE.items():
+    f = f"{RAW}/{src}.png"
+    if os.path.exists(f):
+        im = Image.open(f).convert("RGB"); im.thumbnail((1000, 1400), Image.LANCZOS)
+        im.save(f"{OUT}/{dst}.webp", "WEBP", quality=82, method=6); print("img ", dst, im.size)
+os.makedirs(f"{OUT}/label", exist_ok=True)
+for name in ["caramel", "hazelnut", "vanilla", "fudge", "cinnamon"]:
+    f = f"{RAW}/ing-{name}.png"
+    if os.path.exists(f):
+        img = cutout(Image.open(f), 700); img.save(f"{OUT}/label/ing-{name}.webp", "WEBP", quality=90, method=6, alpha_quality=95); print("cut ", name, img.size)
+g = f"{OUT}/label/latte-photo.png"
+if os.path.exists(g):
+    img = cutout(Image.open(g), 900); img.save(f"{OUT}/label/latte-cut.webp", "WEBP", quality=90, method=6, alpha_quality=95); print("cut  latte", img.size)

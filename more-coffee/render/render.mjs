@@ -5,11 +5,11 @@ const [mode, out] = process.argv.slice(2); mkdirSync(out, { recursive: true });
 const ss = (t) => t * t * (3 - 2 * t), lerp = (a, b, t) => a + (b - a) * t;
 
 // ---- hero sprite: 23 frames, upright jar turning (the page tilts the canvas) ----
-const hero = (i) => { const t = i / 22; return [{ ry: lerp(-34, 18, t), rx: lerp(5, -3, t), s: 1.38, y: -0.15 }]; };
+const hero = (i) => { const t = i / 22; return [{ ry: lerp(-34, 18, t), rx: lerp(5, -3, t), s: 1.4, y: -0.15 }]; };
 
 // ---- scroll sequence: 200 frames, jar choreography keyed to the card timeline ----
 // positions (smoothstep between keys). Card centres cross at p = .03 (R), .20 (L), .37 (R), .53 (L); title rises .64-.9
-const L = -2.7, R_ = 2.7;
+const L = -2.9, R_ = 2.9;
 const K0 = [
   [0.000, { s: 0, x: L, y: -4.8, rz: -14 }],
   [0.015, { s: .88, x: L, y: -4.6, rz: -14 }],
@@ -34,7 +34,7 @@ const at = (K, p, z) => { let i = 0; while (i < K.length - 2 && p > K[i + 1][0])
   const o = { z }; for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) o[k] = lerp(a[k] ?? 0, b[k] ?? 0, ss(t)); o.ry = ryAt(p) + (z < 0 ? (K === K1 ? 10 : -10) : 0); return o; };
 const seq = (i) => { const p = i / 199; return [at(K0, p, 0.5), at(K1, p, -0.4), at(K2, p, -0.4)]; };
 
-const cfg = mode === "hero" ? { n: 23, w: 900, h: 1100, f: hero } : { n: 200, w: 1200, h: 750, f: seq };
+const cfg = mode === "hero" ? { n: 23, w: 1200, h: 1467, f: hero } : { n: 200, w: 2400, h: 1500, f: seq };
 const b = await chromium.launch({ args: ["--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] });
 const pg = await b.newPage({ viewport: { width: cfg.w, height: cfg.h } });
 pg.on("pageerror", (e) => console.log("ERR", e.message));

@@ -79,6 +79,8 @@ async function hero() {
   const decoText = $('[data-load-stage-deco-text]'), decoArrow = $('[data-load-stage-deco-arrow]'), ring = $('[data-load-stage-ring]');
   const ctx = canvas.getContext('2d', { alpha: true });
   const FRAMES = 23;
+  const tides = $$('.tide');
+  if (RM) tides.forEach((t) => t.style.setProperty('--lv', `${+t.dataset.level * 100}%`));
 
   const size = () => {
     const r = canvas.getBoundingClientRect(), w = canvas.offsetWidth, h = canvas.offsetHeight;
@@ -136,7 +138,8 @@ async function hero() {
       .to(nav, { opacity: 1, duration: 0.25 }, '<+=.125')
       .to(cta, { y: 0, opacity: 1, duration: 0.5 }, '<+=.05')
       .to(ring, { drawSVG: '0% 100%', ease: 'power2.out', duration: 1.4 }, '<+=.005')
-      .to(facts, { opacity: 1, y: 0, x: 0, rotate: 0, scale: 1, ease: 'elastic-ease-out', duration: 0.8, stagger: -0.048 }, '<-=.015');
+      .to(facts, { opacity: 1, y: 0, x: 0, rotate: 0, scale: 1, ease: 'elastic-ease-out', duration: 0.8, stagger: -0.048 }, '<-=.015')
+      .to(tides, { '--lv': (i, el) => `${+el.dataset.level * 100}%`, duration: 1.8, ease: 'power2.out', stagger: 0.12 }, '<+.35');
     if (isDesktop) tl.to(decoText, { yPercent: 0, xPercent: 0, opacity: 1, scale: 1, rotate: -7, duration: 0.45 }, '<-=.015').to(decoArrow, { yPercent: 10, opacity: 1, rotate: 9, scale: 1, xPercent: 0, duration: 0.45 }, '<+=.005');
     else tl.to(decoText, { opacity: 1, duration: 0.45 }, '<-=.015');
     tl.to(canvas, { yPercent: -1, xPercent: 0, rotate: -11, scale: 1, opacity: 1, duration: 0.85, onComplete: () => {
@@ -192,6 +195,9 @@ function benefitTable() {
   // ticks stamp (squash + tilt, then elastic rebound) each time they cross the middle of the screen
   $$('[data-benefit-table-check]').forEach((c) => gsap.timeline({ scrollTrigger: { trigger: c, start: 'top 49%', end: 'bottom 51%', toggleActions: 'restart none restart none' } })
     .to(c, { keyframes: { '0%': { scaleX: 1, yPercent: 0, rotate: 0 }, '20%': { scaleX: 0.65, yPercent: 25, rotate: 25, ease: 'power2.in' }, '100%': { scaleX: 1, yPercent: 0, rotate: 0, ease: 'elastic.out(1,0.4)' } }, duration: 0.85 }));
+}
+function rings() {
+  $$('[data-ring]').forEach((r) => gsap.from(r, { opacity: 0, scale: 0.7, rotate: '-=28', duration: 1.2, ease: 'elastic-ease-out-soft', scrollTrigger: { trigger: r, start: 'top 92%', once: true } }));
 }
 function payment() {
   $$('[data-payment]').forEach((p) => {
@@ -356,7 +362,7 @@ addEventListener('load', async () => {
   await document.fonts.ready;
   root.classList.add('fonts-loaded');
   initInertia();
-  sequence(); marquee(); smileys(); fillLine(); benefitTable(); payment(); parallax(); reviewsSlider(); flavours(); highlightText();
+  sequence(); marquee(); smileys(); fillLine(); benefitTable(); rings(); payment(); parallax(); reviewsSlider(); flavours(); highlightText();
   await hero();
   ScrollTrigger.refresh();
   // rebuild the right timelines if the breakpoint, orientation or motion preference changes

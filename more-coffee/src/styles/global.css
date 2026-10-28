@@ -181,7 +181,8 @@ html.has-seq-ready .loader::after { opacity: 0; }
 .stage-visual canvas, .stage-canvas { position: absolute; z-index: 2; left: 16em; top: 33em; width: 34em; height: 42em; will-change: transform; }
 .stage-fact-outer { position: absolute; z-index: 4; width: 8.75em; height: 8.75em; }
 .stage-fact-outer.is-first { left: 13.5em; top: 32em; } .stage-fact-outer.is-second { left: 6.5em; top: 46em; } .stage-fact-outer.is-third { left: 3.5em; top: 62em; }
-.stage-fact { position: absolute; inset: 0; display: flex; flex-flow: column; justify-content: center; align-items: center; gap: .1em; width: 8.75em; height: 8.75em; border-radius: 100%; background: var(--oat); border: .0625em solid #cdb08a; will-change: transform; }
+.stage-fact { overflow: hidden; position: absolute; inset: 0; display: flex; flex-flow: column; justify-content: center; align-items: center; gap: .1em; width: 8.75em; height: 8.75em; border-radius: 100%; background: var(--oat); border: .0625em solid #cdb08a; will-change: transform; }
+.stage-fact > .stage-fact-wrap, .stage-fact > .stage-fact-text { position: relative; z-index: 1; }
 .stage-fact-wrap { display: flex; align-items: baseline; gap: .08em; line-height: .9; }
 .stage-fact-number { font-family: 'Anton', sans-serif; font-size: 2.6em; letter-spacing: -.01em; }
 .stage-fact-unit { font-size: 1.15em; font-weight: 600; text-transform: uppercase; }
@@ -330,8 +331,8 @@ html.has-seq-ready .loader::after { opacity: 0; }
 .flavour-signature-wrap { position: absolute; z-index: 5; left: 3em; top: 1em; }
 .flavour-signature-wrap .hand { font-size: 2em; } .flavour-signature-arrow { position: absolute; left: 7.5em; top: 3.6em; width: 3.6em; }
 .flavour-left-dose { position: absolute; z-index: 3; left: 15em; top: 4em; width: 21em; }
-.flavour-left-pack { position: absolute; z-index: 2; width: 9em; }
-.flavour-left-pack.is-first { left: 4em; top: 11em; rotate: -12deg; } .flavour-left-pack.is-second { left: 10.5em; top: 7.5em; rotate: -3deg; }
+.flavour-left-pack { position: absolute; z-index: 2; width: 6.4em; }
+.flavour-left-pack.is-first { left: 5em; top: 12em; rotate: -14deg; } .flavour-left-pack.is-second { left: 11.2em; top: 8em; rotate: -4deg; }
 .flavour-left-dose-img, .flavour-left-pack-img { width: 100%; height: auto; filter: drop-shadow(0 .7em .8em rgba(58, 33, 19, .22)); }
 .flavour-plus { position: absolute; z-index: 3; left: 38em; top: 21em; width: 3.4em; } .flavour-plus svg { width: 100%; height: auto; }
 .flavour-right { position: absolute; inset: 0 0 0 50%; }
@@ -339,9 +340,9 @@ html.has-seq-ready .loader::after { opacity: 0; }
 .flavour-swiper { position: absolute; z-index: 2; left: 5em; top: 2em; width: 39em; height: 39em; overflow: visible; }
 .flavour-slide { overflow: visible; }
 .flavour-slide-inner { position: relative; width: 100%; height: 100%; }
-.flavour-slide-dose { position: absolute; z-index: 3; left: 2em; top: 13em; width: 20em; }
-.flavour-slide-pack { position: absolute; z-index: 2; width: 10.5em; }
-.flavour-slide-pack.is-first { left: 17em; top: 2em; } .flavour-slide-pack.is-second { left: 22em; top: 5em; }
+.flavour-slide-dose { position: absolute; z-index: 3; left: 3em; top: 12em; width: 19em; }
+.flavour-slide-pack { position: absolute; z-index: 2; width: 6.6em; }
+.flavour-slide-pack.is-first { left: 19em; top: 4em; } .flavour-slide-pack.is-second { left: 25em; top: 6em; }
 .flavour-slide-dose-img, .flavour-slide-pack-img { width: 100%; height: auto; filter: drop-shadow(0 .7em .9em rgba(58, 33, 19, .25)); }
 .flavour-center { position: absolute; z-index: 4; left: 0; right: 0; bottom: -1em; display: flex; justify-content: center; pointer-events: none; }
 .flavour-content-swiper { width: 26em; height: 15.5em; pointer-events: auto; overflow: visible; }
@@ -438,3 +439,15 @@ html.has-seq-ready .loader::after { opacity: 0; }
   .payment-heading { font-size: 3.6em; } .payment-sig { display: none; } .pament-methods { flex-wrap: wrap; margin: 2.5em 0 0; gap: .4em; } .payment-item { margin: 0; width: 6em !important; height: 6em !important; translate: none !important; font-size: .9em; }
   .footer-container { grid-template-columns: 1fr; padding: 0 1.2em; } .footer-text { padding-left: 0; } .footer-cards { grid-template-columns: 1fr 1fr; } .footer-info.is-second { margin-left: 0; } .footer-wordmark { font-size: 9.5em; margin-top: .1em; } .footer-product-title { font-size: 3.4em; } .footer-product-tub { height: 16em; } .footer-product-tub.is-second { height: 12em; }
 }
+
+/* ------------------------------------------------------------------ our own touches */
+/* liquid-fill fact bubbles: each cup fills to its value (zero added sugar stays almost empty) */
+.fact-liquid { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; z-index: 0; pointer-events: none; }
+.tide { --lv: 0%; position: absolute; inset: 0; background: rgba(217, 185, 142, .62); translate: 0 calc(100% - var(--lv, 0%)); }
+.tide::before { content: ''; position: absolute; left: 0; right: 0; top: -.62em; height: .64em; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 12' preserveAspectRatio='none'%3E%3Cpath d='M0 12V6C10 0 20 0 30 6S50 12 60 6V12Z' fill='%23d9b98e' fill-opacity='.62'/%3E%3C/svg%3E") repeat-x; background-size: 3em .64em; }
+@media (prefers-reduced-motion: no-preference) { .tide::before { animation: tide 3.6s linear infinite; } .stage-fact-outer.is-second .tide::before { animation-duration: 4.8s; animation-direction: reverse; } .stage-fact-outer.is-third .tide::before { animation-duration: 4.2s; } }
+@keyframes tide { to { background-position-x: -3em; } }
+/* faint coffee-cup ring stains on the pale sections */
+.coffee-ring { position: absolute; z-index: 0; width: 17em; height: 17em; pointer-events: none; opacity: .09; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' fill='none' stroke='%233a2113' stroke-linecap='round'%3E%3Cpath d='M100 14C150 12 188 50 186 102S150 190 98 186 16 150 14 98 52 16 104 14' stroke-width='7'/%3E%3Cpath d='M100 24C144 24 177 58 175 100S142 177 98 175 25 142 24 99 58 26 100 24' stroke-width='2.4' opacity='.55'/%3E%3Cpath d='M170 130c-6 18-22 36-44 44' stroke-width='9' opacity='.6'/%3E%3C/svg%3E") center / contain no-repeat; }
+.coffee-ring.is-a { top: 1em; right: 4em; rotate: 18deg; } .coffee-ring.is-b { bottom: 6em; left: 1em; width: 22em; height: 22em; rotate: -24deg; } .coffee-ring.is-c { top: 6em; right: 8em; rotate: 60deg; width: 14em; height: 14em; }
+.insider-container, .flavour-container, .payment-container { position: relative; z-index: 1; }

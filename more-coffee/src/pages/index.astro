@@ -75,9 +75,10 @@ const curveArrow = '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" s
                 <div class="stage-bg"><svg viewBox="0 0 700 700" aria-hidden="true"><path d="M189 629A322 322 0 1 1 597 557" fill="none" stroke="#fff" stroke-width="40" stroke-linecap="butt" data-load-stage-ring /></svg></div>
                 <div class="stage-visual"><canvas data-load-stage-canvas class="stage-canvas" aria-label="Brew More protein iced latte tub"></canvas></div>
                 <div class="stage-facts">
-                  {[['25', 'g', 'of Protein', 'is-first'], ['0', 'g', 'added Sugar', 'is-second'], ['90', 'mg', 'of Caffeine', 'is-third']].map(([n, u, t, c]) => (
+                  {[['25', 'g', 'of Protein', 'is-first', .62], ['0', 'g', 'added Sugar', 'is-second', .07], ['90', 'mg', 'of Caffeine', 'is-third', .46]].map(([n, u, t, c, lv]) => (
                     <div data-inertia-item class={`stage-fact-outer ${c}`}>
                       <div data-load-stage-fact data-inertia-item-child class={`stage-fact ${c}`}>
+                        <div class="fact-liquid" aria-hidden="true"><div class="tide" data-level={lv}></div></div>
                         <div class="stage-fact-wrap"><div class="stage-fact-number">{n}</div><div class="stage-fact-unit">{u}</div></div>
                         <div class="stage-fact-text">{t}</div>
                       </div>
@@ -87,7 +88,7 @@ const curveArrow = '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" s
               </div>
               <div class="stage-right">
                 <div class="stage-text-wrap">
-                  <h1 data-load-stage-title class="hero-heading"><span class="white-span">Coffee</span><br />meets<br />Protein</h1>
+                  <h1 data-load-stage-title class="hero-heading"><span class="white-span">Brewed</span><br />to<br />Build</h1>
                   <div class="stage-paragraph-wrap">
                     <p data-load-stage-text class="paragraph is-stage-paragraph">Our Protein Iced Latte blends real coffee with whey protein and fibre, for a smooth caffeine lift that keeps you full.</p>
                     <div data-load-stage-underline class="stage-subline-wrap"><Sketch delay=".2s"><Fragment set:html={underline} /></Sketch></div>
@@ -112,6 +113,7 @@ const curveArrow = '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" s
 
     <!-- INSIDER / POLAROIDS -->
     <div data-inertia class="insider-section">
+      <span class="coffee-ring is-a" aria-hidden="true" data-ring></span>
       <div class="insider-container">
         <h2 class="insider-heading">You deserve the best.<br />You deserve More:<br /><span class="toffee-span">Protein Iced Latte.</span></h2>
         <div class="insider-row">
@@ -266,6 +268,7 @@ const curveArrow = '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" s
 
     <!-- FLAVOUR -->
     <section data-inertia class="flavour">
+      <span class="coffee-ring is-b" aria-hidden="true" data-ring></span>
       <div class="flavour-container">
         <div class="flavour-header">
           <div class="flavour-heading-wrap">
@@ -322,6 +325,7 @@ const curveArrow = '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" s
 
     <!-- PAYMENT -->
     <section class="payment-section">
+      <span class="coffee-ring is-c" aria-hidden="true" data-ring></span>
       <div class="payment-curves" aria-hidden="true"><svg viewBox="0 0 1440 1000" preserveAspectRatio="xMidYMid slice"><path d="M-60 880C240 640 520 1000 860 760S1300 620 1500 700" /><path d="M-60 120C300-40 600 300 980 180S1360 40 1500 120" /></svg></div>
       <div class="payment-container">
         <div class="payment-sig is-left"><Sketch><span class="hand">3–5 Days<br />Delivery</span></Sketch></div>
@@ -338,7 +342,7 @@ const curveArrow = '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" s
       <div class="footer-container">
         <div class="footer-product">
           <div class="footer-product-bg"></div>
-          <h2 class="footer-product-title">Coffee<br />meets<br />Protein</h2>
+          <h2 class="footer-product-title">Brewed<br />to<br />Build</h2>
           <img class="footer-product-tub is-first" src={img('hero/seq_1_9.webp')} alt="" loading="lazy" />
           <img class="footer-product-tub is-second" src={img('hero/seq_1_3.webp')} alt="" loading="lazy" />
           <div class="footer-product-cta"><Button href={BUY} /></div>
