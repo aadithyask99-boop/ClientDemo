@@ -3,7 +3,6 @@ import { site, projects } from '../data/site';
 import Pixel from './Pixel.astro';
 const year = new Date().getFullYear();
 /* Until PUBLIC_CONTACT_EMAIL is set in .env, the email button is replaced by a placeholder line */
-const tints = ['#1b4b8f', '#7a4a2b', '#d9a82e', '#2b6cd9', '#8fa1b3', '#c9a27a'];
 const sitemap = [
   ['Work', '#work'],
   ['Site Chemistry', '#chemistry'],
@@ -30,7 +29,7 @@ const sitemap = [
     <div class="thumbs" data-thumbs aria-hidden="true">
       {
         projects.map((p, i) => (
-          <div class="thumb" style={`--tint:${tints[i]}`}>
+          <div class="thumb" style={`--tint:${p.tint}`}>
             <span class="thumb__n">{String(i + 1).padStart(2, '0')}</span>
             <span class="thumb__name">{p.name}</span>
           </div>

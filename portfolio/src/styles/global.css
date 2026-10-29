@@ -307,9 +307,15 @@ html.lenis body {
 }
 .wd--cool {
   color: var(--accent-ink);
+  padding-right: 0.1em; /* a little air after "cool," before the next word */
+}
+/* the word that keeps changing (scripts/hero.ts) */
+.rot {
+  display: inline-block;
 }
 .comma {
   display: inline-block;
+  margin-left: 0.02em;
 }
 /* With JS the words start hidden and the intro builds them; without JS the sentence is simply there */
 .js .hero__title .wd {

@@ -46,7 +46,7 @@ npm run build:single     # the whole site as ONE self-contained HTML file in dis
 
 The order follows what a client asks: who is this, show me, why would it work for my business, what do I get, who am I hiring, how do I reach them.
 
-1. **Hero:** fills the first screen. The sentence builds, "cool" gives way to "SEO-friendly", then both sit together. Hover the name for a pixel face.
+1. **Hero:** fills the first screen. After the sentence has built, "cool" keeps changing (amazing, sexy, stunning, slick, bold, brilliant; shorter words on phones) and the line re-centres around each new word without shifting the layout (the word list is in `src/scripts/hero.ts`). The sentence builds, "cool" gives way to "SEO-friendly", then both sit together. Hover the name for a pixel face.
 2. **Selected work:** built on the mechanism of the reference. The frames (just the clip, no border) scroll past in a tight column; only the project that has
    crossed the middle of the screen shows its name, arrow and "View", the previous one flies out as the next flies in, and the hero text steps aside and
    returns when you scroll back above the first project. Name and arrow drift against the frames; only the active project is clickable; tabbing to a project

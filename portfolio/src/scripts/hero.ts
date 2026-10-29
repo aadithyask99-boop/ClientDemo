@@ -18,6 +18,7 @@ export function initHero(pixel: Pixel | null = null) {
   const cool = words.find((w) => w.dataset.wd === 'cool')!;
   const seo = words.find((w) => w.dataset.wd === 'seo')!;
   const comma = q('[data-comma]', cool)!;
+  const rot = q('[data-rot]', cool)!;
   const wordsToBuild = words.filter((w) => w !== seo);
   let visible = new Set<HTMLElement>(words);
   let tl: gsap.core.Timeline | null = null;
@@ -45,10 +46,49 @@ export function initHero(pixel: Pixel | null = null) {
     });
   }
 
+  /* Once the sentence is built, "cool" keeps changing: it rolls out, the next word rolls in, and the line re-centres around the new width. Every word is
+     moved by transform only. The width change is compensated in the same frame (before it paints), so nothing visibly shifts and layout shift stays 0.
+     A word that would make the line wrap differently is skipped. Phones get the shorter words. */
+  const list = window.matchMedia('(max-width: 699px)').matches
+    ? ['cool', 'sexy', 'slick', 'bold', 'epic']
+    : ['cool', 'amazing', 'sexy', 'stunning', 'slick', 'bold', 'brilliant'];
+  let ri = 0;
+  let loop = 0;
+  const rowCount = () => new Set(words.map((w) => Math.round(w.offsetTop / 4))).size;
+  function swapTo(text: string) {
+    const before = new Map(words.map((w) => [w, w.getBoundingClientRect().left]));
+    const prev = rot.textContent ?? '';
+    const rows = rowCount();
+    rot.textContent = text;
+    if (rowCount() !== rows) { rot.textContent = prev; return false; }
+    words.forEach((w) => {
+      const d = before.get(w)! - w.getBoundingClientRect().left;
+      if (d) gsap.set(w, { x: (gsap.getProperty(w, 'x') as number) + d });
+    });
+    layout(visible, 0.7, 'power3.inOut');
+    return true;
+  }
+  function tick() {
+    const r = title!.getBoundingClientRect();
+    if (document.hidden || !visible.has(cool) || tl?.isActive() || r.bottom < 0 || r.top > window.innerHeight) return;
+    gsap.to(rot, {
+      opacity: 0, y: '-0.25em', filter: 'blur(6px)', duration: 0.3, ease: 'power2.in', overwrite: true,
+      onComplete: () => {
+        if (swapTo(list[(ri + 1) % list.length])) ri = (ri + 1) % list.length;
+        gsap.fromTo(rot, { opacity: 0, y: '0.25em', filter: 'blur(6px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.45, ease: 'power3.out', onComplete: () => { gsap.set(rot, { clearProps: 'filter,transform' }); } });
+      },
+    });
+  }
+  const startLoop = () => { window.clearInterval(loop); loop = window.setInterval(tick, 2600); };
+  const stopLoop = () => { window.clearInterval(loop); loop = 0; };
+  const resetWord = () => { gsap.killTweensOf(rot); gsap.set(rot, { clearProps: 'all' }); rot.textContent = list[0]; ri = 0; };
+
   /** speed > 1 plays the sequence faster (used on touch devices, where the first paint matters most) */
   function play(speed = 1) {
     if (reduced || !root.classList.contains('js')) return;
     tl?.kill();
+    stopLoop();
+    resetWord();
     gsap.set(words, { opacity: 0, scale: 0.35, x: 0, y: 0, filter: 'blur(0px)' });
     gsap.set(comma, { opacity: 0 });
     visible = new Set();
@@ -75,6 +115,7 @@ export function initHero(pixel: Pixel | null = null) {
     tl.fromTo(cool, { opacity: 0, y: '0.3em', scale: 0.92, filter: 'blur(8px)' }, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 0.7, ease: 'power3.out' }, t + 0.4);
     tl.to(comma, { opacity: 1, duration: 0.5 }, t + 0.9);
     tl.set(words, { filter: 'none' });
+    tl.call(startLoop, [], t + 2.2);
   }
 
   /* The work section takes the page over: the headline leaves as the first project becomes active, and builds itself again when you scroll back */
@@ -82,12 +123,14 @@ export function initHero(pixel: Pixel | null = null) {
   function hide() {
     if (reduced || !root.classList.contains('js')) return;
     tl?.kill();
+    stopLoop();
     gsap.to(words, { opacity: 0, y: -14, duration: 0.25, stagger: 0.015, overwrite: true });
     gsap.to(rest(), { opacity: 0, duration: 0.25, overwrite: true });
   }
   function show() {
     if (reduced || !root.classList.contains('js')) return;
     tl?.kill();
+    resetWord();
     visible = new Set(words);
     gsap.set(words, { opacity: 0, scale: 0.35, y: 0, filter: 'none' });
     gsap.set(comma, { opacity: 1 });
@@ -95,6 +138,7 @@ export function initHero(pixel: Pixel | null = null) {
     gsap.to(words, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.6)', stagger: 0.04, overwrite: true });
     gsap.to(rest(), { opacity: 1, duration: 0.4, overwrite: true });
     pixel?.burst();
+    startLoop();
   }
 
   // Keep the centring right if the window changes size
