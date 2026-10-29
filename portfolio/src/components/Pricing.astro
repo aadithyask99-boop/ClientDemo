@@ -4,6 +4,7 @@ import { site } from '../data/site';
    the screen (the top fifth stays showing), a big headline, one package in a row (name, what it is, price, two little looping clips) and a way to start.
    No boxes, no lines, no labels, no numbers. Click the big price for a small surprise. */
 const ticks = Array.from({ length: 60 }, (_, i) => i);
+const arrow = 'M110 47.42 66.064 95 54.92 83.702l26.108-27.848H0V38.987h81.028L54.92 11.139 66.064 0z';
 const pages = ['Home', 'About us', 'Services', 'Contact us', 'Blog'];
 ---
 
@@ -32,7 +33,12 @@ const pages = ['Home', 'About us', 'Services', 'Contact us', 'Blog'];
       </div>
 
       <div class="pr__cta" data-pr-in>
-        <button class="pr__go" type="button" data-pricing-go>Start with my homepage</button>
+        <!-- the same call to action as the "Start your next website today" section: big words and an arrow that swap places when pointed at -->
+        <button class="next__cta pr__go" type="button" data-pricing-go data-cursor="Let's talk">
+          <span class="pr__go-t">Start your website</span>
+          <span class="next__word">today</span>
+          <span class="next__arrow" aria-hidden="true"><svg viewBox="0 0 110 95"><path fill="currentColor" d={arrow}></path></svg></span>
+        </button>
       </div>
 
       <!-- contact, as in the reference: how to reach me, the email, the other places to find me, and a live clock in my time zone -->

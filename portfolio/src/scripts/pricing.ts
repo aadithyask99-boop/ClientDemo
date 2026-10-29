@@ -81,6 +81,8 @@ export function open(from?: HTMLElement | null) {
   document.addEventListener('keydown', onKey);
   playClips(true);
   runClock(true);
+  const w = q('.next__word', sheet);
+  if (w) q('.pr__go', sheet)?.style.setProperty('--w', `${w.offsetWidth}px`);
   sheet.focus({ preventScroll: true });
 }
 

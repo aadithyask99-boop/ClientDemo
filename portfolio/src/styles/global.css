@@ -2500,27 +2500,24 @@ html.pr-open .hdr {
   object-fit: cover;
 }
 .pr__cta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.9rem 1.4rem;
-  align-items: center;
-  margin-top: clamp(2.5rem, 6vh, 4rem);
+  margin-top: clamp(2.5rem, 7vh, 4.5rem);
 }
 .pr__go {
-  padding: 0.9rem 1.4rem;
+  padding: 0;
   border: 0;
-  border-radius: 99px;
-  background: #0b0b0b;
-  color: hsl(39 50% 95%);
-  font-size: 1rem;
-  font-weight: 500;
-  letter-spacing: -0.02em;
+  background: none;
+  font: inherit;
+  font-size: clamp(2.2rem, 1rem + 6vw, 6rem);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.065em;
+  text-align: left;
   cursor: pointer;
-  transition: background-color 0.25s var(--ease-out), color 0.25s;
+  flex-wrap: wrap;
+  row-gap: 0.05em;
 }
-.pr__go:hover,
-.pr__go:focus-visible {
-  background: var(--accent);
+.pr__go-t {
+  flex: 0 0 100%;
   color: #0b0b0b;
 }
 .pr__mail {
