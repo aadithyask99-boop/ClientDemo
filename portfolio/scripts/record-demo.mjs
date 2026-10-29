@@ -17,7 +17,7 @@
 // The page's own loader runs from the first frame, because the clip starts at navigation. Scrolling is a smooth ease sent as mouse-wheel input.
 // Needs Playwright (set PLAYWRIGHT_DIR if it is not importable) and ffmpeg on the machine; neither is a dependency of the site.
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, rmSync, writeFileSync, readdirSync } from 'node:fs';
+import { mkdirSync, rmSync, writeFileSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const pw = await import('playwright').catch(() => import(`${process.env.PLAYWRIGHT_DIR ?? '/opt/node-tools/node_modules/playwright'}/index.js`));
@@ -56,30 +56,23 @@ if (syncVideo) {
       const vids = new Map();
       const play = HTMLMediaElement.prototype.play;
       HTMLMediaElement.prototype.play = function () {
-        if (!vids.has(this)) vids.set(this, { start: window.__vf || 0, ended: false });
+        if (!vids.has(this)) vids.set(this, { start: window.__vf || 0 });
         const p = play.call(this);
         Promise.resolve(p).then(() => this.pause(), () => {});
         return p;
       };
-      // position every held video at (frames since its play() was called) / fps. Counted in frames because performance.now() follows the real clock,
-      // not the paused one. A seek only finishes while the page clock runs, so this just starts it and the recorder runs the clock in tiny steps until
-      // __pendingVideos() is 0. Headless frame capture does not paint <video> layers, so each held video is mirrored into a canvas of the same size and
-      // place (same class), drawn from its current frame once the seek is done.
-      window.__syncVideos = (frame, fps) => {
-        window.__vf = frame;
-        for (const [v, st] of vids) {
-          const target = Math.min((frame - st.start) / fps, v.duration || 0);
-          if (!isFinite(target) || !v.duration) continue;
-          if (!v.paused) v.pause();
-          if (!st.cv) { st.cv = document.createElement('canvas'); st.cv.className = v.className; st.cv.width = v.videoWidth || 1920; st.cv.height = v.videoHeight || 1080; v.after(st.cv); v.style.visibility = 'hidden'; }
-          const paint = () => { try { st.cv.getContext('2d').drawImage(v, 0, 0, st.cv.width, st.cv.height); } catch (e) {} st.pending = false; };
-          if (target >= v.duration && !st.ended) { st.ended = true; v.dispatchEvent(new Event('ended')); }
-          if (Math.abs(v.currentTime - target) < 0.002 && st.painted) continue;
-          st.pending = true; st.painted = true;
-          v.addEventListener('seeked', paint, { once: true });
-          v.currentTime = target;
-        }
+      const first = () => [...vids][0];
+      window.__videoInfo = () => { const e = first(); return e && e[0].currentSrc ? { src: e[0].currentSrc, start: e[1].start } : null; };
+      // Headless frame capture does not paint <video> layers and a video's own clock is not the paused one, so the recorder cuts the clip into pictures
+      // and shows them one per frame in a canvas of the same size and place (same class) laid over the hidden video.
+      window.__showFrame = (uri) => {
+        const [v, st] = first();
+        if (!st.cv) { st.cv = document.createElement('canvas'); st.cv.className = v.className; st.cv.width = 1280; st.cv.height = 720; v.after(st.cv); v.style.visibility = 'hidden'; st.img = new Image(); }
+        st.pending = true;
+        st.img.onload = () => { st.cv.getContext('2d').drawImage(st.img, 0, 0, 1280, 720); st.pending = false; };
+        st.img.src = uri;
       };
+      window.__endVideo = () => { const e = first(); if (e) e[0].dispatchEvent(new Event('ended')); };
       window.__pendingVideos = () => [...vids.values()].filter((st) => st.pending).length;
     })();`,
   });
@@ -89,6 +82,15 @@ page.goto(url, { waitUntil: 'commit' }).catch(() => {});
 const dt = 1000 / fps;
 const total = Math.round(length * fps);
 let frame = 0;
+let videoFrames = null;
+let videoEnded = false;
+let shown = 0;
+const cutVideo = async (src) => {
+  mkdirSync(`${raw}/video`, { recursive: true });
+  writeFileSync(`${raw}/video.mp4`, Buffer.from(await (await fetch(src)).arrayBuffer()));
+  spawnSync('ffmpeg', ['-v', 'error', '-y', '-i', `${raw}/video.mp4`, '-vf', `fps=${fps},scale=1280:720:force_original_aspect_ratio=increase,crop=1280:720`, '-q:v', '3', `${raw}/video/%04d.jpg`], { stdio: 'inherit' });
+  return readdirSync(`${raw}/video`).length;
+};
 const budget = (policy, ms = dt) => new Promise((resolve, reject) => {
   const timer = setTimeout(() => { cdp.off('Emulation.virtualTimeBudgetExpired', done); reject(new Error('stalled')); }, 10000);
   const done = () => { clearTimeout(timer); resolve(); };
@@ -106,12 +108,20 @@ const step = async () => {
   phase = 'draw';
   if (syncVideo) {
     phase = 'video';
-    await cdp.send('Runtime.evaluate', { expression: `window.__syncVideos && window.__syncVideos(${frame}, ${fps})` });
-    // let the seeks finish: run the page clock in 0.1 ms steps (about 2 ms in all) until no video is still seeking
-    for (let i = 0; i < 300; i++) {
-      const pending = (await cdp.send('Runtime.evaluate', { expression: 'window.__pendingVideos ? window.__pendingVideos() : 0', returnByValue: true })).result.value;
-      if (!pending) break;
-      await budget('pauseIfNetworkFetchesPending', 0.1).catch(() => {});
+    await evaluate(`window.__vf = ${frame}`);
+    const info = await evaluate('window.__videoInfo && window.__videoInfo()');
+    if (info) {
+      videoFrames ??= await cutVideo(info.src);
+      const k = Math.round(frame - info.start);
+      if (k >= videoFrames && !videoEnded) { videoEnded = true; await evaluate('window.__endVideo()'); }
+      const idx = Math.max(1, Math.min(k + 1, videoFrames));
+      if (idx !== shown) {
+        shown = idx;
+        const uri = `data:image/jpeg;base64,${readFileSync(`${raw}/video/${String(idx).padStart(4, '0')}.jpg`).toString('base64')}`;
+        await evaluate(`window.__showFrame(${JSON.stringify(uri)})`);
+        // the picture only loads while the page clock runs: run it in 0.1 ms steps (about 2 ms in all) until it has
+        for (let i = 0; i < 300 && (await evaluate('window.__pendingVideos()')); i++) await budget('pauseIfNetworkFetchesPending', 0.1).catch(() => {});
+      }
     }
   }
   // a heavy frame (a 3D scene compiling its shaders in software, say) can take minutes; there is no use asking for it again while it is pending
