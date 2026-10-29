@@ -75,6 +75,13 @@ export function initEggs() {
     ['pointerup', 'pointercancel', 'pointerleave'].forEach((ev) => head.addEventListener(ev, release));
   }
 
+  // 8a. "Built by hand": press it for the full line
+  const note = q('[data-note]');
+  note?.addEventListener('click', () => {
+    const r = note.getBoundingClientRect();
+    void import('./bubble').then((b) => b.bubble('Built for your business, never from a template. Nothing generic.', { x: r.left + 28, y: r.top - 2, side: 'above', ms: 4200 }));
+  });
+
   // 8. "Remote worldwide": press it and the globe spins, and a bubble says what time it is somewhere else (I work in your hours)
   const globe = q('[data-globe]');
   if (globe) {

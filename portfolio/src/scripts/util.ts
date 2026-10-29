@@ -13,10 +13,13 @@ export const lockScroll = (on: boolean) => window.dispatchEvent(new CustomEvent(
 /* Which easter eggs this visitor has found. Kept in the browser (so it survives a reload), and every new find announces itself so the counter in the footer
    (scripts/eggcount.ts) can update. The ids are the twelve below; hints.ts stops mentioning the ones already found. */
 export const EGGS = ['seo', 'crawler', 'terminal', 'leads', 'shift', 'menu', 'hello', 'hire', 'rocket', 'globe', 'sleepy', 'fast'] as const;
+/* On a phone or tablet there is no keyboard, wheel or hover, so only these can be found; the counter counts what is possible on the device in hand. */
+export const EGGS_TOUCH = ['seo', 'crawler', 'terminal', 'leads', 'shift', 'globe', 'fast'] as const;
+export const eggList = (): readonly string[] => (fine ? EGGS : EGGS_TOUCH);
 const FOUND_KEY = 'aadi-eggs';
 const read = (): string[] => { try { return JSON.parse(localStorage.getItem(FOUND_KEY) ?? '[]'); } catch { return []; } };
 export const found = (id: string) => read().includes(id);
-export const foundCount = () => read().filter((id) => (EGGS as readonly string[]).includes(id)).length;
+export const foundCount = () => read().filter((id) => eggList().includes(id)).length;
 export const markFound = (id: string) => {
   const f = read();
   if (f.includes(id)) return;
