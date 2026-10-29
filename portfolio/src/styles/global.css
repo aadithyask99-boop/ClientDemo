@@ -421,6 +421,10 @@ html[data-world='dark'] .menu {
   .brk--m {
     display: block;
   }
+  /* a phone has room for bigger words: about 43px on a 390px screen (the longest line, "SEO-friendly" with the changing word, just fits) */
+  .hero__title {
+    font-size: clamp(2.3rem, 11.1vw, 3.4rem);
+  }
 }
 .wd {
   display: inline-block;
@@ -480,6 +484,12 @@ html[data-world='dark'] .menu {
   content: '';
   position: absolute;
   inset: -1.3rem -2.2rem;
+}
+/* on a phone there is no hover, and this wider zone pushed the page 19px wider than the screen (a sideways wobble) */
+@media (hover: none), (max-width: 699px) {
+  .mm::before {
+    display: none;
+  }
 }
 /* --p (0 to 1) is set per letter by scripts/hero.ts from its distance to the pointer: 58% ink at rest, full ink under the cursor */
 .ch {
