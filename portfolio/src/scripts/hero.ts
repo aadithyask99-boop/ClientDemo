@@ -55,7 +55,7 @@ export function initHero(pixel: Pixel | null = null) {
   let ri = 0;
   let loop = 0;
   const rowCount = () => new Set(words.map((w) => Math.round(w.offsetTop / 4))).size;
-  function swapTo(text: string) {
+  function swapTo(text: string, dur = 0.7) {
     const before = new Map(words.map((w) => [w, w.getBoundingClientRect().left]));
     const prev = rot.textContent ?? '';
     const rows = rowCount();
@@ -65,7 +65,7 @@ export function initHero(pixel: Pixel | null = null) {
       const d = before.get(w)! - w.getBoundingClientRect().left;
       if (d) gsap.set(w, { x: (gsap.getProperty(w, 'x') as number) + d });
     });
-    layout(visible, 0.7, 'power3.inOut');
+    layout(visible, dur, 'power3.inOut');
     return true;
   }
   function tick() {
@@ -94,11 +94,11 @@ export function initHero(pixel: Pixel | null = null) {
       gsap.killTweensOf(rot);
       gsap.set(rot, { clearProps: 'all' });
       let k = Math.floor(Math.random() * SPIN.length);
-      spin = window.setInterval(() => { swapTo(SPIN[k++ % SPIN.length]); }, 150);
+      spin = window.setInterval(() => { swapTo(SPIN[k++ % SPIN.length], 0); }, 170); // no easing while spinning: words never slide across each other
     } else if (!on && spin) {
       window.clearInterval(spin);
       spin = 0;
-      swapTo('cool');
+      swapTo('cool', 0.5);
       ri = 0;
       startLoop();
     }
@@ -170,7 +170,10 @@ export function initHero(pixel: Pixel | null = null) {
   });
 
   // Click the headline to watch it build again
-  title.addEventListener('click', () => play());
+  title.addEventListener('click', () => {
+    if (title.dataset.held) { delete title.dataset.held; return; } // a press-and-hold (the word spinner on a phone) is not a click
+    play();
+  });
 
   return { play, show, hide };
 }

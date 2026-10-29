@@ -96,9 +96,12 @@ spring back), and a sound toggle (off until switched on): a synthesised tick, qu
 - **Type `seo`** anywhere (or click the hero pixel icon five times on a phone): a made-up search page opens and the site climbs from 8th to 1st.
 - **Type `404`:** a joke error page with a lost pixel icon wandering over it, which then admits it was kidding and goes away.
 - **Type `hello` or `hire`:** the page scrolls to the Connect section.
-- **Hold Shift with the pointer over the headline:** the changing word spins through twenty more adjectives; let go and it settles on "cool".
-- **Right-click the headline:** a menu of jokes ("Inspect element? It is all hand-coded.") in place of the browser's, with "Replay the headline" and "Say hello" that work.
+- **Hold Shift with the pointer over the headline** (on a phone: press and hold it): the changing word spins through twenty more adjectives; let go and it settles on "cool". A cartoon bubble ("Hold Shift here!") pops up when the pointer rests on the headline.
+- **Right-click the headline:** a menu of jokes ("Inspect element? It is all hand-coded.") in place of the browser's; each joke answers back in a speech bubble, and "Replay the headline" and "Say hello" do what they say.
+- **Click "Remote worldwide":** the globe spins and a bubble gives the time in a city far away ("Tokyo: 23:04. Time zones are no problem.").
+- **Hints:** a few seconds in, cartoon bubbles pop up now and then at the side of the screen ("Type hello anywhere", "Right-click the headline"...), only for eggs not yet found, at most six a visit (`src/scripts/hints.ts`).
 - **Keep scrolling when you are already at the bottom** (mouse or trackpad): a pixel rocket builds up, then carries you back to the top.
+- **The cursor** is a cartoon arrow that leans as you move and squashes when you press, and becomes a pointing glove over anything clickable (`src/scripts/cursor.ts`; mouse and trackpad only).
 - **Hover the name** in the hero: a face follows the pointer along the words, the pixel icon bursts, letters under the cursor lift.
 - **Press the clock** in the header: drag the hands, switch the sound on, listen for the tick as you move toward the clock.
 - **Click the headline** to watch it build again. **Open the console**, **switch tabs**, read `/robots.txt` and `/humans.txt`.

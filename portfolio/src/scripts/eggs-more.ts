@@ -1,6 +1,7 @@
 import { gsap } from 'gsap';
 import { PATTERNS, type PatternName } from './patterns';
 import { lockScroll, reduced, q } from './util';
+import { bubble } from './bubble';
 
 /* The rest of the easter eggs. Loaded only when one of them is found (scripts/eggs.ts listens for the triggers):
      type "404"          a fake error page, with a lost pixel icon wandering over it, then the page comes back
@@ -127,11 +128,13 @@ export function rocketLaunch() {
 }
 
 /* ---------- right-click the headline ---------- */
-const JOKES: [string, (() => void) | null][] = [
-  ['Inspect element? It is all hand-coded.', null],
-  ['View source: readable, I promise.', null],
-  ['Copy image: there are no stock photos here.', null],
-  ['Save as... a better website.', null],
+/* each joke answers back in a speech bubble where the menu was */
+const reply = (text: string) => (x: number, y: number) => bubble(text, { x, y: y + 24, side: 'below', ms: 3400 });
+const JOKES: [string, ((x: number, y: number) => void) | null][] = [
+  ['Inspect element? It is all hand-coded.', reply('Go on, open DevTools. Clean, hand-written HTML. No div soup.')],
+  ['View source: readable, I promise.', reply('Readable on purpose. Search engines like that too.')],
+  ['Copy image: there are no stock photos here.', reply('Nothing to copy: no stock photos, no handshake over a laptop.')],
+  ['Save as... a better website.', reply('Already saved as a better website.')],
   ['Replay the headline', () => document.querySelector<HTMLElement>('[data-hero-title]')?.click()],
   ['Say hello', hello],
 ];
@@ -147,7 +150,7 @@ export function headlineMenu(x: number, y: number) {
     b.setAttribute('role', 'menuitem');
     b.className = act ? 'ctx__item ctx__item--act' : 'ctx__item';
     b.textContent = text;
-    b.addEventListener('click', () => { closeMenu(); act?.(); });
+    b.addEventListener('click', () => { const r = b.getBoundingClientRect(); closeMenu(); act?.(r.left + 30, r.top); });
     m.append(b);
     if (i === 3) { const hr = document.createElement('hr'); hr.className = 'ctx__hr'; m.append(hr); }
   });

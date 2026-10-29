@@ -523,19 +523,12 @@ html.lenis body {
 }
 .chem__list li::before {
   content: '';
-  grid-row: 1 / span 2;
+  grid-row: 1;
   width: 0.6rem;
   height: 0.6rem;
   margin-top: 0.4rem;
   border-radius: 0.15rem;
   background: var(--accent);
-}
-.chem__list strong {
-  grid-column: 2;
-  color: var(--cream);
-  font-size: 1.0625rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
 }
 .chem__list span {
   grid-column: 2;
@@ -619,17 +612,8 @@ html.lenis body {
   .fx .chem__list li::before {
     display: none;
   }
-  .fx .chem__list strong,
   .fx .chem__list span {
     grid-column: 1;
-  }
-  .fx .chem__list strong {
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--accent);
   }
   .fx .chem__verdict {
     position: absolute;
@@ -2016,4 +2000,109 @@ html:not(.js) .slot__w:not(:first-child) {
   margin: 0.25rem 0.4rem;
   border: 0;
   background: hsl(0 0% 100% / 0.14);
+}
+
+/* ------------------------------------------------------------------ Cartoon cursor (scripts/cursor.ts), speech bubbles (scripts/bubble.ts) */
+.cc-on,
+.cc-on * {
+  cursor: none !important;
+}
+.cc {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 400;
+  pointer-events: none;
+  transform-origin: 0 0;
+}
+.cc__in {
+  position: absolute;
+  left: -5px;
+  top: -3.5px;
+  width: 34px;
+  height: 34px;
+  transform-origin: 5px 3.5px;
+}
+.cc__a,
+.cc__h {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  transform-origin: 5px 3.5px;
+}
+.cc__h {
+  left: -10.5px;
+  top: 1.5px;
+}
+.cc svg {
+  display: block;
+  overflow: visible;
+}
+.bub {
+  position: fixed;
+  z-index: 150;
+  max-width: 15.5rem;
+  padding: 0.5rem 0.8rem 0.55rem;
+  border: 2.5px solid #050505;
+  border-radius: 1.1rem;
+  background: #fffdf5;
+  color: #050505;
+  font: 600 0.8125rem/1.25 var(--font-sans);
+  letter-spacing: -0.02em;
+  box-shadow: 3px 4px 0 var(--accent);
+  pointer-events: none;
+}
+.bub b {
+  color: var(--accent-ink);
+}
+.bub kbd {
+  display: inline-block;
+  padding: 0 0.35rem;
+  border: 2px solid #050505;
+  border-radius: 0.35rem;
+  background: var(--cream-2);
+  box-shadow: 0 2px 0 #050505;
+  font: 700 0.75rem var(--font-mono);
+}
+/* the tail: a rotated square whose two outer edges carry the outline */
+.bub::after {
+  content: '';
+  position: absolute;
+  left: var(--tail, 1.5rem);
+  width: 0.8rem;
+  height: 0.8rem;
+  background: #fffdf5;
+  rotate: 45deg;
+}
+.bub--above::after {
+  bottom: -0.5rem;
+  border-right: 2.5px solid #050505;
+  border-bottom: 2.5px solid #050505;
+}
+.bub--below::after {
+  top: -0.5rem;
+  border-left: 2.5px solid #050505;
+  border-top: 2.5px solid #050505;
+}
+/* the headline: no accidental text selection while holding or spinning; the button for the globe looks like the text it replaced */
+.hero__title {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+button.hero__loc {
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 550;
+  cursor: pointer;
+}
+button.hero__loc svg {
+  transition: color 0.3s;
+}
+button.hero__loc:hover svg {
+  color: var(--accent-ink);
 }

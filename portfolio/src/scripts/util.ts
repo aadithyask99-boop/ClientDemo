@@ -9,3 +9,9 @@ export const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matc
 
 /* Pause and resume smooth scrolling while an overlay is open (scroll.ts listens) */
 export const lockScroll = (on: boolean) => window.dispatchEvent(new CustomEvent('aadi:lock', { detail: on }));
+
+/* Which easter eggs this visitor has already found (kept for the visit only), so the hints stop mentioning them */
+const FOUND_KEY = 'aadi-eggs';
+const foundSet = (): string[] => { try { return JSON.parse(sessionStorage.getItem(FOUND_KEY) ?? '[]'); } catch { return []; } };
+export const found = (id: string) => foundSet().includes(id);
+export const markFound = (id: string) => { try { const f = foundSet(); if (!f.includes(id)) sessionStorage.setItem(FOUND_KEY, JSON.stringify([...f, id])); } catch { /* storage can be blocked */ } };

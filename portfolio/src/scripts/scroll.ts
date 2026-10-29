@@ -13,7 +13,7 @@ export function initScroll() {
 
   let lenis: Lenis | null = null;
   if (fine && !reduced) {
-    lenis = new Lenis({ lerp: 0.09, wheelMultiplier: 0.95 });
+    lenis = new Lenis({ lerp: 0.07, wheelMultiplier: 0.9 }); // a longer, softer glide than the default (0.1)
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((t) => lenis!.raf(t * 1000));
     gsap.ticker.lagSmoothing(0);
