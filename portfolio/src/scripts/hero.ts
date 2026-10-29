@@ -83,6 +83,27 @@ export function initHero(pixel: Pixel | null = null) {
   const stopLoop = () => { window.clearInterval(loop); loop = 0; };
   const resetWord = () => { gsap.killTweensOf(rot); gsap.set(rot, { clearProps: 'all' }); rot.textContent = list[0]; ri = 0; };
 
+  /* Hold Shift with the pointer over the headline (scripts/eggs.ts sends aadi:spin): the word spins through many more adjectives, fast, and settles back
+     on "cool" when Shift is let go. */
+  const SPIN = ['amazing', 'sexy', 'stunning', 'slick', 'bold', 'brilliant', 'epic', 'dreamy', 'fierce', 'gorgeous', 'fresh', 'clean', 'smooth', 'sharp', 'punchy', 'lush', 'electric', 'unreal', 'fabulous', 'mega', 'flawless', 'tasty'];
+  let spin = 0;
+  window.addEventListener('aadi:spin', (e) => {
+    const on = (e as CustomEvent<boolean>).detail;
+    if (on && !spin && visible.has(cool) && !reduced) {
+      stopLoop();
+      gsap.killTweensOf(rot);
+      gsap.set(rot, { clearProps: 'all' });
+      let k = Math.floor(Math.random() * SPIN.length);
+      spin = window.setInterval(() => { swapTo(SPIN[k++ % SPIN.length]); }, 150);
+    } else if (!on && spin) {
+      window.clearInterval(spin);
+      spin = 0;
+      swapTo('cool');
+      ri = 0;
+      startLoop();
+    }
+  });
+
   /** speed > 1 plays the sequence faster (used on touch devices, where the first paint matters most) */
   function play(speed = 1) {
     if (reduced || !root.classList.contains('js')) return;

@@ -33,8 +33,11 @@ export function initScroll() {
 
   // other scripts can ask for a smooth scroll to a position (keyboard focus on a project, a button that goes to a section)
   window.addEventListener('aadi:scrollto', (e) => {
-    const y = (e as CustomEvent<number>).detail;
-    if (lenis) lenis.scrollTo(y, { duration: 1.2, easing: ease });
+    const d = (e as CustomEvent<number | { y: number; duration?: number; lock?: boolean }>).detail;
+    const y = typeof d === 'number' ? d : d.y;
+    const duration = typeof d === 'number' ? 1.2 : d.duration ?? 1.2;
+    // lock: the ride is not interrupted if the wheel is still turning (the rocket)
+    if (lenis) lenis.scrollTo(y, { duration, easing: ease, lock: typeof d !== 'number' && !!d.lock });
     else window.scrollTo({ top: y, behavior: reduced ? 'auto' : 'smooth' });
   });
 

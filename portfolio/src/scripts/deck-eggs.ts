@@ -1,13 +1,15 @@
 import { gsap } from 'gsap';
 import { reduced } from './util';
 
-/* The three small scenes a card plays when it is flicked (or tapped). Each one is about the thing on the card. */
+/* The three small scenes a card plays when it is flicked (or tapped). Each one is about the thing on the card:
+   development types a build log, search engine optimisation sends a crawler down a checklist, marketing pops incoming enquiries.
+   (The made-up search results page is a separate egg: type "seo".) */
 export type Egg = 'dev' | 'seo' | 'marketing';
 
 const wait = (ms: number) => new Promise<void>((r) => window.setTimeout(r, ms));
 
 export function playEgg(kind: Egg, from?: Element | null) {
-  if (kind === 'seo') void import('./serp').then((m) => m.openSerp());
+  if (kind === 'seo') void import('./crawler').then((m) => m.openCrawler());
   else if (kind === 'dev') void terminal();
   else leads(from);
 }

@@ -85,18 +85,23 @@ spring back), and a sound toggle (off until switched on): a synthesised tick, qu
 | `src/scripts/clock-panel.ts` | The local-time panel (loaded the first time the clock is pressed) |
 | `src/scripts/pixel.ts`, `patterns.ts` | The pixel icon and its four shapes |
 | `src/scripts/scroll.ts` | Lenis smooth scroll, section-aware header |
-| `src/scripts/eggs.ts`, `serp.ts` | The other easter eggs |
+| `src/scripts/eggs.ts`, `eggs-more.ts`, `serp.ts`, `crawler.ts` | The other easter eggs (the triggers are small; the scenes load only when found) |
 | `scripts/single-file.mjs` | Bundles the built site into one HTML file (videos included) |
 | `scripts/record-demo.mjs` | Records a Work clip and poster from a live site |
 
 ## Easter eggs
 
-- **Flick a card hard** (or tap it, or press Enter on it): Development types a build log, Search Engine Optimisation opens a search page, Marketing pops incoming enquiries.
+- **Flick a card hard** (or tap it, or press Enter on it): Development types a build log, Search Engine Optimisation sends a pixel spider down a checklist (title,
+  meta description, structured data, alt text, speed) and counts a score ring up to 100, Marketing pops incoming enquiries.
 - **Type `seo`** anywhere (or click the hero pixel icon five times on a phone): a made-up search page opens and the site climbs from 8th to 1st.
-- **Hover the name** in the hero: a face follows the pointer, the pixel icon bursts, letters under the cursor lift.
-- **Click the headline** to watch it build again.
+- **Type `404`:** a joke error page with a lost pixel icon wandering over it, which then admits it was kidding and goes away.
+- **Type `hello` or `hire`:** the page scrolls to the Connect section.
+- **Hold Shift with the pointer over the headline:** the changing word spins through twenty more adjectives; let go and it settles on "cool".
+- **Right-click the headline:** a menu of jokes ("Inspect element? It is all hand-coded.") in place of the browser's, with "Replay the headline" and "Say hello" that work.
+- **Keep scrolling when you are already at the bottom** (mouse or trackpad): a pixel rocket builds up, then carries you back to the top.
+- **Hover the name** in the hero: a face follows the pointer along the words, the pixel icon bursts, letters under the cursor lift.
 - **Press the clock** in the header: drag the hands, switch the sound on, listen for the tick as you move toward the clock.
-- **Open the console**, **switch tabs**, read `/robots.txt` and `/humans.txt`.
+- **Click the headline** to watch it build again. **Open the console**, **switch tabs**, read `/robots.txt` and `/humans.txt`.
 
 ## Performance
 
