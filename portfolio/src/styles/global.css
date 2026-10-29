@@ -152,7 +152,7 @@ html.intro .hero {
   z-index: 50;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   padding: max(var(--pad), env(safe-area-inset-top, 0px)) var(--gx-r) var(--pad) var(--gx-l);
   color: var(--hfg);
   pointer-events: none;
@@ -162,119 +162,160 @@ html.intro .hero {
   pointer-events: auto;
 }
 
-/* The menu: a tab hanging from the top edge in the middle, and a frosted black glass panel that unrolls under it */
+/* The menu: a paper pull-tab hanging from the top-right edge ("Pull me"). Pull it and a cream panel unrolls down from the top; the tab rides along to the panel's
+   left edge. Sized after the reference: the tab is about 55 x 90 px, the panel a bit over a quarter of the screen (most of it on a phone). */
 .menu {
+  --tab-w: 3.45rem;
+  --tab-h: 6.4rem;
+  --tab-right: max(1rem, env(safe-area-inset-right, 0px));
+  --panel-w: min(26rem, 78vw);
   position: absolute;
   top: 0;
-  left: 50%;
+  right: 0;
   z-index: 2;
-  translate: -50% 0;
-  color: #f5efe3;
+  color: #0b0b0b;
 }
 .menu__tab {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  place-items: center;
-  width: 5.2rem;
-  height: 3rem;
-  padding-bottom: 0.45rem;
+  position: absolute;
+  top: 0;
+  right: var(--tab-right);
+  z-index: 3;
+  width: var(--tab-w);
+  height: var(--tab-h);
   list-style: none;
   cursor: pointer;
-  /* a ribbon with a notch in its lower edge, like the tab in the reference */
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 0.55rem), 0 100%);
-  background: rgb(6 6 6 / 0.84);
-  backdrop-filter: blur(18px) saturate(1.5);
-  -webkit-backdrop-filter: blur(18px) saturate(1.5);
-  font-size: 0.9375rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  /* the outline and the soft shadow follow the notch because they are drop-shadows of the clipped face */
+  filter: drop-shadow(0 0 0.7px #0b0b0b) drop-shadow(0 10px 14px rgb(0 0 0 / 0.22));
   transition: translate 0.35s var(--ease-out);
 }
 .menu__tab::-webkit-details-marker {
   display: none;
 }
-.menu__tab:hover {
-  translate: 0 4px;
+.menu__face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  justify-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0 1.5rem;
+  background: hsl(39 50% 95%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 0.95rem), 0 100%);
 }
-.menu__tab:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: -4px;
+.menu__hole {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.35);
+}
+.menu__word {
+  align-self: center;
+  writing-mode: vertical-rl;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 .menu__word--close,
 .menu[open] .menu__word--open {
   display: none;
 }
 .menu[open] .menu__word--close {
-  display: inline;
+  display: block;
+}
+.menu__tab:hover,
+.menu.is-dragging .menu__tab {
+  translate: 0 6px;
+}
+.menu__tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 .menu__panel {
   position: absolute;
-  top: 2.2rem;
-  left: 50%;
-  translate: -50% 0;
+  top: 0;
+  right: 0;
   display: grid;
-  width: min(21rem, calc(100vw - 2rem));
-  padding: 1.55rem 1.1rem 0.7rem;
-  border: 1px solid rgb(255 255 255 / 0.14);
-  border-top: 0;
-  border-radius: 0 0 1.1rem 1.1rem;
-  background: rgb(6 6 6 / 0.84);
-  backdrop-filter: blur(22px) saturate(1.6);
-  -webkit-backdrop-filter: blur(22px) saturate(1.6);
-  box-shadow: 0 30px 60px -24px #000c, inset 0 1px 0 rgb(255 255 255 / 0.06);
+  width: var(--panel-w);
+  padding: 1.2rem 1.4rem 1.2rem 1.6rem;
+  padding-top: max(1.2rem, env(safe-area-inset-top, 0px));
+  border-radius: 0 0 0 1.5rem;
+  background: hsl(39 50% 95%);
+  box-shadow: 0 0 0 1px #0b0b0b, 0 30px 60px -24px #000a;
 }
 .menu:not([open]) .menu__panel {
   display: none;
 }
 .menu__link {
   display: grid;
-  grid-template-columns: 2rem 1fr auto;
+  grid-template-columns: 1fr auto;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.7rem 0.2rem;
-  border-bottom: 1px solid rgb(255 255 255 / 0.1);
-  font-size: clamp(1.4rem, 1.1rem + 1vw, 1.7rem);
-  font-weight: 600;
+  gap: 0.6rem;
+  padding: clamp(1rem, 2.4vh, 1.4rem) 0;
+  border-bottom: 1px solid rgb(11 11 11 / 0.16);
+  font-size: clamp(1.9rem, 1.3rem + 1.6vw, 2.6rem);
+  font-weight: 700;
   letter-spacing: -0.045em;
-  line-height: 1;
+  line-height: 0.95;
+  text-transform: uppercase;
 }
 .menu__link:last-child {
   border-bottom: 0;
 }
+.menu__lbl {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
 .menu__n {
   font-family: var(--font-mono);
   font-size: 0.6875rem;
-  font-weight: 450;
+  font-weight: 500;
   letter-spacing: 0.04em;
-  color: rgb(245 239 227 / 0.5);
+  color: rgb(11 11 11 / 0.45);
 }
 .menu__go {
   display: grid;
   place-items: center;
-  width: 1.6rem;
-  height: 1.6rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
-  background: rgb(255 255 255 / 0.12);
-  color: #f5efe3;
+  background: var(--accent);
+  color: #0b0b0b;
   transition: background-color 0.3s var(--ease-out), color 0.3s, transform 0.4s var(--ease-out);
 }
-.menu__link:hover .menu__go,
-.menu__link:focus-visible .menu__go,
-.menu__link.is-active .menu__go {
-  background: var(--accent);
-  color: #050505;
+.menu__go svg {
+  width: 1rem;
+  height: 1rem;
 }
-.menu__link:hover .menu__go {
+.menu__link:hover .menu__go,
+.menu__link:focus-visible .menu__go {
+  background: #0b0b0b;
+  color: var(--accent);
   transform: rotate(45deg);
 }
 .menu__link.is-active .menu__t {
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 @media (pointer: coarse) {
-  .menu__tab {
-    width: 5.6rem;
-    height: 3.2rem;
+  .menu {
+    --tab-w: 3.6rem;
+  }
+}
+@media (max-width: 560px) {
+  .menu {
+    --tab-w: 3.2rem;
+    --tab-h: 6.4rem;
+    --panel-w: 74vw;
+  }
+  .menu__go {
+    width: 2.2rem;
+    height: 2.2rem;
   }
 }
 .hdr__clock {
@@ -333,14 +374,6 @@ html.intro .hero {
   .hdr__clock {
     gap: 0.4rem;
     font-size: 0.75rem;
-  }
-  /* the tab hangs in the middle, so on a phone the location label is just its thin line (it opens fully on hover or in the time panel) */
-  .hdr__loc-t {
-    display: none;
-  }
-  .hdr__line {
-    display: block;
-    margin-right: 0.4rem;
   }
 }
 

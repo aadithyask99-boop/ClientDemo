@@ -41,26 +41,37 @@ export function initEggs() {
     void lazy().then((m) => m.headlineMenu(e.clientX, e.clientY));
   });
 
+  // 7. Keep pushing when you are already at the bottom (wheel, trackpad, swipe, or the arrow / space / End keys): a pixel rocket builds up, then carries you back to the top
+  let pull = 0;
+  let idle = 0;
+  const LAUNCH = 560;
+  // on a phone the browser's toolbar slides in and out while you swipe, so the window height jumps by up to ~90px: allow for that
+  const slack = fine ? 24 : 110;
+  const atBottom = () => window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - slack;
+  const letGo = () => { window.clearTimeout(idle); if (pull) { pull = 0; void lazy().then((m) => m.rocketRelease()); } };
+  const push = (amount: number) => {
+    if (!atBottom() || amount <= 0) { letGo(); return; }
+    pull += amount;
+    window.clearTimeout(idle);
+    idle = window.setTimeout(letGo, 900);
+    void lazy().then((m) => { if (pull >= LAUNCH) { pull = 0; window.clearTimeout(idle); markFound('rocket'); m.rocketLaunch(); } else if (pull) m.rocketPull(pull, LAUNCH); });
+  };
+  window.addEventListener('wheel', (e) => push(e.deltaY), { passive: true });
+  window.addEventListener('keydown', (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey || (e.target as Element | null)?.closest?.('input, textarea, select, [contenteditable]')) return;
+    if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ' || e.key === 'End') push(e.key === 'ArrowDown' ? 150 : 280);
+  });
+  let touchY = 0;
+  window.addEventListener('touchstart', (e) => { touchY = e.touches[0].clientY; }, { passive: true });
+  window.addEventListener('touchmove', (e) => { const y = e.touches[0].clientY; const d = touchY - y; touchY = y; if (d > 0 && d < 150) push(d);  }, { passive: true });
+  window.addEventListener('touchend', letGo, { passive: true });
+
   if (fine) {
     // 5. Hold Shift, anywhere on the page: the changing word spins through many more adjectives (hero.ts listens), and settles when Shift is let go
     window.addEventListener('keydown', (e) => { if (e.key === 'Shift' && !e.repeat) spin(true); });
     window.addEventListener('keyup', (e) => { if (e.key === 'Shift') spin(false); });
     window.addEventListener('blur', () => spin(false));
 
-    // 7. Keep scrolling when you are already at the bottom: a pixel rocket builds up, then carries you back to the top
-    let pull = 0;
-    let idle = 0;
-    window.addEventListener('wheel', (e) => {
-      const atBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
-      if (!atBottom || e.deltaY <= 0) {
-        if (pull) { pull = 0; void lazy().then((m) => m.rocketRelease()); }
-        return;
-      }
-      pull += e.deltaY;
-      window.clearTimeout(idle);
-      idle = window.setTimeout(() => { pull = 0; void lazy().then((m) => m.rocketRelease()); }, 700);
-      void lazy().then((m) => { if (pull >= 900) { pull = 0; window.clearTimeout(idle); markFound('rocket'); m.rocketLaunch(); } else m.rocketPull(pull); });
-    }, { passive: true });
   } else if (head) {
     // 5b. On a phone there is no Shift: press and hold the headline for a moment and the word spins for as long as you hold
     let hold = 0;

@@ -63,7 +63,7 @@ The order follows what a client asks: who is this, show me, why would it work fo
 7. **Connect:** click-to-copy email (the hint text rolls to "Copied"), a stack of tinted project tiles that fly in and then cycle, a sitemap and channels
    list (hovered links become white pills), and "Crafted by Aadi" with a pixel icon that keeps changing shape.
 
-Always there: the **menu** is a tab hanging from the top edge in the middle (like a pull-tab); press it and a frosted black glass panel unrolls under it with Work, Services, About and Connect (`src/scripts/menu.ts`; a `<details>`, so it works without JavaScript too). Once you scroll the "Based in the UK" label folds to a thin
+Always there: the **menu** is a paper pull-tab hanging from the top-right edge, labelled "Pull me" (drag it down or just press it); a cream panel unrolls from the top with big Work, Services, About and Connect rows and the tab rides to its left edge. "Based in the UK" and the clock sit at the top-left (`src/scripts/menu.ts`; a `<details>`, so it works without JavaScript too). Once you scroll the "Based in the UK" label folds to a thin
 line that opens again on hover. Pressing the clock opens the **local-time panel**: an analogue and digital clock in your time zone, hands you can drag (they
 spring back), and a sound toggle (off until switched on): a synthesised tick, quieter the further the pointer is from the clock.
 
@@ -99,7 +99,7 @@ spring back), and a sound toggle (off until switched on): a synthesised tick, qu
 - **Right-click the headline:** a small menu with one item, "Say hello", which scrolls to the Connect section, in place of the browser's menu.
 - **Click "Remote worldwide":** the globe spins and a bubble gives the time in a city far away ("Tokyo: 23:04. Time zones are no problem.").
 - **Hints:** a few seconds in, cartoon bubbles pop up now and then at the side of the screen ("Type hello anywhere", "Right-click the headline"...), only for eggs not yet found, at most six a visit (`src/scripts/hints.ts`).
-- **Keep scrolling when you are already at the bottom** (mouse or trackpad): a pixel rocket builds up, then carries you back to the top.
+- **Keep pushing when you are already at the bottom** (mouse wheel, trackpad, a swipe on a phone, or the arrow / space / End keys): a pixel rocket builds up, then carries you back to the top.
 - **The cursor** is a cartoon arrow that leans as you move and squashes when you press, and becomes a pointing hand over anything clickable (`src/scripts/cursor.ts`;
   mouse and trackpad only). **Leave it alone for 45 seconds** and it falls asleep (it droops, little z's float up); move it and it wakes with "Oh! Hi."
 - **Scroll very fast** (a hard flick): a bubble says "Whoa, slow down." and the cursor sweats.

@@ -9,21 +9,23 @@ const links = [
 ---
 
 <header class="hdr" data-header>
-  <!-- The menu is a tab that hangs from the top edge in the middle ("pull" it and a frosted-glass panel unrolls under it; scripts/menu.ts). It is a <details>, so it
+  <!-- The menu is a tab that hangs from the top-right edge ("pull" it and a cream panel unrolls down from the top; scripts/menu.ts). It is a <details>, so it
        opens and closes with no JavaScript too. -->
   <details class="menu" data-menu>
     <summary class="menu__tab" aria-label="Menu">
-      <span class="menu__word menu__word--open">Menu</span>
-      <span class="menu__word menu__word--close">Close</span>
+      <span class="menu__face">
+        <span class="menu__hole" aria-hidden="true"></span>
+        <span class="menu__word menu__word--open">Pull me</span>
+        <span class="menu__word menu__word--close">Close</span>
+      </span>
     </summary>
     <nav class="menu__panel" aria-label="Primary" data-menu-panel>
       {
         links.map(([label, href], i) => (
           <a class="menu__link" href={href} data-nav>
-            <span class="menu__n">{String(i + 1).padStart(2, '0')}</span>
-            <span class="menu__t">{label}</span>
+            <span class="menu__lbl"><span class="menu__t">{label}</span><span class="menu__n">{String(i + 1).padStart(2, '0')}</span></span>
             <span class="menu__go" aria-hidden="true">
-              <svg viewBox="0 0 12 12" width="11" height="11"><path d="M2 9.5 9.5 2M4 2h5.5v5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <svg viewBox="0 0 12 12" width="12" height="12"><path d="M2 9.5 9.5 2M4 2h5.5v5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
             </span>
           </a>
         ))

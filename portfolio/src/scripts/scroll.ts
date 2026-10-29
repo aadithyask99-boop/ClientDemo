@@ -38,7 +38,11 @@ export function initScroll() {
     const duration = typeof d === 'number' ? 1.2 : d.duration ?? 1.2;
     // lock: the ride is not interrupted if the wheel is still turning (the rocket)
     if (lenis) lenis.scrollTo(y, { duration, easing: ease, lock: typeof d !== 'number' && !!d.lock });
-    else window.scrollTo({ top: y, behavior: reduced ? 'auto' : 'smooth' });
+    else if (typeof d !== 'number' && d.lock && !reduced) {
+      // no Lenis (touch): a native smooth scroll stops the moment a finger touches the screen, so the rocket's ride is tweened by hand
+      const p = { v: window.scrollY };
+      gsap.to(p, { v: y, duration, ease: 'power2.inOut', overwrite: true, onUpdate: () => window.scrollTo({ top: p.v, behavior: 'instant' }) });
+    } else window.scrollTo({ top: y, behavior: reduced ? 'auto' : 'smooth' });
   });
 
   // overlays (the "seo" easter egg) pause the page scroll while they are open

@@ -25,7 +25,7 @@ export function hello() {
 const ROCKET = ['...#...', '..###..', '..#.#..', '..###..', '..###..', '.#####.', '.#.#.#.', '...#...'];
 let rocket: HTMLElement | null = null;
 let launching = false;
-export function rocketPull(pull: number) {
+export function rocketPull(pull: number, launchAt = 560) {
   if (launching) return;
   if (!rocket) {
     rocket = document.createElement('div');
@@ -38,7 +38,7 @@ export function rocketPull(pull: number) {
     rocket.prepend(grid);
     document.body.append(rocket);
   }
-  const t = Math.min(1, pull / 900);
+  const t = Math.min(1, pull / launchAt);
   gsap.to(rocket, { y: -t * 46, opacity: Math.min(1, pull / 120), duration: 0.2, overwrite: true });
 }
 export function rocketRelease() {
