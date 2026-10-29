@@ -66,9 +66,8 @@ const step = async () => {
   // normally the clock waits for the page's network requests; if one never finishes (a hung request), carry on without waiting for it
   await budget('pauseIfNetworkFetchesPending').catch(() => budget('advance'));
   phase = 'draw';
-  // a frame that does not come back within 30 s is asked for again (a heavy frame can occasionally get lost)
-  const draw = () => Promise.race([cdp.send('HeadlessExperimental.beginFrame', { interval: dt, screenshot: { format: 'jpeg', quality: 88 } }), new Promise((_, no) => setTimeout(() => no(new Error('frame timeout')), 30000))]);
-  const r = await draw().catch(() => draw());
+  // a heavy frame (a 3D scene compiling its shaders in software, say) can take minutes; there is no use asking for it again while it is pending
+  const r = await Promise.race([cdp.send('HeadlessExperimental.beginFrame', { interval: dt, screenshot: { format: 'jpeg', quality: 88 } }), new Promise((_, no) => setTimeout(() => no(new Error('frame took over 10 minutes')), 600000))]);
   // when nothing on screen changed there is no new picture: repeat the last one, so the numbering has no gaps (ffmpeg stops at the first gap)
   if (r.screenshotData) { last = Buffer.from(r.screenshotData, 'base64'); }
   if (last) writeFileSync(`${raw}/${String(frame).padStart(5, '0')}.jpg`, last);
