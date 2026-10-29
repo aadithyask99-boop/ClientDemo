@@ -2528,6 +2528,66 @@ html.pr-open .hdr {
   border: 0;
   background: none;
   color: rgb(11 11 11 / 0.55);
-  font-size: 0.9375rem;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-align: left;
   cursor: pointer;
+}
+.pr__contact {
+  margin-top: clamp(3rem, 10vh, 6rem);
+}
+.pr__chan {
+  display: grid;
+  gap: 0.15rem;
+}
+.pr__chan a {
+  color: rgb(11 11 11 / 0.55);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  transition: color 0.25s;
+}
+.pr__chan a:hover,
+.pr__chan a:focus-visible {
+  color: #0b0b0b;
+}
+.pr__time {
+  display: grid;
+  gap: 0.6rem;
+  justify-items: center;
+  width: 9rem;
+}
+@media (min-width: 900px) {
+  .pr__time {
+    justify-self: end;
+  }
+}
+.pr__dial {
+  width: 100%;
+}
+.pr__dial-bg {
+  fill: #0b0b0b;
+}
+.pr__tick {
+  stroke: hsl(39 50% 95%);
+  stroke-width: 2;
+}
+.pr__hand {
+  stroke: hsl(39 50% 95%);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.pr__hand--s {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+.pr__tz {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+  text-align: center;
+  text-transform: uppercase;
+  color: rgb(11 11 11 / 0.5);
 }

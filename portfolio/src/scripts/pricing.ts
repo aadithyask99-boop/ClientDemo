@@ -30,6 +30,23 @@ const clips = qa('[data-pricing-clip]', root).map((slot) => {
   slot.append(img, v);
   return v;
 }).filter((v): v is HTMLVideoElement => !!v);
+/* the clock: real time in my time zone, ticking only while the sheet is open */
+const tz = q('[data-clock]')?.dataset.tz;
+let fmt: Intl.DateTimeFormat;
+try { fmt = new Intl.DateTimeFormat('en-GB', { hour: 'numeric', minute: 'numeric', second: 'numeric', hourCycle: 'h23', timeZone: tz }); }
+catch { fmt = new Intl.DateTimeFormat('en-GB', { hour: 'numeric', minute: 'numeric', second: 'numeric', hourCycle: 'h23' }); }
+const hands = { h: q('[data-dial="h"]', root), m: q('[data-dial="m"]', root), s: q('[data-dial="s"]', root) };
+const digital = q('[data-pricing-digital]', root);
+let clock = 0;
+const tickClock = () => {
+  const p = Object.fromEntries(fmt.formatToParts(new Date()).map((x) => [x.type, +x.value]));
+  const h = p.hour % 24;
+  hands.h?.setAttribute('transform', `rotate(${(h % 12) * 30 + p.minute * 0.5})`);
+  hands.m?.setAttribute('transform', `rotate(${p.minute * 6 + p.second * 0.1})`);
+  hands.s?.setAttribute('transform', `rotate(${p.second * 6})`);
+  if (digital) digital.textContent = `${String(h).padStart(2, '0')}:${String(p.minute).padStart(2, '0')}`;
+};
+const runClock = (on: boolean) => { window.clearInterval(clock); if (on) { tickClock(); clock = window.setInterval(tickClock, 1000); } };
 const playClips = (on: boolean) => clips.forEach((v) => {
   if (!on || reduced) { v.pause(); return; }
   if (!v.getAttribute('src') && v.dataset.src) { v.src = v.dataset.src; v.load(); }
@@ -63,6 +80,7 @@ export function open(from?: HTMLElement | null) {
   }
   document.addEventListener('keydown', onKey);
   playClips(true);
+  runClock(true);
   sheet.focus({ preventScroll: true });
 }
 
@@ -71,7 +89,7 @@ export function close(after?: () => void) {
   document.removeEventListener('keydown', onKey);
   lockScroll(false);
   html.classList.remove('pr-open');
-  const done = () => { root.hidden = true; playClips(false); after?.(); };
+  const done = () => { root.hidden = true; playClips(false); runClock(false); after?.(); };
   if (reduced) done();
   else {
     gsap.to(sheet, { yPercent: 100, duration: 0.55, ease: 'power3.in', overwrite: true, onComplete: done });

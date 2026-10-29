@@ -3,6 +3,7 @@ import { site } from '../data/site';
 /* The pricing sheet: opens from "Pricing" in the menu and from the footer (scripts/pricing.ts). It follows the reference: a flat cream sheet that rises over 80% of
    the screen (the top fifth stays showing), a big headline, one package in a row (name, what it is, price, two little looping clips) and a way to start.
    No boxes, no lines, no labels, no numbers. Click the big price for a small surprise. */
+const ticks = Array.from({ length: 60 }, (_, i) => i);
 const pages = ['Home', 'About us', 'Services', 'Contact us', 'Blog'];
 ---
 
@@ -32,7 +33,32 @@ const pages = ['Home', 'About us', 'Services', 'Contact us', 'Blog'];
 
       <div class="pr__cta" data-pr-in>
         <button class="pr__go" type="button" data-pricing-go>Start with my homepage</button>
-        {site.email && <button class="pr__mail" type="button" data-copy={site.email}><span class="connect__mail-text">{site.email}</span> <span class="connect__mail-hint" data-copy-hint>Click to copy</span></button>}
+      </div>
+
+      <!-- contact, as in the reference: how to reach me, the email, the other places to find me, and a live clock in my time zone -->
+      <div class="pr__row pr__contact" data-pr-in>
+        <span></span>
+        <div class="pr__info">
+          <p class="pr__text">The easiest way to reach me is directly. You can also find me across different social channels.</p>
+          {
+            site.email ? (
+              <button class="pr__mail" type="button" data-copy={site.email}><span class="connect__mail-text">{site.email}</span> <span class="connect__mail-hint" data-copy-hint>Click to copy</span></button>
+            ) : (
+              <p class="pr__mail pr__mail--soon">Your email address goes here.</p>
+            )
+          }
+          {site.socials.length > 0 && <ul class="pr__chan">{site.socials.map((s) => <li><a href={s.href} target="_blank" rel="noopener me">{s.label}</a></li>)}</ul>}
+        </div>
+        <div class="pr__time">
+          <svg class="pr__dial" viewBox="-100 -100 200 200" data-pricing-dial role="img" aria-label="Analogue clock showing my local time">
+            <circle r="98" class="pr__dial-bg" />
+            {ticks.map((i) => <line class="pr__tick" y1="-90" y2={i % 5 === 0 ? -78 : -84} transform={`rotate(${i * 6})`} />)}
+            <line data-dial="h" class="pr__hand" y1="6" y2="-48" />
+            <line data-dial="m" class="pr__hand" y1="8" y2="-72" />
+            <line data-dial="s" class="pr__hand pr__hand--s" y1="14" y2="-78" />
+          </svg>
+          <p class="pr__tz">{site.timezone.replace('_', ' ').replace('/', ' / ')}<br /><span data-pricing-digital>--:--</span></p>
+        </div>
       </div>
     </div>
   </div>
