@@ -39,7 +39,11 @@ export async function initPortrait() {
     const k = Math.max(W / src.w, H / src.h);
     f.drawImage(src.el, (W - src.w * k) / 2, (H - src.h * k) / 2, src.w * k, src.h * k);
   };
-  measure();
+  try {
+    measure();
+  } catch {
+    return; // the finished picture simply stays
+  }
 
   const ctx = cv.getContext('2d')!;
   fig.classList.add('is-fx');
@@ -120,12 +124,16 @@ async function source(img: HTMLImageElement | null, svg: SVGSVGElement | null): 
     }
     if (svg) {
       const vb = svg.viewBox.baseVal;
-      const xml = new XMLSerializer().serializeToString(svg).replace('<svg', `<svg xmlns="http://www.w3.org/2000/svg" width="${vb.width * 40}" height="${vb.height * 40}"`);
-      // a data: URI, not a blob: URL: pages shown inside a viewer often only allow data: images, and a blocked image would silently switch the effect off
+      const w = 800;
+      const h = Math.round((800 * vb.height) / vb.width);
+      // the serializer already writes the xmlns attribute for an inline svg; writing it twice is invalid XML, which Firefox and Safari refuse to load as an image
+      // (Chromium forgives it), and the effect then silently never started. Size is moderate for the same reason: very large SVG images fail on some browsers.
+      let xml = new XMLSerializer().serializeToString(svg).replace(/^<svg\b/, `<svg width="${w}" height="${h}"`);
+      if (!/^<svg[^>]*\sxmlns=/.test(xml)) xml = xml.replace(/^<svg\b/, '<svg xmlns="http://www.w3.org/2000/svg"');
       const im = new Image();
       im.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(xml)}`;
       await loaded(im);
-      return { el: im, w: vb.width * 40, h: vb.height * 40 };
+      return im.naturalWidth ? { el: im, w, h } : null;
     }
   } catch {
     /* fall through */
