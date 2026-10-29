@@ -43,19 +43,12 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <p class="hero__late" data-late hidden></p>
   </div>
 
-  <!-- Two icon chips instead of two lines of small print. Each opens a speech bubble with the full line when pressed (scripts/eggs.ts); the words stay in the page for
-       search engines and screen readers. -->
+  <!-- The note on the left is for desktop; on a phone it is kept for search engines and screen readers but not shown, so the foot is just the globe. Pressing
+       the globe shows the time somewhere else (scripts/eggs.ts). -->
   <div class="hero__foot">
-    <button class="hero__chip" type="button" data-note aria-label="Built for your business, never from a template. Nothing generic.">
-      <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M4 20l1-4.2L16.6 4.2a2.1 2.1 0 0 1 3 3L8 18.8 4 20z"></path>
-        <path d="M14.4 6.4l3.2 3.2M5 15.8l3.2 3.2"></path>
-      </svg>
-      <span>Built by hand</span>
-      <span class="sr-only">Built for your business, never from a template. Nothing generic.</span>
-    </button>
+    <p class="hero__note">Built for your business, never from a template. Nothing generic.</p>
     <button class="hero__chip hero__loc" type="button" data-globe aria-label="Remote worldwide. Press to see the time somewhere else.">
-      <span>Worldwide</span>
+      <span>Remote worldwide</span>
       <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
         <circle cx="12" cy="12" r="9.5"></circle>
         <path d="M2.5 12h19M12 2.5c-3.6 3.6-3.6 15.4 0 19M12 2.5c3.6 3.6 3.6 15.4 0 19"></path>

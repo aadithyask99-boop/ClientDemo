@@ -75,13 +75,6 @@ export function initEggs() {
     ['pointerup', 'pointercancel', 'pointerleave'].forEach((ev) => head.addEventListener(ev, release));
   }
 
-  // 8a. "Built by hand": press it for the full line
-  const note = q('[data-note]');
-  note?.addEventListener('click', () => {
-    const r = note.getBoundingClientRect();
-    void import('./bubble').then((b) => b.bubble('Built for your business, never from a template. Nothing generic.', { x: r.left + 28, y: r.top - 2, side: 'above', ms: 4200 }));
-  });
-
   // 8. "Remote worldwide": press it and the globe spins, and a bubble says what time it is somewhere else (I work in your hours)
   const globe = q('[data-globe]');
   if (globe) {
@@ -142,7 +135,7 @@ export function initEggs() {
   }, { passive: true });
 
   // 9. A few seconds in, little bubbles start to say what can be tried (until it has been found)
-  window.setTimeout(() => { void import('./hints').then((m) => m.initHints()); }, 5000);
+  void import('./hints').then((m) => m.initHints());
 
   // 4. The same egg for phones, where there is no keyboard: click the hero pixel icon five times, quickly
   const icon = q('.hero__pixel');

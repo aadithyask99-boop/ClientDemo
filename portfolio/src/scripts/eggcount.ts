@@ -18,9 +18,10 @@ export function initEggCount() {
     });
   });
 
-  // reaching the footer: say how many eggs there are and how many have been found (once each time you arrive after being away)
-  const foot = q('.connect__foot');
-  if (foot) {
+  // arriving at the footer (the Connect section): say how many eggs there are and how many have been found, as soon as the section is a third of the way up the
+  // screen, and keep it there a while (again each time you come back after being away)
+  const sec = q('#connect');
+  if (sec) {
     let shown = false;
     new IntersectionObserver((es) => es.forEach((e) => {
       if (!e.isIntersecting) { shown = false; return; }
@@ -28,11 +29,7 @@ export function initEggCount() {
       shown = true;
       const n = foundCount();
       const msg = n === 0 ? `<b>${total()}</b> eggs are hidden on this page. Go poking.` : n >= total() ? `All <b>${total()}</b> eggs found. Thank you for looking.` : `Eggs found: <b>${n}</b> of ${total()}. Keep poking.`;
-      void import('./bubble').then((b) => {
-        // over the empty space between the project tiles and the sitemap, so no link is covered
-        const r = (q('.sitemap') ?? foot).getBoundingClientRect();
-        b.bubble(msg, { x: window.innerWidth * 0.62, y: Math.max(60, r.top - 10), side: 'above', ms: 4200, html: true });
-      });
-    }), { threshold: 1 }).observe(foot);
+      void import('./bubble').then((b) => b.bubble(msg, { x: window.innerWidth * 0.62, y: window.innerHeight - 28, side: 'above', ms: 6500, html: true }));
+    }), { rootMargin: '0px 0px -35% 0px' }).observe(sec);
   }
 }

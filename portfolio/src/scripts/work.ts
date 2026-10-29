@@ -63,6 +63,7 @@ export function initWork(hero: HeroHandle) {
 
   /* ---------- video loading and playing (no effects on the picture: it is simply the site) ---------- */
   /* Only one clip plays at a time: the one nearest the middle of the screen. Three 60 fps clips decoding at once was enough to make scrolling stutter. */
+  const phone = window.matchMedia('(max-width: 699px)').matches;
   const inView: boolean[] = items.map(() => false);
   const videos = items.map((item) => q<HTMLVideoElement>('video', item)!);
   let chooseRaf = 0;
@@ -91,7 +92,7 @@ export function initWork(hero: HeroHandle) {
     new IntersectionObserver((es) => es.forEach((e) => {
       if (!e.isIntersecting) return;
       if (!poster.getAttribute('src') && poster.dataset.src) poster.src = poster.dataset.src;
-      if (!video.getAttribute('src') && video.dataset.video && !reduced) { video.src = video.dataset.video; video.load(); }
+      if (!video.getAttribute('src') && video.dataset.video && !reduced) { video.src = phone && video.dataset.videoM ? video.dataset.videoM : video.dataset.video; video.load(); } // phones get the small version (480 px wide, still 60 fps)
     }), { rootMargin: '900px 0px' }).observe(item);
     video.addEventListener('playing', () => video.classList.add('is-playing'));
     new IntersectionObserver((es) => es.forEach((e) => { inView[i] = e.isIntersecting; schedule(); }), { threshold: 0.15 }).observe(item);

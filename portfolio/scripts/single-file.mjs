@@ -40,7 +40,7 @@ css = css.replace(/@font-face\{[^}]*\}/g, (face) => {
 const headScripts = [...head.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]).join('\n');
 
 // 4. images and the Work videos (and a portrait, if there is one) become data URIs
-body = body.replace(/(data-src|data-video|src)="\/([^"]+\.(?:webp|png|jpe?g|avif|svg|mp4))"/g, (whole, attr, path) => {
+body = body.replace(/(data-src|data-video-m|data-video|src)="\/([^"]+\.(?:webp|png|jpe?g|avif|svg|mp4))"/g, (whole, attr, path) => {
   const file = join(dist, path);
   return existsSync(file) ? `${attr}="${dataUri(file, mimeOf(path))}"` : whole;
 });

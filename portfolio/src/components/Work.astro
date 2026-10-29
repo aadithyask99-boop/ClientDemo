@@ -28,7 +28,7 @@ const arrow = 'M110 47.42 66.064 95 54.92 83.702l26.108-27.848H0V38.987h81.028L5
               {/* the picture is fetched by scripts/work.ts once the headline has painted; without JavaScript the noscript copy is used */}
               <img class="wi__poster" data-src={`${base}/work/${p.slug}.webp`} alt="" width="960" height="600" decoding="async" />
               <noscript><img class="wi__poster" src={`${base}/work/${p.slug}.webp`} alt="" width="960" height="600" loading="lazy" /></noscript>
-              <video muted loop playsinline preload="none" data-video={`${base}/work/${p.slug}.mp4`} aria-hidden="true" tabindex="-1" />
+              <video muted loop playsinline preload="none" data-video={`${base}/work/${p.slug}.mp4`} data-video-m={`${base}/work/${p.slug}-m.mp4`} aria-hidden="true" tabindex="-1" />
             </div>
 
             <div class="wi__cta" data-wi-cta aria-hidden="true">
