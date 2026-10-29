@@ -164,7 +164,8 @@ for (let i = 0; i < scrollFrames; i++) {
   if (frame % 120 === 0) process.stdout.write(`\r${slug}: ${frame}/${total} frames`);
 }
 while (frame < total) await step();
-await browser.close();
+// the browser can refuse to close while its clock is paused: give it a few seconds, then carry on to the encode regardless
+await Promise.race([browser.close(), new Promise((r) => setTimeout(r, 8000))]);
 console.log(`\r${slug}: ${frame} frames captured`);
 
 // 3. encode: 60 fps, 720 px wide, no audio; the poster is a frame from the finished first screen
@@ -172,3 +173,4 @@ const ff = (a) => { const r = spawnSync('ffmpeg', ['-v', 'error', '-y', ...a], {
 ff(['-framerate', String(fps), '-i', `${raw}/%05d.jpg`, '-vf', 'scale=720:-2:flags=lanczos', '-c:v', 'libx264', '-crf', '28', '-preset', 'slow', '-pix_fmt', 'yuv420p', '-r', String(fps), '-g', String(fps * 2), '-movflags', '+faststart', '-an', `${out}/${slug}.mp4`]);
 ff(['-i', `${raw}/${String(Math.min(posterFrame, frame - 1)).padStart(5, '0')}.jpg`, '-vf', 'scale=960:-2:flags=lanczos', '-c:v', 'libwebp', '-quality', '72', `${out}/${slug}.webp`]);
 console.log(`Wrote public/work/${slug}.mp4 and ${slug}.webp (frames kept in ${raw}: ${readdirSync(raw).length} files)`);
+process.exit(0);
