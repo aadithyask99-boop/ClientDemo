@@ -33,7 +33,7 @@ Needs Playwright (set `PLAYWRIGHT_DIR` if it is not importable) and ffmpeg. Fram
 - Do not put `will-change` on repeated small things (the pixel squares), and do not draw big SVGs live many times (the card back is an image). Check smoothness with a
   scripted wheel scroll and long-animation-frame entries, not by eye.
 - Measure with a production build (`npx astro build`, then `npx astro preview --port 4399`), desktop and a throttled phone (4x CPU, slow 4G). Last measured: about
-  2.4 s desktop, 2.5 to 2.7 s phone, layout shift about 0.
+  1.0 s desktop, 1.7 s phone, layout shift about 0.
 
 ## The single-file artifact
 
