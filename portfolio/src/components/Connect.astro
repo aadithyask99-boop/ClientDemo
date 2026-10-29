@@ -29,11 +29,8 @@ const sitemap = [
          clips are borrowed from the Work section by the script, so nothing is downloaded twice. Without JavaScript they are plain tinted tiles. -->
     <div class="thumbs" data-thumbs role="button" tabindex="0" aria-label="Shuffle through the projects" data-cursor="Next">
       {
-        projects.map((p, i) => (
-          <div class="thumb" style={`--tint:${p.tint}`}>
-            <span class="thumb__n">{String(i + 1).padStart(2, '0')}</span>
-            <span class="thumb__name">{p.name}</span>
-          </div>
+        projects.map((p) => (
+          <div class="thumb" style={`--tint:${p.tint}`} />
         ))
       }
     </div>

@@ -37,6 +37,7 @@ export function rocketPull(pull: number, launchAt = 560) {
     ROCKET.forEach((row, y) => [...row].forEach((c) => { const i = document.createElement('i'); if (c === '#') { i.dataset.on = ''; if (y >= 6) i.className = 'is-flame'; } else i.style.opacity = '0'; grid.append(i); }));
     rocket.prepend(grid);
     document.body.append(rocket);
+    gsap.set(rocket, { xPercent: -50 }); // centred by gsap, so it stays centred when the hint text changes width
   }
   const t = Math.min(1, pull / launchAt);
   const hint = rocket.querySelector<HTMLElement>('.rocket__hint');

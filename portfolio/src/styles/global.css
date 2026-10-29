@@ -1864,7 +1864,6 @@ html:not(.js) .slot__w:not(:first-child) {
   font-size: 0.6875rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  text-shadow: 0 1px 8px #0008;
   box-shadow: 0 0 0 1px hsl(0 0% 100% / 0.1), 0 24px 44px -18px #000;
   user-select: none;
 }
@@ -1882,24 +1881,6 @@ html:not(.js) .slot__w:not(:first-child) {
 }
 .thumb__vid.is-on {
   opacity: 1;
-}
-.thumb::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, #0005, transparent 35%, transparent 60%, #0008);
-  pointer-events: none;
-}
-.thumb > span {
-  position: relative;
-  z-index: 1;
-}
-.thumb__name {
-  font-family: var(--font-sans);
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: -0.05em;
-  text-transform: none;
 }
 .sitemap {
   display: flex;
@@ -1972,9 +1953,6 @@ html:not(.js) .slot__w:not(:first-child) {
     width: 15rem;
     height: 9.4rem;
     margin: -4.7rem 0 0 -7.5rem;
-  }
-  .thumb__name {
-    font-size: 1.2rem;
   }
 }
 
@@ -2131,7 +2109,6 @@ html:not(.js) .slot__w:not(:first-child) {
   left: 50%;
   bottom: 3rem;
   z-index: 125;
-  translate: -50% 0;
   display: grid;
   justify-items: center;
   gap: 0.4rem;
