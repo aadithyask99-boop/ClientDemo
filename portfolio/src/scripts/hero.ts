@@ -1,5 +1,5 @@
 import { gsap } from 'gsap';
-import { q, qa, clamp, reduced, fine } from './util';
+import { q, qa, clamp, reduced, fine, lockScroll } from './util';
 import type { Pixel } from './pixel';
 
 const root = document.documentElement;
@@ -19,7 +19,7 @@ export function initHero(pixel: Pixel | null = null) {
   const seo = words.find((w) => w.dataset.wd === 'seo')!;
   const comma = q('[data-comma]', cool)!;
   const rot = q('[data-rot]', cool)!;
-  const wordsToBuild = words.filter((w) => w !== seo);
+  const wordsToBuild = words.filter((w) => w !== cool); // the sentence is built without "cool"; it joins in afterwards
   let visible = new Set<HTMLElement>(words);
   let tl: gsap.core.Timeline | null = null;
 
@@ -104,34 +104,71 @@ export function initHero(pixel: Pixel | null = null) {
     }
   });
 
-  /** speed > 1 plays the sequence faster (used on touch devices, where the first paint matters most) */
-  function play(speed = 1) {
-    if (reduced || !root.classList.contains('js')) return;
+  const rest = () => [q('.hero__mid'), q('.hero__foot')].filter(Boolean) as HTMLElement[];
+
+  /* Total width of the widest row when `show` is visible: how big the headline can be made in the loader without leaving the screen */
+  function widestRow(show: Set<HTMLElement>) {
+    const gap = parseFloat(getComputedStyle(title!).columnGap) || 0;
+    const rows = new Map<number, number>();
+    words.filter((w) => show.has(w)).forEach((w) => { const k = Math.round(w.offsetTop / 4); rows.set(k, (rows.get(k) ?? -gap) + w.offsetWidth + gap); });
+    return Math.max(...rows.values(), 1);
+  }
+
+  /** speed > 1 plays the sequence faster (used on touch devices, where the first paint matters most).
+      With `intro`, this is the page's loader: the headline is built big, in the middle of the screen, over the empty page; it holds a moment, then zooms
+      and settles into its place in the hero (the rest of the hero fades in as it lands) and "cool" joins the sentence. `onLanded` is called as it settles. */
+  function play(speed = 1, intro = false, onLanded?: () => void) {
+    if (reduced || !root.classList.contains('js')) { onLanded?.(); return; }
     tl?.kill();
     stopLoop();
     resetWord();
     gsap.set(words, { opacity: 0, scale: 0.35, x: 0, y: 0, filter: 'blur(0px)' });
+    gsap.set(seo, { scale: 0.9 }); // the longest word is the page's largest paint: it must first appear nearly full size, or the paint is measured small
     gsap.set(comma, { opacity: 0 });
     visible = new Set();
+    const hdr = q('[data-header]');
+    const pre = q('[data-pre]');
+
+    if (intro) {
+      root.classList.add('intro'); // lifts the hero over the loader (global.css)
+      lockScroll(true); // the page holds still until the headline has landed (no overflow toggle: that re-lays-out the whole page)
+      const final = new Set(words.filter((w) => w !== cool));
+      const r = title!.getBoundingClientRect();
+      const big = Math.max(1, Math.min(1.5, (window.innerWidth - 40) / widestRow(final)));
+      gsap.set(title!, { scale: big, y: window.innerHeight / 2 - (r.top + r.height / 2), transformOrigin: '50% 50%' });
+      gsap.set(rest(), { opacity: 0 });
+      if (hdr) gsap.set(hdr, { opacity: 0 });
+      if (pre) {
+        gsap.to(pre.firstElementChild, { opacity: 0, duration: 0.3 });
+        gsap.delayedCall(0.4, () => pre.remove());
+      }
+    }
 
     const step = 0.085;
     tl = gsap.timeline();
     tl.timeScale(speed);
-    // 1. the sentence builds: "Hi, I'm Aadi and I make cool websites."
+    // 1. the sentence builds: "Hi, I'm Aadi and I make SEO-friendly websites."
     wordsToBuild.forEach((w, i) => {
       const t = i * step;
       tl!.call(() => { visible.add(w); layout(visible, 0.55, 'power3.out', [w]); }, [], t);
       tl!.to(w, { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(1.7)' }, t);
     });
+    let t = wordsToBuild.length * step + 0.35;
 
-    // 2. "cool" gives way to "SEO-friendly"
-    let t = wordsToBuild.length * step + 0.6;
-    tl.call(() => { visible.delete(cool); visible.add(seo); layout(visible, 0.8, 'power3.inOut', [seo]); }, [], t);
-    tl.to(cool, { opacity: 0, y: '-0.3em', scale: 0.92, filter: 'blur(8px)', duration: 0.4, ease: 'power2.in' }, t);
-    tl.fromTo(seo, { opacity: 0, y: '0.3em', scale: 0.92, filter: 'blur(8px)' }, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 0.6, ease: 'power3.out' }, t + 0.12);
+    // 2. (loader only) a beat to read it, then it zooms into place and the rest of the hero arrives
+    if (intro) {
+      t += 0.55;
+      tl.to(title!, { scale: 1, y: 0, duration: 1.15, ease: 'expo.inOut' }, t);
+      tl.to(rest(), { opacity: 1, duration: 0.7, ease: 'power2.out' }, t + 0.8);
+      if (hdr) tl.to(hdr, { opacity: 1, duration: 0.6, ease: 'power2.out', clearProps: 'opacity' }, t + 0.9);
+      tl.call(() => { root.classList.remove('intro'); lockScroll(false); gsap.set(title!, { clearProps: 'transform' }); onLanded?.(); }, [], t + 1.2);
+      t += 1.15;
+    } else {
+      t += 0.35;
+      tl.call(() => onLanded?.(), [], t);
+    }
 
-    // 3. and then both live together: "cool, SEO-friendly websites."
-    t += 1.9;
+    // 3. "cool" joins: "cool, SEO-friendly websites."
     tl.call(() => { visible.add(cool); layout(visible, 0.9, 'power3.inOut', [cool]); }, [], t);
     tl.fromTo(cool, { opacity: 0, y: '0.3em', scale: 0.92, filter: 'blur(8px)' }, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 0.7, ease: 'power3.out' }, t + 0.4);
     tl.to(comma, { opacity: 1, duration: 0.5 }, t + 0.9);
@@ -140,7 +177,6 @@ export function initHero(pixel: Pixel | null = null) {
   }
 
   /* The work section takes the page over: the headline leaves as the first project becomes active, and builds itself again when you scroll back */
-  const rest = () => [q('.hero__mid'), q('.hero__foot')].filter(Boolean) as HTMLElement[];
   function hide() {
     if (reduced || !root.classList.contains('js')) return;
     tl?.kill();

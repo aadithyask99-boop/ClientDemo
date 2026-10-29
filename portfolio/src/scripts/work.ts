@@ -62,8 +62,30 @@ export function initWork(hero: HeroHandle) {
   const dx = () => (compact() ? { title: -40, view: 40, icon: -48 } : { title: -80, view: 80, icon: -100 });
 
   /* ---------- video loading and playing (no effects on the picture: it is simply the site) ---------- */
-  items.forEach((item) => {
-    const video = q<HTMLVideoElement>('video', item)!;
+  /* Only one clip plays at a time: the one nearest the middle of the screen. Three 60 fps clips decoding at once was enough to make scrolling stutter. */
+  const inView: boolean[] = items.map(() => false);
+  const videos = items.map((item) => q<HTMLVideoElement>('video', item)!);
+  let chooseRaf = 0;
+  const choose = () => {
+    chooseRaf = 0;
+    const mid = window.innerHeight / 2;
+    let best = -1;
+    let bestD = Infinity;
+    items.forEach((item, i) => {
+      if (!inView[i]) return;
+      const r = item.getBoundingClientRect();
+      const d = Math.abs(r.top + r.height / 2 - mid);
+      if (d < bestD) { bestD = d; best = i; }
+    });
+    videos.forEach((v, i) => {
+      if (i === best && !reduced) void v.play().catch(() => undefined);
+      else if (!v.paused) v.pause();
+    });
+  };
+  const schedule = () => { if (!chooseRaf) chooseRaf = requestAnimationFrame(choose); };
+  window.addEventListener('scroll', schedule, { passive: true });
+  items.forEach((item, i) => {
+    const video = videos[i];
     const poster = q<HTMLImageElement>('.wi__poster', item)!;
     // initWork runs after the headline has painted (main.ts), so none of this competes with it
     new IntersectionObserver((es) => es.forEach((e) => {
@@ -72,9 +94,7 @@ export function initWork(hero: HeroHandle) {
       if (!video.getAttribute('src') && video.dataset.video && !reduced) { video.src = video.dataset.video; video.load(); }
     }), { rootMargin: '900px 0px' }).observe(item);
     video.addEventListener('playing', () => video.classList.add('is-playing'));
-    new IntersectionObserver((es) => es.forEach((e) => {
-      if (e.isIntersecting) { if (!reduced) void video.play().catch(() => undefined); } else video.pause();
-    }), { threshold: 0.15 }).observe(item);
+    new IntersectionObserver((es) => es.forEach((e) => { inView[i] = e.isIntersecting; schedule(); }), { threshold: 0.15 }).observe(item);
   });
 
   /* ---------- the arrow nudge, per project ---------- */

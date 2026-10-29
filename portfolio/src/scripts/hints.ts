@@ -60,7 +60,6 @@ export function initHints() {
         { id: 'hire', text: `Psst. Try typing ${'<b>hire</b>'}` },
         { id: 'menu', text: 'Right-click the headline' },
         { id: 'shift', text: `Hold ${kbd('Shift')} over the headline` },
-        { id: '404', text: `Type ${'<b>404</b>'}. I dare you.` },
         { id: 'rocket', text: 'Scroll past the very bottom' },
         { id: 'globe', text: 'Click &ldquo;Remote worldwide&rdquo;' },
       ]

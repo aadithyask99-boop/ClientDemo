@@ -11,8 +11,8 @@ export const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matc
 export const lockScroll = (on: boolean) => window.dispatchEvent(new CustomEvent('aadi:lock', { detail: on }));
 
 /* Which easter eggs this visitor has found. Kept in the browser (so it survives a reload), and every new find announces itself so the counter in the footer
-   (scripts/eggcount.ts) can update. The ids are the thirteen below; hints.ts stops mentioning the ones already found. */
-export const EGGS = ['seo', 'crawler', 'terminal', 'leads', 'shift', 'menu', 'hello', 'hire', '404', 'rocket', 'globe', 'sleepy', 'fast'] as const;
+   (scripts/eggcount.ts) can update. The ids are the twelve below; hints.ts stops mentioning the ones already found. */
+export const EGGS = ['seo', 'crawler', 'terminal', 'leads', 'shift', 'menu', 'hello', 'hire', 'rocket', 'globe', 'sleepy', 'fast'] as const;
 const FOUND_KEY = 'aadi-eggs';
 const read = (): string[] => { try { return JSON.parse(localStorage.getItem(FOUND_KEY) ?? '[]'); } catch { return []; } };
 export const found = (id: string) => read().includes(id);

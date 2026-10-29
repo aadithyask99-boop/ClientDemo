@@ -7,7 +7,7 @@ export function initEggs() {
   // 1. For anyone who opens the console
   console.log('%cHi, I\'m %s.', 'font:600 22px/1.5 system-ui, sans-serif;color:#ff5a1f', site.short);
   console.log(
-    '%cYou found the console. Try typing "seo", "404" or "hello" anywhere on the page, holding Shift over the headline, right-clicking it, or scrolling past the bottom.\nOr just say hi: %s',
+    '%cYou found the console. Try typing "seo" or "hello" anywhere on the page, holding Shift over the headline, right-clicking it, or scrolling past the bottom.\nOr just say hi: %s',
     'font:12px/1.7 ui-monospace, monospace',
     site.email || site.url,
   );
@@ -18,7 +18,7 @@ export function initEggs() {
     document.title = document.hidden ? 'Come back, I optimised this for you' : title;
   });
 
-  // 3. Type a word anywhere: "seo" opens a made-up search page, "404" a joke error page, "hello" or "hire" the contact section
+  // 3. Type a word anywhere: "seo" opens a made-up search page, "hello" or "hire" the contact section
   let typed = '';
   const lazy = () => import('./eggs-more');
   window.addEventListener('keydown', (e) => {
@@ -26,7 +26,6 @@ export function initEggs() {
     if ((e.target as Element | null)?.closest?.('input, textarea, select, [contenteditable]')) return;
     typed = (typed + e.key.toLowerCase()).slice(-5);
     if (typed.endsWith('seo')) { typed = ''; void import('./serp').then((m) => m.openSerp()); }
-    else if (typed.endsWith('404')) { typed = ''; markFound('404'); void lazy().then((m) => m.notFound()); }
     else if (typed.endsWith('hello') || typed.endsWith('hire')) { markFound(typed.endsWith('hello') ? 'hello' : 'hire'); typed = ''; void lazy().then((m) => m.hello()); }
   });
 

@@ -97,20 +97,26 @@ initCopy();
 const hero = initHero(heroPixel);
 initCredits(heroPixel);
 
+/* Each piece is set up in its own idle moment, not all in one go: set-up as a single block was a 100 ms stall right while the headline was moving. The Chemistry
+   scene goes first (its pinned scroll distance has to exist before anything below it is measured), the closing sections last, then one refresh of the
+   scroll positions for everything. */
+const idle = (fn: () => void) => {
+  const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
+  if (ric) ric(() => fn(), { timeout: 400 });
+  else window.setTimeout(fn, 50);
+};
 let belowFold = false;
 function setUpBelowFold() {
   if (belowFold) return;
   belowFold = true;
-  initChem(); // the pinned scene; created before the others so its scroll distance is counted
-  initRing();
-  initDeck();
-  void initPortrait();
-  initWork(hero);
-  initEggs();
-  initFace();
-  ScrollTrigger.refresh();
-  // the closing sections are far down the page: set them up well after the headline has painted
-  window.setTimeout(() => { initFinale(); ScrollTrigger.refresh(); }, 3200);
+  const steps: (() => void)[] = [initChem, initRing, initDeck, () => void initPortrait(), () => initWork(hero), initEggs, initFace, initFinale];
+  const next = () => {
+    const step = steps.shift();
+    if (!step) { ScrollTrigger.refresh(); return; }
+    step();
+    idle(next);
+  };
+  idle(next);
 }
 // ...at the latest 3 seconds after load, in case the intro never runs; sooner if the person starts scrolling
 window.setTimeout(setUpBelowFold, 3000);
@@ -126,11 +132,10 @@ async function intro() {
   prePixel?.start(520);
   const fonts = Promise.race([document.fonts.ready, new Promise((r) => window.setTimeout(r, 2500))]);
   // a short minimum so the loader reads as a moment, not a flash. Kept brief: the headline is the page's largest paint.
-  await Promise.all([fonts, new Promise((r) => window.setTimeout(r, fine ? 450 : 150))]);
+  await Promise.all([fonts, new Promise((r) => window.setTimeout(r, fine ? 350 : 120))]);
   prePixel?.stop();
-  gsap.to(pre, { yPercent: -100, duration: 0.8, ease: 'power4.inOut', onComplete: () => pre.remove() });
-  gsap.delayedCall(fine ? 0.3 : 0.12, () => { hero.play(fine ? 1 : 1.7); heroPixel?.start(); });
-  // the key word lands about 1.5s into the sequence; set the rest up just after it
-  gsap.delayedCall(fine ? 2.1 : 1.4, setUpBelowFold);
+  // the loader IS the headline (scripts/hero.ts): it builds in the middle of the screen, zooms into place, and the rest of the page is set up as it lands
+  hero.play(fine ? 1 : 1.5, true, setUpBelowFold);
+  heroPixel?.start();
 }
 void intro();

@@ -46,7 +46,7 @@ npm run build:single     # the whole site as ONE self-contained HTML file in dis
 
 The order follows what a client asks: who is this, show me, why would it work for my business, what do I get, who am I hiring, how do I reach them.
 
-1. **Hero:** fills the first screen. After the sentence has built, "cool" keeps changing (amazing, sexy, stunning, slick, bold, brilliant; shorter words on phones) and the line re-centres around each new word without shifting the layout (the word list is in `src/scripts/hero.ts`). The sentence builds, "cool" gives way to "SEO-friendly", then both sit together. Hover the name for a pixel face.
+1. **Loader and hero:** the loader is the headline. It builds big, in the middle of the empty screen ("Hi, I'm Aadi and I make SEO-friendly websites."), holds a moment, then zooms into its place in the hero as the rest of the page fades in, and "cool" joins the sentence (`play()` in `src/scripts/hero.ts`; reduced motion and no JS skip it). The hero fills the first screen. After the sentence has built, "cool" keeps changing (amazing, sexy, stunning, slick, bold, brilliant; shorter words on phones) and the line re-centres around each new word without shifting the layout (the word list is in `src/scripts/hero.ts`). The sentence builds, "cool" gives way to "SEO-friendly", then both sit together. Hover the name for a pixel face.
 2. **Selected work:** built on the mechanism of the reference. The frames (just the clip, no border) scroll past in a tight column; only the project that has
    crossed the middle of the screen shows its name, arrow and "View", the previous one flies out as the next flies in, and the hero text steps aside and
    returns when you scroll back above the first project. Name and arrow drift against the frames; only the active project is clickable; tabbing to a project
@@ -55,7 +55,7 @@ The order follows what a client asks: who is this, show me, why would it work fo
    meet is the orange core, ENQUIRIES. The view zooms into it until the whole screen is orange with ENQUIRIES standing on it, which holds; the next scroll
    gives way to the verdict.
 4. **Services:** three cards you can drag and flick. They are dealt face down (a symmetric pattern of bevelled pixels) and turned over as the section arrives.
-   On a phone the row scrolls sideways and each card is turned over as it comes into view. Three small tabs under the sentence bring a card forward (on a phone: scroll it to the middle); the words in the sentence follow the card you are on.
+   On a phone the row is a carousel that keeps moving: it glides to the next card every few seconds (touch it and it waits), and each card is turned over as it comes into view. Three small tabs under the sentence bring a card forward (on a phone: scroll it to the middle); the words in the sentence follow the card you are on.
 5. **Every detail, one designer:** the portrait goes from a few huge blocks to the real picture as the scroll carries it up the screen, and back again
    in reverse (a few blocks flash orange on the way). The title is built from pixels.
 6. **Next chapter:** "Start your next website today" in huge type, built from pixels as it scrolls in. Two small slots roll through words
@@ -94,7 +94,6 @@ spring back), and a sound toggle (off until switched on): a synthesised tick, qu
 - **Flick a card hard** (or tap it, or press Enter on it): Development types a build log, Search Engine Optimisation sends a pixel spider down a checklist (title,
   meta description, structured data, alt text, speed) and counts a score ring up to 100, Marketing pops incoming enquiries.
 - **Type `seo`** anywhere (or click the hero pixel icon five times on a phone): a made-up search page opens and the site climbs from 8th to 1st.
-- **Type `404`:** a joke error page with a lost pixel icon wandering over it, which then admits it was kidding and goes away.
 - **Type `hello` or `hire`:** the page scrolls to the Connect section.
 - **Hold Shift with the pointer over the headline** (on a phone: press and hold it): the changing word spins through twenty more adjectives; let go and it settles on "cool". A cartoon bubble ("Hold Shift here!") pops up when the pointer rests on the headline.
 - **Right-click the headline:** a small menu with one item, "Say hello", which scrolls to the Connect section, in place of the browser's menu.
@@ -106,7 +105,7 @@ spring back), and a sound toggle (off until switched on): a synthesised tick, qu
 - **Scroll very fast** (a hard flick): a bubble says "Whoa, slow down." and the cursor sweats.
 - **Up late?** Between midnight and 5am by the visitor's own clock a line under the name says "Still up? Same." (and a few other hours get their own).
 - **The egg counter:** once the first egg is found, "[ 3 / 13 eggs ]" appears in the footer and each find says "Egg found! 3 of 13". Progress is kept in the browser. Find
-  all thirteen (seo page, crawler, build log, enquiries, word spinner, right-click, hello, hire, 404, rocket, globe, sleepy cursor, fast scroll) and the page opens the
+  all twelve (seo page, crawler, build log, enquiries, word spinner, right-click, hello, hire, rocket, globe, sleepy cursor, fast scroll) and the page opens the
   contact section: "You found them all. Let's talk." The list is `EGGS` in `src/scripts/util.ts`; add an id there and call `markFound('id')` where the egg plays.
 - **Hover the name** in the hero: a face follows the pointer along the words, the pixel icon bursts, letters under the cursor lift.
 - **Press the clock** in the header: drag the hands, switch the sound on, listen for the tick as you move toward the clock.
@@ -114,15 +113,17 @@ spring back), and a sound toggle (off until switched on): a synthesised tick, qu
 
 ## Performance
 
-Measured on a production build (Chromium, three runs each): largest contentful paint about 2.35 s on desktop and 2.5 to 2.7 s on a throttled phone
-(4x CPU, slow 4G), cumulative layout shift about 0. JavaScript is about 60 KB gzipped (the search-page egg, its animation helper and the clock panel load only
-when used), CSS 7 KB. Three things keep it there, and all are easy to undo by accident:
+Measured on a production build (Chromium, three runs each): largest contentful paint about 1.0 s on desktop and 1.7 to 1.8 s on a throttled phone
+(4x CPU, slow 4G), cumulative layout shift about 0. JavaScript is about 63 KB gzipped (the search-page egg, its animation helper, the egg scenes and the clock panel load only
+when used), CSS 8 KB. The things that keep it there, all easy to undo by accident:
 
-- The intro is deliberately quick so the longest word of the headline paints before the 2.5 s line.
-- Everything below the first screen (the pinned scene, the cards, the Work pictures and clips) is set up and fetched only after the headline has painted
-  (`setUpBelowFold` in `src/scripts/main.ts`); the closing sections wait a little longer still.
-- The first Work frame starts below the first screen (the hero is a full screen tall). If a frame ever sits inside the first screen, its picture becomes
-  the largest paint and LCP rises to about 3 s on desktop and 4 s on a phone.
+- The loader is the headline, and the longest word ("SEO-friendly") is the page's largest paint, so it has to appear early and nearly full size (it starts at 90% scale; a
+  word that starts tiny is measured as a small paint and the number gets worse).
+- Everything below the first screen is set up only after the headline has landed, one piece per idle moment (`setUpBelowFold` in `src/scripts/main.ts`), then one refresh of the
+  scroll positions. Doing it as one block was a 100 ms stall while the headline moved.
+- The first Work frame starts below the first screen (the hero is a full screen tall). If a frame ever sits inside the first screen, its picture becomes the largest paint.
+- Smoothness while scrolling: no `will-change` on the hundreds of pixel squares (each became its own layer); the card backs are an image (`public/card-back.svg`), not 500
+  live SVG shapes each; only one Work clip plays at a time; the cursor moves by one frame callback instead of an animation per pointer event.
 
 If you change the intro or add images near the top, re-measure.
 

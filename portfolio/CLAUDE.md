@@ -25,10 +25,13 @@ Needs Playwright (set `PLAYWRIGHT_DIR` if it is not importable) and ffmpeg. Fram
 - Do not stop a recording with `pkill -f record-demo`: the pattern matches your own shell and kills it. Kill by PID.
 - The demo sites are at `https://clientdemo.maximusmediascape.workers.dev/<slug>/`.
 
-## Performance rules (largest contentful paint must stay under 2.5 s)
+## Performance rules (largest contentful paint must stay under 2.5 s; it is about 1 s now)
 
 - The headline's longest word must stay the largest paint. Do not put a picture inside the first screen (the hero is a full screen tall; the first Work frame sits
   below it), and keep everything below the fold set up in `setUpBelowFold` in `src/scripts/main.ts`, after the headline has painted.
+- The loader is the headline (`play(speed, true)` in `src/scripts/hero.ts`). "SEO-friendly" must first appear near full size (scale 0.9), or LCP jumps to the late "cool" word (3.6 s).
+- Do not put `will-change` on repeated small things (the pixel squares), and do not draw big SVGs live many times (the card back is an image). Check smoothness with a
+  scripted wheel scroll and long-animation-frame entries, not by eye.
 - Measure with a production build (`npx astro build`, then `npx astro preview --port 4399`), desktop and a throttled phone (4x CPU, slow 4G). Last measured: about
   2.4 s desktop, 2.5 to 2.7 s phone, layout shift about 0.
 

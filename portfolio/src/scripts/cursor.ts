@@ -16,35 +16,52 @@ export function initCursor() {
   cc.setAttribute('aria-hidden', 'true');
   cc.innerHTML = `<span class="cc__in"><span class="cc__a">${ARROW}</span><span class="cc__h">${GLOVE}</span></span>`;
   document.body.appendChild(cc);
-  gsap.set(cc, { x: -100, y: -100 });
   const inner = cc.querySelector<HTMLElement>('.cc__in')!;
-  const arrow = cc.querySelector<HTMLElement>('.cc__a')!;
-  const hand = cc.querySelector<HTMLElement>('.cc__h')!;
-  gsap.set(hand, { opacity: 0, scale: 0.6 });
-  let overHand = false;
+
+  /* Moving the cursor is the hottest path on the page, so it does the least: a pointer event only records where the pointer is; one frame callback writes
+     the position. (Earlier this created and killed animations on every pointer event.) The hand/arrow swap is a CSS class, checked only when the pointer
+     enters a different element. */
+  let x = -100;
+  let y = -100;
   let lastX = 0;
-  let tilt = 0;
+  let swing = 0; // the lean from sideways speed, fades out by itself
+  let tilt = 0; // what is shown, easing toward (resting lean + swing)
+  let asleep = false;
   let shown = false;
-  const setHand = (on: boolean) => {
-    if (on === overHand) return;
-    overHand = on;
-    gsap.to(arrow, { opacity: on ? 0 : 1, scale: on ? 0.6 : 1, duration: 0.16, overwrite: 'auto' });
-    gsap.to(hand, { opacity: on ? 1 : 0, scale: on ? 1 : 0.6, duration: 0.2, ease: 'back.out(2.4)', overwrite: 'auto' });
+  let raf = 0;
+  let target: EventTarget | null = null;
+  const press = { s: 1 };
+  let labelFor: (t: Element | null) => void = () => undefined; // set below, unless motion is reduced
+  const draw = () => {
+    raf = 0;
+    const want = (asleep ? 38 : 0) + swing;
+    tilt += (want - tilt) * 0.22;
+    swing *= 0.82;
+    cc.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${press.s})`;
+    inner.style.transform = `rotate(${tilt.toFixed(2)}deg)`;
+    if (Math.abs(want - tilt) > 0.05 || Math.abs(swing) > 0.05) raf = requestAnimationFrame(draw);
   };
+  const schedule = () => { if (!raf) raf = requestAnimationFrame(draw); };
+
   window.addEventListener('pointermove', (e) => {
     if (e.pointerType === 'touch') return;
+    x = e.clientX;
+    y = e.clientY;
+    if (!reduced) swing = Math.max(-22, Math.min(22, (x - lastX) * 1.4));
+    lastX = x;
     if (!shown) { shown = true; root.classList.add('cc-on'); }
-    gsap.set(cc, { x: e.clientX, y: e.clientY, opacity: 1 });
-    if (!reduced) {
-      tilt += (Math.max(-22, Math.min(22, (e.clientX - lastX) * 1.4)) - tilt) * 0.5;
-      gsap.to(inner, { rotation: tilt, duration: 0.3, ease: 'power2.out', overwrite: 'auto' }); // leans with the sideways speed, and settles
+    cc.style.opacity = '1';
+    if (e.target !== target) {
+      target = e.target;
+      const el = target as Element | null;
+      cc.classList.toggle('is-hand', !!el?.closest?.(INTERACTIVE));
+      labelFor(el);
     }
-    lastX = e.clientX;
-    setHand(!!(e.target as Element | null)?.closest?.(INTERACTIVE));
+    schedule();
   }, { passive: true });
-  window.addEventListener('pointerdown', () => { gsap.to(cc, { scale: 0.82, duration: 0.1, overwrite: 'auto' }); });
-  window.addEventListener('pointerup', () => { gsap.to(cc, { scale: 1, duration: 0.45, ease: 'elastic.out(1.2, 0.4)', overwrite: 'auto' }); });
-  document.documentElement.addEventListener('pointerleave', () => gsap.to(cc, { opacity: 0, duration: 0.15 }));
+  window.addEventListener('pointerdown', () => { gsap.to(press, { s: 0.82, duration: 0.1, onUpdate: schedule, overwrite: true }); });
+  window.addEventListener('pointerup', () => { gsap.to(press, { s: 1, duration: 0.45, ease: 'elastic.out(1.2, 0.4)', onUpdate: schedule, overwrite: true }); });
+  root.addEventListener('pointerleave', () => { cc.style.opacity = '0'; });
 
   // a hard scroll makes it sweat: a drop slides down from its head (scripts/eggs.ts sends this)
   window.addEventListener('aadi:sweat', () => {
@@ -56,11 +73,8 @@ export function initCursor() {
   });
 
   /* Leave it alone for 45 seconds and it falls asleep (droops, little z's float up). Any movement wakes it with "Oh! Hi." and counts as an egg found. */
-  let asleep = false;
   let sleepT = 0;
   let zT = 0;
-  let px = -100;
-  let py = -100;
   const sleepAfter = (window as unknown as { __aadiSleepMs?: number }).__aadiSleepMs ?? 45000;
   const zzz = () => {
     const z = document.createElement('span');
@@ -73,8 +87,7 @@ export function initCursor() {
   const fallAsleep = () => {
     if (asleep || document.hidden || !shown) return;
     asleep = true;
-    gsap.to(inner, { rotation: 38, y: 6, duration: 1.2, ease: 'power2.out', overwrite: 'auto' });
-    gsap.to(arrow, { scaleY: 0.9, duration: 1.2 });
+    schedule();
     zzz();
     zT = window.setInterval(zzz, 1500);
   };
@@ -84,42 +97,40 @@ export function initCursor() {
     if (!asleep) return;
     asleep = false;
     window.clearInterval(zT);
-    gsap.to(inner, { rotation: 0, y: 0, duration: 0.6, ease: 'elastic.out(1.1, 0.4)', overwrite: 'auto' });
-    gsap.to(arrow, { scaleY: 1, duration: 0.3 });
+    swing = -26; // a little startled wobble as it comes round
+    schedule();
     markFound('sleepy');
-    void import('./bubble').then((b) => b.bubble('Oh! Hi.', { x: px + 10, y: py + 26, side: 'below', ms: 1800 }));
+    void import('./bubble').then((b) => b.bubble('Oh! Hi.', { x: x + 10, y: y + 26, side: 'below', ms: 1800 }));
   };
-  ['pointermove', 'pointerdown', 'keydown', 'wheel', 'scroll', 'touchstart'].forEach((ev) => window.addEventListener(ev, () => wake(), { passive: true }));
-  window.addEventListener('pointermove', (e) => { px = e.clientX; py = e.clientY; }, { passive: true });
+  ['pointermove', 'pointerdown', 'keydown', 'wheel', 'scroll', 'touchstart'].forEach((ev) => window.addEventListener(ev, wake, { passive: true }));
   sleepT = window.setTimeout(fallAsleep, sleepAfter);
+
+  /* The small label that trails the pointer over anything marked data-cursor="Label" (Replay, View, Copy...) */
   if (reduced) return;
   const el = document.createElement('div');
   el.className = 'cur';
   el.setAttribute('aria-hidden', 'true');
   document.body.appendChild(el);
   gsap.set(el, { x: -100, y: -100, scale: 0.6, opacity: 0 });
-  const x = gsap.quickTo(el, 'x', { duration: 0.25, ease: 'power3' });
-  const y = gsap.quickTo(el, 'y', { duration: 0.25, ease: 'power3' });
+  const lx = gsap.quickTo(el, 'x', { duration: 0.25, ease: 'power3' });
+  const ly = gsap.quickTo(el, 'y', { duration: 0.25, ease: 'power3' });
   let on = false;
-
   const hide = () => {
     if (!on) return;
     on = false;
     gsap.to(el, { opacity: 0, scale: 0.6, duration: 0.18, overwrite: 'auto' });
   };
-
-  window.addEventListener('pointermove', (e) => {
-    x(e.clientX + 26);
-    y(e.clientY + 28);
-    const label = (e.target as Element | null)?.closest?.('[data-cursor]')?.getAttribute('data-cursor');
+  window.addEventListener('pointermove', (e) => { lx(e.clientX + 26); ly(e.clientY + 28); }, { passive: true });
+  labelFor = (t) => {
+    const label = t?.closest?.('[data-cursor]')?.getAttribute('data-cursor');
     if (!label) return hide();
     if (el.textContent !== label) el.textContent = label;
     if (!on) {
       on = true;
       gsap.to(el, { opacity: 1, scale: 1, duration: 0.28, ease: 'back.out(2.2)', overwrite: 'auto' });
     }
-  }, { passive: true });
-  document.documentElement.addEventListener('pointerleave', hide);
+  };
+  root.addEventListener('pointerleave', hide);
   // scrolling moves content under a still pointer, so the label would be left pointing at the wrong thing until the next move
   window.addEventListener('scroll', hide, { passive: true });
 }

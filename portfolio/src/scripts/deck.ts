@@ -221,5 +221,21 @@ export function initDeck() {
       setActive(i);
     }), { threshold: [0.55, 0.8] }); // measured against the screen: sideways (the row clips its cards) and down the page
     cards.forEach((c) => io.observe(c));
+
+    /* A carousel that keeps moving: every few seconds the row glides to the next card (and back to the first after the last), so all three are seen without
+       knowing to swipe. Touching the row stops it; it picks up again after a few seconds of leaving it alone. It only moves while the row is on screen. */
+    let onScreen = false;
+    let paused = false;
+    let resume = 0;
+    new IntersectionObserver((es) => es.forEach((e) => { onScreen = e.isIntersecting; }), { threshold: 0.5 }).observe(stage);
+    const nearest = () => {
+      const mid = stage.scrollLeft + stage.clientWidth / 2;
+      return cards.reduce((best, c, i) => (Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid) < Math.abs(cards[best].offsetLeft + cards[best].offsetWidth / 2 - mid) ? i : best), 0);
+    };
+    const glideTo = (i: number) => stage.scrollTo({ left: cards[i].offsetLeft + cards[i].offsetWidth / 2 - stage.clientWidth / 2, behavior: reduced ? 'auto' : 'smooth' });
+    const hold = () => { paused = true; window.clearTimeout(resume); resume = window.setTimeout(() => { paused = false; }, 7000); };
+    ['touchstart', 'pointerdown', 'wheel'].forEach((ev) => stage.addEventListener(ev, hold, { passive: true }));
+    tabs.forEach((t) => t.addEventListener('click', hold));
+    if (!reduced) window.setInterval(() => { if (!paused && onScreen && !document.hidden) glideTo((nearest() + 1) % cards.length); }, 3400);
   }
 }

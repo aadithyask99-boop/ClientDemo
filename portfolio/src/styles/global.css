@@ -119,6 +119,11 @@ html.lenis body {
   place-items: center;
   background: var(--cream);
 }
+/* while the headline is the loader (scripts/hero.ts): the hero sits over the loader with no background of its own */
+html.intro .hero {
+  z-index: 101;
+  background: transparent;
+}
 
 /* ------------------------------------------------------------------ Pixel icon: a 7x7 grid of squares */
 .pixel {
@@ -131,7 +136,7 @@ html.lenis body {
 .pixel i {
   display: block;
   background: var(--accent);
-  will-change: transform;
+  /* no will-change here: there are hundreds of these squares on the page, and promoting each to its own layer made every scroll frame costlier */
 }
 .pixel i:not([data-on]) {
   opacity: 0;
@@ -266,7 +271,7 @@ html.lenis body {
   min-height: 100svh; /* the hero is the whole first screen: headline in the middle, credits under it, the small notes at the foot */
   padding: max(calc(var(--pad) * 3.2), 4.5rem) var(--gx-r) var(--pad) var(--gx-l);
   display: grid;
-  grid-template-rows: 1fr auto 1fr auto;
+  grid-template-rows: 0.85fr auto 1.25fr auto; /* the headline sits a little above the middle */
   justify-items: center;
   background: var(--cream);
 }
@@ -772,10 +777,11 @@ html.lenis body {
   pointer-events: none;
   visibility: hidden; /* only shown while the cards are being dealt face down (scripts/deck.ts) */
 }
-.card__bk svg {
+.card__bk img {
   display: block;
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
 .card__top {
   display: flex;
@@ -836,10 +842,11 @@ html.lenis body {
   box-shadow: 0 22px 44px -20px #000;
   transform-origin: 50% 115%;
 }
-.back svg {
+.back img {
   display: block;
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
 .back--l {
   transform: translateX(calc(-50% - clamp(5rem, 14vw, 10.5rem))) rotate(-21deg);
@@ -878,6 +885,10 @@ html:not(.fx) .hint--touch {
     margin-inline: calc(var(--gx-l) * -1) calc(var(--gx-r) * -1);
     width: auto;
     max-width: none;
+    /* the section centres its children, which sized this row to all three cards side by side (805px on a 390px phone): the row was wider than the
+       screen, nothing in it could scroll, and only the middle card was ever reachable. It has to be as wide as the screen and scroll inside that. */
+    justify-self: stretch;
+    min-width: 0;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
   }
@@ -1893,52 +1904,6 @@ html:not(.js) .slot__w:not(:first-child) {
   color: var(--muted);
 }
 
-/* ------------------------------------------------------------------ Easter egg: type "404" */
-.nf {
-  position: fixed;
-  inset: 0;
-  z-index: 135;
-  display: grid;
-  align-content: center;
-  justify-items: center;
-  gap: 0.6rem;
-  background: #fff;
-  color: #202124;
-  text-align: center;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  cursor: pointer;
-}
-.nf__code {
-  font-size: clamp(5rem, 22vw, 11rem);
-  font-weight: 300;
-  line-height: 1;
-  letter-spacing: -0.04em;
-  color: #5f6368;
-}
-.nf__msg {
-  font-size: clamp(1.1rem, 3vw, 1.5rem);
-}
-.nf__sub {
-  font-size: 0.9375rem;
-  color: #5f6368;
-}
-.nf__lost {
-  position: absolute;
-  left: 0;
-  top: 0;
-  --px: 14px;
-}
-.nf__lost i {
-  background: var(--accent);
-}
-.nf__q {
-  position: absolute;
-  left: 0;
-  top: 0;
-  font: 700 1.6rem var(--font-mono);
-  color: var(--accent-ink);
-}
-
 /* ------------------------------------------------------------------ Easter eggs: "hello" toast, the rocket, the headline menu */
 .toast {
   position: fixed;
@@ -2038,6 +2003,7 @@ html:not(.js) .slot__w:not(:first-child) {
   left: 0;
   top: 0;
   z-index: 400;
+  opacity: 0; /* shown by the first pointer move (scripts/cursor.ts) */
   pointer-events: none;
   transform-origin: 0 0;
 }
@@ -2056,6 +2022,19 @@ html:not(.js) .slot__w:not(:first-child) {
   top: 0;
   display: block;
   transform-origin: 5px 3.5px;
+  transition: opacity 0.16s, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cc__h {
+  opacity: 0;
+  transform: scale(0.6);
+}
+.cc.is-hand .cc__a {
+  opacity: 0;
+  transform: scale(0.6);
+}
+.cc.is-hand .cc__h {
+  opacity: 1;
+  transform: none;
 }
 .cc__h {
   left: -9px; /* the fingertip lands where the arrow's tip is */
