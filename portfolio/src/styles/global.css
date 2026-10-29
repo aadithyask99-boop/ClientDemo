@@ -152,7 +152,7 @@ html.intro .hero {
   z-index: 50;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: max(var(--pad), env(safe-area-inset-top, 0px)) var(--gx-r) var(--pad) var(--gx-l);
   color: var(--hfg);
   pointer-events: none;
@@ -161,45 +161,120 @@ html.intro .hero {
 .hdr > * {
   pointer-events: auto;
 }
-.hdr__nav {
-  display: flex;
-  gap: 2px;
-}
-.pillink {
-  position: relative;
-  padding: 0.3rem 0.65rem;
-  border-radius: 0.5rem;
-  font-size: 0.8125rem;
-  font-weight: 550;
-  letter-spacing: -0.01em;
-  perspective: 300px;
-  /* the fill arrives a beat after the letters start to turn */
-  transition: background-color 0.3s var(--ease-out) 0.075s;
-}
-.pillink:hover,
-.pillink.is-active {
-  background: var(--hpill);
-}
-/* the label turns over like a cube to a second copy of itself in the accent colour (pivot half a line behind the text) */
-.pillink__t {
-  position: relative;
-  display: inline-block;
-  line-height: 1;
-  transform-style: preserve-3d;
-  transform-origin: 50% 50% -0.5em;
-  transition: transform 0.5s var(--ease-out);
-}
-.pillink__t::after {
-  content: attr(data-t);
+
+/* The menu: a tab hanging from the top edge in the middle, and a frosted black glass panel that unrolls under it */
+.menu {
   position: absolute;
-  inset: 0;
-  color: var(--accent-ink);
-  transform: translate3d(0, 0.5em, -0.5em) rotateX(-90deg);
-  backface-visibility: hidden;
+  top: 0;
+  left: 50%;
+  z-index: 2;
+  translate: -50% 0;
+  color: #f5efe3;
 }
-@media (hover: hover) {
-  .pillink:hover .pillink__t {
-    transform: rotateX(90deg);
+.menu__tab {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 5.2rem;
+  height: 3rem;
+  padding-bottom: 0.45rem;
+  list-style: none;
+  cursor: pointer;
+  /* a ribbon with a notch in its lower edge, like the tab in the reference */
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 0.55rem), 0 100%);
+  background: rgb(6 6 6 / 0.84);
+  backdrop-filter: blur(18px) saturate(1.5);
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  transition: translate 0.35s var(--ease-out);
+}
+.menu__tab::-webkit-details-marker {
+  display: none;
+}
+.menu__tab:hover {
+  translate: 0 4px;
+}
+.menu__tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+}
+.menu__word--close,
+.menu[open] .menu__word--open {
+  display: none;
+}
+.menu[open] .menu__word--close {
+  display: inline;
+}
+.menu__panel {
+  position: absolute;
+  top: 2.2rem;
+  left: 50%;
+  translate: -50% 0;
+  display: grid;
+  width: min(21rem, calc(100vw - 2rem));
+  padding: 1.55rem 1.1rem 0.7rem;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-top: 0;
+  border-radius: 0 0 1.1rem 1.1rem;
+  background: rgb(6 6 6 / 0.84);
+  backdrop-filter: blur(22px) saturate(1.6);
+  -webkit-backdrop-filter: blur(22px) saturate(1.6);
+  box-shadow: 0 30px 60px -24px #000c, inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+.menu:not([open]) .menu__panel {
+  display: none;
+}
+.menu__link {
+  display: grid;
+  grid-template-columns: 2rem 1fr auto;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.7rem 0.2rem;
+  border-bottom: 1px solid rgb(255 255 255 / 0.1);
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 1.7rem);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+.menu__link:last-child {
+  border-bottom: 0;
+}
+.menu__n {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 450;
+  letter-spacing: 0.04em;
+  color: rgb(245 239 227 / 0.5);
+}
+.menu__go {
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.12);
+  color: #f5efe3;
+  transition: background-color 0.3s var(--ease-out), color 0.3s, transform 0.4s var(--ease-out);
+}
+.menu__link:hover .menu__go,
+.menu__link:focus-visible .menu__go,
+.menu__link.is-active .menu__go {
+  background: var(--accent);
+  color: #050505;
+}
+.menu__link:hover .menu__go {
+  transform: rotate(45deg);
+}
+.menu__link.is-active .menu__t {
+  color: var(--accent);
+}
+@media (pointer: coarse) {
+  .menu__tab {
+    width: 5.6rem;
+    height: 3.2rem;
   }
 }
 .hdr__clock {
@@ -210,7 +285,7 @@ html.intro .hero {
   color: inherit;
   cursor: pointer;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   letter-spacing: 0.02em;
   font-variant-numeric: tabular-nums;
 }
@@ -254,13 +329,18 @@ html.intro .hero {
   display: inline-block;
   min-width: 3.2ch;
 }
-@media (max-width: 520px) {
+@media (max-width: 560px) {
   .hdr__clock {
     gap: 0.4rem;
-    font-size: 0.6875rem;
+    font-size: 0.75rem;
   }
-  .pillink {
-    padding: 0.3rem 0.5rem;
+  /* the tab hangs in the middle, so on a phone the location label is just its thin line (it opens fully on hover or in the time panel) */
+  .hdr__loc-t {
+    display: none;
+  }
+  .hdr__line {
+    display: block;
+    margin-right: 0.4rem;
   }
 }
 
@@ -343,7 +423,7 @@ html.intro .hero {
   color: var(--muted);
 }
 .hero__credits {
-  font-size: 0.8125rem;
+  font-size: clamp(0.9375rem, 0.85rem + 0.35vw, 1.1875rem);
   letter-spacing: -0.005em;
   color: var(--muted);
 }
@@ -406,11 +486,11 @@ html.intro .hero {
   align-items: flex-end;
   justify-content: space-between;
   gap: 1rem;
-  font-size: 0.8125rem;
-  letter-spacing: -0.005em;
+  font-size: clamp(0.9375rem, 0.85rem + 0.35vw, 1.1875rem); /* the small print is not so small: nearer the reference's */
+  letter-spacing: -0.01em;
 }
 .hero__note {
-  max-width: 17rem;
+  max-width: 24rem;
   font-weight: 550;
 }
 @media (max-width: 699px) {
@@ -2160,12 +2240,6 @@ html:not(.js) .slot__w:not(:first-child) {
 
 /* ------------------------------------------------------------------ Touch: bigger things to press (about 44px, as phones expect) */
 @media (pointer: coarse) {
-  .pillink {
-    padding: 0.62rem 0.8rem;
-  }
-  .hdr__nav {
-    gap: 0;
-  }
   .deck__tab {
     width: 2.75rem;
     height: 2.75rem;

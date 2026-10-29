@@ -53,8 +53,8 @@ export function initScroll() {
   qa('[data-world-section]').forEach((sec) => {
     ScrollTrigger.create({
       trigger: sec,
-      start: 'top 40px',
-      end: 'bottom 40px',
+      start: 'top 70px', // a little tolerance: a section scrolled to by a link can stop a few pixels short of the line
+      end: 'bottom 70px',
       onToggle: (self) => {
         if (!self.isActive) return;
         root.dataset.world = sec.dataset.worldSection === 'dark' ? 'dark' : 'light';

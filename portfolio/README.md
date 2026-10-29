@@ -63,7 +63,7 @@ The order follows what a client asks: who is this, show me, why would it work fo
 7. **Connect:** click-to-copy email (the hint text rolls to "Copied"), a stack of tinted project tiles that fly in and then cycle, a sitemap and channels
    list (hovered links become white pills), and "Crafted by Aadi" with a pixel icon that keeps changing shape.
 
-Always there: the header links turn over like a cube to an orange copy of themselves on hover, and once you scroll the "Based in the UK" label folds to a thin
+Always there: the **menu** is a tab hanging from the top edge in the middle (like a pull-tab); press it and a frosted black glass panel unrolls under it with Work, Services, About and Connect (`src/scripts/menu.ts`; a `<details>`, so it works without JavaScript too). Once you scroll the "Based in the UK" label folds to a thin
 line that opens again on hover. Pressing the clock opens the **local-time panel**: an analogue and digital clock in your time zone, hands you can drag (they
 spring back), and a sound toggle (off until switched on): a synthesised tick, quieter the further the pointer is from the clock.
 
@@ -95,7 +95,7 @@ spring back), and a sound toggle (off until switched on): a synthesised tick, qu
   meta description, structured data, alt text, speed) and counts a score ring up to 100, Marketing pops incoming enquiries.
 - **Type `seo`** anywhere (or click the hero pixel icon five times on a phone): a made-up search page opens and the site climbs from 8th to 1st.
 - **Type `hello` or `hire`:** the page scrolls to the Connect section.
-- **Hold Shift with the pointer over the headline** (on a phone: press and hold it): the changing word spins through twenty more adjectives; let go and it settles on "cool". A cartoon bubble ("Hold Shift here!") pops up when the pointer rests on the headline.
+- **Hold Shift, anywhere on the page** (on a phone: press and hold the headline): the changing word spins through twenty more adjectives; let go and it settles on "cool". A cartoon bubble ("Hold Shift. Anywhere.") pops up 3 seconds after the headline lands and once more a minute later.
 - **Right-click the headline:** a small menu with one item, "Say hello", which scrolls to the Connect section, in place of the browser's menu.
 - **Click "Remote worldwide":** the globe spins and a bubble gives the time in a city far away ("Tokyo: 23:04. Time zones are no problem.").
 - **Hints:** a few seconds in, cartoon bubbles pop up now and then at the side of the screen ("Type hello anywhere", "Right-click the headline"...), only for eggs not yet found, at most six a visit (`src/scripts/hints.ts`).
@@ -104,9 +104,6 @@ spring back), and a sound toggle (off until switched on): a synthesised tick, qu
   mouse and trackpad only). **Leave it alone for 45 seconds** and it falls asleep (it droops, little z's float up); move it and it wakes with "Oh! Hi."
 - **Scroll very fast** (a hard flick): a bubble says "Whoa, slow down." and the cursor sweats.
 - **Up late?** Between midnight and 5am by the visitor's own clock a line under the name says "Still up? Same." (and a few other hours get their own).
-- **The egg counter:** reaching the footer pops a speech bubble ("12 eggs are hidden on this page. Go poking." / "Eggs found: 3 of 12"), and each find says "Egg found! 3 of 12". On a phone the count is of the seven that can be found there (no keyboard, wheel or hover). Progress is kept in the browser. Find
-  all twelve (seo page, crawler, build log, enquiries, word spinner, right-click, hello, hire, rocket, globe, sleepy cursor, fast scroll; on a phone: seo, crawler, build log, enquiries, word spinner, globe, fast scroll) and the page opens the
-  contact section: "You found them all. Let's talk." The list is `EGGS` in `src/scripts/util.ts`; add an id there and call `markFound('id')` where the egg plays.
 - **Hover the name** in the hero: a face follows the pointer along the words, the pixel icon bursts, letters under the cursor lift.
 - **Press the clock** in the header: drag the hands, switch the sound on, listen for the tick as you move toward the clock.
 - **Click the headline** to watch it build again. **Open the console**, **switch tabs**, read `/robots.txt` and `/humans.txt`.

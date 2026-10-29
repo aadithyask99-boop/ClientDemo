@@ -2,21 +2,35 @@
 import { site } from '../data/site';
 const links = [
   ['Work', '#work'],
-  ['Service', '#services'],
+  ['Services', '#services'],
+  ['About', '#about'],
   ['Connect', '#connect'],
 ];
 ---
 
 <header class="hdr" data-header>
-  <nav class="hdr__nav" aria-label="Primary">
-    {
-      links.map(([label, href]) => (
-        <a class="pillink" href={href} data-nav>
-          <span class="pillink__t" data-t={label}>{label}</span>
-        </a>
-      ))
-    }
-  </nav>
+  <!-- The menu is a tab that hangs from the top edge in the middle ("pull" it and a frosted-glass panel unrolls under it; scripts/menu.ts). It is a <details>, so it
+       opens and closes with no JavaScript too. -->
+  <details class="menu" data-menu>
+    <summary class="menu__tab" aria-label="Menu">
+      <span class="menu__word menu__word--open">Menu</span>
+      <span class="menu__word menu__word--close">Close</span>
+    </summary>
+    <nav class="menu__panel" aria-label="Primary" data-menu-panel>
+      {
+        links.map(([label, href], i) => (
+          <a class="menu__link" href={href} data-nav>
+            <span class="menu__n">{String(i + 1).padStart(2, '0')}</span>
+            <span class="menu__t">{label}</span>
+            <span class="menu__go" aria-hidden="true">
+              <svg viewBox="0 0 12 12" width="11" height="11"><path d="M2 9.5 9.5 2M4 2h5.5v5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </span>
+          </a>
+        ))
+      }
+    </nav>
+  </details>
+
   <!-- the clock is also the way into the local-time panel (scripts/clock-panel.ts); the location label folds to a thin line once the page is scrolled -->
   <button class="hdr__clock" type="button" data-open-clock aria-haspopup="dialog" title={`Local time (${site.timezone})`}>
     {

@@ -12,6 +12,7 @@ import { initDeck } from './deck';
 import { initPortrait } from './portrait';
 import { initWork } from './work';
 import { initFinale } from './finale';
+import { initMenu } from './menu';
 
 (window as unknown as { __aadi: boolean }).__aadi = true;
 const root = document.documentElement;
@@ -93,6 +94,7 @@ initScroll();
 initCursor();
 initClock();
 initHeader();
+initMenu();
 initCopy();
 const hero = initHero(heroPixel);
 initCredits(heroPixel);
@@ -135,7 +137,12 @@ async function intro() {
   await Promise.all([fonts, new Promise((r) => window.setTimeout(r, fine ? 350 : 120))]);
   prePixel?.stop();
   // the loader IS the headline (scripts/hero.ts): it builds in the middle of the screen, zooms into place, and the rest of the page is set up as it lands
-  hero.play(fine ? 1 : 1.5, true, setUpBelowFold);
+  hero.play(fine ? 1 : 1.5, true, () => {
+    (window as unknown as { __aadiLandedAt: number }).__aadiLandedAt = performance.now(); // the hints count their three seconds from here
+    window.dispatchEvent(new Event('aadi:landed'));
+    void import('./hints').then((m) => m.initHints());
+    setUpBelowFold();
+  });
   heroPixel?.start();
 }
 void intro();

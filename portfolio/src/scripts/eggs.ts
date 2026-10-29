@@ -1,6 +1,5 @@
 import { site } from '../data/site';
 import { q, fine, markFound, reduced } from './util';
-import { initEggCount } from './eggcount';
 
 /* The small, quiet easter eggs. The bigger ones live in their own files (serp.ts) and are loaded only when found. */
 export function initEggs() {
@@ -43,11 +42,8 @@ export function initEggs() {
   });
 
   if (fine) {
-    // 5. Hold Shift with the pointer over the headline: the changing word spins through many more adjectives (hero.ts listens)
-    let over = false;
-    head?.addEventListener('pointerenter', () => { over = true; });
-    head?.addEventListener('pointerleave', () => { over = false; spin(false); });
-    window.addEventListener('keydown', (e) => { if (e.key === 'Shift' && !e.repeat && over) spin(true); });
+    // 5. Hold Shift, anywhere on the page: the changing word spins through many more adjectives (hero.ts listens), and settles when Shift is let go
+    window.addEventListener('keydown', (e) => { if (e.key === 'Shift' && !e.repeat) spin(true); });
     window.addEventListener('keyup', (e) => { if (e.key === 'Shift') spin(false); });
     window.addEventListener('blur', () => spin(false));
 
@@ -92,9 +88,6 @@ export function initEggs() {
     });
   }
 
-  // 10. The counter in the footer
-  initEggCount();
-
   // 11. A line under the name for people who are up late (by the visitor's own clock)
   const late = q('[data-late]');
   if (late) {
@@ -135,7 +128,6 @@ export function initEggs() {
   }, { passive: true });
 
   // 9. A few seconds in, little bubbles start to say what can be tried (until it has been found)
-  void import('./hints').then((m) => m.initHints());
 
   // 4. The same egg for phones, where there is no keyboard: click the hero pixel icon five times, quickly
   const icon = q('.hero__pixel');

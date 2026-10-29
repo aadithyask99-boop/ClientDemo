@@ -2,7 +2,7 @@ import { q, fine, reduced, found } from './util';
 import { bubble } from './bubble';
 
 /* Little cartoon bubbles that say what can be tried, so the easter eggs do not stay secret for ever:
-   - the word spinner's hint, 3 s after the headline lands and once more a minute later (on a phone: "Press and hold the headline")
+   - the word spinner's hint ("Hold Shift. Anywhere."), 3 s after the headline lands and once more a minute later (on a phone: "Press and hold the headline")
    - every so often a bubble pops up somewhere at the side of the screen with another thing to try ("Type hello", "Right-click the headline"...)
    Each is shown only until it has been found (or twice), never while something is open, and never more than six times a visit. Loaded a few seconds after the first screen. */
 const shown = new Map<string, number>();
@@ -26,16 +26,21 @@ export function initHints() {
     shiftShown++;
     lastShiftHint = performance.now();
     dismiss = fine
-      ? bubble(`Hold ${kbd('Shift')} over the headline!`, { x: Math.min(Math.max(x ?? r.left + r.width * 0.3, r.left + 60), r.right - 60), y: r.top + 8, side: 'above', ms: 4200, html: true })
+      ? bubble(`Hold ${kbd('Shift')}. Anywhere.`, { x: Math.min(Math.max(x ?? r.left + r.width * 0.3, r.left + 60), r.right - 60), y: r.top + 8, side: 'above', ms: 4200, html: true })
       : bubble('Press and hold the headline!', { x: r.left + r.width / 2, y: r.bottom - 2, side: 'below', ms: 4200 });
     return true;
   };
   if (title && !reduced) {
-    const landed = 3600; // the loader has finished about 3.6 s after the page opens
-    window.setTimeout(() => {
-      if (!showShift()) window.setTimeout(() => showShift(), 8000); // it was scrolled away: once more shortly after
-      window.setTimeout(() => showShift(), 60000);
-    }, Math.max(400, landed + 3000 - performance.now()));
+    // three seconds after the headline has really landed (main.ts records the moment), however long the page took to get there
+    const landedAt = (window as unknown as { __aadiLandedAt?: number }).__aadiLandedAt;
+    const fire = () => {
+      window.setTimeout(() => {
+        if (!showShift()) window.setTimeout(() => showShift(), 8000); // it was scrolled away: once more shortly after
+        window.setTimeout(() => showShift(), 60000);
+      }, Math.max(300, (landedAt ?? performance.now()) + 3000 - performance.now()));
+    };
+    if (landedAt) fire();
+    else window.addEventListener('aadi:landed', fire, { once: true });
     if (fine) {
       let t = 0;
       title.addEventListener('pointerenter', (e) => {
@@ -43,9 +48,9 @@ export function initHints() {
         t = window.setTimeout(() => showShift((e as PointerEvent).clientX), 700);
       });
       title.addEventListener('pointerleave', () => window.clearTimeout(t));
-      // pressing Shift is the answer: the bubble goes
-      window.addEventListener('keydown', (e) => { if (e.key === 'Shift') { window.clearTimeout(t); dismiss?.(); dismiss = null; } });
     }
+    // pressing Shift is the answer: the bubble goes
+    window.addEventListener('keydown', (e) => { if (e.key === 'Shift') { dismiss?.(); dismiss = null; } });
   }
 
   /* the random ones */

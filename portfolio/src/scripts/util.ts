@@ -10,20 +10,12 @@ export const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matc
 /* Pause and resume smooth scrolling while an overlay is open (scroll.ts listens) */
 export const lockScroll = (on: boolean) => window.dispatchEvent(new CustomEvent('aadi:lock', { detail: on }));
 
-/* Which easter eggs this visitor has found. Kept in the browser (so it survives a reload), and every new find announces itself so the counter in the footer
-   (scripts/eggcount.ts) can update. The ids are the twelve below; hints.ts stops mentioning the ones already found. */
-export const EGGS = ['seo', 'crawler', 'terminal', 'leads', 'shift', 'menu', 'hello', 'hire', 'rocket', 'globe', 'sleepy', 'fast'] as const;
-/* On a phone or tablet there is no keyboard, wheel or hover, so only these can be found; the counter counts what is possible on the device in hand. */
-export const EGGS_TOUCH = ['seo', 'crawler', 'terminal', 'leads', 'shift', 'globe', 'fast'] as const;
-export const eggList = (): readonly string[] => (fine ? EGGS : EGGS_TOUCH);
+/* Which easter eggs this visitor has found, kept in the browser. Only the hints use it: they stop mentioning an egg once it has been found. */
 const FOUND_KEY = 'aadi-eggs';
-const read = (): string[] => { try { return JSON.parse(localStorage.getItem(FOUND_KEY) ?? '[]'); } catch { return []; } };
-export const found = (id: string) => read().includes(id);
-export const foundCount = () => read().filter((id) => eggList().includes(id)).length;
-export const markFound = (id: string) => {
-  const f = read();
-  if (f.includes(id)) return;
-  try { localStorage.setItem(FOUND_KEY, JSON.stringify([...f, id])); } catch { /* storage can be blocked: the find still counts for this visit */ memory.add(id); }
-  window.dispatchEvent(new CustomEvent('aadi:egg', { detail: { id, count: Math.max(foundCount(), memory.size) } }));
-};
 const memory = new Set<string>();
+const read = (): string[] => { try { return [...JSON.parse(localStorage.getItem(FOUND_KEY) ?? '[]'), ...memory]; } catch { return [...memory]; } };
+export const found = (id: string) => read().includes(id);
+export const markFound = (id: string) => {
+  if (found(id)) return;
+  try { localStorage.setItem(FOUND_KEY, JSON.stringify([...read(), id])); } catch { memory.add(id); } // storage can be blocked: the find still counts for this visit
+};
