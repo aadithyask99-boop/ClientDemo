@@ -1,4 +1,5 @@
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { clamp, q, reduced } from './util';
 
 /* "Every detail, one designer": the picture is resolved by the scroll, both ways. As it enters from the bottom it is a few huge blocks; each bit of scroll
@@ -78,13 +79,21 @@ export async function initPortrait() {
     }
   };
 
-  // starts as the top edge climbs past 95% of the screen, finishes with the top edge about a fifth of the way down (72% of a screen of travel)
-  const progress = () => clamp((window.innerHeight * 0.95 - fig.getBoundingClientRect().top) / (window.innerHeight * 0.72));
-  target = progress();
+  // Progress comes from ScrollTrigger (the same machinery that drives the Site Chemistry scene): 0 as the top edge of the picture climbs past 95% of the
+  // screen, 1 once it is about a fifth of the way down (72% of a screen of travel). Scrolling back runs it the other way.
+  gsap.registerPlugin(ScrollTrigger);
+  const st = ScrollTrigger.create({
+    trigger: fig,
+    start: () => `top ${window.innerHeight * 0.95}px`,
+    end: () => `top ${window.innerHeight * 0.23}px`,
+    invalidateOnRefresh: true,
+    onUpdate: (self) => { target = self.progress; },
+    onRefresh: (self) => { target = self.progress; },
+  });
+  target = st.progress;
   level = target;
   render();
-  window.addEventListener('scroll', () => { target = progress(); }, { passive: true });
-  window.addEventListener('resize', () => { measure(); shown = -1; target = progress(); }, { passive: true });
+  window.addEventListener('resize', () => { measure(); shown = -1; }, { passive: true });
   gsap.ticker.add(() => {
     level += (target - level) * 0.2;
     if (Math.abs(target - level) < 0.001) level = target;
@@ -92,12 +101,22 @@ export async function initPortrait() {
   });
 }
 
+/* load events rather than decode(): decode() rejects for some SVG images in some browsers, which would silently switch the effect off */
+function loaded(im: HTMLImageElement) {
+  return new Promise<void>((resolve) => {
+    if (im.complete) return resolve();
+    im.addEventListener('load', () => resolve(), { once: true });
+    im.addEventListener('error', () => resolve(), { once: true });
+    window.setTimeout(resolve, 4000);
+  });
+}
+
 async function source(img: HTMLImageElement | null, svg: SVGSVGElement | null): Promise<{ el: CanvasImageSource; w: number; h: number } | null> {
   try {
     if (img) {
       img.loading = 'eager';
-      await img.decode();
-      return { el: img, w: img.naturalWidth, h: img.naturalHeight };
+      await loaded(img);
+      return img.naturalWidth ? { el: img, w: img.naturalWidth, h: img.naturalHeight } : null;
     }
     if (svg) {
       const vb = svg.viewBox.baseVal;
@@ -105,7 +124,7 @@ async function source(img: HTMLImageElement | null, svg: SVGSVGElement | null): 
       // a data: URI, not a blob: URL: pages shown inside a viewer often only allow data: images, and a blocked image would silently switch the effect off
       const im = new Image();
       im.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(xml)}`;
-      await im.decode();
+      await loaded(im);
       return { el: im, w: vb.width * 40, h: vb.height * 40 };
     }
   } catch {
