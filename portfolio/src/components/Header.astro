@@ -22,9 +22,9 @@ const links = [
     </summary>
     <nav class="menu__panel" aria-label="Primary" data-menu-panel>
       {
-        links.map(([label, href], i) => (
+        links.map(([label, href]) => (
           <a class="menu__link" href={href} {...(href === '#pricing' ? { 'data-pricing-open': '' } : { 'data-nav': '' })}>
-            <span class="menu__lbl"><span class="menu__t">{label}</span><span class="menu__n">{String(i + 1).padStart(2, '0')}</span></span>
+            <span class="menu__lbl"><span class="menu__t">{label}</span></span>
             <span class="menu__go" aria-hidden="true">
               <svg viewBox="0 0 12 12" width="12" height="12"><path d="M2 9.5 9.5 2M4 2h5.5v5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
             </span>

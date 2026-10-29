@@ -2,7 +2,6 @@
 import { site, projects } from '../data/site';
 import Pixel from './Pixel.astro';
 const year = new Date().getFullYear();
-/* Until PUBLIC_CONTACT_EMAIL is set in .env, the email button is replaced by a placeholder line */
 const sitemap = [
   ['Work', '#work'],
   ['Site Chemistry', '#chemistry'],
@@ -15,14 +14,18 @@ const sitemap = [
   <div class="connect__inner">
     <h2 id="connect-title" class="connect__title">Got a site in mind?</h2>
     <p class="connect__promise">I design your homepage first. You only pay once you love it. <button type="button" class="connect__pricing" data-pricing-open>See pricing</button></p>
+    <!-- the contact form, after the one in the reference but centred: big uppercase fields on thin lines and a full-width send bar. There is no server behind
+         the site, so sending opens the visitor's email app with the message already written (scripts/finale.ts). -->
     {
-      site.email ? (
-        <button class="connect__mail" type="button" data-copy={site.email} data-cursor="Copy">
-          <span class="connect__mail-text">{site.email}</span>
-          <span class="connect__mail-hint" aria-live="polite" data-copy-hint>Click to copy</span>
-        </button>
-      ) : (
-        <p class="connect__soon">Your email address goes here.</p>
+      site.email && (
+        <form class="cform" data-contact-form data-to={site.email} novalidate>
+          <input class="cform__f" name="name" type="text" placeholder="NAME*" aria-label="Name" autocomplete="name" required />
+          <input class="cform__f" name="company" type="text" placeholder="COMPANY" aria-label="Company" autocomplete="organization" />
+          <input class="cform__f" name="email" type="email" placeholder="EMAIL*" aria-label="Email" autocomplete="email" required />
+          <textarea class="cform__f" name="message" rows="1" placeholder="MESSAGE*" aria-label="Message" required />
+          <button class="cform__send" type="submit">Send message</button>
+          <p class="cform__note" role="status" aria-live="polite" data-form-note></p>
+        </form>
       )
     }
 

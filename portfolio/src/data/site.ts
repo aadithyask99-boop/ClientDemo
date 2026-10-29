@@ -14,7 +14,7 @@ export const site = {
   timezone: str(env.PUBLIC_TIMEZONE, 'Europe/London'),
   /* Shown before the clock in the header */
   location: str(env.PUBLIC_LOCATION_LABEL, 'Based in the UK'),
-  email: str(env.PUBLIC_CONTACT_EMAIL),
+  email: str(env.PUBLIC_CONTACT_EMAIL, 'Aadithyask99@gmail.com'),
   /* Preview builds stay out of search results until PUBLIC_NOINDEX=false */
   noindex: str(env.PUBLIC_NOINDEX, 'true') !== 'false',
   demosUrl: str(env.PUBLIC_DEMOS_URL, 'https://clientdemo.maximusmediascape.workers.dev').replace(/\/$/, ''),

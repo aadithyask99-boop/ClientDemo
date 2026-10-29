@@ -135,6 +135,25 @@ export function initFinale() {
     window.setInterval(() => { if (inView && !document.hidden && performance.now() - lastPress > 6000) advance(); }, 4200);
   }
 
+  /* ----- the contact form: there is no server, so sending opens the visitor's email app with everything filled in ----- */
+  const form = q<HTMLFormElement>('[data-contact-form]');
+  if (form) {
+    const note = q('[data-form-note]', form);
+    const area = q<HTMLTextAreaElement>('textarea', form);
+    const grow = () => { if (area) { area.style.height = 'auto'; area.style.height = `${area.scrollHeight}px`; } };
+    area?.addEventListener('input', grow);
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const d = new FormData(form);
+      const bad = qa<HTMLInputElement>('[required]', form).find((f) => !f.checkValidity());
+      if (bad) { bad.focus(); if (note) note.textContent = 'Please fill in the fields marked with a star.'; return; }
+      const val = (k: string) => String(d.get(k) ?? '').trim();
+      const body = [`Name: ${val('name')}`, ...(val('company') ? [`Company: ${val('company')}`] : []), `Email: ${val('email')}`, '', val('message')].join('\n');
+      window.location.href = `mailto:${form.dataset.to}?subject=${encodeURIComponent(`Website enquiry from ${val('name')}`)}&body=${encodeURIComponent(body)}`;
+      if (note) note.textContent = 'Thank you. Your email app should open with your message ready to send.';
+    });
+  }
+
   /* ----- the pixel icon beside "Crafted by" changes shape every few seconds ----- */
   const mini = q('.pixel--mini');
   if (mini) {
