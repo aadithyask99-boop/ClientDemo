@@ -1,0 +1,90 @@
+---
+import { site } from '../data/site';
+/* The pricing sheet: opens from "Pricing" in the menu and from the footer (scripts/pricing.ts). It rises from the bottom over 80% of the screen and leaves the
+   top fifth showing, like a drawer. One package, how the "homepage first, pay when you love it" idea works, a few answers, and a way to get started.
+   Click the big price for a small surprise. */
+const pages = ['Home', 'About us', 'Services', 'Contact us', 'Blog'];
+const included = [
+  ['Bespoke design', 'Drawn for your business from a blank page. No templates, nothing generic.'],
+  ['Fully animated', 'Smooth, scroll-driven motion and small details throughout, the kind you see on award-winning sites.'],
+  ['SEO fundamentals', 'Clean page structure, titles and descriptions, a sitemap and a fast, mobile-first build, so search engines can find you.'],
+  ['Good to go', 'Finished, tested and ready to put live.'],
+];
+const steps = [
+  ['Tell me about your business', 'A short chat about what you do, who it is for and what you want people to do.'],
+  ['I design your homepage first', 'No payment, no commitment. You see how your site would look and feel.'],
+  ['Love it? Then you pay', 'Only once you are happy with the homepage. If it is not for you, you owe nothing.'],
+  ['I build the other four pages', 'About us, Services, Contact us and the Blog, to match, and then it goes live.'],
+];
+const answers = [
+  ['Do I pay anything before I see my homepage?', 'No. I design your homepage first and you only pay once you are happy with it. Then I build the rest.'],
+  ['What if I need more than five pages?', 'Tell me what you need and I will quote for it. The five-page site is the starting point, not a limit.'],
+  ['Will people find it on Google?', 'Every site is built with the SEO fundamentals in from the start: clear structure, page titles and descriptions, a sitemap and fast loading on phones.'],
+];
+---
+
+<div class="pr" data-pricing hidden>
+  <div class="pr__veil" data-pricing-close></div>
+  <div class="pr__sheet" role="dialog" aria-modal="true" aria-labelledby="pr-title" tabindex="-1" data-lenis-prevent>
+    <div class="pr__bar">
+      <p class="tag-b pr__tag">Pricing</p>
+      <button class="pr__x" type="button" data-pricing-close>Close <svg viewBox="0 0 12 12" width="11" height="11" aria-hidden="true"><path d="M1 1l10 10M11 1 1 11" stroke="currentColor" stroke-width="1.6" fill="none" /></svg></button>
+    </div>
+
+    <div class="pr__body">
+      <h2 class="pr__title" id="pr-title" data-pr-in>Fair pricing.<br />Your homepage first, payment second.</h2>
+
+      <section class="pr__sec" data-pr-in>
+        <p class="pr__label">The package</p>
+        <div class="pr__main">
+          <div class="pr__card">
+            <button class="pr__price" type="button" data-pricing-price>
+              <span class="pr__amount">£1,299</span>
+              <span class="pr__stamp" aria-hidden="true">£0 today<br /><small>pay when you love it</small></span>
+            </button>
+            <p class="pr__name">Five-page website</p>
+            <p class="pr__lede">One bespoke, fully animated website with the SEO groundwork done and ready to go live. And you do not pay until you have seen your homepage and love it.</p>
+            <ol class="pr__pages" aria-label="The five pages">
+              {pages.map((p, i) => <li><span>{String(i + 1).padStart(2, '0')}</span>{p}</li>)}
+            </ol>
+          </div>
+          <ul class="pr__incl">
+            {included.map(([t, d]) => <li><strong>{t}</strong><span>{d}</span></li>)}
+          </ul>
+        </div>
+      </section>
+
+      <section class="pr__sec" data-pr-in>
+        <p class="pr__label">How it works</p>
+        <ol class="pr__steps">
+          {steps.map(([t, d], i) => <li><span class="pr__n">{String(i + 1).padStart(2, '0')}</span><strong>{t}</strong><span>{d}</span></li>)}
+        </ol>
+      </section>
+
+      <section class="pr__sec" data-pr-in>
+        <p class="pr__label">Answers</p>
+        <div class="pr__faq">
+          {
+            answers.map(([q, a], i) => (
+              <details>
+                <summary><span class="pr__n">{String(i + 1).padStart(2, '0')}</span><span class="pr__q">{q}</span><span class="pr__open" aria-hidden="true"></span></summary>
+                <p>{a}</p>
+              </details>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="pr__sec pr__end" data-pr-in>
+        <p class="pr__label">Start</p>
+        <div class="pr__main">
+          <p class="pr__lede">Tell me about your business and I will start on your homepage.</p>
+          <div class="pr__cta">
+            <button class="pr__go" type="button" data-pricing-go>Start with my homepage <svg viewBox="0 0 12 12" width="13" height="13" aria-hidden="true"><path d="M2 9.5 9.5 2M4 2h5.5v5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
+            {site.email && <button class="pr__mail" type="button" data-copy={site.email}><span class="connect__mail-text">{site.email}</span> <span class="connect__mail-hint" data-copy-hint>Click to copy</span></button>}
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

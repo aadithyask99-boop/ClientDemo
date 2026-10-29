@@ -40,6 +40,12 @@ function initHeader() {
   const fold = () => hdr?.classList.toggle('is-scrolled', window.scrollY > 4);
   fold();
   window.addEventListener('scroll', fold, { passive: true });
+  document.addEventListener('click', (e) => {
+    const t = (e.target as Element).closest<HTMLElement>('[data-pricing-open]');
+    if (!t) return;
+    e.preventDefault();
+    void import('./pricing').then((m) => m.open(t));
+  });
   const btn = q('[data-open-clock]');
   btn?.addEventListener('click', () => { void import('./clock-panel').then((m) => m.open(btn)); });
 }
