@@ -1,13 +1,12 @@
 import { gsap } from 'gsap';
 import { PATTERNS, type PatternName } from './patterns';
 import { lockScroll, reduced, q } from './util';
-import { bubble } from './bubble';
 
 /* The rest of the easter eggs. Loaded only when one of them is found (scripts/eggs.ts listens for the triggers):
      type "404"          a fake error page, with a lost pixel icon wandering over it, then the page comes back
      type "hello"/"hire" the contact section opens
      scroll past the bottom   a pixel rocket carries you back to the top
-     right-click the headline a menu with a few jokes
+     right-click the headline a one-item menu: "Say hello"
    (Holding Shift over the headline is handled in hero.ts, because it has to drive the headline's own word.) */
 
 function pixelIcon(name: PatternName, size = 12) {
@@ -128,31 +127,22 @@ export function rocketLaunch() {
 }
 
 /* ---------- right-click the headline ---------- */
-/* each joke answers back in a speech bubble where the menu was */
-const reply = (text: string) => (x: number, y: number) => bubble(text, { x, y: y + 24, side: 'below', ms: 3400 });
-const JOKES: [string, ((x: number, y: number) => void) | null][] = [
-  ['Inspect element? It is all hand-coded.', reply('Go on, open DevTools. Clean, hand-written HTML. No div soup.')],
-  ['View source: readable, I promise.', reply('Readable on purpose. Search engines like that too.')],
-  ['Copy image: there are no stock photos here.', reply('Nothing to copy: no stock photos, no handshake over a laptop.')],
-  ['Save as... a better website.', reply('Already saved as a better website.')],
-  ['Replay the headline', () => document.querySelector<HTMLElement>('[data-hero-title]')?.click()],
-  ['Say hello', hello],
-];
+/* the headline's own menu: a single item */
+const ITEMS: [string, () => void][] = [['Say hello', hello]];
 let menu: HTMLElement | null = null;
 export function headlineMenu(x: number, y: number) {
   closeMenu();
   const m = document.createElement('div');
   m.className = 'ctx';
   m.setAttribute('role', 'menu');
-  JOKES.forEach(([text, act], i) => {
+  ITEMS.forEach(([text, act]) => {
     const b = document.createElement('button');
     b.type = 'button';
     b.setAttribute('role', 'menuitem');
-    b.className = act ? 'ctx__item ctx__item--act' : 'ctx__item';
+    b.className = 'ctx__item ctx__item--act';
     b.textContent = text;
-    b.addEventListener('click', () => { const r = b.getBoundingClientRect(); closeMenu(); act?.(r.left + 30, r.top); });
+    b.addEventListener('click', () => { closeMenu(); act(); });
     m.append(b);
-    if (i === 3) { const hr = document.createElement('hr'); hr.className = 'ctx__hr'; m.append(hr); }
   });
   document.body.append(m);
   const w = m.offsetWidth;

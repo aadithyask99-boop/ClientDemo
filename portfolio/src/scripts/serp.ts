@@ -1,5 +1,5 @@
 import { site } from '../data/site';
-import { lockScroll, reduced } from './util';
+import { lockScroll, reduced, markFound } from './util';
 
 /* Easter egg: type "seo" anywhere. A search results page opens with a made-up query and this site at number eight,
    then it climbs to number one. Every rival is invented (and lives on the reserved .example domain). */
@@ -40,6 +40,7 @@ function item(title: string, url: string, me: boolean, desc = '') {
 export async function openSerp() {
   if (open) return;
   open = true;
+  markFound('seo');
   const [{ gsap }, { Flip }] = await Promise.all([import('gsap'), import('gsap/Flip')]);
   gsap.registerPlugin(Flip);
   const prevFocus = document.activeElement as HTMLElement | null;

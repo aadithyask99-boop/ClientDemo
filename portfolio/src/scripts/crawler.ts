@@ -1,6 +1,6 @@
 import { gsap } from 'gsap';
 import { site } from '../data/site';
-import { lockScroll, reduced } from './util';
+import { lockScroll, reduced, markFound } from './util';
 
 /* The Search Engine Optimisation card's scene: a little pixel spider crawls down a mini checklist of the unglamorous things that decide whether a site can be
    found, ticks each one off, and a score ring counts up to 100. It is an illustration of the work, not a live audit. Loaded only when the card is flicked or tapped. */
@@ -22,6 +22,7 @@ let open = false;
 export function openCrawler() {
   if (open) return;
   open = true;
+  markFound('crawler');
   const prevFocus = document.activeElement as HTMLElement | null;
   const overlay = document.createElement('div');
   overlay.className = 'crawl';

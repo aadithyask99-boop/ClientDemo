@@ -1,11 +1,11 @@
 import { gsap } from 'gsap';
-import { fine, reduced } from './util';
+import { fine, reduced, markFound } from './util';
 
 /* The cursor. A cartoon one: a chunky orange arrow with a thick ink outline and a hard shadow that leans with the movement and squashes when you press;
-   over anything clickable it becomes a pointing glove. Only for a mouse or trackpad, and the real cursor is hidden only once the first move proves it works.
+   over anything clickable it becomes a pointing hand. Only for a mouse or trackpad, and the real cursor is hidden only once the first move proves it works.
    Also a small label that trails the pointer over anything marked data-cursor="Label" (Replay, View, Copy...). */
 const ARROW = '<svg viewBox="0 0 34 34" width="34" height="34"><path d="M6 5 6 27 12 22 16.4 31.4 21.2 29.2 16.8 20 24.6 20Z" fill="#050505" transform="translate(2.4 2.8)"/><path d="M5 3.5 5 25.5 11 20.5 15.4 30 20.2 27.8 15.8 18.6 23.6 18.6Z" fill="#ff5a1f" stroke="#050505" stroke-width="2.6" stroke-linejoin="round"/><path d="M8.6 10.2 8.6 17.2 11.2 15" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/></svg>';
-const GLOVE = '<svg viewBox="0 0 34 34" width="34" height="34"><g transform="translate(2.4 2.8)" fill="#050505"><rect x="12" y="2" width="7" height="17" rx="3.5"/><rect x="7" y="14" width="19" height="15" rx="7"/></g><g fill="#ff5a1f" stroke="#050505" stroke-width="2.6" stroke-linejoin="round"><rect x="12" y="2" width="7" height="17" rx="3.5"/><rect x="7" y="14" width="19" height="15" rx="7"/><path d="M9 18.5C5.5 17.5 3.5 20 5 22.5L8 26.5"/></g><path d="M10 18.6 10 25" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".85" transform="translate(4 0)"/><rect x="7.4" y="23.8" width="18.2" height="4.4" rx="2.2" fill="#fffdf5" stroke="#050505" stroke-width="2.4"/></svg>';
+const GLOVE = '<svg viewBox="0 0 34 34" width="34" height="34"><path d="M11 5.2A3 3 0 0 1 17 5.2L17 13.4A2.6 2.6 0 0 1 22 13.4A2.6 2.6 0 0 1 27 14.6A2.6 2.6 0 0 1 32 16L32 23C32 27.4 29 30.4 25 30.4L16.5 30.4C13.6 30.4 11.4 29 9.8 26.4L5.2 19.6C4.4 18.4 5.4 17 6.8 17.2C7.8 17.4 9 18.4 11 20.8Z" fill="#050505" transform="translate(2.4 2.8)"/><path d="M11 5.2A3 3 0 0 1 17 5.2L17 13.4A2.6 2.6 0 0 1 22 13.4A2.6 2.6 0 0 1 27 14.6A2.6 2.6 0 0 1 32 16L32 23C32 27.4 29 30.4 25 30.4L16.5 30.4C13.6 30.4 11.4 29 9.8 26.4L5.2 19.6C4.4 18.4 5.4 17 6.8 17.2C7.8 17.4 9 18.4 11 20.8Z" fill="#ff5a1f" stroke="#050505" stroke-width="2.6" stroke-linejoin="round"/><path d="M22 14.6V21.6M27 15.8V21.6" stroke="#050505" stroke-width="2" stroke-linecap="round" opacity=".7"/><path d="M13.2 6.4V11.5" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".85"/></svg>';
 const INTERACTIVE = 'a[href], button, summary, [role="button"], [data-cursor], .card, input, select, label[for]';
 
 export function initCursor() {
@@ -45,6 +45,53 @@ export function initCursor() {
   window.addEventListener('pointerdown', () => { gsap.to(cc, { scale: 0.82, duration: 0.1, overwrite: 'auto' }); });
   window.addEventListener('pointerup', () => { gsap.to(cc, { scale: 1, duration: 0.45, ease: 'elastic.out(1.2, 0.4)', overwrite: 'auto' }); });
   document.documentElement.addEventListener('pointerleave', () => gsap.to(cc, { opacity: 0, duration: 0.15 }));
+
+  // a hard scroll makes it sweat: a drop slides down from its head (scripts/eggs.ts sends this)
+  window.addEventListener('aadi:sweat', () => {
+    const d = document.createElement('span');
+    d.className = 'cc__drop';
+    cc.append(d);
+    gsap.fromTo(d, { x: 22, y: -2, opacity: 0, scale: 0.5 }, { x: 24, y: 16, opacity: 1, scale: 1, duration: 0.5, ease: 'power2.in' });
+    gsap.to(d, { y: 34, opacity: 0, duration: 0.7, delay: 0.5, ease: 'power1.in', onComplete: () => d.remove() });
+  });
+
+  /* Leave it alone for 45 seconds and it falls asleep (droops, little z's float up). Any movement wakes it with "Oh! Hi." and counts as an egg found. */
+  let asleep = false;
+  let sleepT = 0;
+  let zT = 0;
+  let px = -100;
+  let py = -100;
+  const sleepAfter = (window as unknown as { __aadiSleepMs?: number }).__aadiSleepMs ?? 45000;
+  const zzz = () => {
+    const z = document.createElement('span');
+    z.className = 'cc__z';
+    z.textContent = Math.random() < 0.5 ? 'z' : 'Z';
+    cc.append(z);
+    gsap.fromTo(z, { x: 18, y: -4, opacity: 0, scale: 0.6 }, { x: 30 + Math.random() * 10, y: -34, opacity: 1, scale: 1, duration: 1.8, ease: 'power1.out', onComplete: () => z.remove() });
+    gsap.to(z, { opacity: 0, duration: 0.7, delay: 1.1 });
+  };
+  const fallAsleep = () => {
+    if (asleep || document.hidden || !shown) return;
+    asleep = true;
+    gsap.to(inner, { rotation: 38, y: 6, duration: 1.2, ease: 'power2.out', overwrite: 'auto' });
+    gsap.to(arrow, { scaleY: 0.9, duration: 1.2 });
+    zzz();
+    zT = window.setInterval(zzz, 1500);
+  };
+  const wake = () => {
+    window.clearTimeout(sleepT);
+    sleepT = window.setTimeout(fallAsleep, sleepAfter);
+    if (!asleep) return;
+    asleep = false;
+    window.clearInterval(zT);
+    gsap.to(inner, { rotation: 0, y: 0, duration: 0.6, ease: 'elastic.out(1.1, 0.4)', overwrite: 'auto' });
+    gsap.to(arrow, { scaleY: 1, duration: 0.3 });
+    markFound('sleepy');
+    void import('./bubble').then((b) => b.bubble('Oh! Hi.', { x: px + 10, y: py + 26, side: 'below', ms: 1800 }));
+  };
+  ['pointermove', 'pointerdown', 'keydown', 'wheel', 'scroll', 'touchstart'].forEach((ev) => window.addEventListener(ev, () => wake(), { passive: true }));
+  window.addEventListener('pointermove', (e) => { px = e.clientX; py = e.clientY; }, { passive: true });
+  sleepT = window.setTimeout(fallAsleep, sleepAfter);
   if (reduced) return;
   const el = document.createElement('div');
   el.className = 'cur';

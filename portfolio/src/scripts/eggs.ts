@@ -1,5 +1,6 @@
 import { site } from '../data/site';
-import { q, fine, markFound } from './util';
+import { q, fine, markFound, reduced } from './util';
+import { initEggCount } from './eggcount';
 
 /* The small, quiet easter eggs. The bigger ones live in their own files (serp.ts) and are loaded only when found. */
 export function initEggs() {
@@ -91,6 +92,48 @@ export function initEggs() {
       });
     });
   }
+
+  // 10. The counter in the footer
+  initEggCount();
+
+  // 11. A line under the name for people who are up late (by the visitor's own clock)
+  const late = q('[data-late]');
+  if (late) {
+    const h = new Date().getHours();
+    const text = h < 5 ? 'Still up? Same.' : h < 7 ? 'Early bird. Respect.' : h >= 23 ? 'Almost midnight. Same, honestly.' : '';
+    if (text) {
+      late.textContent = text;
+      late.hidden = false;
+      if (!reduced) void import('gsap').then(({ gsap }) => gsap.from(late, { opacity: 0, y: 6, duration: 0.8, delay: 1.2, ease: 'power2.out' }));
+    }
+  }
+
+  // 12. Scroll very fast (a hard flick) and a bubble says so, and the cursor breaks into a sweat
+  let ly = window.scrollY;
+  let lt = performance.now();
+  let streak = 0;
+  let cool = 0;
+  let quiet = 0;
+  let ptr = { x: window.innerWidth / 2, y: window.innerHeight * 0.6 };
+  window.addEventListener('pointermove', (e) => { ptr = { x: e.clientX, y: e.clientY }; }, { passive: true });
+  window.addEventListener('aadi:scrollto', () => { quiet = performance.now() + 5000; }); // rides the page makes itself (anchors, the rocket) are not flicks
+  window.addEventListener('scroll', () => {
+    const now = performance.now();
+    const dt = now - lt;
+    if (dt < 90) return;
+    const v = (Math.abs(window.scrollY - ly) / dt) * 1000;
+    ly = window.scrollY;
+    lt = now;
+    if (now < quiet || reduced) { streak = 0; return; }
+    streak = v > 5500 ? streak + 1 : 0;
+    if (streak >= 2 && now > cool) {
+      cool = now + 25000;
+      streak = 0;
+      markFound('fast');
+      window.dispatchEvent(new Event('aadi:sweat'));
+      void import('./bubble').then((b) => b.bubble('Whoa, slow down.', { x: ptr.x, y: ptr.y - 10, side: 'above', ms: 2400 }));
+    }
+  }, { passive: true });
 
   // 9. A few seconds in, little bubbles start to say what can be tried (until it has been found)
   window.setTimeout(() => { void import('./hints').then((m) => m.initHints()); }, 5000);

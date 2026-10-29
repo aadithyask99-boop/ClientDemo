@@ -97,11 +97,17 @@ spring back), and a sound toggle (off until switched on): a synthesised tick, qu
 - **Type `404`:** a joke error page with a lost pixel icon wandering over it, which then admits it was kidding and goes away.
 - **Type `hello` or `hire`:** the page scrolls to the Connect section.
 - **Hold Shift with the pointer over the headline** (on a phone: press and hold it): the changing word spins through twenty more adjectives; let go and it settles on "cool". A cartoon bubble ("Hold Shift here!") pops up when the pointer rests on the headline.
-- **Right-click the headline:** a menu of jokes ("Inspect element? It is all hand-coded.") in place of the browser's; each joke answers back in a speech bubble, and "Replay the headline" and "Say hello" do what they say.
+- **Right-click the headline:** a small menu with one item, "Say hello", which scrolls to the Connect section, in place of the browser's menu.
 - **Click "Remote worldwide":** the globe spins and a bubble gives the time in a city far away ("Tokyo: 23:04. Time zones are no problem.").
 - **Hints:** a few seconds in, cartoon bubbles pop up now and then at the side of the screen ("Type hello anywhere", "Right-click the headline"...), only for eggs not yet found, at most six a visit (`src/scripts/hints.ts`).
 - **Keep scrolling when you are already at the bottom** (mouse or trackpad): a pixel rocket builds up, then carries you back to the top.
-- **The cursor** is a cartoon arrow that leans as you move and squashes when you press, and becomes a pointing glove over anything clickable (`src/scripts/cursor.ts`; mouse and trackpad only).
+- **The cursor** is a cartoon arrow that leans as you move and squashes when you press, and becomes a pointing hand over anything clickable (`src/scripts/cursor.ts`;
+  mouse and trackpad only). **Leave it alone for 45 seconds** and it falls asleep (it droops, little z's float up); move it and it wakes with "Oh! Hi."
+- **Scroll very fast** (a hard flick): a bubble says "Whoa, slow down." and the cursor sweats.
+- **Up late?** Between midnight and 5am by the visitor's own clock a line under the name says "Still up? Same." (and a few other hours get their own).
+- **The egg counter:** once the first egg is found, "[ 3 / 13 eggs ]" appears in the footer and each find says "Egg found! 3 of 13". Progress is kept in the browser. Find
+  all thirteen (seo page, crawler, build log, enquiries, word spinner, right-click, hello, hire, 404, rocket, globe, sleepy cursor, fast scroll) and the page opens the
+  contact section: "You found them all. Let's talk." The list is `EGGS` in `src/scripts/util.ts`; add an id there and call `markFound('id')` where the egg plays.
 - **Hover the name** in the hero: a face follows the pointer along the words, the pixel icon bursts, letters under the cursor lift.
 - **Press the clock** in the header: drag the hands, switch the sound on, listen for the tick as you move toward the clock.
 - **Click the headline** to watch it build again. **Open the console**, **switch tabs**, read `/robots.txt` and `/humans.txt`.
