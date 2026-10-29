@@ -9,7 +9,7 @@ const shown = new Map<string, number>();
 let total = 0;
 let lastShiftHint = -1e9;
 
-const busy = () => !!document.querySelector('.serp, .crawl, .nf, .ctx, .clk:not([hidden]), .pr:not([hidden]), .bub');
+const busy = () => !!document.querySelector('.serp, .crawl, .nf, .ctx, .clk:not([hidden]), .pr:not([hidden]), .menu[open], .bub');
 
 export function initHints() {
   const title = q('[data-hero-title]');

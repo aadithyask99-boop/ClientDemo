@@ -1609,13 +1609,6 @@ html[data-world='dark'] .cur {
   color: inherit;
   cursor: pointer;
 }
-.clk__eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
 .clk__face {
   width: min(78%, 15rem);
   height: auto;

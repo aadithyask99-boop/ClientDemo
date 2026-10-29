@@ -7,11 +7,10 @@ const ticks = Array.from({ length: 60 }, (_, i) => i);
 
 <div class="clk" data-clock-panel hidden>
   <div class="clk__veil" data-clock-close></div>
-  <div class="clk__card" role="dialog" aria-modal="true" aria-labelledby="clk-title" tabindex="-1">
+  <div class="clk__card" role="dialog" aria-modal="true" aria-label="Local time" tabindex="-1">
     <button class="clk__x" type="button" data-clock-close aria-label="Close">
       <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M1 1l10 10M11 1 1 11" stroke="currentColor" stroke-width="1.5" fill="none" /></svg>
     </button>
-    <p class="clk__eyebrow tag-b" id="clk-title">{site.location || 'Local time'}</p>
     <svg class="clk__face" viewBox="-100 -100 200 200" data-clock-face role="img" aria-label="Analogue clock showing my local time. Drag a hand; it springs back.">
       <circle r="96" class="clk__ring" />
       {ticks.map((i) => <line class={i % 5 === 0 ? 'clk__tick clk__tick--5' : 'clk__tick'} y1="-90" y2={i % 5 === 0 ? -80 : -85} transform={`rotate(${i * 6})`} />)}
