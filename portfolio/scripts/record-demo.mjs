@@ -48,6 +48,7 @@ const ctx = await browser.newContext({ viewport: { width: W, height: H } });
 const page = await ctx.newPage();
 const cdp = await ctx.newCDPSession(page);
 await cdp.send('HeadlessExperimental.enable');
+await cdp.send('Page.enable');
 await cdp.send('Emulation.setVirtualTimePolicy', { policy: 'pause' });
 if (syncVideo) {
   await cdp.send('Page.addScriptToEvaluateOnNewDocument', {
@@ -61,16 +62,25 @@ if (syncVideo) {
         return p;
       };
       // position every held video at (frames since its play() was called) / fps. Counted in frames because performance.now() follows the real clock,
-      // not the paused one. No timers here either: the page clock is paused while this runs.
-      window.__syncVideos = (frame, fps) => (window.__vf = frame, Promise.all([...vids].map(([v, st]) => new Promise((resolve) => {
-        const target = Math.min((frame - st.start) / fps, v.duration || 0);
-        if (!isFinite(target) || !v.duration) return resolve();
-        if (!v.paused) v.pause();
-        if (target >= v.duration && !st.ended) { st.ended = true; v.currentTime = v.duration; v.dispatchEvent(new Event('ended')); return resolve(); }
-        if (Math.abs(v.currentTime - target) < 0.002) return resolve();
-        v.addEventListener('seeked', () => resolve(), { once: true });
-        v.currentTime = target;
-      }))));
+      // not the paused one. A seek only finishes while the page clock runs, so this just starts it and the recorder runs the clock in tiny steps until
+      // __pendingVideos() is 0. Headless frame capture does not paint <video> layers, so each held video is mirrored into a canvas of the same size and
+      // place (same class), drawn from its current frame once the seek is done.
+      window.__syncVideos = (frame, fps) => {
+        window.__vf = frame;
+        for (const [v, st] of vids) {
+          const target = Math.min((frame - st.start) / fps, v.duration || 0);
+          if (!isFinite(target) || !v.duration) continue;
+          if (!v.paused) v.pause();
+          if (!st.cv) { st.cv = document.createElement('canvas'); st.cv.className = v.className; st.cv.width = v.videoWidth || 1920; st.cv.height = v.videoHeight || 1080; v.after(st.cv); v.style.visibility = 'hidden'; }
+          const paint = () => { try { st.cv.getContext('2d').drawImage(v, 0, 0, st.cv.width, st.cv.height); } catch (e) {} st.pending = false; };
+          if (target >= v.duration && !st.ended) { st.ended = true; v.dispatchEvent(new Event('ended')); }
+          if (Math.abs(v.currentTime - target) < 0.002 && st.painted) continue;
+          st.pending = true; st.painted = true;
+          v.addEventListener('seeked', paint, { once: true });
+          v.currentTime = target;
+        }
+      };
+      window.__pendingVideos = () => [...vids.values()].filter((st) => st.pending).length;
     })();`,
   });
 }
@@ -79,11 +89,11 @@ page.goto(url, { waitUntil: 'commit' }).catch(() => {});
 const dt = 1000 / fps;
 const total = Math.round(length * fps);
 let frame = 0;
-const budget = (policy) => new Promise((resolve, reject) => {
+const budget = (policy, ms = dt) => new Promise((resolve, reject) => {
   const timer = setTimeout(() => { cdp.off('Emulation.virtualTimeBudgetExpired', done); reject(new Error('stalled')); }, 10000);
   const done = () => { clearTimeout(timer); resolve(); };
   cdp.once('Emulation.virtualTimeBudgetExpired', done);
-  cdp.send('Emulation.setVirtualTimePolicy', { policy, budget: dt });
+  cdp.send('Emulation.setVirtualTimePolicy', { policy, budget: ms });
 });
 let phase = 'start';
 let last = null;
@@ -96,7 +106,13 @@ const step = async () => {
   phase = 'draw';
   if (syncVideo) {
     phase = 'video';
-    await Promise.race([cdp.send('Runtime.evaluate', { expression: `window.__syncVideos && window.__syncVideos(${frame}, ${fps})`, awaitPromise: true }), new Promise((r) => setTimeout(r, 5000))]).catch(() => {});
+    await cdp.send('Runtime.evaluate', { expression: `window.__syncVideos && window.__syncVideos(${frame}, ${fps})` });
+    // let the seeks finish: run the page clock in 0.1 ms steps (about 2 ms in all) until no video is still seeking
+    for (let i = 0; i < 300; i++) {
+      const pending = (await cdp.send('Runtime.evaluate', { expression: 'window.__pendingVideos ? window.__pendingVideos() : 0', returnByValue: true })).result.value;
+      if (!pending) break;
+      await budget('pauseIfNetworkFetchesPending', 0.1).catch(() => {});
+    }
   }
   // a heavy frame (a 3D scene compiling its shaders in software, say) can take minutes; there is no use asking for it again while it is pending
   const r = await Promise.race([cdp.send('HeadlessExperimental.beginFrame', { interval: dt, screenshot: { format: 'jpeg', quality: 88 } }), new Promise((_, no) => setTimeout(() => no(new Error('frame took over 10 minutes')), 600000))]);
