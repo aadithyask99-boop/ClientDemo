@@ -51,10 +51,20 @@ page.goto(url, { waitUntil: 'commit' }).catch(() => {});
 const dt = 1000 / fps;
 const total = Math.round(length * fps);
 let frame = 0;
+const budget = (policy) => new Promise((resolve, reject) => {
+  const timer = setTimeout(() => { cdp.off('Emulation.virtualTimeBudgetExpired', done); reject(new Error('stalled')); }, 10000);
+  const done = () => { clearTimeout(timer); resolve(); };
+  cdp.once('Emulation.virtualTimeBudgetExpired', done);
+  cdp.send('Emulation.setVirtualTimePolicy', { policy, budget: dt });
+});
+let phase = 'start';
+let seen = -1;
+setInterval(() => { if (frame === seen) console.error(`\nno progress at frame ${frame} (${phase})`); seen = frame; }, 20000).unref();
 const step = async () => {
-  const expired = new Promise((r) => cdp.once('Emulation.virtualTimeBudgetExpired', r));
-  await cdp.send('Emulation.setVirtualTimePolicy', { policy: 'pauseIfNetworkFetchesPending', budget: dt });
-  await expired;
+  phase = 'clock';
+  // normally the clock waits for the page's network requests; if one never finishes (a hung request), carry on without waiting for it
+  await budget('pauseIfNetworkFetchesPending').catch(() => budget('advance'));
+  phase = 'draw';
   const r = await cdp.send('HeadlessExperimental.beginFrame', { interval: dt, screenshot: { format: 'jpeg', quality: 88 } });
   if (r.screenshotData) writeFileSync(`${raw}/${String(frame).padStart(5, '0')}.jpg`, Buffer.from(r.screenshotData, 'base64'));
   frame++;
@@ -62,7 +72,7 @@ const step = async () => {
 const evaluate = async (expression) => (await cdp.send('Runtime.evaluate', { expression, returnByValue: true })).result.value;
 // Input events are only answered when the next frame is produced (the compositor is under our control), so each is sent, a frame is stepped, then it is awaited
 const input = (ev) => cdp.send('Input.dispatchMouseEvent', ev);
-const withFrame = async (...events) => { const sent = events.map(input); await step(); await Promise.all(sent); };
+const withFrame = async (...events) => { const sent = events.map(input); await step(); phase = 'input'; await Promise.all(sent); };
 const wheel = (deltaY) => withFrame({ type: 'mouseWheel', x: W / 2, y: H / 2, deltaX: 0, deltaY });
 const click = async (x, y) => {
   await withFrame({ type: 'mouseMoved', x, y });
