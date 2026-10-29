@@ -1,5 +1,5 @@
 import { gsap } from 'gsap';
-import { reduced, q } from './util';
+import { reduced, q, fine } from './util';
 
 /* The rest of the easter eggs. Loaded only when one of them is found (scripts/eggs.ts listens for the triggers):
      type "hello"/"hire" the contact section opens
@@ -31,7 +31,7 @@ export function rocketPull(pull: number, launchAt = 560) {
     rocket = document.createElement('div');
     rocket.className = 'rocket';
     rocket.setAttribute('aria-hidden', 'true');
-    rocket.innerHTML = '<span class="rocket__hint">keep going</span>';
+    rocket.innerHTML = '<span class="rocket__hint"></span>';
     const grid = document.createElement('span');
     grid.className = 'pixel rocket__px';
     ROCKET.forEach((row, y) => [...row].forEach((c) => { const i = document.createElement('i'); if (c === '#') { i.dataset.on = ''; if (y >= 6) i.className = 'is-flame'; } else i.style.opacity = '0'; grid.append(i); }));
@@ -39,7 +39,10 @@ export function rocketPull(pull: number, launchAt = 560) {
     document.body.append(rocket);
   }
   const t = Math.min(1, pull / launchAt);
-  gsap.to(rocket, { y: -t * 46, opacity: Math.min(1, pull / 120), duration: 0.2, overwrite: true });
+  const hint = rocket.querySelector<HTMLElement>('.rocket__hint');
+  if (hint) hint.textContent = pull > 0 ? 'keep going' : fine ? 'scroll again for a lift' : 'swipe up for a lift';
+  if (!rocket.classList.contains('is-ready')) { rocket.classList.add('is-ready'); gsap.fromTo(rocket, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'back.out(1.6)' }); }
+  else gsap.to(rocket, { y: -t * 46, opacity: 1, duration: 0.2, overwrite: true });
 }
 export function rocketRelease() {
   if (!rocket || launching) return;

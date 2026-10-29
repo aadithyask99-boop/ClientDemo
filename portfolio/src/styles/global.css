@@ -169,11 +169,20 @@ html.intro .hero {
   --tab-h: 6.4rem;
   --tab-right: max(1rem, env(safe-area-inset-right, 0px));
   --panel-w: min(26rem, 78vw);
+  /* the tab and panel take the opposite of the page behind them: black over the cream sections, cream over the black ones */
+  --m-bg: #0b0b0b;
+  --m-fg: hsl(39 50% 95%);
+  --m-accent: #ff5a1f;
   position: absolute;
   top: 0;
   right: 0;
   z-index: 2;
-  color: #0b0b0b;
+  color: var(--m-fg);
+}
+html[data-world='dark'] .menu {
+  --m-bg: hsl(39 50% 95%);
+  --m-fg: #0b0b0b;
+  --m-accent: var(--accent-ink);
 }
 .menu__tab {
   position: absolute;
@@ -187,7 +196,7 @@ html.intro .hero {
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
   /* the outline and the soft shadow follow the notch because they are drop-shadows of the clipped face */
-  filter: drop-shadow(0 0 0.7px #0b0b0b) drop-shadow(0 10px 14px rgb(0 0 0 / 0.22));
+  filter: drop-shadow(0 0 0.7px var(--m-bg)) drop-shadow(0 10px 14px rgb(0 0 0 / 0.25));
   transition: translate 0.35s var(--ease-out);
 }
 .menu__tab::-webkit-details-marker {
@@ -201,7 +210,8 @@ html.intro .hero {
   justify-items: center;
   gap: 0.5rem;
   padding: 0.75rem 0 1.5rem;
-  background: hsl(39 50% 95%);
+  background: var(--m-bg);
+  transition: background-color 0.4s var(--ease-out);
   clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 0.95rem), 0 100%);
 }
 .menu__hole {
@@ -245,8 +255,9 @@ html.intro .hero {
   padding: 1.2rem 1.4rem 1.2rem 1.6rem;
   padding-top: max(1.2rem, env(safe-area-inset-top, 0px));
   border-radius: 0 0 0 1.5rem;
-  background: hsl(39 50% 95%);
-  box-shadow: 0 0 0 1px #0b0b0b, 0 30px 60px -24px #000a;
+  background: var(--m-bg);
+  transition: background-color 0.4s var(--ease-out), color 0.4s var(--ease-out);
+  box-shadow: 0 0 0 1px hsl(0 0% 50% / 0.35), 0 30px 60px -24px #000a;
 }
 .menu:not([open]) .menu__panel {
   display: none;
@@ -257,7 +268,7 @@ html.intro .hero {
   align-items: center;
   gap: 0.6rem;
   padding: clamp(1rem, 2.4vh, 1.4rem) 0;
-  border-bottom: 1px solid rgb(11 11 11 / 0.16);
+  border-bottom: 1px solid color-mix(in srgb, var(--m-fg) 18%, transparent);
   font-size: clamp(1.9rem, 1.3rem + 1.6vw, 2.6rem);
   font-weight: 700;
   letter-spacing: -0.045em;
@@ -277,7 +288,7 @@ html.intro .hero {
   font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: 0.04em;
-  color: rgb(11 11 11 / 0.45);
+  color: color-mix(in srgb, var(--m-fg) 50%, transparent);
 }
 .menu__go {
   display: grid;
@@ -295,12 +306,12 @@ html.intro .hero {
 }
 .menu__link:hover .menu__go,
 .menu__link:focus-visible .menu__go {
-  background: #0b0b0b;
-  color: var(--accent);
+  background: var(--m-fg);
+  color: var(--m-bg);
   transform: rotate(45deg);
 }
 .menu__link.is-active .menu__t {
-  color: var(--accent-ink);
+  color: var(--m-accent);
 }
 @media (pointer: coarse) {
   .menu {
@@ -1828,8 +1839,11 @@ html:not(.js) .slot__w:not(:first-child) {
 .thumbs {
   position: relative;
   width: 100%;
-  height: 8.5rem;
+  height: 17.5rem;
   margin-top: 0.5rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  outline-offset: 6px;
 }
 .thumb {
   position: absolute;
@@ -1838,24 +1852,51 @@ html:not(.js) .slot__w:not(:first-child) {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 11rem;
-  height: 6.9rem;
-  margin: -3.45rem 0 0 -5.5rem;
-  padding: 0.7rem 0.8rem;
-  border-radius: 0.6rem;
+  width: 22rem;
+  height: 13.75rem;
+  margin: -6.9rem 0 0 -11rem;
+  padding: 0.9rem 1rem;
+  overflow: hidden;
+  border-radius: 0.8rem;
   background: var(--tint);
   color: #fff;
-  mix-blend-mode: normal;
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  text-shadow: 0 1px 8px #0006;
-  box-shadow: 0 14px 30px -14px #000;
+  text-shadow: 0 1px 8px #0008;
+  box-shadow: 0 0 0 1px hsl(0 0% 100% / 0.1), 0 24px 44px -18px #000;
+  user-select: none;
+}
+.thumb__img,
+.thumb__vid {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.thumb__vid {
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.thumb__vid.is-on {
+  opacity: 1;
+}
+.thumb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #0005, transparent 35%, transparent 60%, #0008);
+  pointer-events: none;
+}
+.thumb > span {
+  position: relative;
+  z-index: 1;
 }
 .thumb__name {
   font-family: var(--font-sans);
-  font-size: 1.15rem;
+  font-size: 1.5rem;
   font-weight: 600;
   letter-spacing: -0.05em;
   text-transform: none;
@@ -1917,10 +1958,23 @@ html:not(.js) .slot__w:not(:first-child) {
   --px: 3px;
 }
 @media (max-width: 699px) {
+  /* the rocket waits on its own pad under the last line, so it never covers the links */
+  .connect {
+    padding-bottom: 7.5rem;
+  }
+  .rocket {
+    bottom: 0.9rem;
+  }
+  .thumbs {
+    height: 13.5rem;
+  }
   .thumb {
-    width: 9rem;
-    height: 5.7rem;
-    margin: -2.85rem 0 0 -4.5rem;
+    width: 15rem;
+    height: 9.4rem;
+    margin: -4.7rem 0 0 -7.5rem;
+  }
+  .thumb__name {
+    font-size: 1.2rem;
   }
 }
 
@@ -2075,7 +2129,7 @@ html:not(.js) .slot__w:not(:first-child) {
 .rocket {
   position: fixed;
   left: 50%;
-  bottom: 0;
+  bottom: 3rem;
   z-index: 125;
   translate: -50% 0;
   display: grid;

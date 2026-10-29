@@ -60,10 +60,10 @@ The order follows what a client asks: who is this, show me, why would it work fo
    in reverse (a few blocks flash orange on the way). The title is built from pixels.
 6. **Next chapter:** "Start your next website today" in huge type, built from pixels as it scrolls in. Two small slots roll through words
    ("Make it Fast and Clear"). Point at "today" and the arrow swaps sides with the word.
-7. **Connect:** click-to-copy email (the hint text rolls to "Copied"), a stack of tinted project tiles that fly in and then cycle, a sitemap and channels
+7. **Connect:** click-to-copy email (the hint text rolls to "Copied"), a stack of rotated cards showing the Work clips (the front one plays; press the stack to throw the top card to the back, round after round, and it keeps turning on its own), a pixel rocket that is already waiting on the pad once the last line is on screen, a sitemap and channels
    list (hovered links become white pills), and "Crafted by Aadi" with a pixel icon that keeps changing shape.
 
-Always there: the **menu** is a paper pull-tab hanging from the top-right edge, labelled "Pull me" (drag it down or just press it); a cream panel unrolls from the top with big Work, Services, About and Connect rows and the tab rides to its left edge. "Based in the UK" and the clock sit at the top-left (`src/scripts/menu.ts`; a `<details>`, so it works without JavaScript too). Once you scroll the "Based in the UK" label folds to a thin
+Always there: the **menu** is a paper pull-tab hanging from the top-right edge, labelled "Pull me" (drag it down or just press it); a panel unrolls from the top (black over the cream sections, cream over the black ones; it rolls itself back up after 4 seconds of no activity) with big Work, Services, About and Connect rows and the tab rides to its left edge. "Based in the UK" and the clock sit at the top-left (`src/scripts/menu.ts`; a `<details>`, so it works without JavaScript too). Once you scroll the "Based in the UK" label folds to a thin
 line that opens again on hover. Pressing the clock opens the **local-time panel**: an analogue and digital clock in your time zone, hands you can drag (they
 spring back), and a sound toggle (off until switched on): a synthesised tick, quieter the further the pointer is from the clock.
 
@@ -81,7 +81,7 @@ spring back), and a sound toggle (off until switched on): a synthesised tick, qu
 | `src/scripts/portrait.ts` | The scroll-built portrait (block front, reversible) |
 | `src/scripts/work.ts` | Work: one active project at a time, drift, arrow nudge, clip loading |
 | `src/scripts/pixelreveal.ts` | Headings built from pixels (real text stays in the page) |
-| `src/scripts/finale.ts` | Next-chapter slots, footer tile stack, pixel headings, crafted-by icon |
+| `src/scripts/finale.ts` | Next-chapter slots, footer card stack, pixel headings, crafted-by icon |
 | `src/scripts/clock-panel.ts` | The local-time panel (loaded the first time the clock is pressed) |
 | `src/scripts/pixel.ts`, `patterns.ts` | The pixel icon and its four shapes |
 | `src/scripts/scroll.ts` | Lenis smooth scroll, section-aware header |

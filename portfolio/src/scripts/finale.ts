@@ -44,35 +44,95 @@ export function initFinale() {
     document.fonts?.ready.then(measure);
   }
 
-  /* ----- the stack of project tiles ----- */
+  /* ----- the stack of Work clips: rotated cards, press to throw the top one to the back ----- */
   const stack = q('[data-thumbs]');
   const tiles = stack ? qa('.thumb', stack) : [];
   if (stack && tiles.length && js) {
     const n = tiles.length;
-    const pose = (k: number) => ({ x: k * 22 - 40, y: k * -7, rotation: -4 + k * 2.4, scale: 1 - k * 0.045, zIndex: n - k });
+    const phone = window.matchMedia('(max-width: 699px)').matches;
+    const spread = phone ? 0.62 : 1;
+    const side = (k: number) => (k % 2 ? 1 : -1);
+    const pose = (k: number) => ({ x: side(k) * k * 16 * spread, y: k * -7, rotation: k === 0 ? -2 : side(k) * (3 + k * 2.6), scale: 1 - k * 0.04, zIndex: n - k, opacity: k > 4 ? 0 : 1 });
     let order = tiles.slice();
-    const place = (dur: number, ease = 'power3.inOut') => order.forEach((t, k) => gsap.to(t, { ...pose(k), duration: dur, ease, overwrite: true }));
-    if (reduced) order.forEach((t, k) => gsap.set(t, pose(k)));
-    else {
-      gsap.set(tiles, { x: 0, y: 60, rotation: 0, scale: 0.5, opacity: 0 });
-      ScrollTrigger.create({
-        trigger: stack,
-        start: 'top 92%',
-        once: true,
-        onEnter: () => {
-          order.forEach((t, k) => gsap.to(t, { ...pose(k), opacity: 1, duration: 0.9, ease: 'back.out(1.3)', delay: k * 0.08, overwrite: true }));
-          window.setInterval(() => {
-            if (document.hidden) return;
-            const front = order.shift()!;
-            order.push(front);
-            // the front tile leaves sideways, drops behind the others and the rest step forward
-            gsap.to(front, { x: pose(n - 1).x + 120, y: -26, rotation: 9, duration: 0.45, ease: 'power2.in', onComplete: () => place(0.6) });
-            order.slice(0, -1).forEach((t, k) => gsap.to(t, { ...pose(k), duration: 0.6, ease: 'power3.inOut', overwrite: true }));
-            gsap.set(front, { zIndex: 0, delay: 0.45 });
-          }, 2300);
-        },
-      });
-    }
+    let inView = false;
+    let lastPress = 0;
+    let busy = false;
+
+    // borrow the pictures and clips from the Work section (same order as the projects)
+    const items = qa('[data-wi]');
+    const media = () => tiles.forEach((t, i) => {
+      const src = items[i];
+      const poster = src && q<HTMLImageElement>('.wi__poster', src);
+      const clip = src && q<HTMLVideoElement>('video', src);
+      if (!poster || !clip) return;
+      const img = document.createElement('img');
+      img.className = 'thumb__img';
+      img.alt = '';
+      img.decoding = 'async';
+      img.src = poster.getAttribute('src') || poster.dataset.src || '';
+      const v = document.createElement('video');
+      v.className = 'thumb__vid';
+      v.muted = true;
+      v.loop = true;
+      v.playsInline = true;
+      v.preload = 'none';
+      v.setAttribute('aria-hidden', 'true');
+      v.dataset.src = phone && clip.dataset.videoM ? clip.dataset.videoM : clip.dataset.video || '';
+      t.prepend(v);
+      t.prepend(img);
+    });
+    const play = () => order.forEach((t, k) => {
+      const v = q<HTMLVideoElement>('.thumb__vid', t);
+      if (!v) return;
+      if (k === 0 && inView && !reduced) {
+        if (!v.getAttribute('src') && v.dataset.src) { v.src = v.dataset.src; v.load(); }
+        void v.play().catch(() => {});
+        v.classList.add('is-on');
+      } else {
+        v.pause();
+        v.classList.remove('is-on');
+      }
+    });
+
+    const advance = () => {
+      if (busy) return;
+      busy = true;
+      const front = order.shift()!;
+      order.push(front);
+      const dir = Math.random() < 0.5 ? -1 : 1;
+      if (reduced) { order.forEach((t, k) => gsap.set(t, pose(k))); busy = false; play(); return; }
+      // the front card is thrown out sideways, tucks in behind the others, and the rest step forward
+      gsap.to(front, { x: dir * (phone ? 150 : 300), y: -30, rotation: dir * 16, duration: 0.42, ease: 'power2.in', onComplete: () => {
+        gsap.set(front, { zIndex: 0 });
+        gsap.to(front, { ...pose(n - 1), duration: 0.55, ease: 'power3.out', onComplete: () => { busy = false; } });
+      } });
+      order.slice(0, -1).forEach((t, k) => gsap.to(t, { ...pose(k), duration: 0.6, ease: 'power3.inOut', overwrite: true }));
+      play();
+    };
+
+    order.forEach((t, k) => gsap.set(t, reduced ? pose(k) : { x: 0, y: 70, rotation: 0, scale: 0.6, opacity: 0, zIndex: n - k }));
+    ScrollTrigger.create({
+      trigger: stack,
+      start: 'top 130%',
+      once: true,
+      onEnter: () => {
+        media();
+        if (reduced) return;
+        ScrollTrigger.create({
+          trigger: stack,
+          start: 'top 92%',
+          once: true,
+          onEnter: () => order.forEach((t, k) => gsap.to(t, { ...pose(k), duration: 0.9, ease: 'back.out(1.3)', delay: k * 0.08, overwrite: true })),
+        });
+      },
+    });
+    new IntersectionObserver((es) => { inView = es[0].isIntersecting; play(); }, { threshold: 0.35 }).observe(stack);
+
+    const press = () => { lastPress = performance.now(); advance(); };
+    stack.addEventListener('click', press);
+    stack.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); press(); } });
+    // left alone, it keeps turning on its own, round after round
+    window.setInterval(() => { if (inView && !document.hidden && performance.now() - lastPress > 6000) advance(); }, 4200);
   }
 
   /* ----- the pixel icon beside "Crafted by" changes shape every few seconds ----- */

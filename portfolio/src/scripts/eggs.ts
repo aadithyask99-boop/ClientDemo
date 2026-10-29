@@ -48,7 +48,16 @@ export function initEggs() {
   // on a phone the browser's toolbar slides in and out while you swipe, so the window height jumps by up to ~90px: allow for that
   const slack = fine ? 24 : 110;
   const atBottom = () => window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - slack;
-  const letGo = () => { window.clearTimeout(idle); if (pull) { pull = 0; void lazy().then((m) => m.rocketRelease()); } };
+  // the rocket is already waiting on the pad as soon as the last line of the page is on screen, so people can see what the extra scroll is for
+  let ready = false;
+  const letGo = () => { window.clearTimeout(idle); if (pull) { pull = 0; void lazy().then((m) => (ready ? m.rocketPull(0, LAUNCH) : m.rocketRelease())); } };
+  const foot = q('.connect__foot');
+  if (foot && 'IntersectionObserver' in window && !reduced) {
+    new IntersectionObserver((es) => {
+      ready = es[0].isIntersecting;
+      void lazy().then((m) => (ready ? m.rocketPull(pull, LAUNCH) : m.rocketRelease()));
+    }, { threshold: 0.9 }).observe(foot);
+  }
   const push = (amount: number) => {
     if (!atBottom() || amount <= 0) { letGo(); return; }
     pull += amount;

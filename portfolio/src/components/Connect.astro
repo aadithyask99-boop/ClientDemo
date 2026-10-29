@@ -25,8 +25,9 @@ const sitemap = [
       )
     }
 
-    <!-- the projects as a little stack of tinted tiles: they fly in, then the top one goes to the back, one by one (scripts/finale.ts) -->
-    <div class="thumbs" data-thumbs aria-hidden="true">
+    <!-- the Work clips as a stack of rotated cards: press it and the top card is thrown to the back, round after round (scripts/finale.ts). The pictures and
+         clips are borrowed from the Work section by the script, so nothing is downloaded twice. Without JavaScript they are plain tinted tiles. -->
+    <div class="thumbs" data-thumbs role="button" tabindex="0" aria-label="Shuffle through the projects" data-cursor="Next">
       {
         projects.map((p, i) => (
           <div class="thumb" style={`--tint:${p.tint}`}>

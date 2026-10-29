@@ -18,9 +18,18 @@ export function initMenu() {
   // the tab travels left until it sits against the panel's left edge
   const openX = () => -(panel.offsetWidth - parseFloat(getComputedStyle(tab).right));
 
+  // left alone for 4 seconds it rolls itself back up (any movement, press or key on it starts the count again)
+  let idle = 0;
+  const arm = () => {
+    window.clearTimeout(idle);
+    if (!open.on) return;
+    idle = window.setTimeout(() => set(false), 4000);
+  };
+
   const set = (on: boolean) => {
     if (on === open.on) return;
     open.on = on;
+    arm();
     menu.dataset.state = on ? 'open' : 'closed';
     tab.setAttribute('aria-expanded', String(on));
     tween?.kill();
@@ -72,6 +81,7 @@ export function initMenu() {
   tab.addEventListener('click', (e) => e.preventDefault()); // <details> would toggle by itself; the pointer code above decides
   tab.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); set(!open.on); } });
 
+  ['pointermove', 'pointerdown', 'focusin', 'keydown', 'touchstart'].forEach((ev) => menu.addEventListener(ev, arm, { passive: true }));
   links.forEach((a) => a.addEventListener('click', () => set(false)));
   document.addEventListener('pointerdown', (e) => { if (open.on && !menu.contains(e.target as Node)) set(false); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && open.on) { set(false); tab.focus(); } });
