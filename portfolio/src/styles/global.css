@@ -2366,6 +2366,15 @@ html.pr-open .hdr {
   color: #0b0b0b;
   outline: none;
 }
+.pr__sheet::before {
+  /* a plain strip along the top, so text scrolling up never runs into Close */
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 1;
+  height: 3rem;
+  background: hsl(39 50% 95%);
+}
 .pr__x {
   position: absolute;
   top: 1.1rem;
@@ -2587,4 +2596,59 @@ html.pr-open .hdr {
   text-align: center;
   text-transform: uppercase;
   color: rgb(11 11 11 / 0.5);
+}
+
+/* the pricing sheet on a phone: the same content, tighter, one left edge */
+@media (max-width: 699px) {
+  .pr__body {
+    padding-top: 3.2rem;
+    padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
+  }
+  .pr__title {
+    font-size: 2.1rem;
+  }
+  .pr__row {
+    gap: 0.9rem;
+    margin-top: 1.8rem;
+  }
+  .pr__info {
+    gap: 0.8rem;
+  }
+  .pr__row > .pr__name {
+    margin-bottom: -0.5rem;
+  }
+  .pr__text,
+  .pr__mail,
+  .pr__chan a {
+    font-size: 1rem;
+  }
+  .pr__amount {
+    font-size: 3.2rem;
+  }
+  .pr__clips {
+    gap: 0.5rem;
+  }
+  .pr__clip {
+    flex: 1 1 0;
+  }
+  .pr__cta {
+    margin-top: 1.6rem;
+  }
+  .pr__go {
+    font-size: 2.4rem;
+  }
+  .pr__contact {
+    margin-top: 2.2rem;
+    gap: 1.2rem;
+  }
+  .pr__contact > span {
+    display: none; /* the empty first column of the wide layout */
+  }
+  .pr__time {
+    width: 6.5rem;
+    justify-items: start;
+  }
+  .pr__tz {
+    text-align: left;
+  }
 }
