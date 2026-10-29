@@ -25,8 +25,11 @@ npm run build:single     # the whole site as ONE self-contained HTML file in dis
   Until then a smooth illustration stands in (not pixel art, so there is something to resolve).
 - **Copy:** the headline words and the "nothing generic" line are in `Hero.astro`, the four points and the verdict in `Chemistry.astro`, the service cards in
   `Deck.astro`, the about text in `About.astro`, the project list (every project is a "Concept build") in `src/data/site.ts`.
-- **Work clips:** each project needs `public/work/<slug>.mp4` (a 9 second loop, 720 px wide, no audio) and `<slug>.webp` (its poster).
-  `node scripts/record-demo.mjs <slug> <url>` records both for a live site (needs Playwright and ffmpeg).
+- **Work clips:** each project needs `public/work/<slug>.mp4` (18 seconds at 60 fps, 720 px wide, no audio) and `<slug>.webp` (its poster). The clip starts at
+  navigation, so the site's own loader is in it, then the first screen, then one smooth scroll through the page.
+  `node scripts/record-demo.mjs <slug> <url> [--length 18] [--start 6] [--scroll 4200] [--gate "click to open"]` records both for a live site (needs Playwright and
+  ffmpeg). It does not screen-record (that tops out near 15 to 25 fps on a laptop and stutters): it pauses the browser's clock and steps it 1/60 s at a time,
+  drawing every frame in full, so a clip takes 5 to 15 minutes to make but is exactly 60 fps.
 - **Launch:** set `PUBLIC_SITE_URL` and `PUBLIC_NOINDEX=false`. While `PUBLIC_NOINDEX=true` the site tells search engines to stay away.
 
 ## Design language
