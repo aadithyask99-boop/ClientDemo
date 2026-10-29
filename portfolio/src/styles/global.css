@@ -2503,7 +2503,6 @@ html.pr-open .hdr {
   position: relative;
   display: block;
   flex: 1 1 0;
-  max-width: 11rem;
   aspect-ratio: 16 / 10;
   overflow: hidden;
   border-radius: 0.4rem;
@@ -2576,7 +2575,7 @@ html.pr-open .hdr {
 }
 @media (min-width: 900px) {
   .pr__time {
-    justify-self: start; /* the clock stands under the clips, on the same left edge, as in the reference */
+    justify-self: start; /* the clock stands under the clips, on the same left edge; the clips run to the right margin, which is as wide as the left one */
   }
 }
 .pr__dial {
@@ -2660,8 +2659,40 @@ html.pr-open .hdr {
   width: min(100%, 36rem);
   margin-top: 0.4rem;
 }
+.cform {
+  min-height: 8rem;
+  align-content: start;
+}
 .cform__step[hidden] {
   display: none;
+}
+.cform__nav {
+  display: flex;
+  justify-content: center;
+  gap: 1.4rem;
+  margin-top: 0.5rem;
+}
+.cform__nav[hidden],
+.cform__send[hidden],
+.cform__nav button[hidden] {
+  display: none;
+}
+.cform__nav button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: color-mix(in srgb, var(--cream) 60%, transparent);
+  font: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.25s;
+}
+.cform__nav button:hover,
+.cform__nav button:focus-visible {
+  color: var(--accent);
+}
+.cform__nav [data-next] {
+  color: var(--cream);
 }
 .cform__f {
   width: 100%;

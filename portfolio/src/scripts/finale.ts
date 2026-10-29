@@ -140,38 +140,45 @@ export function initFinale() {
   if (form) {
     const note = q('[data-form-note]', form);
     const steps = qa('.cform__step', form);
+    const nav = q('[data-form-nav]', form);
     const area = q<HTMLTextAreaElement>('textarea', form);
     const field = (i: number) => q<HTMLInputElement | HTMLTextAreaElement>('.cform__f', steps[i]);
     const grow = () => { if (area) { area.style.height = 'auto'; area.style.height = `${area.scrollHeight}px`; } };
-    area?.addEventListener('input', grow);
-    if (js) steps.slice(1).forEach((s) => { s.hidden = true; });
-    const reveal = (i: number, focus = false) => {
-      const s = steps[i];
-      if (!s) return;
-      if (s.hidden) {
-        s.hidden = false;
-        if (!reduced) gsap.fromTo(s, { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out', clearProps: 'transform,opacity' });
-      }
-      if (focus) field(i)?.focus();
+    area?.addEventListener('input', () => { grow(); sendShown(); });
+    const send = q('.cform__send', form);
+    const sendShown = () => { if (send) send.hidden = !(js && area && area.value.trim() !== ''); };
+    let at = 0;
+    // one line at a time: the line you are on goes, the next one comes in its place
+    const go = (i: number, focus = true) => {
+      if (!js || i < 0 || i >= steps.length) return;
+      const from = steps[at];
+      at = i;
+      steps.forEach((s, k) => { s.hidden = k !== i; });
+      if (nav) { nav.hidden = false; const back = q('[data-back]', nav); const next = q('[data-next]', nav); if (back) back.hidden = i === 0; if (next) next.hidden = i === steps.length - 1; }
+      if (from !== steps[i] && !reduced) gsap.fromTo(steps[i], { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: 'power3.out', clearProps: 'transform,opacity' });
+      if (note) note.textContent = '';
+      if (i === steps.length - 1) { grow(); sendShown(); }
+      if (focus) field(i)?.focus({ preventScroll: true });
     };
-    // a line is done when it is filled in (Enter, or moving away from it); an optional line can be left empty and passed with Enter
-    steps.slice(0, 4).forEach((_, i) => {
-      const f = field(i)!;
-      const done = () => f.value.trim() !== '' && f.checkValidity();
-      f.addEventListener('keydown', (e) => {
-        if ((e as KeyboardEvent).key !== 'Enter' || f === area) return;
-        e.preventDefault();
-        if (!f.required || done()) { if (note) note.textContent = ''; reveal(i + 1, true); }
-        else if (note) note.textContent = f.type === 'email' ? 'That email does not look right yet.' : 'Please fill this in first.';
-      });
-      f.addEventListener('blur', () => { if (f !== area && done()) reveal(i + 1); });
-      if (f === area) f.addEventListener('input', () => { if (done()) reveal(i + 1); });
-    });
+    const advance = () => {
+      const f = field(at)!;
+      if (f.required && (f.value.trim() === '' || !f.checkValidity())) {
+        if (note) note.textContent = f.type === 'email' ? 'That email does not look right yet.' : 'Please fill this in first.';
+        return;
+      }
+      go(at + 1);
+    };
+    if (js) {
+      go(0, false);
+      steps.slice(0, -1).forEach((_, i) => field(i)!.addEventListener('keydown', (e) => { if ((e as KeyboardEvent).key === 'Enter') { e.preventDefault(); advance(); } }));
+      q('[data-next]', form)?.addEventListener('click', advance);
+      q('[data-back]', form)?.addEventListener('click', () => go(at - 1));
+    }
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const d = new FormData(form);
       const bad = qa<HTMLInputElement>('[required]', form).find((f) => !f.checkValidity());
-      if (bad) { const i = steps.findIndex((s) => s.contains(bad)); reveal(i, true); if (note) note.textContent = 'Please fill in the lines marked above.'; return; }
+      if (bad) { go(steps.findIndex((s) => s.contains(bad))); if (note) note.textContent = 'Please fill this in first.'; return; }
       const val = (k: string) => String(d.get(k) ?? '').trim();
       const body = [`Name: ${val('name')}`, ...(val('company') ? [`Company: ${val('company')}`] : []), `Email: ${val('email')}`, '', val('message')].join('\n');
       window.location.href = `mailto:${form.dataset.to}?subject=${encodeURIComponent(`Website enquiry from ${val('name')}`)}&body=${encodeURIComponent(body)}`;
