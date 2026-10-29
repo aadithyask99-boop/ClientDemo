@@ -44,6 +44,10 @@ export function initDeck() {
   tabs.forEach((t, i) => t.addEventListener('click', () => {
     touched = true;
     setActive(i);
+    if (row) {
+      cards[i].scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', inline: 'center', block: 'nearest' }); // the row scrolls sideways; the card comes to the middle
+      return;
+    }
     cards[i].style.zIndex = String(++z);
     const y = gsap.getProperty(cards[i], 'y') as number;
     gsap.fromTo(cards[i], { y }, { y: y - 22, duration: 0.18, yoyo: true, repeat: 1, ease: 'power2.out', overwrite: 'auto' });
@@ -193,5 +197,29 @@ export function initDeck() {
         });
       },
     });
+  }
+
+  /* ----- phones: the row scrolls sideways, so each card is turned over as it comes into view, and the heading follows the card that is in the middle ----- */
+  if (row) {
+    const inners = cards.map((c) => q('.card__in', c)!);
+    const rears = cards.map((c) => q('.card__bk', c)!);
+    if (!reduced) {
+      gsap.set(inners, { rotationY: 180, transformPerspective: 800 });
+      gsap.set(rears, { rotationY: 0, transformPerspective: 800, visibility: 'visible' });
+    }
+    const flipped: boolean[] = [];
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      const i = cards.indexOf(e.target as HTMLElement);
+      if (e.intersectionRatio < 0.55) return; // the first report comes with any overlap at all: only a card that is mostly in view counts
+      if (!flipped[i] && !reduced) {
+        flipped[i] = true;
+        gsap.timeline({ delay: 0.12 })
+          .to(inners[i], { rotationY: 0, duration: 0.8, ease: 'power3.inOut' }, 0)
+          .to(rears[i], { rotationY: -180, duration: 0.8, ease: 'power3.inOut', onComplete: () => { gsap.set(rears[i], { visibility: 'hidden' }); } }, 0);
+      }
+      touched = true;
+      setActive(i);
+    }), { threshold: [0.55, 0.8] }); // measured against the screen: sideways (the row clips its cards) and down the page
+    cards.forEach((c) => io.observe(c));
   }
 }

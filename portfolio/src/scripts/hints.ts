@@ -7,6 +7,7 @@ import { bubble } from './bubble';
    Each is shown only until it has been found (or twice), never while something is open, and never more than six times a visit. Loaded a few seconds after the first screen. */
 const shown = new Map<string, number>();
 let total = 0;
+let lastShiftHint = -1e9;
 
 const busy = () => !!document.querySelector('.serp, .crawl, .nf, .ctx, .clk:not([hidden]), .bub');
 
@@ -20,12 +21,13 @@ export function initHints() {
       let t = 0;
       let dismiss: (() => void) | null = null;
       title.addEventListener('pointerenter', (e) => {
-        if (found('shift') || (shown.get('shift') ?? 0) >= 3 || busy()) return;
+        if (found('shift') || (shown.get('shift') ?? 0) >= 8 || busy() || performance.now() - lastShiftHint < 6000) return;
         t = window.setTimeout(() => {
+          lastShiftHint = performance.now();
           shown.set('shift', (shown.get('shift') ?? 0) + 1);
           const r = title.getBoundingClientRect();
           dismiss = bubble(`Hold ${kbd('Shift')} here!`, { x: Math.min(Math.max((e as PointerEvent).clientX, r.left + 60), r.right - 60), y: r.top + 8, side: 'above', ms: 3400, html: true });
-        }, 1100);
+        }, 500);
       });
       title.addEventListener('pointerleave', () => window.clearTimeout(t));
       // pressing Shift is the answer: the bubble goes
@@ -37,6 +39,18 @@ export function initHints() {
         bubble('Press and hold me!', { x: r.left + r.width / 2, y: r.bottom - 2, side: 'below', ms: 3800 });
       }, 1500);
     }
+  }
+
+  // once the sentence has settled, if the word spinner has not been found, the bubble comes by itself (and again from time to time while the headline is on screen)
+  if (title && fine && !reduced) {
+    const auto = () => {
+      const r = title.getBoundingClientRect();
+      if (found('shift') || document.hidden || busy() || r.bottom < 0 || r.top > window.innerHeight || performance.now() - lastShiftHint < 20000) return;
+      lastShiftHint = performance.now();
+      shown.set('shift', (shown.get('shift') ?? 0) + 1);
+      bubble(`Hold ${kbd('Shift')} over this headline!`, { x: r.left + r.width * 0.3, y: r.top + 6, side: 'above', ms: 3600, html: true });
+    };
+    window.setTimeout(() => { auto(); window.setInterval(auto, 14000); }, 2500);
   }
 
   /* the random ones */
@@ -59,11 +73,11 @@ export function initHints() {
   ['pointermove', 'scroll', 'keydown', 'touchstart'].forEach((ev) => window.addEventListener(ev, () => { last = performance.now(); }, { passive: true }));
 
   const pop = () => {
-    if (total >= 6 || document.hidden || busy() || performance.now() - last > 12000) return;
-    const left = pool.filter((h) => !found(h.id) && (shown.get(h.id) ?? 0) < 1);
+    if (total >= 8 || document.hidden || busy() || performance.now() - last > 12000) return;
+    const left = pool.filter((h) => !found(h.id) && (shown.get(h.id) ?? 0) < (h.id === 'shift' ? 3 : 1));
     if (!left.length) return;
     const h = left[Math.floor(Math.random() * left.length)];
-    shown.set(h.id, 1);
+    shown.set(h.id, (shown.get(h.id) ?? 0) + 1);
     total++;
     // somewhere near the edge of the screen, away from the middle where the reading happens
     const rightSide = Math.random() < 0.5;
@@ -71,5 +85,5 @@ export function initHints() {
     const y = window.innerHeight * between(0.3, 0.8);
     bubble(h.text, { x, y, side: Math.random() < 0.5 ? 'above' : 'below', ms: 4200, html: true });
   };
-  window.setTimeout(() => { pop(); window.setInterval(pop, 26000); }, 16000);
+  window.setTimeout(() => { pop(); window.setInterval(pop, 22000); }, 12000);
 }

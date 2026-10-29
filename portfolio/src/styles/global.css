@@ -551,87 +551,101 @@ html.lenis body {
   letter-spacing: -0.055em;
   text-wrap: balance;
 }
-@media (min-width: 900px) {
-  .fx .chem__pin {
-    height: 100svh;
-    padding-block: 3.5rem 1.5rem;
-    align-content: center;
-    gap: 1.2rem;
+.chem.is-live .chem__pin {
+  height: 100svh;
+  padding-block: 3.5rem 1.5rem;
+  align-content: center;
+  gap: 1.2rem;
+}
+.chem.is-live .chem__stage {
+  position: relative;
+  display: block;
+  width: min(100%, 64svh);
+  aspect-ratio: 1;
+}
+.chem.is-live .chem__diagram {
+  position: absolute;
+  inset: 0;
+}
+.chem.is-live .chem__ring {
+  display: block;
+}
+.chem.is-live .chem__copy {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-content: center;
+  padding-inline: 18%;
+  pointer-events: none;
+}
+.chem.is-live .chem__title {
+  font-size: clamp(1.4rem, 0.9rem + 1.5vw, 2.3rem);
+}
+.chem.is-live .chem__list {
+  position: relative;
+  display: block;
+  width: min(100%, 38rem);
+  height: 5.6rem;
+  text-align: center;
+}
+.chem.is-live .chem__list li {
+  position: absolute;
+  inset: 0 0 auto 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  row-gap: 0.35rem;
+  font-size: clamp(1.05rem, 0.8rem + 0.7vw, 1.4rem);
+  line-height: 1.3;
+  letter-spacing: -0.03em;
+  color: var(--cream);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.45s var(--ease-out), transform 0.6s var(--ease-out);
+}
+.chem.is-live .chem__list li.is-on {
+  opacity: 1;
+  transform: none;
+}
+.chem.is-live .chem__list li::before {
+  display: none;
+}
+.chem.is-live .chem__list span {
+  grid-column: 1;
+}
+.chem.is-live .chem__verdict {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-content: center;
+  width: auto;
+  padding: var(--gx-l);
+  border-radius: 0;
+  background: transparent; /* the section itself has turned orange by now */
+  text-align: center;
+  font-size: clamp(2rem, 1rem + 4vw, 5.4rem);
+  letter-spacing: -0.065em;
+  opacity: 0;
+}
+.chem.is-live .chem__verdict span {
+  max-width: 12em;
+}
+
+/* on a phone the same scene in a narrower frame: bigger caption box, no text along the circles (too small to read) */
+@media (max-width: 699px) {
+  .chem.is-live .chem__list {
+    height: 7.4rem;
   }
-  .fx .chem__stage {
-    position: relative;
-    display: block;
-    width: min(100%, 64svh);
-    aspect-ratio: 1;
-  }
-  .fx .chem__diagram {
-    position: absolute;
-    inset: 0;
-  }
-  .fx .chem__ring {
-    display: block;
-  }
-  .fx .chem__copy {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    display: grid;
-    place-content: center;
-    padding-inline: 18%;
-    pointer-events: none;
-  }
-  .fx .chem__title {
-    font-size: clamp(1.4rem, 0.9rem + 1.5vw, 2.3rem);
-  }
-  .fx .chem__list {
-    position: relative;
-    display: block;
-    width: min(100%, 38rem);
-    height: 5.6rem;
-    text-align: center;
-  }
-  .fx .chem__list li {
-    position: absolute;
-    inset: 0 0 auto 0;
-    display: grid;
-    grid-template-columns: 1fr;
-    justify-items: center;
-    row-gap: 0.35rem;
-    font-size: clamp(1.05rem, 0.8rem + 0.7vw, 1.4rem);
-    line-height: 1.3;
-    letter-spacing: -0.03em;
-    color: var(--cream);
-    opacity: 0;
-    transform: translateY(14px);
-    transition: opacity 0.45s var(--ease-out), transform 0.6s var(--ease-out);
-  }
-  .fx .chem__list li.is-on {
-    opacity: 1;
-    transform: none;
-  }
-  .fx .chem__list li::before {
+  .chem.is-live .venn__arc {
     display: none;
   }
-  .fx .chem__list span {
-    grid-column: 1;
+  .chem.is-live .chem__copy {
+    padding-inline: 14%;
   }
-  .fx .chem__verdict {
-    position: absolute;
-    inset: 0;
-    z-index: 5;
-    display: grid;
-    place-content: center;
-    width: auto;
-    padding: var(--gx-l);
-    border-radius: 0;
-    background: transparent; /* the section itself has turned orange by now */
-    text-align: center;
-    font-size: clamp(2rem, 1rem + 4vw, 5.4rem);
-    letter-spacing: -0.065em;
-    opacity: 0;
-  }
-  .fx .chem__verdict span {
-    max-width: 12em;
+  .chem.is-live .chem__title {
+    font-size: clamp(1.05rem, 0.6rem + 2.6vw, 1.4rem);
   }
 }
 
