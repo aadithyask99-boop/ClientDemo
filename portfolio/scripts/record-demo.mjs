@@ -8,6 +8,8 @@
 //   --scroll   pixels to scroll through the page (default 4200, capped at the page's height)
 //   --gate     text on an "enter" button to click once the loader is done (default: none)
 //   --fps      frames per second (default 60)
+//   --sync-video  for sites whose intro is a <video> (halcyon): video playback runs in real time, not in the paused browser clock, so it would be
+//              over before the first frame; this holds each video and sets its position every frame, so the intro is captured from its first frame
 //
 // Why it is not a screen recording: a recorder can only keep up with what the machine can draw in real time (about 15 to 25 frames a second here, fewer for
 // 3D sites), so the result stutters whatever the setting. Instead the browser's clock is paused and stepped by 1/60 s, one rendered frame at a time
@@ -30,6 +32,7 @@ const startAt = Number(opt('start', 6));
 const scrollPx = Number(opt('scroll', 4200));
 const gate = opt('gate', '');
 const fps = Number(opt('fps', 60));
+const syncVideo = args.includes('--sync-video');
 
 const out = resolve(import.meta.dirname, '../public/work');
 const raw = `/tmp/record-${slug}`;
@@ -46,6 +49,31 @@ const page = await ctx.newPage();
 const cdp = await ctx.newCDPSession(page);
 await cdp.send('HeadlessExperimental.enable');
 await cdp.send('Emulation.setVirtualTimePolicy', { policy: 'pause' });
+if (syncVideo) {
+  await cdp.send('Page.addScriptToEvaluateOnNewDocument', {
+    source: `(() => {
+      const vids = new Map();
+      const play = HTMLMediaElement.prototype.play;
+      HTMLMediaElement.prototype.play = function () {
+        if (!vids.has(this)) vids.set(this, { start: window.__vf || 0, ended: false });
+        const p = play.call(this);
+        Promise.resolve(p).then(() => this.pause(), () => {});
+        return p;
+      };
+      // position every held video at (frames since its play() was called) / fps. Counted in frames because performance.now() follows the real clock,
+      // not the paused one. No timers here either: the page clock is paused while this runs.
+      window.__syncVideos = (frame, fps) => (window.__vf = frame, Promise.all([...vids].map(([v, st]) => new Promise((resolve) => {
+        const target = Math.min((frame - st.start) / fps, v.duration || 0);
+        if (!isFinite(target) || !v.duration) return resolve();
+        if (!v.paused) v.pause();
+        if (target >= v.duration && !st.ended) { st.ended = true; v.currentTime = v.duration; v.dispatchEvent(new Event('ended')); return resolve(); }
+        if (Math.abs(v.currentTime - target) < 0.002) return resolve();
+        v.addEventListener('seeked', () => resolve(), { once: true });
+        v.currentTime = target;
+      }))));
+    })();`,
+  });
+}
 page.goto(url, { waitUntil: 'commit' }).catch(() => {});
 
 const dt = 1000 / fps;
@@ -66,6 +94,10 @@ const step = async () => {
   // normally the clock waits for the page's network requests; if one never finishes (a hung request), carry on without waiting for it
   await budget('pauseIfNetworkFetchesPending').catch(() => budget('advance'));
   phase = 'draw';
+  if (syncVideo) {
+    phase = 'video';
+    await Promise.race([cdp.send('Runtime.evaluate', { expression: `window.__syncVideos && window.__syncVideos(${frame}, ${fps})`, awaitPromise: true }), new Promise((r) => setTimeout(r, 5000))]).catch(() => {});
+  }
   // a heavy frame (a 3D scene compiling its shaders in software, say) can take minutes; there is no use asking for it again while it is pending
   const r = await Promise.race([cdp.send('HeadlessExperimental.beginFrame', { interval: dt, screenshot: { format: 'jpeg', quality: 88 } }), new Promise((_, no) => setTimeout(() => no(new Error('frame took over 10 minutes')), 600000))]);
   // when nothing on screen changed there is no new picture: repeat the last one, so the numbering has no gaps (ffmpeg stops at the first gap)
