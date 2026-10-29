@@ -2662,7 +2662,7 @@ html.pr-open .hdr {
   }
 }
 
-/* ------------------------------------------------------------------ Contact form in the footer: one line at a time, then the send */
+/* ------------------------------------------------------------------ Contact form (lives in the pricing sheet): one line at a time, then the send */
 .cform {
   display: grid;
   gap: 0.2rem;
@@ -2691,7 +2691,7 @@ html.pr-open .hdr {
   padding: 0;
   border: 0;
   background: none;
-  color: color-mix(in srgb, var(--cream) 60%, transparent);
+  color: color-mix(in srgb, var(--cf-fg, var(--cream)) 60%, transparent);
   font: inherit;
   font-size: 1rem;
   cursor: pointer;
@@ -2699,19 +2699,19 @@ html.pr-open .hdr {
 }
 .cform__nav button:hover,
 .cform__nav button:focus-visible {
-  color: var(--accent);
+  color: var(--cf-accent, var(--accent));
 }
 .cform__nav [data-next] {
-  color: var(--cream);
+  color: var(--cf-fg, var(--cream));
 }
 .cform__f {
   width: 100%;
   padding: 0.5rem 0 0.7rem;
   border: 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--cream) 22%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--cf-fg, var(--cream)) 22%, transparent);
   border-radius: 0;
   background: none;
-  color: var(--cream);
+  color: var(--cf-fg, var(--cream));
   font: inherit;
   font-size: clamp(1.5rem, 0.9rem + 2.2vw, 2.6rem);
   font-weight: 600;
@@ -2724,11 +2724,11 @@ html.pr-open .hdr {
   transition: border-color 0.3s;
 }
 .cform__f::placeholder {
-  color: color-mix(in srgb, var(--cream) 42%, transparent);
+  color: color-mix(in srgb, var(--cf-fg, var(--cream)) 42%, transparent);
   opacity: 1;
 }
 .cform__f:focus {
-  border-bottom-color: var(--accent);
+  border-bottom-color: var(--cf-accent, var(--accent));
 }
 textarea.cform__f {
   min-height: 3.2rem;
@@ -2743,7 +2743,7 @@ textarea.cform__f {
   padding: 0;
   border: 0;
   background: none;
-  color: var(--accent);
+  color: var(--cf-accent, var(--accent));
   font: inherit;
   font-size: clamp(1.8rem, 1rem + 3vw, 3.4rem);
   font-weight: 600;
@@ -2763,5 +2763,99 @@ textarea.cform__f {
   min-height: 1.4rem;
   margin-top: 0.4rem;
   font-size: 0.9375rem;
-  color: color-mix(in srgb, var(--cream) 65%, transparent);
+  color: color-mix(in srgb, var(--cf-fg, var(--cream)) 65%, transparent);
+}
+
+/* in the cream sheet the form is ink on cream, left aligned with the text above it */
+.pr .cform {
+  --cf-fg: #0b0b0b;
+  --cf-accent: var(--accent-ink);
+  width: 100%;
+  margin-top: 0.2rem;
+}
+.pr .cform__f {
+  text-align: left;
+  font-size: clamp(1.4rem, 1rem + 1.4vw, 2.2rem);
+}
+.pr .cform__nav {
+  justify-content: flex-start;
+}
+.pr .cform__send {
+  justify-content: flex-start;
+  font-size: var(--pr-d);
+}
+.pr .cform__nav [data-next] {
+  color: #0b0b0b;
+}
+
+/* ------------------------------------------------------------------ Pricing sheet extras: icon, what happens next, badge, rolling line */
+.pr__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+.pr__icon {
+  --px: 7px;
+  flex: none;
+  margin-top: 0.4rem;
+}
+.pr__flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.5rem;
+  font-size: var(--pr-b);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.pr__flow i {
+  font-style: normal;
+  color: var(--accent-ink);
+}
+.pr__roll {
+  display: grid;
+  overflow: hidden;
+  font-size: var(--pr-b);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--accent-ink);
+}
+.pr__roll-w {
+  grid-area: 1 / 1;
+}
+.pr__roll-w:not(:first-child) {
+  opacity: 0;
+}
+html:not(.js) .pr__roll-w:not(:first-child) {
+  display: none;
+}
+.pr__priceline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem 1.4rem;
+}
+.pr__badge {
+  padding: 0.35rem 0.7rem;
+  border: 2px solid var(--accent-ink);
+  border-radius: 0.4rem;
+  color: var(--accent-ink);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  rotate: -4deg;
+}
+@media (max-width: 699px) {
+  .pr__icon {
+    --px: 5px;
+  }
+  .pr__flow {
+    gap: 0.2rem 0.3rem;
+    font-size: 0.9rem;
+    letter-spacing: -0.03em;
+  }
 }

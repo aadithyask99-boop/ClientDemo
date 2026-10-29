@@ -1,11 +1,14 @@
 ---
 import { site } from '../data/site';
+import Pixel from './Pixel.astro';
 /* The pricing sheet: opens from "Pricing" in the menu and from the footer (scripts/pricing.ts). It follows the reference: a flat cream sheet that rises over 80% of
-   the screen (the top fifth stays showing), a big headline, one package in a row (name, what it is, price, two little looping clips) and a way to start.
-   No boxes, no lines, no labels, no numbers. Click the big price for a small surprise. */
+   the screen (the top fifth stays showing), a big headline with a little pixel icon, one package in a row (name, what it is, price, two little looping clips),
+   what happens next, a way to start, and the contact form (one line at a time; scripts/finale.ts runs it). No boxes, no lines, no labels, no numbers. Click the big price for a small surprise. */
 const ticks = Array.from({ length: 60 }, (_, i) => i);
 const arrow = 'M110 47.42 66.064 95 54.92 83.702l26.108-27.848H0V38.987h81.028L54.92 11.139 66.064 0z';
 const pages = ['Home', 'About us', 'Services', 'Contact us', 'Blog'];
+const roll = ['Home that grabs', 'About that builds trust', 'Services that sell', 'Contact that gets replies', 'Blog that gets found'];
+const flow = ['Chat', 'Homepage', 'You approve', 'I build', 'Live'];
 ---
 
 <div class="pr" data-pricing hidden>
@@ -14,17 +17,25 @@ const pages = ['Home', 'About us', 'Services', 'Contact us', 'Blog'];
     <button class="pr__x" type="button" data-pricing-close>Close</button>
 
     <div class="pr__body">
-      <h2 class="pr__title" id="pr-title" data-pr-in>Fair pricing. Your homepage first, payment second.</h2>
+      <div class="pr__head" data-pr-in>
+        <h2 class="pr__title" id="pr-title">Fair pricing. Your homepage first, payment second.</h2>
+        <Pixel class="pr__icon" pattern="window" />
+      </div>
 
       <div class="pr__row" data-pr-in>
         <p class="pr__name">Five-page website</p>
         <div class="pr__info">
           <p class="pr__text">Bespoke and fully animated, with the SEO fundamentals done. {pages.join(', ').replace(/, ([^,]+)$/, ' and $1')}. Ready to go live.</p>
-          <button class="pr__price" type="button" data-pricing-price>
-            <span class="pr__amount">£1,299</span>
-            <span class="pr__stamp" aria-hidden="true">£0 today<br /><small>pay when you love it</small></span>
-          </button>
+          <p class="pr__roll" data-pricing-roll aria-label="What each page does">{roll.map((w) => <span class="pr__roll-w">{w}</span>)}</p>
+          <div class="pr__priceline">
+            <button class="pr__price" type="button" data-pricing-price>
+              <span class="pr__amount">£1,299</span>
+              <span class="pr__stamp" aria-hidden="true">£0 today<br /><small>pay when you love it</small></span>
+            </button>
+            <span class="pr__badge">Pay when you have seen<br />the homepage and love it</span>
+          </div>
           <p class="pr__text">I design your homepage first. You only pay once you love it, then I build the rest.</p>
+          <p class="pr__flow" aria-label="What happens next">{flow.map((w, i) => <><span>{w}</span>{i < flow.length - 1 && <i aria-hidden="true">→</i>}</>)}</p>
         </div>
         <div class="pr__clips" aria-hidden="true">
           <span class="pr__clip" data-pricing-clip="0"></span>
@@ -41,16 +52,24 @@ const pages = ['Home', 'About us', 'Services', 'Contact us', 'Blog'];
         </button>
       </div>
 
-      <!-- contact, as in the reference: how to reach me, the email, the other places to find me, and a live clock in my time zone -->
-      <div class="pr__row pr__contact" data-pr-in>
+      <!-- contact: the form (one line at a time), the other places to find me, and a live clock in my time zone -->
+      <div class="pr__row pr__contact" data-pr-in data-pricing-contact>
         <span></span>
         <div class="pr__info">
-          <p class="pr__text">The easiest way to reach me is directly. You can also find me across different social channels.</p>
+          <p class="pr__text">Tell me a little about your business and I will start on your homepage.</p>
           {
-            site.email ? (
-              <button class="pr__mail" type="button" data-copy={site.email}><span class="connect__mail-text">{site.email}</span> <span class="connect__mail-hint" data-copy-hint>Click to copy</span></button>
-            ) : (
-              <p class="pr__mail pr__mail--soon">Your email address goes here.</p>
+            site.email && (
+              <form class="cform" data-contact-form data-to={site.email} novalidate>
+                <div class="cform__step"><input class="cform__f" name="name" type="text" placeholder="Your name" aria-label="Your name" autocomplete="name" enterkeyhint="next" required /></div>
+                <div class="cform__step"><input class="cform__f" name="company" type="text" placeholder="Company (optional)" aria-label="Company, optional" autocomplete="organization" enterkeyhint="next" /></div>
+                <div class="cform__step"><input class="cform__f" name="email" type="email" placeholder="Your email" aria-label="Your email" autocomplete="email" enterkeyhint="next" required /></div>
+                <div class="cform__step">
+                  <textarea class="cform__f" name="message" rows="1" placeholder="What are you after?" aria-label="Your message" required />
+                  <button class="cform__send" type="submit">Send message <svg viewBox="0 0 110 95" aria-hidden="true"><path fill="currentColor" d="M110 47.42 66.064 95 54.92 83.702l26.108-27.848H0V38.987h81.028L54.92 11.139 66.064 0z" /></svg></button>
+                </div>
+                <p class="cform__nav" data-form-nav hidden><button type="button" data-back>Back</button><button type="button" data-next>Next</button></p>
+                <p class="cform__note" role="status" aria-live="polite" data-form-note></p>
+              </form>
             )
           }
           {site.socials.length > 0 && <ul class="pr__chan">{site.socials.map((s) => <li><a href={s.href} target="_blank" rel="noopener me">{s.label}</a></li>)}</ul>}

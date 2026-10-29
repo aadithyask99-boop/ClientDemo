@@ -12,7 +12,7 @@ export interface Pixel {
 }
 
 /* A 7x7 grid of squares that scatters and reforms as a different shape. Only transform and opacity move, so it never shifts the layout. */
-export function initPixel(el: HTMLElement): Pixel {
+export function initPixel(el: HTMLElement, order: PatternName[] = ORDER): Pixel {
   const cells = [...el.children] as HTMLElement[];
   const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#ff5a1f';
   const ink = '#0a0a0a';
@@ -23,8 +23,8 @@ export function initPixel(el: HTMLElement): Pixel {
 
   function morph(to?: PatternName, fast = false) {
     if (reduced) return;
-    idx = to ? ORDER.indexOf(to) : (idx + 1) % ORDER.length;
-    const on = bits(ORDER[idx]);
+    idx = to ? order.indexOf(to) : (idx + 1) % order.length;
+    const on = bits(order[idx]);
     const s = cells[0].getBoundingClientRect().width || 8;
     const k = fast ? 0.6 : 1;
     const r = gsap.utils.random;

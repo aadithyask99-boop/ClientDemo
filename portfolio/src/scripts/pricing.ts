@@ -1,5 +1,6 @@
 import { gsap } from 'gsap';
 import { q, qa, reduced, fine, lockScroll, markFound } from './util';
+import { initPixel } from './pixel';
 
 /* The pricing sheet. Loaded the first time "Pricing" is pressed (menu or footer).
    - Two little clips from the Work section play inside it.
@@ -47,6 +48,31 @@ const tickClock = () => {
   if (digital) digital.textContent = `${String(h).padStart(2, '0')}:${String(p.minute).padStart(2, '0')}`;
 };
 const runClock = (on: boolean) => { window.clearInterval(clock); if (on) { tickClock(); clock = window.setInterval(tickClock, 1000); } };
+/* the little icon beside the headline: a page being designed, the home page, the tick of approval; it changes shape while the sheet is open */
+const iconEl = q('.pr__icon', root);
+const icon = iconEl ? initPixel(iconEl, ['window', 'house', 'check']) : null;
+
+/* the rolling line under the description: what each of the five pages does */
+const rollWords = qa('.pr__roll-w', root);
+let rollAt = 0;
+let rollTimer = 0;
+if (rollWords.length > 1 && !reduced) gsap.set(rollWords.slice(1), { yPercent: 110 });
+const roll = () => {
+  const out = rollWords[rollAt];
+  rollAt = (rollAt + 1) % rollWords.length;
+  const next = rollWords[rollAt];
+  gsap.fromTo(next, { yPercent: 110, opacity: 1 }, { yPercent: 0, duration: 0.55, ease: 'power3.out', overwrite: true });
+  gsap.to(out, { yPercent: -110, duration: 0.55, ease: 'power3.out', overwrite: true, onComplete: () => { gsap.set(out, { opacity: 0 }); } });
+};
+const runDecor = (on: boolean) => {
+  window.clearInterval(rollTimer);
+  icon?.stop();
+  if (on && !reduced) {
+    icon?.start(2800);
+    if (rollWords.length > 1) rollTimer = window.setInterval(roll, 2300);
+  }
+};
+
 const playClips = (on: boolean) => clips.forEach((v) => {
   if (!on || reduced) { v.pause(); return; }
   if (!v.getAttribute('src') && v.dataset.src) { v.src = v.dataset.src; v.load(); }
@@ -81,6 +107,7 @@ export function open(from?: HTMLElement | null) {
   document.addEventListener('keydown', onKey);
   playClips(true);
   runClock(true);
+  runDecor(true);
   const w = q('.next__word', sheet);
   if (w) q('.pr__go', sheet)?.style.setProperty('--w', `${w.offsetWidth}px`);
   sheet.focus({ preventScroll: true });
@@ -91,7 +118,7 @@ export function close(after?: () => void) {
   document.removeEventListener('keydown', onKey);
   lockScroll(false);
   html.classList.remove('pr-open');
-  const done = () => { root.hidden = true; playClips(false); runClock(false); after?.(); };
+  const done = () => { root.hidden = true; playClips(false); runClock(false); runDecor(false); after?.(); };
   if (reduced) done();
   else {
     gsap.to(sheet, { yPercent: 100, duration: 0.55, ease: 'power3.in', overwrite: true, onComplete: done });
@@ -102,12 +129,14 @@ export function close(after?: () => void) {
 
 qa('[data-pricing-close]', root).forEach((el) => el.addEventListener('click', () => close()));
 
-// "Start with my homepage": roll the sheet away and take them to the contact section
+// "Start your website today": the sheet scrolls down to the contact form and the first line is ready to type in
 q('[data-pricing-go]', root)?.addEventListener('click', () => {
-  close(() => {
-    const c = q('#connect');
-    if (c) window.dispatchEvent(new CustomEvent('aadi:scrollto', { detail: { y: c.getBoundingClientRect().top + window.scrollY, duration: 1.8 } }));
-  });
+  const body = q('.pr__body', root);
+  const c = q('[data-pricing-contact]', root);
+  if (!body || !c) return;
+  const top = c.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop - 24;
+  body.scrollTo({ top, behavior: reduced ? 'auto' : 'smooth' });
+  window.setTimeout(() => q<HTMLInputElement>('.cform__f', c)?.focus({ preventScroll: true }), reduced ? 0 : 700);
 });
 
 // the egg
