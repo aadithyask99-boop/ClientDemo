@@ -135,18 +135,43 @@ export function initFinale() {
     window.setInterval(() => { if (inView && !document.hidden && performance.now() - lastPress > 6000) advance(); }, 4200);
   }
 
-  /* ----- the contact form: there is no server, so sending opens the visitor's email app with everything filled in ----- */
+  /* ----- the contact form: one line at a time, and there is no server, so sending opens the visitor's email app with everything filled in ----- */
   const form = q<HTMLFormElement>('[data-contact-form]');
   if (form) {
     const note = q('[data-form-note]', form);
+    const steps = qa('.cform__step', form);
     const area = q<HTMLTextAreaElement>('textarea', form);
+    const field = (i: number) => q<HTMLInputElement | HTMLTextAreaElement>('.cform__f', steps[i]);
     const grow = () => { if (area) { area.style.height = 'auto'; area.style.height = `${area.scrollHeight}px`; } };
     area?.addEventListener('input', grow);
+    if (js) steps.slice(1).forEach((s) => { s.hidden = true; });
+    const reveal = (i: number, focus = false) => {
+      const s = steps[i];
+      if (!s) return;
+      if (s.hidden) {
+        s.hidden = false;
+        if (!reduced) gsap.fromTo(s, { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out', clearProps: 'transform,opacity' });
+      }
+      if (focus) field(i)?.focus();
+    };
+    // a line is done when it is filled in (Enter, or moving away from it); an optional line can be left empty and passed with Enter
+    steps.slice(0, 4).forEach((_, i) => {
+      const f = field(i)!;
+      const done = () => f.value.trim() !== '' && f.checkValidity();
+      f.addEventListener('keydown', (e) => {
+        if ((e as KeyboardEvent).key !== 'Enter' || f === area) return;
+        e.preventDefault();
+        if (!f.required || done()) { if (note) note.textContent = ''; reveal(i + 1, true); }
+        else if (note) note.textContent = f.type === 'email' ? 'That email does not look right yet.' : 'Please fill this in first.';
+      });
+      f.addEventListener('blur', () => { if (f !== area && done()) reveal(i + 1); });
+      if (f === area) f.addEventListener('input', () => { if (done()) reveal(i + 1); });
+    });
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const d = new FormData(form);
       const bad = qa<HTMLInputElement>('[required]', form).find((f) => !f.checkValidity());
-      if (bad) { bad.focus(); if (note) note.textContent = 'Please fill in the fields marked with a star.'; return; }
+      if (bad) { const i = steps.findIndex((s) => s.contains(bad)); reveal(i, true); if (note) note.textContent = 'Please fill in the lines marked above.'; return; }
       const val = (k: string) => String(d.get(k) ?? '').trim();
       const body = [`Name: ${val('name')}`, ...(val('company') ? [`Company: ${val('company')}`] : []), `Email: ${val('email')}`, '', val('message')].join('\n');
       window.location.href = `mailto:${form.dataset.to}?subject=${encodeURIComponent(`Website enquiry from ${val('name')}`)}&body=${encodeURIComponent(body)}`;

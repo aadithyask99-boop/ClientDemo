@@ -2348,6 +2348,9 @@ html:not(.js) .slot__w:not(:first-child) {
   cursor: pointer;
 }
 .pr {
+  /* one type scale for the whole sheet: the headline, the price and the call to action share one display size; everything else shares one body size */
+  --pr-d: clamp(2rem, 1rem + 3.4vw, 4rem);
+  --pr-b: 1.0625rem;
   position: fixed;
   inset: 0;
   z-index: 40; /* under the header (50), so the top fifth keeps its nav */
@@ -2408,7 +2411,8 @@ html.pr-open .hdr {
 }
 .pr__title {
   max-width: 22ch;
-  font-size: clamp(1.9rem, 1rem + 2.6vw, 3.4rem);
+  margin-left: -0.04em; /* the big letters' own side gap removed, so the edge lines up with the clips and the rest */
+  font-size: var(--pr-d);
   font-weight: 600;
   letter-spacing: -0.055em;
   line-height: 1;
@@ -2427,7 +2431,7 @@ html.pr-open .hdr {
   }
 }
 .pr__name {
-  font-size: 1.125rem;
+  font-size: var(--pr-b);
   font-weight: 600;
   letter-spacing: -0.03em;
 }
@@ -2438,7 +2442,7 @@ html.pr-open .hdr {
 }
 .pr__text {
   max-width: 28rem;
-  font-size: 1.0625rem;
+  font-size: var(--pr-b);
   font-weight: 500;
   line-height: 1.35;
   letter-spacing: -0.02em;
@@ -2455,7 +2459,8 @@ html.pr-open .hdr {
 }
 .pr__amount {
   display: block;
-  font-size: clamp(3rem, 2rem + 4vw, 5.5rem);
+  margin-left: -0.04em;
+  font-size: var(--pr-d);
   font-weight: 600;
   letter-spacing: -0.06em;
   line-height: 0.9;
@@ -2520,7 +2525,8 @@ html.pr-open .hdr {
   border: 0;
   background: none;
   font: inherit;
-  font-size: clamp(2.2rem, 1rem + 6vw, 6rem);
+  margin-left: -0.04em;
+  font-size: var(--pr-d);
   font-weight: 600;
   line-height: 0.95;
   letter-spacing: -0.065em;
@@ -2538,7 +2544,7 @@ html.pr-open .hdr {
   border: 0;
   background: none;
   color: rgb(11 11 11 / 0.55);
-  font-size: 1.0625rem;
+  font-size: var(--pr-b);
   font-weight: 500;
   letter-spacing: -0.02em;
   text-align: left;
@@ -2553,7 +2559,7 @@ html.pr-open .hdr {
 }
 .pr__chan a {
   color: rgb(11 11 11 / 0.55);
-  font-size: 1.0625rem;
+  font-size: var(--pr-b);
   font-weight: 500;
   letter-spacing: -0.02em;
   transition: color 0.25s;
@@ -2604,12 +2610,13 @@ html.pr-open .hdr {
 
 /* the pricing sheet on a phone: the same content, tighter, one left edge */
 @media (max-width: 699px) {
+  .pr {
+    --pr-d: 2.2rem;
+    --pr-b: 1rem;
+  }
   .pr__body {
     padding-top: 3.2rem;
     padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
-  }
-  .pr__title {
-    font-size: 1.9rem;
   }
   .pr__row {
     gap: 0.9rem;
@@ -2621,14 +2628,6 @@ html.pr-open .hdr {
   .pr__row > .pr__name {
     margin-bottom: -0.5rem;
   }
-  .pr__text,
-  .pr__mail,
-  .pr__chan a {
-    font-size: 1rem;
-  }
-  .pr__amount {
-    font-size: 3.2rem;
-  }
   .pr__clips {
     gap: 0.5rem;
   }
@@ -2637,9 +2636,6 @@ html.pr-open .hdr {
   }
   .pr__cta {
     margin-top: 1.6rem;
-  }
-  .pr__go {
-    font-size: 2.4rem;
   }
   .pr__contact {
     margin-top: 2.2rem;
@@ -2657,67 +2653,74 @@ html.pr-open .hdr {
   }
 }
 
-/* ------------------------------------------------------------------ Contact form in the footer (after the reference, centred) */
+/* ------------------------------------------------------------------ Contact form in the footer: one line at a time, then the send */
 .cform {
   display: grid;
-  width: min(100%, 40rem);
-  margin-top: 0.5rem;
+  gap: 0.2rem;
+  width: min(100%, 36rem);
+  margin-top: 0.4rem;
+}
+.cform__step[hidden] {
+  display: none;
 }
 .cform__f {
   width: 100%;
-  padding: 0.45rem 0;
+  padding: 0.5rem 0 0.7rem;
   border: 0;
   border-bottom: 1px solid color-mix(in srgb, var(--cream) 22%, transparent);
   border-radius: 0;
   background: none;
   color: var(--cream);
   font: inherit;
-  font-size: clamp(1.5rem, 0.9rem + 2.4vw, 2.8rem);
+  font-size: clamp(1.5rem, 0.9rem + 2.2vw, 2.6rem);
   font-weight: 600;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.055em;
   line-height: 1.1;
   text-align: center;
-  text-transform: uppercase;
   outline: none;
   resize: none;
   overflow: hidden;
   transition: border-color 0.3s;
 }
 .cform__f::placeholder {
-  color: var(--cream);
+  color: color-mix(in srgb, var(--cream) 42%, transparent);
   opacity: 1;
 }
 .cform__f:focus {
   border-bottom-color: var(--accent);
 }
-.cform__f:focus::placeholder {
-  opacity: 0.35;
-}
 textarea.cform__f {
-  min-height: 3.4rem;
+  min-height: 3.2rem;
 }
+/* the send is the same kind of call to action as the others on the site: big words and an arrow, in the orange */
 .cform__send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35em;
   margin-top: 1rem;
-  padding: 0.85rem 1rem;
+  padding: 0;
   border: 0;
-  border-radius: 0.4rem;
-  background: var(--cream);
-  color: #050505;
+  background: none;
+  color: var(--accent);
   font: inherit;
-  font-size: clamp(1.1rem, 0.8rem + 1.2vw, 1.6rem);
+  font-size: clamp(1.8rem, 1rem + 3vw, 3.4rem);
   font-weight: 600;
-  letter-spacing: -0.03em;
-  text-transform: uppercase;
+  letter-spacing: -0.06em;
   cursor: pointer;
-  transition: background-color 0.25s var(--ease-out);
 }
-.cform__send:hover,
-.cform__send:focus-visible {
-  background: var(--accent);
+.cform__send svg {
+  width: 0.72em;
+  height: auto;
+  transition: transform 0.4s var(--ease-out);
+}
+.cform__send:hover svg,
+.cform__send:focus-visible svg {
+  transform: translateX(0.2em);
 }
 .cform__note {
   min-height: 1.4rem;
-  margin-top: 0.7rem;
+  margin-top: 0.4rem;
   font-size: 0.9375rem;
-  color: color-mix(in srgb, var(--cream) 70%, transparent);
+  color: color-mix(in srgb, var(--cream) 65%, transparent);
 }
