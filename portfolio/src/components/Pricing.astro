@@ -3,12 +3,10 @@ import { site } from '../data/site';
 import Pixel from './Pixel.astro';
 /* The pricing sheet: opens from "Pricing" in the menu and from the footer (scripts/pricing.ts). It follows the reference: a flat cream sheet that rises over 80% of
    the screen (the top fifth stays showing), a big headline with a little pixel icon, one package in a row (name, what it is, price, two little looping clips),
-   what happens next, a way to start, and the contact form (one line at a time; scripts/finale.ts runs it). No boxes, no lines, no labels, no numbers. Click the big price for a small surprise. */
+   and the contact form (one line at a time; scripts/finale.ts runs it) beside the same working clock as the header's (sound on or off). No boxes, no lines, no labels, no numbers. */
 const ticks = Array.from({ length: 60 }, (_, i) => i);
-const arrow = 'M110 47.42 66.064 95 54.92 83.702l26.108-27.848H0V38.987h81.028L54.92 11.139 66.064 0z';
 const pages = ['Home', 'About us', 'Services', 'Contact us', 'Blog'];
 const roll = ['Home that grabs', 'About that builds trust', 'Services that sell', 'Contact that gets replies', 'Blog that gets found'];
-const flow = ['Chat', 'Homepage', 'You approve', 'I build', 'Live'];
 ---
 
 <div class="pr" data-pricing hidden>
@@ -27,29 +25,15 @@ const flow = ['Chat', 'Homepage', 'You approve', 'I build', 'Live'];
         <div class="pr__info">
           <p class="pr__text">Bespoke and fully animated, with the SEO fundamentals done. {pages.join(', ').replace(/, ([^,]+)$/, ' and $1')}. Ready to go live.</p>
           <p class="pr__roll" data-pricing-roll aria-label="What each page does">{roll.map((w) => <span class="pr__roll-w">{w}</span>)}</p>
-          <div class="pr__priceline">
-            <button class="pr__price" type="button" data-pricing-price>
-              <span class="pr__amount">£1,299</span>
-              <span class="pr__stamp" aria-hidden="true">£0 today<br /><small>pay when you love it</small></span>
-            </button>
-            <span class="pr__badge">Pay when you have seen<br />the homepage and love it</span>
-          </div>
+          <p class="pr__price"><span class="pr__amount">£1,299</span></p>
           <p class="pr__text">I design your homepage first. You only pay once you love it, then I build the rest.</p>
-          <p class="pr__flow" aria-label="What happens next">{flow.map((w, i) => <><span>{w}</span>{i < flow.length - 1 && <i aria-hidden="true">→</i>}</>)}</p>
         </div>
         <div class="pr__clips" aria-hidden="true">
           <span class="pr__clip" data-pricing-clip="0"></span>
           <span class="pr__clip" data-pricing-clip="1"></span>
+          <span class="pr__clip" data-pricing-clip="2"></span>
+          <span class="pr__clip" data-pricing-clip="3"></span>
         </div>
-      </div>
-
-      <div class="pr__cta" data-pr-in>
-        <!-- the same call to action as the "Start your next website today" section: big words and an arrow that swap places when pointed at -->
-        <button class="next__cta pr__go" type="button" data-pricing-go data-cursor="Let's talk">
-          <span class="pr__go-t">Start your website</span>
-          <span class="next__word">today</span>
-          <span class="next__arrow" aria-hidden="true"><svg viewBox="0 0 110 95"><path fill="currentColor" d={arrow}></path></svg></span>
-        </button>
       </div>
 
       <!-- contact: the form (one line at a time), the other places to find me, and a live clock in my time zone -->
@@ -74,15 +58,17 @@ const flow = ['Chat', 'Homepage', 'You approve', 'I build', 'Live'];
           }
           {site.socials.length > 0 && <ul class="pr__chan">{site.socials.map((s) => <li><a href={s.href} target="_blank" rel="noopener me">{s.label}</a></li>)}</ul>}
         </div>
-        <div class="pr__time">
-          <svg class="pr__dial" viewBox="-100 -100 200 200" data-pricing-dial role="img" aria-label="Analogue clock showing my local time">
-            <circle r="98" class="pr__dial-bg" />
-            {ticks.map((i) => <line class="pr__tick" y1="-90" y2={i % 5 === 0 ? -78 : -84} transform={`rotate(${i * 6})`} />)}
-            <line data-dial="h" class="pr__hand" y1="6" y2="-48" />
-            <line data-dial="m" class="pr__hand" y1="8" y2="-72" />
-            <line data-dial="s" class="pr__hand pr__hand--s" y1="14" y2="-78" />
+        <div class="pr__time" data-pricing-clock>
+          <svg class="clk__face" viewBox="-100 -100 200 200" data-clock-face role="img" aria-label="Analogue clock showing my local time. Drag a hand; it springs back.">
+            <circle r="96" class="clk__ring" />
+            {ticks.map((i) => <line class={i % 5 === 0 ? 'clk__tick clk__tick--5' : 'clk__tick'} y1="-90" y2={i % 5 === 0 ? -80 : -85} transform={`rotate(${i * 6})`} />)}
+            <g data-hand="h" class="clk__hand clk__hand--h"><line y1="6" y2="-48" /></g>
+            <g data-hand="m" class="clk__hand clk__hand--m"><line y1="8" y2="-72" /></g>
+            <g data-hand="s" class="clk__hand clk__hand--s"><line y1="14" y2="-78" /><circle r="4" /></g>
           </svg>
-          <p class="pr__tz">{site.timezone.replace('_', ' ').replace('/', ' / ')}<br /><span data-pricing-digital>--:--</span></p>
+          <p class="clk__digital" data-clock-digital aria-live="off">--:--:--</p>
+          <p class="clk__tz">{site.timezone.replace('_', ' ')}</p>
+          <button class="clk__snd" type="button" data-clock-sound aria-pressed="false">Sound off</button>
         </div>
       </div>
     </div>

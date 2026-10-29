@@ -1583,6 +1583,8 @@ html[data-world='dark'] .cur {
 .clk__card {
   position: relative;
   display: grid;
+  box-sizing: border-box;
+  grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   gap: 0.9rem;
   width: min(100%, 25rem);
@@ -1687,6 +1689,11 @@ html[data-world='dark'] .cur {
 }
 .clk__mail--soon {
   color: hsl(0 0% 100% / 0.6);
+}
+.clk__mail .connect__mail-text {
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
 }
 .clk__mail .connect__mail-hint {
   font-family: var(--font-mono);
@@ -2458,14 +2465,7 @@ html.pr-open .hdr {
   letter-spacing: -0.02em;
 }
 .pr__price {
-  position: relative;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
+  margin: 0;
 }
 .pr__amount {
   display: block;
@@ -2476,43 +2476,15 @@ html.pr-open .hdr {
   line-height: 0.9;
   transition: opacity 0.2s;
 }
-.pr__price.is-stamped .pr__amount {
-  opacity: 0.25;
-}
-.pr__stamp {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  translate: -50% -50%;
-  padding: 0.4rem 0.8rem;
-  border: 3px solid var(--accent-ink);
-  border-radius: 0.5rem;
-  color: var(--accent-ink);
-  font-family: var(--font-mono);
-  font-size: clamp(1rem, 0.8rem + 1vw, 1.6rem);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: 0.04em;
-  text-align: center;
-  text-transform: uppercase;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-}
-.pr__stamp small {
-  font-size: 0.56em;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-}
 .pr__clips {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 0.6rem;
 }
 
 .pr__clip {
   position: relative;
   display: block;
-  flex: 1 1 0;
   aspect-ratio: 16 / 10;
   overflow: hidden;
   border-radius: 0.4rem;
@@ -2525,39 +2497,6 @@ html.pr-open .hdr {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-.pr__cta {
-  margin-top: clamp(2.5rem, 7vh, 4.5rem);
-}
-.pr__go {
-  padding: 0;
-  border: 0;
-  background: none;
-  font: inherit;
-  margin-left: -0.04em;
-  font-size: var(--pr-d);
-  font-weight: 600;
-  line-height: 0.95;
-  letter-spacing: -0.065em;
-  text-align: left;
-  cursor: pointer;
-  flex-wrap: wrap;
-  row-gap: 0.05em;
-}
-.pr__go-t {
-  flex: 0 0 100%;
-  color: #0b0b0b;
-}
-.pr__mail {
-  padding: 0;
-  border: 0;
-  background: none;
-  color: rgb(11 11 11 / 0.55);
-  font-size: var(--pr-b);
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  text-align: left;
-  cursor: pointer;
 }
 .pr__contact {
   margin-top: clamp(3rem, 10vh, 6rem);
@@ -2579,42 +2518,38 @@ html.pr-open .hdr {
 }
 .pr__time {
   display: grid;
-  gap: 0.6rem;
-  justify-items: center;
+  gap: 0.5rem;
+  justify-items: start; /* everything in the clock block starts on the clips' left edge */
+  width: 11rem;
+}
+.pr .clk__face {
   width: 9rem;
+  height: 9rem;
 }
 @media (min-width: 900px) {
   .pr__time {
     justify-self: start; /* the clock stands under the clips, on the same left edge; the clips run to the right margin, which is as wide as the left one */
   }
 }
-.pr__dial {
-  width: 100%;
-}
-.pr__dial-bg {
+
+/* the clock in the sheet is the header panel's clock, ink on cream: a dark dial, dark readouts */
+.pr .clk__ring {
   fill: #0b0b0b;
+  stroke: none;
 }
-.pr__tick {
-  stroke: hsl(39 50% 95%);
-  stroke-width: 2;
+.pr .clk__digital {
+  font-size: 1.1rem;
 }
-.pr__hand {
-  stroke: hsl(39 50% 95%);
-  stroke-width: 4;
-  stroke-linecap: round;
-}
-.pr__hand--s {
-  stroke: var(--accent);
-  stroke-width: 2;
-}
-.pr__tz {
-  font-family: var(--font-mono);
-  font-size: 0.625rem;
-  line-height: 1.5;
-  letter-spacing: 0.06em;
-  text-align: center;
-  text-transform: uppercase;
+.pr .clk__tz {
+  margin-top: 0;
   color: rgb(11 11 11 / 0.5);
+}
+.pr .clk__snd {
+  background: rgb(11 11 11 / 0.08);
+  color: #0b0b0b;
+}
+.pr .clk__snd[aria-pressed='true'] {
+  background: var(--accent);
 }
 
 /* the pricing sheet on a phone: the same content, tighter, one left edge */
@@ -2640,12 +2575,6 @@ html.pr-open .hdr {
   .pr__clips {
     gap: 0.5rem;
   }
-  .pr__clip {
-    flex: 1 1 0;
-  }
-  .pr__cta {
-    margin-top: 1.6rem;
-  }
   .pr__contact {
     margin-top: 2.2rem;
     gap: 1.2rem;
@@ -2654,11 +2583,7 @@ html.pr-open .hdr {
     display: none; /* the empty first column of the wide layout */
   }
   .pr__time {
-    width: 6.5rem;
-    justify-items: start;
-  }
-  .pr__tz {
-    text-align: left;
+    width: 9.5rem;
   }
 }
 
@@ -2800,19 +2725,6 @@ textarea.cform__f {
   flex: none;
   margin-top: 0.4rem;
 }
-.pr__flow {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.2rem 0.5rem;
-  font-size: var(--pr-b);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-.pr__flow i {
-  font-style: normal;
-  color: var(--accent-ink);
-}
 .pr__roll {
   display: grid;
   overflow: hidden;
@@ -2830,32 +2742,8 @@ textarea.cform__f {
 html:not(.js) .pr__roll-w:not(:first-child) {
   display: none;
 }
-.pr__priceline {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.8rem 1.4rem;
-}
-.pr__badge {
-  padding: 0.35rem 0.7rem;
-  border: 2px solid var(--accent-ink);
-  border-radius: 0.4rem;
-  color: var(--accent-ink);
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  font-weight: 600;
-  line-height: 1.35;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  rotate: -4deg;
-}
 @media (max-width: 699px) {
   .pr__icon {
     --px: 5px;
-  }
-  .pr__flow {
-    gap: 0.2rem 0.3rem;
-    font-size: 0.9rem;
-    letter-spacing: -0.03em;
   }
 }
