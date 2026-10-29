@@ -70,9 +70,9 @@ const step = async () => {
   frame++;
 };
 const evaluate = async (expression) => (await cdp.send('Runtime.evaluate', { expression, returnByValue: true })).result.value;
-// Input events are only answered when the next frame is produced (the compositor is under our control), so each is sent, a frame is stepped, then it is awaited
+// Input events are only answered when a later frame is produced (the compositor is under our control), so they are sent and not awaited, and the next steps flush them
 const input = (ev) => cdp.send('Input.dispatchMouseEvent', ev);
-const withFrame = async (...events) => { const sent = events.map(input); await step(); phase = 'input'; await Promise.all(sent); };
+const withFrame = async (...events) => { events.forEach((ev) => input(ev).catch(() => {})); await step(); }; // not awaited: the reply can only come with a later frame
 const wheel = (deltaY) => withFrame({ type: 'mouseWheel', x: W / 2, y: H / 2, deltaX: 0, deltaY });
 const click = async (x, y) => {
   await withFrame({ type: 'mouseMoved', x, y });
