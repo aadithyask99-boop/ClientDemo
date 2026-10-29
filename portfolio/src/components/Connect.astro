@@ -1,6 +1,7 @@
 ---
 import { site, projects } from '../data/site';
 import Pixel from './Pixel.astro';
+import Credit from './Credit.astro';
 const year = new Date().getFullYear();
 const sitemap = [
   ['Work', '#work'],
@@ -46,6 +47,6 @@ const sitemap = [
 
   <footer class="connect__foot">
     <p>©{year} {site.owner}</p>
-    <p class="connect__craft">Crafted by {site.short} <Pixel class="pixel--mini" /></p>
+    <p class="connect__craft"><Credit text={`Crafted by ${site.short}`} /> <Pixel class="pixel--mini" /></p>
   </footer>
 </section>

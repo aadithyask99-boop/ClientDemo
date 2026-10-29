@@ -1,0 +1,16 @@
+---
+import { portraitFile } from '../data/portrait';
+import PixelFace from './PixelFace.astro';
+/* A line of text with the hero name line's hover: a little pixel face pops up and follows the pointer, and the letters under the cursor come alive
+   (scripts/hero.ts, initCredits). Used for "Crafted by Aadi" in the footer and in the pricing sheet. */
+interface Props { text: string; class?: string }
+const { text, class: cls = '' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<span class:list={['mm', cls]} data-mm>
+  <span class="mm__av" data-mm-av aria-hidden="true">
+    {portraitFile ? <canvas class="mm__face" data-face-src={`${base}/${portraitFile}`} width="88" height="88" /> : <PixelFace class="mm__face" from={2} to={22} />}
+  </span>
+  <span class="mm__text" data-mm-text>{text}</span>
+</span>

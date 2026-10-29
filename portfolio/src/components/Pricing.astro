@@ -1,11 +1,18 @@
 ---
 import { site } from '../data/site';
 import Pixel from './Pixel.astro';
+import Credit from './Credit.astro';
 /* The pricing sheet: opens from "Pricing" in the menu and from the footer (scripts/pricing.ts). It follows the reference: a flat cream sheet that rises over 80% of
    the screen (the top fifth stays showing), a big headline with a little pixel icon, one package in a row (name, what it is, price, two little looping clips),
-   and the contact form (one line at a time; scripts/finale.ts runs it) beside the same working clock as the header's (sound on or off). No boxes, no lines, no labels, no numbers. */
-const ticks = Array.from({ length: 60 }, (_, i) => i);
+   five answers as in the reference (press a question to open it), the contact form (one line at a time; scripts/finale.ts runs it) and "Crafted by" along the bottom. No boxes, no lines, no labels, no numbers. */
 const pages = ['Home', 'About us', 'Services', 'Contact us', 'Blog'];
+const faq = [
+  ['Do I pay before I see my homepage?', 'No. I design your homepage first and you only pay once you are happy with it. Then I build the rest.'],
+  ['What is in the five pages?', 'Home, About us, Services, Contact us and a Blog, all bespoke, fully animated and built with the SEO fundamentals, ready to go live.'],
+  ['What if I need more than five pages?', 'Tell me what you need and I will quote for it. The five-page website is the starting point, not a limit.'],
+  ['Will people find it on Google?', 'Every site is built with the SEO fundamentals in from the start: clear structure, page titles and descriptions, a sitemap and fast loading on phones.'],
+  ['How do we get started?', 'Tell me a little about your business using the form below and I will start on your homepage.'],
+]
 const roll = ['Home that grabs', 'About that builds trust', 'Services that sell', 'Contact that gets replies', 'Blog that gets found'];
 ---
 
@@ -36,7 +43,18 @@ const roll = ['Home that grabs', 'About that builds trust', 'Services that sell'
         </div>
       </div>
 
-      <!-- contact: the form (one line at a time), the other places to find me, and a live clock in my time zone -->
+      <div class="pr__faq" data-pr-in>
+        {
+          faq.map(([q, a]) => (
+            <details>
+              <summary><span class="pr__q">{q}</span><span class="pr__open" aria-hidden="true"></span></summary>
+              <p>{a}</p>
+            </details>
+          ))
+        }
+      </div>
+
+      <!-- contact: the form (one line at a time) and the other places to find me -->
       <div class="pr__row pr__contact" data-pr-in data-pricing-contact>
         <span></span>
         <div class="pr__info">
@@ -58,19 +76,8 @@ const roll = ['Home that grabs', 'About that builds trust', 'Services that sell'
           }
           {site.socials.length > 0 && <ul class="pr__chan">{site.socials.map((s) => <li><a href={s.href} target="_blank" rel="noopener me">{s.label}</a></li>)}</ul>}
         </div>
-        <div class="pr__time" data-pricing-clock>
-          <svg class="clk__face" viewBox="-100 -100 200 200" data-clock-face role="img" aria-label="Analogue clock showing my local time. Drag a hand; it springs back.">
-            <circle r="96" class="clk__ring" />
-            {ticks.map((i) => <line class={i % 5 === 0 ? 'clk__tick clk__tick--5' : 'clk__tick'} y1="-90" y2={i % 5 === 0 ? -80 : -85} transform={`rotate(${i * 6})`} />)}
-            <g data-hand="h" class="clk__hand clk__hand--h"><line y1="6" y2="-48" /></g>
-            <g data-hand="m" class="clk__hand clk__hand--m"><line y1="8" y2="-72" /></g>
-            <g data-hand="s" class="clk__hand clk__hand--s"><line y1="14" y2="-78" /><circle r="4" /></g>
-          </svg>
-          <p class="clk__digital" data-clock-digital aria-live="off">--:--:--</p>
-          <p class="clk__tz">{site.timezone.replace('_', ' ')}</p>
-          <button class="clk__snd" type="button" data-clock-sound aria-pressed="false">Sound off</button>
-        </div>
       </div>
     </div>
+    <p class="pr__craft"><Credit text={`Crafted by ${site.short}`} /> <Pixel class="pixel--mini" /></p>
   </div>
 </div>

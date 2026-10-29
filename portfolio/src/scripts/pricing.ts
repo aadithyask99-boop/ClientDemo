@@ -6,7 +6,7 @@ import { initPixel } from './pixel';
    - Two little clips from the Work section play inside it.
    - It rises over the bottom 80% of the screen; the page behind is dimmed and the top fifth stays showing. Escape, the Close button or a press on the dimmed
      part rolls it back down. The page does not scroll while it is open; the sheet scrolls inside.
-   - The clock in the sheet is the header's clock again: drag the hands, and sound can be turned on and off. */
+   - Five questions open and close like the reference's; "Crafted by Aadi" runs along the bottom with the same hover as the hero's name line. */
 const root = q('[data-pricing]')!;
 const sheet = q('.pr__sheet', root)!;
 const veil = q('.pr__veil', root)!;
@@ -31,22 +31,11 @@ const clips = qa('[data-pricing-clip]', root).map((slot) => {
   slot.append(img, v);
   return v;
 }).filter((v): v is HTMLVideoElement => !!v);
-/* the clock: the same working clock as the header's panel (drag the hands, sound on or off), mounted the first time the sheet opens */
-const clockEl = q('[data-pricing-clock]', root);
-let clock: { start(): void; stop(): void } | null = null;
-const runClock = (on: boolean) => {
-  if (!clockEl) return;
-  if (!clock) {
-    if (!on) return;
-    void import('./clock-panel').then((m) => { clock = m.mountClock(clockEl); if (!root.hidden) clock.start(); });
-    return;
-  }
-  if (on) clock.start(); else clock.stop();
-};
-
 /* the little icon beside the headline: a page being designed, the home page, the tick of approval; it changes shape while the sheet is open */
 const iconEl = q('.pr__icon', root);
 const icon = iconEl ? initPixel(iconEl, ['window', 'house', 'check']) : null;
+const miniEl = q('.pixel--mini', root);
+const mini = miniEl ? initPixel(miniEl) : null;
 
 /* the rolling line under the description: what each of the five pages does */
 const rollWords = qa('.pr__roll-w', root);
@@ -63,8 +52,10 @@ const roll = () => {
 const runDecor = (on: boolean) => {
   window.clearInterval(rollTimer);
   icon?.stop();
+  mini?.stop();
   if (on && !reduced) {
     icon?.start(2800);
+    mini?.start(2600);
     if (rollWords.length > 1) rollTimer = window.setInterval(roll, 2300);
   }
 };
@@ -102,7 +93,6 @@ export function open(from?: HTMLElement | null) {
   }
   document.addEventListener('keydown', onKey);
   playClips(true);
-  runClock(true);
   runDecor(true);
   sheet.focus({ preventScroll: true });
 }
@@ -112,7 +102,7 @@ export function close(after?: () => void) {
   document.removeEventListener('keydown', onKey);
   lockScroll(false);
   html.classList.remove('pr-open');
-  const done = () => { root.hidden = true; playClips(false); runClock(false); runDecor(false); after?.(); };
+  const done = () => { root.hidden = true; playClips(false); runDecor(false); after?.(); };
   if (reduced) done();
   else {
     gsap.to(sheet, { yPercent: 100, duration: 0.55, ease: 'power3.in', overwrite: true, onComplete: done });

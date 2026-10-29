@@ -495,7 +495,7 @@ html[data-world='dark'] .menu {
 .ch {
   display: inline-block;
   white-space: pre;
-  color: color-mix(in srgb, var(--ink) calc(58% + var(--p, 0) * 42%), transparent);
+  color: color-mix(in srgb, var(--mm-ink, var(--ink)) calc(58% + var(--p, 0) * 42%), transparent);
   transform: translateY(calc(var(--p, 0) * -3px));
 }
 .mm__av {
@@ -2423,7 +2423,7 @@ html.pr-open .hdr {
   height: 100%;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: clamp(3.2rem, 7vh, 4.5rem) var(--gx-r) 4rem var(--gx-l);
+  padding: clamp(3.2rem, 7vh, 4.5rem) var(--gx-r) 4.2rem var(--gx-l);
   scrollbar-width: none;
 }
 .pr__title {
@@ -2438,7 +2438,7 @@ html.pr-open .hdr {
 .pr__row {
   display: grid;
   gap: 1rem;
-  margin-top: clamp(2.2rem, 9vh, 6rem);
+  margin-top: clamp(1.8rem, 5vh, 3.2rem);
 }
 @media (min-width: 900px) {
   .pr__row {
@@ -2499,7 +2499,7 @@ html.pr-open .hdr {
   object-fit: cover;
 }
 .pr__contact {
-  margin-top: clamp(3rem, 10vh, 6rem);
+  margin-top: clamp(1.8rem, 5vh, 3.2rem);
 }
 .pr__chan {
   display: grid;
@@ -2516,40 +2516,10 @@ html.pr-open .hdr {
 .pr__chan a:focus-visible {
   color: #0b0b0b;
 }
-.pr__time {
-  display: grid;
-  gap: 0.5rem;
-  justify-items: start; /* everything in the clock block starts on the clips' left edge */
-  width: 11rem;
-}
-.pr .clk__face {
-  width: 9rem;
-  height: 9rem;
-}
 @media (min-width: 900px) {
   .pr__time {
     justify-self: start; /* the clock stands under the clips, on the same left edge; the clips run to the right margin, which is as wide as the left one */
   }
-}
-
-/* the clock in the sheet is the header panel's clock, ink on cream: a dark dial, dark readouts */
-.pr .clk__ring {
-  fill: #0b0b0b;
-  stroke: none;
-}
-.pr .clk__digital {
-  font-size: 1.1rem;
-}
-.pr .clk__tz {
-  margin-top: 0;
-  color: rgb(11 11 11 / 0.5);
-}
-.pr .clk__snd {
-  background: rgb(11 11 11 / 0.08);
-  color: #0b0b0b;
-}
-.pr .clk__snd[aria-pressed='true'] {
-  background: var(--accent);
 }
 
 /* the pricing sheet on a phone: the same content, tighter, one left edge */
@@ -2564,7 +2534,7 @@ html.pr-open .hdr {
   }
   .pr__row {
     gap: 0.9rem;
-    margin-top: 1.8rem;
+    margin-top: 1.6rem;
   }
   .pr__info {
     gap: 0.8rem;
@@ -2576,14 +2546,11 @@ html.pr-open .hdr {
     gap: 0.5rem;
   }
   .pr__contact {
-    margin-top: 2.2rem;
-    gap: 1.2rem;
+    margin-top: 1.6rem;
+    gap: 1rem;
   }
   .pr__contact > span {
     display: none; /* the empty first column of the wide layout */
-  }
-  .pr__time {
-    width: 9.5rem;
   }
 }
 
@@ -2746,4 +2713,89 @@ html:not(.js) .pr__roll-w:not(:first-child) {
   .pr__icon {
     --px: 5px;
   }
+}
+
+/* the five answers, as in the reference: the question on the text column, "Open" at the right margin */
+.pr__faq {
+  margin-top: clamp(1.8rem, 5vh, 3.2rem);
+}
+.pr__faq summary {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 1.5rem;
+  padding: 0.7rem 0;
+  list-style: none;
+  cursor: pointer;
+}
+.pr__faq summary::-webkit-details-marker {
+  display: none;
+}
+.pr__q {
+  font-size: var(--pr-b);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.pr__open::before {
+  content: 'Open';
+  color: rgb(11 11 11 / 0.45);
+  font-size: var(--pr-b);
+  transition: color 0.25s;
+}
+.pr__faq summary:hover .pr__open::before {
+  color: #0b0b0b;
+}
+.pr__faq details[open] .pr__open::before {
+  content: 'Close';
+}
+.pr__faq details p {
+  max-width: 32rem;
+  padding: 0 0 0.8rem;
+  font-size: var(--pr-b);
+  line-height: 1.4;
+  color: rgb(11 11 11 / 0.7);
+}
+@media (min-width: 900px) {
+  .pr__faq summary {
+    grid-template-columns: 1fr 1.4fr 1fr;
+    gap: 2.5rem;
+  }
+  .pr__q {
+    grid-column: 2;
+  }
+  .pr__open {
+    grid-column: 3;
+    justify-self: end;
+  }
+  .pr__faq details p {
+    padding-left: calc((100% - 5rem) / 3.4 + 2.5rem);
+    max-width: none;
+  }
+  .pr__faq details p {
+    padding-right: calc((100% - 5rem) / 3.4 + 2.5rem);
+  }
+}
+
+/* "Crafted by" along the bottom of the sheet, a plain strip like the one at the top; same hover as the hero's name line */
+.pr__craft {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  height: 3.2rem;
+  padding: 0 var(--gx-r) env(safe-area-inset-bottom, 0px) var(--gx-l);
+  background: hsl(39 50% 95%);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: rgb(11 11 11 / 0.55);
+}
+.connect__craft .mm,
+.pr__craft .mm {
+  padding: 0.3rem 0;
+  --mm-ink: var(--cream);
+}
+.pr__craft .mm {
+  --mm-ink: #0b0b0b;
 }

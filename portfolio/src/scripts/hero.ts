@@ -220,10 +220,14 @@ export function initHero(pixel: Pixel | null = null) {
    letters under the cursor come alive as it passes. To use a real portrait, put an <img> inside [data-mm-av].
 --------------------------------------------------------------------------------------------- */
 export function initCredits(pixel: Pixel | null) {
-  const mm = q('[data-mm]');
-  const av = q('[data-mm-av]');
-  const text = q('[data-mm-text]');
-  if (!mm || !av || !text || !fine || reduced) return;
+  // the same hover is on every [data-mm]: the name line in the hero, and "Crafted by Aadi" in the footer and in the pricing sheet
+  qa('[data-mm]').forEach((mm) => credit(mm, mm.closest('.hero') ? pixel : null));
+}
+
+function credit(mm: HTMLElement, pixel: Pixel | null) {
+  const av = q('[data-mm-av]', mm);
+  const text = q('[data-mm-text]', mm);
+  if (!av || !text || !fine || reduced) return;
 
   const str = text.textContent ?? '';
   text.setAttribute('aria-label', str);
@@ -301,8 +305,9 @@ export function initCredits(pixel: Pixel | null) {
 
 /* With a photo in public/portrait.jpg, the little face that follows the cursor is that photo reduced to a 22 x 22 grid of pixels. */
 export function initFace() {
-  const cv = q<HTMLCanvasElement>('[data-face-src]');
-  if (!cv) return;
+  qa<HTMLCanvasElement>('[data-face-src]').forEach(paintFace);
+}
+function paintFace(cv: HTMLCanvasElement) {
   const img = new Image();
   img.src = cv.dataset.faceSrc ?? '';
   img.decode().then(() => {
