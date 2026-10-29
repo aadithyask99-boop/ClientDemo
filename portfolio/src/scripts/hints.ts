@@ -16,11 +16,12 @@ export function initHints() {
   const kbd = (k: string) => `<kbd>${k}</kbd>`;
 
   /* The word spinner. Three seconds after the headline has landed a bubble says how to use it, goes away, comes once more a minute later, and after that it
-     is left alone (a visitor who rests the pointer on the headline may get one more nudge). Gone for good once the spinner has been used. */
+     is left alone (a visitor who rests the pointer on the headline may get one more nudge). Gone for the rest of the visit once the spinner has been used (it comes back on the next visit). */
   let shiftShown = 0;
+  let usedShift = false; // this visit only: someone who tried it last time still gets the hint on their next visit
   let dismiss: (() => void) | null = null;
   const showShift = (x?: number) => {
-    if (!title || reduced || found('shift') || busy() || shiftShown >= 3) return false;
+    if (!title || reduced || usedShift || busy() || shiftShown >= 3) return false;
     const r = title.getBoundingClientRect();
     if (r.bottom < 0 || r.top > window.innerHeight) return false;
     shiftShown++;
@@ -44,13 +45,14 @@ export function initHints() {
     if (fine) {
       let t = 0;
       title.addEventListener('pointerenter', (e) => {
-        if (found('shift') || performance.now() - lastShiftHint < 15000) return;
+        if (usedShift || performance.now() - lastShiftHint < 15000) return;
         t = window.setTimeout(() => showShift((e as PointerEvent).clientX), 700);
       });
       title.addEventListener('pointerleave', () => window.clearTimeout(t));
     }
     // pressing Shift is the answer: the bubble goes
-    window.addEventListener('keydown', (e) => { if (e.key === 'Shift') { dismiss?.(); dismiss = null; } });
+    window.addEventListener('keydown', (e) => { if (e.key === 'Shift') { usedShift = true; dismiss?.(); dismiss = null; } });
+    window.addEventListener('aadi:spin', (e) => { if ((e as CustomEvent<boolean>).detail) { usedShift = true; dismiss?.(); dismiss = null; } }); // the press-and-hold on a phone
   }
 
   /* the random ones */
