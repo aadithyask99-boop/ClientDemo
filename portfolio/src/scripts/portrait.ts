@@ -102,11 +102,10 @@ async function source(img: HTMLImageElement | null, svg: SVGSVGElement | null): 
     if (svg) {
       const vb = svg.viewBox.baseVal;
       const xml = new XMLSerializer().serializeToString(svg).replace('<svg', `<svg xmlns="http://www.w3.org/2000/svg" width="${vb.width * 40}" height="${vb.height * 40}"`);
-      const url = URL.createObjectURL(new Blob([xml], { type: 'image/svg+xml' }));
+      // a data: URI, not a blob: URL: pages shown inside a viewer often only allow data: images, and a blocked image would silently switch the effect off
       const im = new Image();
-      im.src = url;
+      im.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(xml)}`;
       await im.decode();
-      URL.revokeObjectURL(url);
       return { el: im, w: vb.width * 40, h: vb.height * 40 };
     }
   } catch {
