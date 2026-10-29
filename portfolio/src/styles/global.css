@@ -2352,8 +2352,6 @@ html:not(.js) .slot__w:not(:first-child) {
   position: absolute;
   inset: 0;
   background: rgb(5 5 5 / 0.62);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
 }
 /* while it is open the header sits on the dimmed page, so it takes the light colours */
 html.pr-open .hdr {
@@ -2364,104 +2362,73 @@ html.pr-open .hdr {
   inset: auto 0 0 0;
   height: 80vh;
   height: 80dvh;
-  display: flex;
-  flex-direction: column;
-  border-radius: var(--radius) var(--radius) 0 0;
   background: hsl(39 50% 95%);
   color: #0b0b0b;
   outline: none;
-  box-shadow: 0 -30px 80px -30px #000c;
-}
-.pr__bar {
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.1rem var(--gx-r) 0.7rem var(--gx-l);
-}
-.pr__tag {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgb(11 11 11 / 0.55);
 }
 .pr__x {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.45rem 0.8rem;
+  position: absolute;
+  top: 1.1rem;
+  right: var(--gx-r);
+  z-index: 2;
+  padding: 0.3rem 0;
   border: 0;
-  border-radius: 99px;
-  background: #0b0b0b;
-  color: hsl(39 50% 95%);
-  font-size: 0.875rem;
-  font-weight: 500;
+  background: none;
+  color: rgb(11 11 11 / 0.5);
+  font-size: 0.9375rem;
   cursor: pointer;
-  transition: background-color 0.25s var(--ease-out), color 0.25s;
+  transition: color 0.25s;
 }
 .pr__x:hover,
 .pr__x:focus-visible {
-  background: var(--accent);
   color: #0b0b0b;
 }
 .pr__body {
-  flex: 1;
-  min-height: 0;
+  height: 100%;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 0.5rem var(--gx-r) 4rem var(--gx-l);
-  scrollbar-width: thin;
+  padding: clamp(3.2rem, 7vh, 4.5rem) var(--gx-r) 4rem var(--gx-l);
+  scrollbar-width: none;
 }
 .pr__title {
-  max-width: 18ch;
-  margin: 0.6rem 0 clamp(2.5rem, 6vw, 5rem);
-  font-size: clamp(2.4rem, 1.4rem + 4.6vw, 5.4rem);
+  max-width: 17ch;
+  font-size: clamp(2rem, 1.2rem + 3.6vw, 4.6rem);
   font-weight: 600;
   letter-spacing: -0.055em;
-  line-height: 0.98;
+  line-height: 1;
   text-wrap: balance;
 }
-.pr__sec {
+.pr__row {
   display: grid;
-  gap: 1.1rem 2rem;
-  padding: 1.6rem 0 clamp(2rem, 4vw, 3.4rem);
-  border-top: 1px solid rgb(11 11 11 / 0.16);
+  gap: 1rem;
+  margin-top: clamp(2.2rem, 9vh, 6rem);
 }
-@media (min-width: 800px) {
-  .pr__sec {
-    grid-template-columns: minmax(8rem, 1fr) 4fr;
+@media (min-width: 900px) {
+  .pr__row {
+    grid-template-columns: 1fr 1.4fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
   }
 }
-.pr__label {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgb(11 11 11 / 0.55);
+.pr__name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
 }
-.pr__main {
+.pr__info {
   display: grid;
-  gap: 2rem 3rem;
-  align-items: start;
+  gap: 1rem;
+  justify-items: start;
 }
-@media (min-width: 1000px) {
-  .pr__main {
-    grid-template-columns: 1.1fr 1fr;
-  }
-}
-.pr__card {
-  position: relative;
-  display: grid;
-  gap: 0.9rem;
-  padding: clamp(1.2rem, 2.5vw, 2rem);
-  border-radius: 1.2rem;
-  background: #0b0b0b;
-  color: hsl(39 50% 95%);
+.pr__text {
+  max-width: 28rem;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
 }
 .pr__price {
   position: relative;
-  justify-self: start;
   padding: 0;
   border: 0;
   background: none;
@@ -2472,26 +2439,26 @@ html.pr-open .hdr {
 }
 .pr__amount {
   display: block;
-  font-size: clamp(4rem, 2rem + 8vw, 8rem);
+  font-size: clamp(3rem, 2rem + 4vw, 5.5rem);
   font-weight: 600;
-  letter-spacing: -0.07em;
+  letter-spacing: -0.06em;
   line-height: 0.9;
   transition: opacity 0.2s;
 }
 .pr__price.is-stamped .pr__amount {
-  opacity: 0.45;
+  opacity: 0.25;
 }
 .pr__stamp {
   position: absolute;
   left: 50%;
   top: 50%;
   translate: -50% -50%;
-  padding: 0.5rem 0.9rem;
-  border: 3px solid var(--accent);
+  padding: 0.4rem 0.8rem;
+  border: 3px solid var(--accent-ink);
   border-radius: 0.5rem;
-  color: var(--accent);
+  color: var(--accent-ink);
   font-family: var(--font-mono);
-  font-size: clamp(1.1rem, 0.8rem + 1.6vw, 2rem);
+  font-size: clamp(1rem, 0.8rem + 1vw, 1.6rem);
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: 0.04em;
@@ -2506,153 +2473,61 @@ html.pr-open .hdr {
   font-weight: 600;
   letter-spacing: 0.1em;
 }
-.pr__name {
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: -0.04em;
-}
-.pr__lede {
-  max-width: 34rem;
-  font-size: clamp(1rem, 0.9rem + 0.4vw, 1.25rem);
-  line-height: 1.4;
-}
-.pr__card .pr__lede {
-  color: hsl(39 50% 95% / 0.78);
-}
-.pr__pages {
-  display: grid;
-  margin-top: 0.4rem;
-}
-.pr__pages li {
+.pr__clips {
   display: flex;
-  gap: 0.9rem;
-  align-items: baseline;
-  padding: 0.6rem 0;
-  border-top: 1px solid hsl(39 50% 95% / 0.16);
-  font-size: 1.2rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
+  gap: 0.6rem;
 }
-.pr__pages li span,
-.pr__n {
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  opacity: 0.55;
-}
-.pr__incl,
-.pr__steps {
-  display: grid;
-}
-.pr__incl li,
-.pr__steps li {
-  display: grid;
-  gap: 0.25rem;
-  padding: 1rem 0;
-  border-top: 1px solid rgb(11 11 11 / 0.16);
-}
-.pr__incl li:first-child {
-  border-top: 0;
-  padding-top: 0;
-}
-.pr__incl strong,
-.pr__steps strong {
-  font-size: 1.35rem;
-  font-weight: 600;
-  letter-spacing: -0.04em;
-}
-.pr__incl span,
-.pr__steps li > span:not(.pr__n) {
-  max-width: 38rem;
-  color: rgb(11 11 11 / 0.68);
-  line-height: 1.4;
-}
-@media (min-width: 800px) {
-  .pr__steps li {
-    grid-template-columns: 3rem minmax(0, 1fr) minmax(0, 1.2fr);
-    align-items: baseline;
-    gap: 1.5rem;
+@media (min-width: 900px) {
+  .pr__clips {
+    justify-content: flex-end;
   }
 }
-.pr__steps li:first-child {
-  border-top: 0;
-  padding-top: 0;
+.pr__clip {
+  position: relative;
+  display: block;
+  flex: 0 1 11rem;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 0.4rem;
+  background: hsl(39 28% 90%);
 }
-.pr__faq details {
-  border-top: 1px solid rgb(11 11 11 / 0.16);
-}
-.pr__faq details:first-child {
-  border-top: 0;
-}
-.pr__faq summary {
-  display: grid;
-  grid-template-columns: 2rem 1fr auto;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 0;
-  list-style: none;
-  cursor: pointer;
-}
-.pr__faq summary::-webkit-details-marker {
-  display: none;
-}
-.pr__q {
-  font-size: 1.2rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-}
-.pr__open::before {
-  content: 'Open';
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.04em;
-  color: rgb(11 11 11 / 0.5);
-}
-.pr__faq details[open] .pr__open::before {
-  content: 'Close';
-}
-.pr__faq details p {
-  max-width: 40rem;
-  padding: 0 0 1.2rem 3rem;
-  color: rgb(11 11 11 / 0.7);
-  line-height: 1.45;
+.pr__clip img,
+.pr__clip video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .pr__cta {
   display: flex;
   flex-wrap: wrap;
   gap: 0.9rem 1.4rem;
   align-items: center;
+  margin-top: clamp(2.5rem, 6vh, 4rem);
 }
 .pr__go {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.7rem;
-  padding: 0.95rem 1.4rem;
+  padding: 0.9rem 1.4rem;
   border: 0;
   border-radius: 99px;
-  background: var(--accent);
-  color: #0b0b0b;
-  font-size: 1.0625rem;
-  font-weight: 600;
+  background: #0b0b0b;
+  color: hsl(39 50% 95%);
+  font-size: 1rem;
+  font-weight: 500;
   letter-spacing: -0.02em;
   cursor: pointer;
-  transition: background-color 0.25s var(--ease-out), color 0.25s, transform 0.3s var(--ease-out);
+  transition: background-color 0.25s var(--ease-out), color 0.25s;
 }
 .pr__go:hover,
 .pr__go:focus-visible {
-  background: #0b0b0b;
-  color: hsl(39 50% 95%);
+  background: var(--accent);
+  color: #0b0b0b;
 }
 .pr__mail {
   padding: 0;
   border: 0;
   background: none;
-  color: inherit;
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
+  color: rgb(11 11 11 / 0.55);
+  font-size: 0.9375rem;
   cursor: pointer;
-}
-.pr__mail .connect__mail-hint {
-  opacity: 0.55;
 }

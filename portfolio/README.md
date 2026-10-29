@@ -60,7 +60,7 @@ The order follows what a client asks: who is this, show me, why would it work fo
    in reverse (a few blocks flash orange on the way). The title is built from pixels.
 6. **Next chapter:** "Start your next website today" in huge type, built from pixels as it scrolls in. Two small slots roll through words
    ("Make it Fast and Clear"). Point at "today" and the arrow swaps sides with the word.
-7. **Pricing sheet** (menu and footer, `src/components/Pricing.astro`, `src/scripts/pricing.ts`): rises over the bottom 80% of the screen with the top fifth left showing. One package (£1,299, five pages, bespoke and fully animated, SEO fundamentals), "homepage first, pay when you love it" in four steps, three answers and a way to start. Egg: press the big price and a "£0 today, pay when you love it" stamp slams down.
+7. **Pricing sheet** (menu and footer, `src/components/Pricing.astro`, `src/scripts/pricing.ts`): follows the reference, a flat cream sheet over the bottom 80% of the screen with the top fifth left showing. A big headline, one row (Five-page website, what it is, £1,299, homepage first and pay when you love it, two little looping Work clips) and a start button. No boxes, lines, labels or numbers. Egg: press the big price and a "£0 today, pay when you love it" stamp slams down.
 8. **Connect:** click-to-copy email (the hint text rolls to "Copied"), a stack of rotated cards showing the Work clips (the front one plays; press the stack to throw the top card to the back, round after round, and it keeps turning on its own), a pixel rocket that is already waiting on the pad once the last line is on screen, a sitemap and channels
    list (hovered links become white pills), and "Crafted by Aadi" with a pixel icon that keeps changing shape.
 

@@ -1,7 +1,8 @@
 import { gsap } from 'gsap';
-import { q, qa, reduced, lockScroll, markFound } from './util';
+import { q, qa, reduced, fine, lockScroll, markFound } from './util';
 
 /* The pricing sheet. Loaded the first time "Pricing" is pressed (menu or footer).
+   - Two little clips from the Work section play inside it.
    - It rises over the bottom 80% of the screen; the page behind is dimmed and the top fifth stays showing. Escape, the Close button or a press on the dimmed
      part rolls it back down. The page does not scroll while it is open; the sheet scrolls inside.
    - Egg: press the big price and a stamp slams down on it, "£0 today, pay when you love it". Press again and it lifts. */
@@ -11,10 +12,34 @@ const veil = q('.pr__veil', root)!;
 const html = document.documentElement;
 let opener: HTMLElement | null = null;
 
+/* the two little clips are borrowed from the Work section (same pictures, same files, nothing downloaded twice); they play only while the sheet is open */
+const clips = qa('[data-pricing-clip]', root).map((slot) => {
+  const work = qa('[data-wi]')[Number(slot.dataset.pricingClip)];
+  const poster = work && q<HTMLImageElement>('.wi__poster', work);
+  const src = work && q<HTMLVideoElement>('video', work);
+  if (!poster || !src) return null;
+  const img = document.createElement('img');
+  img.alt = '';
+  img.src = poster.getAttribute('src') || poster.dataset.src || '';
+  const v = document.createElement('video');
+  v.muted = true;
+  v.loop = true;
+  v.playsInline = true;
+  v.preload = 'none';
+  v.dataset.src = (!fine && src.dataset.videoM) || src.dataset.video || '';
+  slot.append(img, v);
+  return v;
+}).filter((v): v is HTMLVideoElement => !!v);
+const playClips = (on: boolean) => clips.forEach((v) => {
+  if (!on || reduced) { v.pause(); return; }
+  if (!v.getAttribute('src') && v.dataset.src) { v.src = v.dataset.src; v.load(); }
+  void v.play().catch(() => {});
+});
+
 function onKey(e: KeyboardEvent) {
   if (e.key === 'Escape') { close(); return; }
   if (e.key !== 'Tab') return;
-  const f = qa<HTMLElement>('button, a[href], summary', sheet).filter((el) => el.offsetParent !== null);
+  const f = qa<HTMLElement>('button, a[href]', sheet).filter((el) => el.offsetParent !== null);
   if (!f.length) return;
   const first = f[0];
   const last = f[f.length - 1];
@@ -37,6 +62,7 @@ export function open(from?: HTMLElement | null) {
     gsap.fromTo(parts, { y: 36, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', stagger: 0.09, delay: 0.3, overwrite: true });
   }
   document.addEventListener('keydown', onKey);
+  playClips(true);
   sheet.focus({ preventScroll: true });
 }
 
@@ -45,7 +71,7 @@ export function close(after?: () => void) {
   document.removeEventListener('keydown', onKey);
   lockScroll(false);
   html.classList.remove('pr-open');
-  const done = () => { root.hidden = true; after?.(); };
+  const done = () => { root.hidden = true; playClips(false); after?.(); };
   if (reduced) done();
   else {
     gsap.to(sheet, { yPercent: 100, duration: 0.55, ease: 'power3.in', overwrite: true, onComplete: done });
