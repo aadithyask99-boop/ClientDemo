@@ -78,6 +78,14 @@ const jsonLd = {
       // The page is complete and readable without JavaScript. The js class only switches the intro on.
       (function () {
         var d = document.documentElement;
+        // A reload always starts at the top, on the hero, not wherever the browser remembers (the intro is built for the top of the page)
+        try {
+          if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+          if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+        } catch (e) {}
+        window.scrollTo(0, 0);
+        window.addEventListener('load', function () { window.scrollTo(0, 0); });
+        window.addEventListener('pageshow', function (e) { if (e.persisted) window.scrollTo(0, 0); });
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         d.classList.add('js');
         // A mouse or trackpad gets the full pointer effects (fx); phones and touch tablets get the light version
