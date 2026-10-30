@@ -9,6 +9,8 @@ import { initCountdown } from './countdown';
 import { initRsvp, readParty } from './rsvp';
 import { initEggs, sealSecret, askMotionPermission, toast } from './eggs';
 import { initFireflies } from './fireflies';
+import { initAtmosphere } from './atmosphere';
+import { initDance } from './dance';
 import { setSound, soundOn, startMusic, unlock } from './audio';
 
 declare global { interface Window { __garden?: boolean } }
@@ -88,6 +90,8 @@ function afterOpen(): void {
   startMusic(inv.music.src);
   unlock();
   initTilt();
+  const atmo = initAtmosphere(reduce);
+  initDance(reduce, atmo);
 
   if (!reduce && matchMedia('(pointer: fine)').matches) {
     root.style.scrollBehavior = 'auto';

@@ -1,4 +1,4 @@
-// Easter eggs: swans, hidden rings, the wax-seal secret, shake-for-petals, and the colour chimes.
+// Easter eggs: swans, hidden rings, the wax-seal secret, and the colour chimes. (Touch ones live in atmosphere.ts and dance.ts.)
 import gsap from 'gsap';
 import { invitation as inv } from '../data/invitation';
 import { arpeggio, chime } from './audio';
@@ -118,25 +118,10 @@ export function initEggs(): void {
       else toast(`A ring. That is ${found.size} of ${rings.length}.`);
     }),
   );
-
-  // Shake the phone for petals (iOS needs permission, requested from the seal tap)
-  let last = 0;
-  let hits = 0;
-  window.addEventListener('devicemotion', (e) => {
-    const a = e.accelerationIncludingGravity;
-    if (!a) return;
-    const mag = Math.abs(a.x || 0) + Math.abs(a.y || 0) + Math.abs(a.z || 0);
-    const now = Date.now();
-    if (mag > 38) {
-      hits = now - last < 600 ? hits + 1 : 1;
-      last = now;
-      if (hits >= 3) { hits = 0; petals(40); chime(5); }
-    }
-  });
 }
 
+/** iOS asks before it shares the phone's tilt, which only drives the cover's depth effect. */
 export async function askMotionPermission(): Promise<void> {
-  const D = DeviceMotionEvent as unknown as { requestPermission?: () => Promise<string> };
   const O = DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> };
-  try { await D.requestPermission?.(); await O.requestPermission?.(); } catch { /* user said no, fine */ }
+  try { await O.requestPermission?.(); } catch { /* user said no, fine */ }
 }

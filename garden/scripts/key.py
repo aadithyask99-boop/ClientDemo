@@ -15,6 +15,7 @@ JOBS = {
     'linen': (None, 1000), 'villa': (None, 1100),
     'seal': ((0, 255, 0), 700), 'swans': ((0, 255, 0), 900),
     'garland': ((255, 0, 255), 1500), 'roses': ((255, 0, 255), 1500), 'arch': ((255, 0, 255), 900),
+    'couple': (None, 900), 'venue': (None, 900),
 }
 
 def border_colour(a):
@@ -38,8 +39,22 @@ def key_out(im, rgb, lo=60, hi=140):
     res.putalpha(al)
     return res
 
+def petal_sprites(path):
+    # six loose pieces laid out 3 columns x 2 rows: crop each cell, key it, trim to the piece
+    im = Image.open(path)
+    w, h = im.size
+    for i in range(6):
+        c, r = i % 3, i // 3
+        cell = im.crop((c * w // 3, r * h // 2, (c + 1) * w // 3, (r + 1) * h // 2))
+        sp = key_out(cell, (0, 255, 0))
+        sp = sp.crop(sp.getchannel('A').point(lambda v: 255 if v > 24 else 0).getbbox())
+        sp.thumbnail((140, 140), Image.LANCZOS)
+        sp.save(out / f'petal-{i}.webp', quality=90, method=6)
+        print(f'petal-{i}', sp.size)
+
 for p in sorted(raw.iterdir()):
     name = p.stem
+    if name == 'petals': petal_sprites(p); continue
     if name not in JOBS: continue
     rgb, w = JOBS[name]
     im = Image.open(p)
