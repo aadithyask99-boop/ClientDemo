@@ -120,8 +120,14 @@ export function initEggs(): void {
   );
 }
 
-/** iOS asks before it shares the phone's tilt, which only drives the cover's depth effect. */
-export async function askMotionPermission(): Promise<void> {
+/** iOS asks before it shares the phone's motion. Both requests start synchronously, inside the user's tap (iOS only
+ *  allows that), and one "Motion & Orientation" setting covers both. */
+export function askMotionPermission(): Promise<'granted' | 'denied' | 'unsupported'> {
+  const D = DeviceMotionEvent as unknown as { requestPermission?: () => Promise<string> };
   const O = DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> };
-  try { await O.requestPermission?.(); } catch { /* user said no, fine */ }
+  const calls: Promise<string>[] = [];
+  try { if (D.requestPermission) calls.push(D.requestPermission()); } catch { /* ignore */ }
+  try { if (O.requestPermission) calls.push(O.requestPermission()); } catch { /* ignore */ }
+  if (!calls.length) return Promise.resolve('unsupported');
+  return Promise.all(calls.map((c) => c.catch(() => 'denied'))).then((r) => (r.includes('granted') ? 'granted' : 'denied'));
 }

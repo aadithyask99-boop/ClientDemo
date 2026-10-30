@@ -3,7 +3,7 @@
 // is pushed and dragged by the pointer, is stirred by scrolling, and on a phone feels the tilt (gravity) sensor.
 // It is drawn on a fixed canvas; only the points near the screen are simulated or drawn.
 import { chime } from './audio';
-import { toast } from './eggs';
+import { tilt } from './sensors';
 
 type Pt = { x: number; y: number; knot: boolean };
 
@@ -12,7 +12,8 @@ const K_REST = 4.5; // pull back toward the route (loose, so it can float)
 const K_NEIGH = 34; // pull toward the average of neighbours (carries waves along the string)
 const DAMP = 0.972;
 const WIND = 60;
-const TILT_G = 320; // sideways acceleration at full tilt
+const TILT_G = 560; // sideways acceleration at full tilt
+const RIPPLE = 900; // how hard rotating or shaking the phone ripples the string
 const REPEL = 2300;
 const DRAG = 6;
 const R = 190; // pointer reach
@@ -120,20 +121,7 @@ export function initThread(reduce: boolean): () => void {
     pX = nx; pY = ny; pT = now;
   }, { passive: true });
 
-  let tiltX = 0, tiltY = 0, tx = 0, ty = 0, hinted = false;
-  addEventListener('deviceorientation', (e) => {
-    if (e.gamma == null || e.beta == null) return;
-    const ang = (screen.orientation && screen.orientation.angle) || 0;
-    // gamma: left/right tilt, beta: front/back tilt, swapped when the phone is turned on its side
-    let gx = e.gamma, gy = e.beta - 55;
-    if (ang === 90) { gx = e.beta - 55; gy = -e.gamma; } else if (ang === 270 || ang === -90) { gx = -(e.beta - 55); gy = e.gamma; } else if (ang === 180) { gx = -e.gamma; gy = -(e.beta - 55); }
-    tx = Math.max(-1, Math.min(1, gx / 35));
-    ty = Math.max(-1, Math.min(1, gy / 40)) * 0.5;
-    if (!hinted && Math.abs(tx) > 0.25) {
-      hinted = true;
-      try { if (!localStorage.getItem('garden-tilt-hint')) { localStorage.setItem('garden-tilt-hint', '1'); toast('Tilt your phone. The thread swings with it.'); } } catch { /* ignore */ }
-    }
-  }, { passive: true });
+  let tiltX = 0, tiltY = 0;
 
   let lastScroll = scrollY, gust = 0;
   addEventListener('scroll', () => { gust = Math.min(2.5, gust + Math.abs(scrollY - lastScroll) * 0.012); lastScroll = scrollY; }, { passive: true });
@@ -145,14 +133,17 @@ export function initThread(reduce: boolean): () => void {
   const step = (dt: number, t: number) => {
     const top = scrollY - 500, bottom = scrollY + H + 500;
     const idle = t - pT > 1400;
-    tiltX += (tx - tiltX) * 0.08;
-    tiltY += (ty - tiltY) * 0.08;
+    tiltX += (tilt.x - tiltX) * 0.1;
+    tiltY += (tilt.y - tiltY) * 0.1;
+    const ripple = tilt.jerk * RIPPLE + tilt.shake * RIPPLE;
+    tilt.jerk *= 0.95;
+    tilt.shake *= 0.96;
     gust *= 0.97;
     for (let i = 1; i < n - 1; i++) {
       if (ry[i] < top || ry[i] > bottom) continue;
       let ax = (rx[i] - x[i]) * K_REST + ((x[i - 1] + x[i + 1]) * 0.5 - x[i]) * K_NEIGH;
       let ay = (ry[i] - y[i]) * K_REST + ((y[i - 1] + y[i + 1]) * 0.5 - y[i]) * K_NEIGH;
-      ax += Math.sin(t * 0.0009 + i * 0.045) * WIND + Math.sin(t * 0.0031 + i * 0.07) * gust * 380 + tiltX * TILT_G;
+      ax += Math.sin(t * 0.0009 + i * 0.045) * WIND + Math.sin(t * 0.0031 + i * 0.07) * gust * 380 + tiltX * TILT_G + ripple * (0.55 + 0.45 * Math.sin(i * 0.07 + t * 0.006));
       ay += Math.cos(t * 0.0007 + i * 0.05) * WIND * 0.35 + tiltY * TILT_G;
       if (!idle) {
         const dx = x[i] - pX, dy = y[i] - pY;
@@ -167,6 +158,7 @@ export function initThread(reduce: boolean): () => void {
       ox[i] = x[i]; oy[i] = y[i];
       x[i] += vx + ax * dt * dt;
       y[i] += vy + ay * dt * dt;
+      if (x[i] < 10) x[i] = 10; else if (x[i] > W - 10) x[i] = W - 10; // never swing off the screen
       const ex = x[i] - rx[i], ey = y[i] - ry[i], e = Math.hypot(ex, ey);
       if (e > MAX_DISP) { x[i] = rx[i] + (ex / e) * MAX_DISP; y[i] = ry[i] + (ey / e) * MAX_DISP; }
     }

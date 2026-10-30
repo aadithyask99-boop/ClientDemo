@@ -9,6 +9,7 @@ import { initCountdown } from './countdown';
 import { initRsvp, readParty } from './rsvp';
 import { initEggs, sealSecret, askMotionPermission, toast } from './eggs';
 import { initFireflies } from './fireflies';
+import { initSensors } from './sensors';
 import { initAtmosphere } from './atmosphere';
 import { initDance } from './dance';
 import { initScene } from './scene';
@@ -111,6 +112,7 @@ function afterOpen(): void {
     gsap.to('.window', { yPercent: -5, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
     gsap.to('.roses', { yPercent: 18, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
   }
+  initSensors();
   initThread(reduce);
   ScrollTrigger.refresh();
 }
