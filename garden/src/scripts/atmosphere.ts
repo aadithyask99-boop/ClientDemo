@@ -5,12 +5,15 @@ import { chime } from './audio';
 import { petals as shower, toast } from './eggs';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const SPRITES = [0, 1, 2, 3, 4, 5].map((i) => `${base}/art/petal-${i}.webp`);
+// six petals and leaves, plus three more leaves from the butterfly sheet
+const SPRITES = [...[0, 1, 2, 3, 4, 5].map((i) => `${base}/art/petal-${i}.webp`), ...[3, 4, 5].map((i) => `${base}/art/fly-${i}.webp`)];
+const BUTTERFLIES = [0, 1, 2].map((i) => `${base}/art/fly-${i}.webp`);
 
 interface P {
   x: number; y: number; z: number; s: number; r: number; vr: number;
   ph: number; sp: number; fl: number; fs: number; vy: number; ix: number; iy: number; k: number; turb: number; temp: boolean;
 }
+interface B { x: number; y: number; vx: number; vy: number; tx: number; ty: number; nt: number; k: number; s: number; fl: number; flee: number }
 export interface Atmosphere { gust: (n: number) => void; spawn: (x: number, y: number, n: number) => void }
 
 export function initAtmosphere(reduce: boolean): Atmosphere {
@@ -20,12 +23,19 @@ export function initAtmosphere(reduce: boolean): Atmosphere {
   if (!canvas || !ctx || reduce) return none;
 
   const imgs: HTMLImageElement[] = SPRITES.map((src) => { const i = new Image(); i.decoding = 'async'; i.src = src; return i; });
+  const bimgs: HTMLImageElement[] = BUTTERFLIES.map((src) => { const i = new Image(); i.decoding = 'async'; i.src = src; return i; });
+  const fine = matchMedia('(pointer: fine)').matches;
   const dpr = Math.min(2, devicePixelRatio || 1);
   let W = 0;
   let H = 0;
   let parts: P[] = [];
   let gustV = 0;
   let caught = 0;
+  let bfs: B[] = [];
+  let lastMove = 0;
+  let tapX = 0;
+  let tapY = 0;
+  let tapT = -1e9;
 
   const make = (fromTop: boolean, temp = false, x?: number, y?: number): P => {
     const z = 0.55 + Math.random() * 0.65;
@@ -44,6 +54,7 @@ export function initAtmosphere(reduce: boolean): Atmosphere {
     canvas.height = H * dpr;
     const n = W < 700 ? 11 : 20;
     parts = Array.from({ length: n }, () => make(false));
+    bfs = Array.from({ length: W < 700 ? 2 : 4 }, (_, i) => ({ x: Math.random() * W, y: H * 0.25 + Math.random() * H * 0.5, vx: 0, vy: 0, tx: Math.random() * W, ty: Math.random() * H * 0.7, nt: 0, k: i % 3, s: W < 700 ? 34 : 46, fl: Math.random() * 6, flee: 0 }));
   };
   resize();
   addEventListener('resize', resize);
@@ -67,6 +78,7 @@ export function initAtmosphere(reduce: boolean): Atmosphere {
     const dy = e.clientY - py;
     px = e.clientX;
     py = e.clientY;
+    if (e.pointerType === 'mouse') lastMove = performance.now();
     if (Math.abs(dx) + Math.abs(dy) > 120) return;
     for (const p of parts) {
       const d = Math.hypot(p.x - px, p.y - py);
@@ -87,6 +99,21 @@ export function initAtmosphere(reduce: boolean): Atmosphere {
   // tap a petal to catch it; tap empty paper to scatter a few
   addEventListener('pointerdown', (e) => {
     const t = e.target as HTMLElement | null;
+    tapX = e.clientX;
+    tapY = e.clientY;
+    tapT = performance.now();
+    for (const b of bfs) {
+      if (Math.hypot(b.x - e.clientX, b.y - e.clientY) < b.s * 0.9) {
+        b.flee = 1.5;
+        b.tx = b.x + (b.x - e.clientX) * 8 + (Math.random() - 0.5) * 300;
+        b.ty = Math.max(40, b.y - 160 - Math.random() * 220);
+        b.vx += (b.x - e.clientX) * 6;
+        b.vy -= 220;
+        chime(6 + b.k, 0.7);
+        spawn(b.x, b.y, 3);
+        return;
+      }
+    }
     for (const p of parts) {
       if (p.temp && p.y < 0) continue;
       if (Math.hypot(p.x - e.clientX, p.y - e.clientY) < p.s * 0.8 + 12) {
@@ -145,6 +172,40 @@ export function initAtmosphere(reduce: boolean): Atmosphere {
       ctx.scale(1, 0.35 + 0.65 * Math.abs(Math.cos(p.fl)));
       ctx.globalAlpha = (0.5 + 0.4 * p.z) * (night ? 0.7 : 1);
       if (img.complete && img.naturalWidth) ctx.drawImage(img, -p.s / 2, -p.s / 2, p.s, (p.s * img.naturalHeight) / img.naturalWidth);
+      ctx.restore();
+    }
+    // butterflies: they wander, drift toward the pointer (or your last tap) and scatter when touched
+    for (const b of bfs) {
+      b.nt -= dt;
+      const attract = fine && t - lastMove < 2600 ? { x: px, y: py } : t - tapT < 3800 ? { x: tapX, y: tapY } : null;
+      if (b.flee > 0) b.flee -= dt;
+      else if (attract && Math.hypot(attract.x - b.x, attract.y - b.y) < 560) {
+        b.tx = attract.x + Math.cos(t / 700 + b.k * 2) * 70;
+        b.ty = attract.y + Math.sin(t / 560 + b.k * 2) * 50;
+      } else if (b.nt <= 0) {
+        b.tx = Math.random() * W;
+        b.ty = H * 0.12 + Math.random() * H * 0.72;
+        b.nt = 1.6 + Math.random() * 2.4;
+      }
+      b.vx += ((b.tx - b.x) * 1.5 + Math.sin(t / 230 + b.k) * 46) * dt;
+      b.vy += ((b.ty - b.y) * 1.5 + Math.cos(t / 190 + b.k) * 46) * dt;
+      const damp = Math.exp(-dt * (b.flee > 0 ? 1.1 : 2.3));
+      b.vx *= damp;
+      b.vy *= damp;
+      const sp = Math.hypot(b.vx, b.vy);
+      const cap = b.flee > 0 ? 560 : 230;
+      if (sp > cap) { b.vx *= cap / sp; b.vy *= cap / sp; }
+      b.x += b.vx * dt;
+      b.y += b.vy * dt;
+      b.fl += dt * (11 + sp * 0.03);
+      const im = bimgs[b.k];
+      if (!(im.complete && im.naturalWidth)) continue;
+      ctx.save();
+      ctx.translate(b.x, b.y);
+      ctx.rotate(Math.atan2(b.vy, b.vx) + Math.PI / 2);
+      ctx.scale(0.28 + 0.72 * Math.abs(Math.cos(b.fl)), 1);
+      ctx.globalAlpha = night ? 0.75 : 0.96;
+      ctx.drawImage(im, -b.s / 2, -b.s / 2, b.s, (b.s * im.naturalHeight) / im.naturalWidth);
       ctx.restore();
     }
     raf = requestAnimationFrame(frame);

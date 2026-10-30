@@ -326,3 +326,48 @@ main > .dance { height: 250svh; padding: 0; }
 .hoop-stage.held { transform: scale(1.04); box-shadow: 0 30px 80px rgba(176, 130, 47, 0.45), inset 0 0 36px rgba(120, 90, 30, 0.14); cursor: grabbing; }
 .night .hoop-stage { box-shadow: 0 0 80px rgba(226, 187, 104, 0.28), inset 0 0 36px rgba(120, 90, 30, 0.14); filter: brightness(0.92); }
 .dance-pin .hint { font-size: clamp(1.45rem, 4.4vw, 1.9rem); max-width: 26rem; line-height: 1.15; }
+
+/* ---------- Finale landscape: sunset, hills, chapel, oak, bench ---------- */
+.finale { --dusk: 0; display: block; position: relative; padding-bottom: 0 !important; }
+.finale-copy { position: relative; z-index: 3; display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 0.8rem; text-align: center; }
+.sky { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: var(--dusk); background: linear-gradient(to bottom, transparent 22%, #f9e6d3 50%, #f3c8a8 72%, #dba3a6 89%, #a98cab 100%); }
+.night .sky { background: linear-gradient(to bottom, transparent 22%, #25304a 52%, #3a3558 78%, #6a4a62 100%); }
+.sun { position: absolute; left: 50%; bottom: 30%; width: min(34rem, 84vw); aspect-ratio: 1; margin-left: calc(min(34rem, 84vw) / -2); border-radius: 50%; opacity: var(--dusk); transform: translateY(calc((1 - var(--dusk)) * -40%));
+  background: radial-gradient(circle, #fff6cf 0%, #ffdc9c 22%, rgba(255, 190, 130, 0.5) 46%, transparent 68%); }
+.night .sun { background: radial-gradient(circle, #fffdf0 0%, #dfe6ff 18%, rgba(170, 190, 255, 0.35) 42%, transparent 66%); }
+.scene { position: relative; z-index: 2; width: calc(100% + 2 * var(--gutter)); margin: clamp(0rem, 2vw, 2rem) 0 0 calc(-1 * var(--gutter)); height: clamp(25rem, 54vw, 48rem); }
+.hills { position: absolute; left: 0; bottom: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%); mask-image: linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%); }
+.night .hills, .night .prop img { filter: brightness(0.62) saturate(0.85); }
+.prop { position: absolute; padding: 0; border: 0; background: none; cursor: pointer; transition: transform 0.5s var(--ease); -webkit-tap-highlight-color: transparent; }
+.prop img { display: block; height: 100%; width: auto; }
+.prop:hover { transform: translateY(-4px); }
+.church { left: 4%; bottom: 31%; height: 42%; }
+.tree { right: 3%; bottom: 26%; height: 68%; transform-origin: 50% 100%; }
+.bench { left: 50%; margin-left: -9%; bottom: 20%; height: 17%; }
+@media (min-width: 900px) { .church { left: 12%; } .tree { right: 11%; } .bench { margin-left: -6%; } }
+.glow { position: absolute; left: 24%; top: 52%; width: 50%; height: 26%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 205, 110, 0.95), rgba(255, 190, 90, 0)); opacity: calc(var(--dusk) * 0.9); filter: blur(5px); pointer-events: none; mix-blend-mode: screen; }
+.birds { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.bird { position: absolute; color: #4a5744; pointer-events: none; will-change: transform; }
+.night .bird { color: #aeb8d8; }
+.finale .roses-end { position: absolute; left: 0; right: 0; bottom: 0; height: 60%; margin: 0; z-index: 4; pointer-events: none; }
+.finale .roses-end img { position: absolute; bottom: -7%; width: min(54vw, 700px); max-width: none; display: block; margin: 0; }
+.finale .roses-end .rl { left: -10%; }
+.finale .roses-end .rr { right: -10%; transform: scaleX(-1); }
+.scene::before { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 16%; z-index: 1; pointer-events: none; background: linear-gradient(to top, #8da071 0%, rgba(141, 160, 113, 0.85) 35%, rgba(141, 160, 113, 0) 100%); }
+.night .scene::before { filter: brightness(0.55); }
+.finale .ring-egg { pointer-events: auto; }
+.dusk .fireflies { display: block; }
+
+/* ---------- Ivy down the margins of wide screens ---------- */
+.vines { position: fixed; inset: 0; z-index: 2; pointer-events: none; display: none; overflow: hidden; }
+@media (min-width: 1280px) { .opened .vines { display: block; } }
+.vine { position: absolute; top: -2svh; width: min(11vw, 190px); transform-origin: 50% 0; animation: vsway 8s ease-in-out infinite alternate; }
+.vine img { display: block; width: 100%; height: auto; }
+.vine .flip { transform: scaleY(-1); }
+.vl { left: max(0px, 0.5vw); }
+.vr { right: max(0px, 0.5vw); transform: scaleX(-1); animation-name: vsway-r; }
+@keyframes vsway { from { transform: rotate(-1deg); } to { transform: rotate(1.3deg); } }
+@keyframes vsway-r { from { transform: scaleX(-1) rotate(-1deg); } to { transform: scaleX(-1) rotate(1.3deg); } }
+.night .vine img { filter: brightness(0.7); }
+@media (prefers-reduced-motion: reduce) { .vine, .vr { animation: none; } }

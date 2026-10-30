@@ -64,3 +64,24 @@ export function setSound(next: boolean): void {
   if (music) { if (next) void music.play().catch(() => {}); else music.pause(); }
   if (next) unlock();
 }
+
+/** A church bell: inharmonic partials with a long decay, struck a few times. */
+export function bell(strikes = 3): void {
+  if (!on || !ctx || !master) return;
+  for (let n = 0; n < strikes; n++) {
+    const t = ctx.currentTime + n * 1.1;
+    [1, 2.0, 2.76, 5.4].forEach((m, k) => {
+      const o = ctx!.createOscillator();
+      const g = ctx!.createGain();
+      o.type = 'sine';
+      o.frequency.value = 196 * m;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.26 / (k + 1), t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 3.2 - k * 0.5);
+      o.connect(g);
+      g.connect(master!);
+      o.start(t);
+      o.stop(t + 3.3);
+    });
+  }
+}

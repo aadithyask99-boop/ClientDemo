@@ -11,6 +11,7 @@ import { initEggs, sealSecret, askMotionPermission, toast } from './eggs';
 import { initFireflies } from './fireflies';
 import { initAtmosphere } from './atmosphere';
 import { initDance } from './dance';
+import { initScene } from './scene';
 import { setSound, soundOn, startMusic, unlock } from './audio';
 
 declare global { interface Window { __garden?: boolean } }
@@ -92,6 +93,7 @@ function afterOpen(): void {
   initTilt();
   const atmo = initAtmosphere(reduce);
   initDance(reduce, atmo);
+  initScene(reduce, atmo);
 
   if (!reduce && matchMedia('(pointer: fine)').matches) {
     root.style.scrollBehavior = 'auto';

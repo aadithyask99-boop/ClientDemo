@@ -55,11 +55,15 @@ The page posts `text/plain` with `no-cors`, which Apps Script accepts, so there 
 
 ## Atmosphere (`atmosphere.ts`)
 
-Embroidered petals and leaves drift down on a slow wind. Scrolling fast stirs a gust, moving the pointer pushes them aside, tapping one catches it (it chimes; eight catches earns a wish, sixteen a shower) and tapping empty paper scatters a few. A gust also blows through now and then by itself. The garland and roses sway in the same breeze, and two layers of soft leaf shadow drift across the page (moonlight at night). Everything stops under `prefers-reduced-motion`, and the petal loop pauses when the tab is hidden.
+Embroidered petals and leaves drift down on a slow wind. Scrolling fast stirs a gust, moving the pointer pushes them aside, tapping one catches it (it chimes; eight catches earns a wish, sixteen a shower) and tapping empty paper scatters a few. A gust also blows through now and then by itself. Butterflies wander the page, drift toward the pointer (or your last tap) and scatter when touched. The garland and roses sway in the same breeze, and two layers of soft leaf shadow drift across the page (moonlight at night). On screens 1280 px and wider, ivy grows down both margins so the paper beside the content is never empty. Everything stops under `prefers-reduced-motion`, and the petal loop pauses when the tab is hidden.
 
 ## The first dance (`dance.ts`, `Dance.astro`)
 
-A 5-second clip of the couple waltzing was generated from the still, using the still as both first and last frame so it loops seamlessly. It is stored as 60 WebP frames (about 1 MB) and drawn to a canvas inside an oval embroidery hoop. Scrolling through the section scrubs the dance (a section 2.5 screens tall with a sticky stage), with two full loops over its length. **Press and hold** the hoop to play it in real time, with hearts, petals and chimes, and let go to hand it back to the scroll. With reduced motion the still image stays.
+A 6-second clip of the couple waltzing, drawing into a hold and then dipping, was generated from the still, using the still as both first and last frame so it loops seamlessly. It is stored as 72 WebP frames (about 1.5 MB) and drawn to a canvas inside an oval embroidery hoop. Scrolling through the section scrubs the dance (a section 2.5 screens tall with a sticky stage), with two full loops over its length. **Press and hold** the hoop to play it in real time, with hearts, petals and chimes, and let go to hand it back to the scroll. With reduced motion the still image stays.
+
+## The finale landscape (`scene.ts`, `Finale.astro`)
+
+The footer is a stitched countryside: rolling hills, a chapel, an old oak and a bench on a winding path, with roses in the corners. As you scroll in, the sky turns to sunset (`--dusk` goes from 0 to 1) and the sun sinks behind the hills; the chapel windows light up and fireflies appear. Touch the chapel to ring its bell and send birds from the spire, shake the oak for falling leaves, or sit the bench. The captions are in `scene` in `invitation.ts`. At night the sky becomes dusk blue with a moon.
 
 ## Easter eggs
 
@@ -71,11 +75,11 @@ Made with `bytedance-seed/seedream-5-0-flash` on OpenRouter, about 2 cents an im
 
 ```
 ../scripts/env.sh run -- node scripts/gen-art.mjs [name ...]   # raw images to ./art-raw (gitignored)
-python3 -I scripts/key.py art-raw                              # cut out the keyed pieces, slice the petals, write public/art/*.webp
+python3 -I scripts/key.py art-raw                              # cut out keyed pieces, slice the petal, scenery and butterfly sheets, write public/art/*.webp
 
 # the dance: needs art-raw/couple-small.jpg (the still resized to 720x960)
-../scripts/env.sh run -- node scripts/gen-dance.mjs            # image-to-video, first frame = last frame; about $0.21 on alibaba/wan-3.0 at 480p
-python3 -I scripts/dance-frames.py art-raw                     # 60 levelled frames into public/art/dance
+DANCE_OUT=dance2 ../scripts/env.sh run -- node scripts/gen-dance.mjs   # image-to-video, first frame = last frame; about $0.26 for 6 s on alibaba/wan-3.0 at 480p (DANCE_PROMPT overrides the move)
+python3 -I scripts/dance-frames.py art-raw dance2              # 72 levelled frames into public/art/dance (set data-frames in Dance.astro to match)
 ```
 
 Pieces that need transparency (seal, garland, roses, swans, wreath, the six petals) are generated on a flat colour and keyed out by sampling the border colour. Names, dates and every other word stay live text, never baked into an image. Generated art usually cannot be copyrighted, so clients do not get exclusivity over a design.

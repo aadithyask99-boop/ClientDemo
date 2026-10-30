@@ -37,7 +37,8 @@ export function initFireflies(reduce: boolean): void {
   };
   const sync = () => {
     cancelAnimationFrame(raf);
-    if (document.documentElement.classList.contains('night') && !document.hidden) raf = requestAnimationFrame(frame);
+    const cl = document.documentElement.classList;
+    if ((cl.contains('night') || cl.contains('dusk')) && !document.hidden) raf = requestAnimationFrame(frame);
   };
   new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
   document.addEventListener('visibilitychange', sync);

@@ -52,8 +52,34 @@ def petal_sprites(path):
         sp.save(out / f'petal-{i}.webp', quality=90, method=6)
         print(f'petal-{i}', sp.size)
 
+def trim(sp, thresh=24):
+    return sp.crop(sp.getchannel('A').point(lambda v: 255 if v > thresh else 0).getbbox())
+
+def cells(path, cols, rows, names, family, longest):
+    """Slice a sheet of separate pieces laid out in a grid, key each and trim it to the piece."""
+    im = Image.open(path)
+    w, h = im.size
+    for i, name in enumerate(names):
+        c, r = i % cols, i // cols
+        sp = trim(key_out(im.crop((c * w // cols, r * h // rows, (c + 1) * w // cols, (r + 1) * h // rows)), family))
+        sp.thumbnail((longest, longest), Image.LANCZOS)
+        sp.save(out / f'{name}.webp', quality=88, method=6)
+        print(name, sp.size, (out / f'{name}.webp').stat().st_size // 1024, 'KB')
+
+SHEETS = {
+    'scenery': (3, 1, ['church', 'tree', 'bench'], (255, 0, 255), 760),
+    'flutter': (3, 2, ['fly-0', 'fly-1', 'fly-2', 'fly-3', 'fly-4', 'fly-5'], (255, 0, 255), 150),
+}
+TRIMMED = {'hills': 1700, 'vine': 1100}  # keyed, trimmed to the artwork, longest side
+
 for p in sorted(raw.iterdir()):
     name = p.stem
+    if name in SHEETS: cells(p, *SHEETS[name][:4], SHEETS[name][4]); continue
+    if name in TRIMMED:
+        sp = trim(key_out(Image.open(p), (255, 0, 255)))
+        sp.thumbnail((TRIMMED[name], TRIMMED[name]), Image.LANCZOS)
+        sp.save(out / f'{name}.webp', quality=86, method=6)
+        print(name, sp.size, (out / f'{name}.webp').stat().st_size // 1024, 'KB'); continue
     if name == 'petals': petal_sprites(p); continue
     if name not in JOBS: continue
     rgb, w = JOBS[name]

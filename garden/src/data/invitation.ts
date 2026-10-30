@@ -26,6 +26,7 @@ export interface Invitation {
   day: Moment[];
   dress: { code: string; note: string; swatches: string[] };
   dance: { title: string; hint: string; holdHint: string };
+  scene: { church: string; tree: string; bench: string };
   gifts: string;
   rsvp: {
     deadline: string; // ISO date
@@ -76,6 +77,11 @@ export const invitation: Invitation = {
     swatches: ['#8a9a6b', '#e9dcc3', '#c98f87', '#9b86b5', '#c9a35e'],
   },
   dance: { title: 'Save us a dance', hint: 'scroll to waltz, or press and hold to keep them dancing', holdHint: 'dancing… let go to carry on scrolling' },
+  scene: {
+    church: 'The chapel bell will ring at half past two. Please do not be the reason it rings twice.',
+    tree: 'The Hartwell oak is three hundred years old and has seen far worse proposals.',
+    bench: 'Reserved for anyone who needs a sit-down, a shoe off and a gossip.',
+  },
   gifts:
     'Your being there is the gift. If you would still like to give something, a contribution to our honeymoon in Provence would make us very happy.',
   rsvp: {

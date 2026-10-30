@@ -5,7 +5,6 @@ import { hearts } from './eggs';
 import type { Atmosphere } from './atmosphere';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const N = 60;
 const FPS = 12;
 const CYCLES = 2; // dances this many full loops over the length of the section
 
@@ -15,6 +14,7 @@ export function initDance(reduce: boolean, atmo: Atmosphere): void {
   const canvas = document.getElementById('dance-canvas') as HTMLCanvasElement;
   const hint = document.getElementById('dance-hint')!;
   const ctx = canvas.getContext('2d');
+  const N = Number(stage.dataset.frames || 60);
   if (!ctx || reduce) return; // the still image stays, nothing moves
 
   stage.addEventListener('contextmenu', (e) => e.preventDefault());

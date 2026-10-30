@@ -10,15 +10,19 @@ const model = process.env.DANCE_MODEL || 'alibaba/wan-3.0';
 const frame = `data:image/jpeg;base64,${readFileSync(`${raw}/couple-small.jpg`).toString('base64')}`;
 const H = { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' };
 
+const duration = Number(process.env.DANCE_DURATION || 6);
+const out = process.env.DANCE_OUT || 'dance';
+const prompt = process.env.DANCE_PROMPT ||
+  'A slow romantic waltz. The bride and groom turn gently together, then the groom leans the bride back into a graceful, gentle dip with her veil and gown trailing, ' +
+  'holds the dip for a moment, then lifts her smoothly back up so they end standing together exactly as they began. ' +
+  'Static camera, the flat ivory background stays exactly the same, the hand-embroidered stitched textile look is preserved, smooth slow movement, the couple stays in place.';
+
 const body = {
   model,
-  prompt:
-    'The bride and groom slowly sway and waltz in place, turning gently together, her veil and gown flowing softly, his tailcoat moving slightly. ' +
-    'Static camera, the flat ivory background stays exactly the same, the hand-embroidered stitched textile look is preserved, smooth slow movement, ' +
-    'ends in exactly the starting pose so the clip loops.',
+  prompt,
   resolution: '480p',
   aspect_ratio: '3:4',
-  duration: 5,
+  duration,
   frame_images: [
     { type: 'image_url', image_url: { url: frame }, frame_type: 'first_frame' },
     { type: 'image_url', image_url: { url: frame }, frame_type: 'last_frame' },
@@ -39,8 +43,8 @@ for (let i = 0; i < 90; i++) {
     const url = (p.unsigned_urls || p.urls || [])[0];
     const v = await fetch(url, { headers: { Authorization: `Bearer ${key}` } });
     mkdirSync(raw, { recursive: true });
-    writeFileSync(`${raw}/dance.mp4`, Buffer.from(await v.arrayBuffer()));
-    console.log('saved dance.mp4', p.usage?.cost ?? '');
+    writeFileSync(`${raw}/${out}.mp4`, Buffer.from(await v.arrayBuffer()));
+    console.log(`saved ${out}.mp4`, p.usage?.cost ?? '');
     break;
   }
   if (p.status === 'failed') { console.log(JSON.stringify(p)); process.exit(1); }
