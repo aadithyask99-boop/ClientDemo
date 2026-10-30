@@ -9,9 +9,11 @@ const initials = `${inv.a[0]}&${inv.b[0]}`;
     <div class="door door-l" style={`--img:url(${base}/art/linen.webp)`}></div>
     <div class="door door-r" style={`--img:url(${base}/art/linen.webp)`}></div>
   </div>
+  <!-- The wax seal is two halves cut along a jagged crack, so it can snap in two when pressed. -->
   <button class="seal" id="seal" type="button" aria-label={`Open the invitation from ${inv.a} and ${inv.b}`}>
-    <img src={`${base}/art/seal.webp`} alt="" width="340" height="340" decoding="async" />
-    <span class="seal-mono">{initials}</span>
+    <span class="half hl"><img src={`${base}/art/seal.webp`} alt="" width="340" height="340" decoding="async" /><span class="seal-mono">{initials}</span></span>
+    <span class="half hr"><img src={`${base}/art/seal.webp`} alt="" width="340" height="340" decoding="async" /><span class="seal-mono">{initials}</span></span>
+    <svg class="crack" viewBox="0 0 100 100" aria-hidden="true"><path pathLength="100" d="M52 2 L46 20 L55 36 L47 54 L56 72 L49 88 L53 99" /></svg>
   </button>
   <p class="cover-hint script">touch the seal to open</p>
   <p class="secret" id="secret" role="status" hidden></p>

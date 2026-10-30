@@ -1,7 +1,6 @@
 // The first dance, played once. Scrolling through the section scrubs a spin that ends in a dip; the dip lands near the
 // end of the section and holds, then the page moves on. Nothing loops. Pressing and holding lets them dance on by
 // themselves (forward, to the dip); letting go hands the dance back to the scroll.
-import { chime } from './audio';
 import { hearts } from './eggs';
 import type { Atmosphere } from './atmosphere';
 
@@ -74,7 +73,6 @@ export function initDance(reduce: boolean, atmo: Atmosphere): void {
         hearts(b.left + b.width / 2, b.top + b.height * 0.25, 3);
         atmo.spawn(b.left + b.width / 2, b.top + b.height * 0.5, 3);
         atmo.gust(0.5);
-        chime(Math.floor(Math.random() * 6), 0.6);
       }
     }
     const last = N - 1;

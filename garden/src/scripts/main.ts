@@ -10,10 +10,11 @@ import { initRsvp, readParty } from './rsvp';
 import { initEggs, sealSecret, askMotionPermission, toast } from './eggs';
 import { initFireflies } from './fireflies';
 import { initSensors } from './sensors';
+import { initParallax } from './parallax';
 import { initAtmosphere } from './atmosphere';
 import { initDance } from './dance';
 import { initScene } from './scene';
-import { setSound, soundOn, startMusic, unlock } from './audio';
+import { setSound, soundOn, startMusic, setMusicSource, toggleMusic, musicPlaying, unlock } from './audio';
 
 declare global { interface Window { __garden?: boolean } }
 window.__garden = true;
@@ -72,14 +73,27 @@ const syncSound = () => { soundBtn.setAttribute('aria-pressed', String(soundOn()
 syncSound();
 soundBtn.addEventListener('click', () => { setSound(!soundOn()); syncSound(); });
 
+// music: starts at 20% volume when the seal is pressed, and can be paused here
+const musicBtn = q<HTMLButtonElement>('#music');
+const syncMusic = () => { musicBtn.setAttribute('aria-pressed', String(musicPlaying())); musicBtn.setAttribute('aria-label', musicPlaying() ? 'Pause the music' : 'Play the music'); };
+syncMusic();
+musicBtn.addEventListener('click', () => { toggleMusic(); syncMusic(); });
+
 // ----- Cover -----
 prepareCover(reduce);
 const seal = q<HTMLButtonElement>('#seal');
 const sealPress = sealSecret(seal);
+// pressing dents the wax before it lets go
+seal.addEventListener('pointerdown', () => seal.classList.add('pressed'));
+['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => seal.addEventListener(ev, () => seal.classList.remove('pressed')));
 let opening = false;
 seal.addEventListener('click', async () => {
   if (sealPress.fired() || opening) return;
   opening = true;
+  // audio may only begin inside this tap, so the music starts here (volume comes from the config)
+  setMusicSource(inv.music.src);
+  startMusic(inv.music.src, inv.music.volume);
+  syncMusic();
   void askMotionPermission();
   await openCover(reduce);
   afterOpen();
@@ -89,16 +103,16 @@ function afterOpen(): void {
   root.classList.remove('locked');
   root.classList.add('opened');
   window.scrollTo(0, 0);
-  startMusic(inv.music.src);
   unlock();
   initTilt();
   const atmo = initAtmosphere(reduce);
   initDance(reduce, atmo);
   initScene(reduce, atmo);
+  initParallax(reduce);
 
   if (!reduce && matchMedia('(pointer: fine)').matches) {
     root.style.scrollBehavior = 'auto';
-    const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
+    const lenis = new Lenis({ lerp: 0.075, wheelMultiplier: 0.9, smoothWheel: true });
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((t) => lenis.raf(t * 1000));
     gsap.ticker.lagSmoothing(0);

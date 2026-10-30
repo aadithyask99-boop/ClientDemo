@@ -39,7 +39,7 @@ export interface Invitation {
   };
   secret: string; // revealed by long-pressing the wax seal
   hunt: { found: string }; // revealed when all five hidden rings are found
-  music: { src: string; title: string }; // src empty = chimes only
+  music: { src: string; title: string; volume: number }; // src empty = a quiet synthesised ambient loop; volume 0 to 1
 }
 
 export const invitation: Invitation = {
@@ -99,5 +99,5 @@ export const invitation: Invitation = {
   },
   secret: 'The proposal ring is older than the house. It was his grandmother’s, and she said it was waiting for someone who walks slowly.',
   hunt: { found: 'You found all five rings. Tell the bride you did and she will save you a dance.' },
-  music: { src: '', title: '' },
+  music: { src: '', title: 'First dance', volume: 0.2 },
 };
