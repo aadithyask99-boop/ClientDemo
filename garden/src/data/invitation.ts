@@ -77,7 +77,7 @@ export const invitation: Invitation = {
     note: 'Soft colours, a good hat if you have one. Whatever you choose, you will be on grass at some point.',
     swatches: ['#8a9a6b', '#e9dcc3', '#c98f87', '#9b86b5', '#c9a35e'],
   },
-  dance: { title: 'Save us a dance', hint: 'scroll to waltz, or press and hold to keep them dancing', holdHint: 'dancing… let go to carry on scrolling' },
+  dance: { title: 'Save us a dance', hint: 'scroll to spin them into the dip, or press and hold to let them dance on', holdHint: 'dancing… let go to take over' },
   scene: {
     church: 'The chapel bell will ring at half past two. Please do not be the reason it rings twice.',
     tree: 'The Hartwell oak is three hundred years old and has seen far worse proposals.',

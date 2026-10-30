@@ -9,7 +9,7 @@ export function prepareCover(reduce: boolean): void {
   gsap.set('.garland', { y: -70, scale: 1.32, transformOrigin: '50% 0%' });
   gsap.set('.window', { scale: 1.3, transformOrigin: '50% 72%' });
   gsap.set('.roses', { y: 90, scale: 1.4, transformOrigin: '50% 100%' });
-  gsap.set('.names, .getting, .cue', { autoAlpha: 0, y: 24 });
+  gsap.set('.names, .getting', { autoAlpha: 0, y: 24 });
 }
 
 export function openCover(reduce: boolean): Promise<void> {
@@ -26,7 +26,7 @@ export function openCover(reduce: boolean): Promise<void> {
     };
     if (reduce) {
       gsap.to(cover, { autoAlpha: 0, duration: 0.5, onComplete: finish });
-      gsap.set('.names, .getting, .cue', { autoAlpha: 1, y: 0 });
+      gsap.set('.names, .getting', { autoAlpha: 1, y: 0 });
       return;
     }
     const tl = gsap.timeline({ onComplete: finish });
@@ -40,8 +40,7 @@ export function openCover(reduce: boolean): Promise<void> {
       .to('.roses', { y: 0, scale: 1, duration: 2.5, ease: 'expo.out' }, 0.9)
       .to(cover, { autoAlpha: 0, duration: 0.6, ease: 'power1.inOut' }, 2.7)
       .to('.names', { autoAlpha: 1, y: 0, duration: 1.2, ease: 'power3.out' }, 2.5)
-      .to('.getting', { autoAlpha: 1, y: 0, duration: 1, ease: 'power3.out' }, 2.8)
-      .to('.cue', { autoAlpha: 1, y: 0, duration: 0.8 }, 3.1);
+      .to('.getting', { autoAlpha: 1, y: 0, duration: 1, ease: 'power3.out' }, 2.8);
   });
 }
 

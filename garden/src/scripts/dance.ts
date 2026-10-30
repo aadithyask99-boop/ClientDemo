@@ -1,11 +1,12 @@
-// The first dance. Scrolling through the section scrubs a 60-frame waltz that loops seamlessly (the video's first and
-// last frames were the same still). Pressing and holding plays it in real time; letting go hands it back to the scroll.
+// The first dance, played once. Scrolling through the section scrubs a spin that ends in a dip; the dip lands near the
+// end of the section and holds, then the page moves on. Nothing loops. Pressing and holding lets them dance on by
+// themselves (forward, to the dip); letting go hands the dance back to the scroll.
 import { chime } from './audio';
 import { hearts } from './eggs';
 import type { Atmosphere } from './atmosphere';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const CYCLES = 2; // dances this many full loops over the length of the section
+const END = 0.86; // the dip is reached after 86% of the section's scroll; the rest is a held pause before the page moves on
 
 export function initDance(reduce: boolean, atmo: Atmosphere): void {
   const sec = document.getElementById('dance')!;
@@ -39,11 +40,11 @@ export function initDance(reduce: boolean, atmo: Atmosphere): void {
   let near = false;
   new IntersectionObserver((es) => {
     near = es[0].isIntersecting;
-    if (near) { load(); requestAnimationFrame(tick); }
+    if (near) { load(); requestAnimationFrame(tick); } else offset = 0; // a fresh dance each time it comes back into view
   }, { rootMargin: '150% 0px 150% 0px' }).observe(sec);
 
   let held = false;
-  let offset = 0; // frames added by holding, so letting go never jumps
+  let offset = 0; // frames gained by holding, so letting go never jumps
   let shown = 0;
   let timer = 0;
   let beat = 0;
@@ -76,13 +77,14 @@ export function initDance(reduce: boolean, atmo: Atmosphere): void {
         chime(Math.floor(Math.random() * 6), 0.6);
       }
     }
-    const desired = p * CYCLES * N + offset;
+    const last = N - 1;
+    const desired = Math.min(last, Math.min(1, p / END) * last + offset);
     shown += (desired - shown) * (1 - Math.exp(-dt * 9));
     const speed = Math.abs(scrollY - lastScroll);
     lastScroll = scrollY;
     if (speed > 12 && r.top < innerHeight && r.bottom > 0) atmo.gust(Math.min(0.35, speed * 0.004));
     if (ready) {
-      const f = ((shown % N) + N) % N;
+      const f = Math.max(0, Math.min(last, shown));
       if (Math.abs(f - lastDrawn) > 0.03) {
         lastDrawn = f;
         const i = Math.floor(f);
@@ -93,7 +95,7 @@ export function initDance(reduce: boolean, atmo: Atmosphere): void {
           ctx!.drawImage(a, 0, 0);
           // blend toward the next frame so slow scrolling glides instead of stepping
           const frac = f - i;
-          const nb = frames[(i + 1) % N];
+          const nb = frames[Math.min(last, i + 1)];
           if (frac > 0.03 && nb.naturalWidth) { ctx!.globalAlpha = frac; ctx!.drawImage(nb, 0, 0); ctx!.globalAlpha = 1; }
         }
       }

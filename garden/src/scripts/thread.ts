@@ -1,35 +1,60 @@
-// A gold embroidery thread stitches itself down the whole page, passing through every section's knot.
+// The gold thread, as a loose string with real physics. Its route down the page (hero to the swans) is only a
+// loose tether: every point is a Verlet particle that drifts on a slow wind, passes waves to its neighbours,
+// is pushed and dragged by the pointer, is stirred by scrolling, and on a phone feels the tilt (gravity) sensor.
+// It is drawn on a fixed canvas; only the points near the screen are simulated or drawn.
 import { chime } from './audio';
+import { toast } from './eggs';
 
+type Pt = { x: number; y: number; knot: boolean };
+
+const SP = 22; // px between particles
+const K_REST = 4.5; // pull back toward the route (loose, so it can float)
+const K_NEIGH = 34; // pull toward the average of neighbours (carries waves along the string)
+const DAMP = 0.972;
+const WIND = 60;
+const TILT_G = 320; // sideways acceleration at full tilt
+const REPEL = 2300;
+const DRAG = 6;
+const R = 190; // pointer reach
+const MAX_DISP = 210;
 
 export function initThread(reduce: boolean): () => void {
-  const svg = document.getElementById('thread') as unknown as SVGSVGElement;
-  const line = document.getElementById('thread-line') as unknown as SVGPathElement;
-  const ghost = document.getElementById('thread-ghost') as unknown as SVGPathElement;
-  const needle = document.getElementById('needle') as unknown as SVGGElement;
+  const canvas = document.getElementById('thread') as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d')!;
+  const root = document.documentElement;
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  let W = 0;
+  let H = 0;
+  let n = 0;
+  let rx = new Float32Array(0);
+  let ry = new Float32Array(0);
+  let x = new Float32Array(0);
+  let y = new Float32Array(0);
+  let ox = new Float32Array(0);
+  let oy = new Float32Array(0);
+  let colour = '#b0822f';
 
-  let total = 0;
-  let samples: { l: number; y: number }[] = [];
+  const readColour = () => { colour = getComputedStyle(root).getPropertyValue('--thread').trim() || '#b0822f'; };
+  readColour();
+  new MutationObserver(readColour).observe(root, { attributes: true, attributeFilter: ['class'] });
 
-  type Pt = { x: number; y: number; knot: boolean };
+  // ---------- the route ----------
   let sideCount = 0;
   const anchor = (el: HTMLElement): Pt => {
-    const W = document.documentElement.clientWidth;
+    const vw = root.clientWidth;
     const knot = el.querySelector<HTMLElement>('.knot');
     const r = (knot ?? el).getBoundingClientRect();
     if (knot) return { x: r.left + r.width / 2 + scrollX, y: r.top + r.height / 2 + scrollY, knot: true };
-    // Sections without a knot: on wide screens the thread swings out to alternate margins so it never crosses text;
-    // on phones it keeps to the left margin.
-    // (left margin before the journey, right margin after it, so it only crosses the page at the journey spine)
-    const x = W >= 900 ? (sideCount++ === 0 ? W * 0.1 : W * 0.92) : Math.max(30, W * 0.08);
-    return { x, y: r.top + scrollY + Math.min(r.height * 0.1, 56), knot: false };
+    // sections without a knot: wide screens use the left margin before the journey and the right after it; phones the left margin
+    const px = vw >= 900 ? (sideCount++ === 0 ? vw * 0.1 : vw * 0.92) : Math.max(30, vw * 0.08);
+    return { x: px, y: r.top + scrollY + Math.min(r.height * 0.1, 56), knot: false };
   };
 
   const build = () => {
-    const W = document.documentElement.clientWidth;
-    const H = document.body.scrollHeight;
-    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    svg.style.height = `${H}px`;
+    W = root.clientWidth;
+    H = innerHeight;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
     const wide = W >= 900;
     sideCount = 0;
 
@@ -41,64 +66,212 @@ export function initThread(reduce: boolean): () => void {
     if (finale) pts.push({ x: wide ? W * 0.92 : Math.max(30, W * 0.08), y: finale.getBoundingClientRect().top + scrollY + 30, knot: false });
     const swans = document.getElementById('swans');
     if (swans) { const r = swans.getBoundingClientRect(); pts.push({ x: W / 2, y: r.top + scrollY + r.height * 0.55, knot: false }); }
+    if (pts.length < 2) return;
 
-    let d = `M ${pts[0].x} ${pts[0].y}`;
+    // sample each cubic segment densely, then resample at an even spacing along the whole route
+    const dense: number[] = [pts[0].x, pts[0].y];
     for (let i = 1; i < pts.length; i++) {
       const a = pts[i - 1];
       const b = pts[i];
       const dy = b.y - a.y;
-      // vertical tangents make an S between the points; a little sway keeps runs along one margin from looking ruled
       const sway = (a.knot && b.knot ? (wide ? 46 : 0) : wide ? 0 : 12) * (i % 2 ? 1 : -1);
-      d += ` C ${a.x + sway} ${a.y + dy * 0.45}, ${b.x - sway} ${b.y - dy * 0.45}, ${b.x} ${b.y}`;
+      const c1x = a.x + sway, c1y = a.y + dy * 0.45, c2x = b.x - sway, c2y = b.y - dy * 0.45;
+      const steps = Math.max(8, Math.ceil(Math.hypot(b.x - a.x, dy) / 5));
+      for (let s = 1; s <= steps; s++) {
+        const t = s / steps, u = 1 - t;
+        dense.push(
+          u * u * u * a.x + 3 * u * u * t * c1x + 3 * u * t * t * c2x + t * t * t * b.x,
+          u * u * u * a.y + 3 * u * u * t * c1y + 3 * u * t * t * c2y + t * t * t * b.y,
+        );
+      }
     }
-    line.setAttribute('d', d);
-    ghost.setAttribute('d', d);
-    total = line.getTotalLength();
-    line.style.strokeDasharray = `${total}`;
-    samples = [];
-    const n = 700;
-    for (let i = 0; i <= n; i++) {
-      const l = (total * i) / n;
-      samples.push({ l, y: line.getPointAtLength(l).y });
+    const out: number[] = [dense[0], dense[1]];
+    let carry = 0;
+    for (let i = 2; i < dense.length; i += 2) {
+      let ax = dense[i - 2], ay = dense[i - 1];
+      const bx = dense[i], by = dense[i + 1];
+      let seg = Math.hypot(bx - ax, by - ay);
+      while (carry + seg >= SP) {
+        const f = (SP - carry) / seg;
+        ax += (bx - ax) * f;
+        ay += (by - ay) * f;
+        out.push(ax, ay);
+        seg = Math.hypot(bx - ax, by - ay);
+        carry = 0;
+      }
+      carry += seg;
     }
-    update();
+    n = out.length / 2;
+    rx = new Float32Array(n); ry = new Float32Array(n);
+    for (let i = 0; i < n; i++) { rx[i] = out[2 * i]; ry[i] = out[2 * i + 1]; }
+    x = Float32Array.from(rx); y = Float32Array.from(ry);
+    ox = Float32Array.from(rx); oy = Float32Array.from(ry);
   };
 
-  const lengthAtY = (y: number) => {
-    if (y <= samples[0].y) return 0;
-    if (y >= samples[samples.length - 1].y) return total;
-    let lo = 0;
-    let hi = samples.length - 1;
-    while (hi - lo > 1) {
-      const mid = (lo + hi) >> 1;
-      if (samples[mid].y < y) lo = mid; else hi = mid;
+  // ---------- inputs ----------
+  let pX = -9999, pY = -9999, pVX = 0, pVY = 0, pT = -1e9; // pointer, in page coordinates
+  addEventListener('pointermove', (e) => {
+    const now = performance.now();
+    const nx = e.clientX + scrollX, ny = e.clientY + scrollY;
+    const dt = Math.max(8, now - pT) / 1000;
+    if (now - pT < 200) { pVX = pVX * 0.6 + ((nx - pX) / dt) * 0.4; pVY = pVY * 0.6 + ((ny - pY) / dt) * 0.4; } else { pVX = 0; pVY = 0; }
+    const cap = 2200; // a fast flick should push the string, not fling it
+    pVX = Math.max(-cap, Math.min(cap, pVX)); pVY = Math.max(-cap, Math.min(cap, pVY));
+    pX = nx; pY = ny; pT = now;
+  }, { passive: true });
+
+  let tiltX = 0, tiltY = 0, tx = 0, ty = 0, hinted = false;
+  addEventListener('deviceorientation', (e) => {
+    if (e.gamma == null || e.beta == null) return;
+    const ang = (screen.orientation && screen.orientation.angle) || 0;
+    // gamma: left/right tilt, beta: front/back tilt, swapped when the phone is turned on its side
+    let gx = e.gamma, gy = e.beta - 55;
+    if (ang === 90) { gx = e.beta - 55; gy = -e.gamma; } else if (ang === 270 || ang === -90) { gx = -(e.beta - 55); gy = e.gamma; } else if (ang === 180) { gx = -e.gamma; gy = -(e.beta - 55); }
+    tx = Math.max(-1, Math.min(1, gx / 35));
+    ty = Math.max(-1, Math.min(1, gy / 40)) * 0.5;
+    if (!hinted && Math.abs(tx) > 0.25) {
+      hinted = true;
+      try { if (!localStorage.getItem('garden-tilt-hint')) { localStorage.setItem('garden-tilt-hint', '1'); toast('Tilt your phone. The thread swings with it.'); } } catch { /* ignore */ }
     }
-    return samples[lo].l;
+  }, { passive: true });
+
+  let lastScroll = scrollY, gust = 0;
+  addEventListener('scroll', () => { gust = Math.min(2.5, gust + Math.abs(scrollY - lastScroll) * 0.012); lastScroll = scrollY; }, { passive: true });
+
+  // ---------- simulation ----------
+  const kick = (i: number, f: number) => {
+    for (let k = Math.max(1, i - 6); k < Math.min(n - 1, i + 7); k++) ox[k] -= f * (1 - Math.abs(k - i) / 7) * 0.016;
+  };
+  const step = (dt: number, t: number) => {
+    const top = scrollY - 500, bottom = scrollY + H + 500;
+    const idle = t - pT > 1400;
+    tiltX += (tx - tiltX) * 0.08;
+    tiltY += (ty - tiltY) * 0.08;
+    gust *= 0.97;
+    for (let i = 1; i < n - 1; i++) {
+      if (ry[i] < top || ry[i] > bottom) continue;
+      let ax = (rx[i] - x[i]) * K_REST + ((x[i - 1] + x[i + 1]) * 0.5 - x[i]) * K_NEIGH;
+      let ay = (ry[i] - y[i]) * K_REST + ((y[i - 1] + y[i + 1]) * 0.5 - y[i]) * K_NEIGH;
+      ax += Math.sin(t * 0.0009 + i * 0.045) * WIND + Math.sin(t * 0.0031 + i * 0.07) * gust * 380 + tiltX * TILT_G;
+      ay += Math.cos(t * 0.0007 + i * 0.05) * WIND * 0.35 + tiltY * TILT_G;
+      if (!idle) {
+        const dx = x[i] - pX, dy = y[i] - pY;
+        const d = Math.hypot(dx, dy);
+        if (d < R && d > 0.01) {
+          const w = (1 - d / R) * (1 - d / R);
+          ax += (dx / d) * w * REPEL + pVX * w * DRAG;
+          ay += (dy / d) * w * REPEL * 0.5 + pVY * w * DRAG;
+        }
+      }
+      const vx = (x[i] - ox[i]) * DAMP, vy = (y[i] - oy[i]) * DAMP;
+      ox[i] = x[i]; oy[i] = y[i];
+      x[i] += vx + ax * dt * dt;
+      y[i] += vy + ay * dt * dt;
+      const ex = x[i] - rx[i], ey = y[i] - ry[i], e = Math.hypot(ex, ey);
+      if (e > MAX_DISP) { x[i] = rx[i] + (ex / e) * MAX_DISP; y[i] = ry[i] + (ey / e) * MAX_DISP; }
+    }
   };
 
-  const update = () => {
-    if (!total) return;
-    const len = reduce ? total : lengthAtY(scrollY + innerHeight * 0.62);
-    line.style.strokeDashoffset = `${total - len}`;
-    if (reduce) { needle.style.display = 'none'; return; }
-    const p = line.getPointAtLength(len);
-    const q = line.getPointAtLength(Math.min(total, len + 3));
-    const ang = (Math.atan2(q.y - p.y, q.x - p.x) * 180) / Math.PI;
-    needle.setAttribute('transform', `translate(${p.x} ${p.y}) rotate(${ang})`);
+  // a light smoothing pass so a push bends the string in an arc instead of kinking it
+  const smooth = () => {
+    const top = scrollY - 500, bottom = scrollY + H + 500;
+    for (let pass = 0; pass < 2; pass++) {
+      for (let i = 1; i < n - 1; i++) {
+        if (ry[i] < top || ry[i] > bottom) continue;
+        x[i] += ((x[i - 1] + x[i + 1]) * 0.5 - x[i]) * 0.16;
+        y[i] += ((y[i - 1] + y[i + 1]) * 0.5 - y[i]) * 0.16;
+      }
+    }
   };
 
-  let raf = 0;
-  const onScroll = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; update(); }); };
-  window.addEventListener('scroll', onScroll, { passive: true });
-  let t = 0;
-  const rebuild = () => { clearTimeout(t); t = window.setTimeout(build, 120); };
-  window.addEventListener('resize', rebuild);
+  // ---------- drawing ----------
+  let tip = 0;
+  const firstAbove = (yy: number) => { let lo = 0, hi = n - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (ry[m] < yy) lo = m + 1; else hi = m; } return lo; };
+  const trace = (i0: number, i1: number) => {
+    ctx.beginPath();
+    ctx.moveTo(x[i0], y[i0] - scrollY);
+    for (let i = i0 + 1; i < i1; i++) ctx.quadraticCurveTo(x[i], y[i] - scrollY, (x[i] + x[i + 1]) / 2, (y[i] + y[i + 1]) / 2 - scrollY);
+    ctx.lineTo(x[i1], y[i1] - scrollY);
+  };
+  const draw = () => {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    if (n < 3) return;
+    const v0 = Math.max(0, firstAbove(scrollY - 60) - 1);
+    const v1 = Math.min(n - 1, firstAbove(scrollY + H + 60) + 1);
+    tip = reduce ? n - 1 : Math.min(n - 1, firstAbove(scrollY + H * 0.62));
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    if (tip > v0 + 1) { // the thread already laid
+      const e = Math.min(tip, v1);
+      ctx.strokeStyle = 'rgba(80, 50, 0, 0.28)';
+      ctx.lineWidth = 3.6;
+      ctx.save(); ctx.translate(0, 1.5); trace(v0, e); ctx.stroke(); ctx.restore();
+      ctx.strokeStyle = colour;
+      ctx.lineWidth = 2.6;
+      trace(v0, e);
+      ctx.stroke();
+    }
+    if (!reduce && tip < v1 - 1) { // the way ahead, faintly dotted
+      ctx.strokeStyle = colour;
+      ctx.globalAlpha = 0.45;
+      ctx.lineWidth = 1.6;
+      ctx.setLineDash([1, 9]);
+      trace(Math.max(v0, tip), v1);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 1;
+    }
+    if (!reduce && tip > 1 && tip < n - 1) { // the needle at the tip
+      const a = Math.atan2(y[tip + 1] - y[tip - 1], x[tip + 1] - x[tip - 1]);
+      ctx.save();
+      ctx.translate(x[tip], y[tip] - scrollY);
+      ctx.rotate(a);
+      ctx.fillStyle = colour;
+      ctx.beginPath();
+      ctx.moveTo(0, 0); ctx.lineTo(24, -3); ctx.lineTo(22, 0); ctx.lineTo(24, 3); ctx.closePath();
+      ctx.fill();
+      ctx.beginPath(); ctx.arc(3, 0, 1.4, 0, 6.3); ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.fill();
+      ctx.restore();
+    }
+  };
+
+  // tap the needle: it chimes and the thread gives a flick
+  let chimeStep = 0;
+  addEventListener('pointerdown', (e) => {
+    if (reduce || !tip) return;
+    if (Math.hypot(e.clientX - x[tip], e.clientY - (y[tip] - scrollY)) < 30) { chime(chimeStep++ % 8, 0.9); kick(tip, 500); }
+  }, { passive: true });
+
+  // ---------- loop ----------
+  let raf = 0, last = performance.now(), acc = 0;
+  const frame = (t: number) => {
+    acc += Math.min(0.05, (t - last) / 1000);
+    last = t;
+    let guard = 3;
+    while (acc >= 1 / 60 && guard--) { step(1 / 60, t); smooth(); acc -= 1 / 60; }
+    if (guard < 0) acc = 0;
+    draw();
+    raf = requestAnimationFrame(frame);
+  };
+  const run = () => { cancelAnimationFrame(raf); if (reduce) { draw(); return; } if (!document.hidden) { last = performance.now(); raf = requestAnimationFrame(frame); } };
+  document.addEventListener('visibilitychange', run);
+  if (reduce) addEventListener('scroll', () => requestAnimationFrame(draw), { passive: true });
+
+  let t0 = 0;
+  const rebuild = () => { clearTimeout(t0); t0 = window.setTimeout(() => { build(); run(); }, 120); };
+  addEventListener('resize', rebuild);
   new ResizeObserver(rebuild).observe(document.body);
   document.fonts?.ready.then(rebuild);
-  window.addEventListener('load', rebuild);
-
-  let step = 0;
-  needle.addEventListener('click', () => chime(step++ % 8, 0.9));
+  addEventListener('load', rebuild);
   build();
+  run();
+
+  // handy for tests: how far the visible part of the string has been pushed off its route
+  (window as unknown as { __thread?: unknown }).__thread = {
+    displacement: () => { let m = 0; for (let i = 0; i < n; i++) if (ry[i] > scrollY && ry[i] < scrollY + H) m = Math.max(m, Math.hypot(x[i] - rx[i], y[i] - ry[i])); return m; },
+    points: () => n,
+    at: (cy: number) => { const i = firstAbove(scrollY + cy); return [x[i], y[i] - scrollY]; },
+  };
   return build;
 }

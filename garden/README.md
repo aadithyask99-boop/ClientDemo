@@ -49,7 +49,7 @@ The page posts `text/plain` with `no-cors`, which Apps Script accepts, so there 
 
 - **Cover** (`cover.ts`): two linen doors in CSS 3D with a wax seal. Tapping the seal swings the doors open while the hero layers (garland, villa window, roses) push forward by different amounts, so it feels like walking in. The cover is only shown with JavaScript on; without it the page is a plain readable invitation.
 - **Tilt**: after opening, the stage tilts with the pointer on desktop and the phone's gyroscope on mobile (iOS permission is asked on the seal tap). Layers also drift apart as you scroll away.
-- **Thread** (`thread.ts`): one SVG path built from each section's anchor. A needle follows the scroll position along it. On phones it keeps to the left margin; on wide screens it runs down the margin and weaves through the journey spine. Tap the needle for a chime.
+- **Thread** (`thread.ts`): a free-floating string with real physics, drawn on a fixed canvas. Its route (hero to the swans) is only a loose tether: every point is a Verlet particle that drifts on a slow wind, passes waves to its neighbours, is pushed and dragged by the pointer (it never follows the pointer, it flows away from it and floats back), is stirred by scrolling, and on a phone feels the tilt sensor (`deviceorientation`), so tilting swings it sideways like gravity. Only the points near the screen are simulated. A needle rides the tip, and tapping it chimes and flicks the string. Reduced motion draws it still.
 - **Ink date** (`ink.ts`, `DateReveal.astro`): circles roughened by SVG turbulence act as a mask over the date, growing with scroll.
 - **Sound** (`audio.ts`): chimes are synthesised with the Web Audio API, so there is no audio to license. Set `music.src` for looping music; the sound button in the corner controls both.
 
@@ -74,7 +74,7 @@ Embroidered petals and leaves drift down on a slow wind. Scrolling fast stirs a 
 
 ## The first dance (`dance.ts`, `Dance.astro`)
 
-A 6-second clip of the couple waltzing, drawing into a hold and then dipping, was generated from the still, using the still as both first and last frame so it loops seamlessly. It is stored as 144 WebP frames at 24 fps (about 2.5 MB) and drawn to a canvas inside an oval embroidery hoop. Scrolling through the section scrubs the dance (a section 2.5 screens tall with a sticky stage), with two full loops over its length. **Press and hold** the hoop to play it in real time, with hearts, petals and chimes, and let go to hand it back to the scroll. With reduced motion the still image stays.
+A 6-second one-shot clip was generated from the couple still: she is twirled under his arm in a full spin, then he lowers her into a deep dip and they hold it. Only the first frame is fixed (`DANCE_LAST=0`), so it ends in the dip. It is trimmed to the useful 4 seconds and stored as 96 WebP frames at 24 fps (about 1.2 MB), drawn to a canvas inside an oval embroidery hoop. **It does not loop.** Scrolling through the section plays the spin and then the dip, which lands after 86% of the section's scroll and holds still while the page moves on; scrolling back up rewinds it. **Press and hold** the hoop to let them dance on by themselves (forward only, to the dip, with hearts and chimes); letting go hands it back to the scroll. With reduced motion the still image stays.
 
 ## The finale landscape (`scene.ts`, `Finale.astro`)
 
@@ -93,8 +93,8 @@ Made with `bytedance-seed/seedream-5-0-flash` on OpenRouter, about 2 cents an im
 python3 -I scripts/key.py art-raw                              # cut out keyed pieces, slice the petal, scenery and butterfly sheets, write public/art/*.webp
 
 # the dance: needs art-raw/couple-small.jpg (the still resized to 720x960)
-DANCE_OUT=dance2 ../scripts/env.sh run -- node scripts/gen-dance.mjs   # image-to-video, first frame = last frame; about $0.26 for 6 s on alibaba/wan-3.0 at 480p (DANCE_PROMPT overrides the move)
-python3 -I scripts/dance-frames.py art-raw dance2              # 144 levelled frames into public/art/dance (set data-frames and data-fps in Dance.astro to match)
+DANCE_OUT=dance3 DANCE_LAST=0 ../scripts/env.sh run -- node scripts/gen-dance.mjs   # image-to-video; about $0.26 for 6 s on alibaba/wan-3.0 at 480p. DANCE_PROMPT sets the move; omit DANCE_LAST=0 for a looping clip
+python3 -I scripts/dance-frames.py art-raw dance3 4.8 0.8    # levelled frames 0.8 s to 4.8 s into public/art/dance (set data-frames in Dance.astro to the count it prints)
 ```
 
 Pieces that need transparency (seal, garland, roses, swans, wreath, the six petals) are generated on a flat colour and keyed out by sampling the border colour. Names, dates and every other word stay live text, never baked into an image. Generated art usually cannot be copyrighted, so clients do not get exclusivity over a design.

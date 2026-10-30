@@ -1,5 +1,5 @@
-// Makes the slow-dance loop: the couple still (art-raw/couple.jpg) is used as BOTH the first and last frame,
-// so the clip returns to its starting pose and loops seamlessly. Then run scripts/dance-frames.sh.
+// Makes the dance clip from the couple still (art-raw/couple-small.jpg). By default the still is BOTH the first and last frame
+// so the clip loops; with DANCE_LAST=0 only the first frame is fixed, so the clip can end in a different pose (the dip).
 //   ../scripts/env.sh run -- node scripts/gen-dance.mjs
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 
@@ -25,7 +25,8 @@ const body = {
   duration,
   frame_images: [
     { type: 'image_url', image_url: { url: frame }, frame_type: 'first_frame' },
-    { type: 'image_url', image_url: { url: frame }, frame_type: 'last_frame' },
+    // DANCE_LAST=0 leaves the ending free (a one-shot dance that ends in the dip) instead of looping back to the still
+    ...(process.env.DANCE_LAST === '0' ? [] : [{ type: 'image_url', image_url: { url: frame }, frame_type: 'last_frame' }]),
   ],
 };
 

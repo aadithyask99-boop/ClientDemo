@@ -124,10 +124,7 @@ main { position: relative; z-index: 1; }
 .names .amp { font-size: 1.15em; color: var(--thread); line-height: 0; }
 @media (max-width: 640px) { .names { flex-direction: column; align-items: center; gap: 0; line-height: 0.95; font-size: clamp(3.2rem, 17vw, 5rem); } .names .amp { line-height: 0.8; font-size: 0.8em; } }
 .getting { position: relative; z-index: 3; font-size: clamp(1.9rem, 1.2rem + 3vw, 3rem); color: var(--thread); margin-top: 0.4rem; }
-.cue { display: block; margin: 1.6rem auto 0; width: 1.8rem; height: 3.2rem; border-radius: 1rem; border: 1.5px solid var(--thread); position: relative; opacity: 0.8; }
-.cue span { position: absolute; left: 50%; top: 0.55rem; width: 0.3rem; height: 0.3rem; margin-left: -0.15rem; border-radius: 50%; background: var(--thread); animation: cue 2s var(--ease) infinite; }
-@keyframes cue { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(1.5rem); opacity: 0; } }
-.js:not(.opened) .names, .js:not(.opened) .getting, .js:not(.opened) .cue { opacity: 0; }
+.js:not(.opened) .names, .js:not(.opened) .getting { opacity: 0; }
 
 /* ---------- Hidden rings ---------- */
 .ring-egg { position: absolute; left: var(--x); top: var(--y); z-index: 4; width: 2.6rem; height: 2.6rem; display: grid; place-items: center; border: 0; background: none; color: var(--thread); opacity: 0.0; cursor: pointer; border-radius: 50%; pointer-events: auto; transition: opacity 0.5s, transform 0.5s var(--ease); animation: glint 5s ease-in-out infinite; }
@@ -255,12 +252,8 @@ input[type='text']:focus, textarea:focus { outline: 0; border-bottom-style: soli
 .roses-end img { width: min(112vw, 980px); max-width: none; display: block; margin-bottom: -4%; }
 #secret2 { position: static; translate: 0 0; margin-top: 0.4rem; }
 
-/* ---------- Thread ---------- */
-.thread { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: visible; }
-.thread path { vector-effect: non-scaling-stroke; }
-#thread-ghost { stroke: var(--thread); stroke-width: 1.6; stroke-dasharray: 1 9; stroke-linecap: round; opacity: 0.45; }
-#thread-line { stroke: var(--thread); stroke-width: 2.6; stroke-linecap: round; filter: drop-shadow(0 1px 1px rgba(80, 50, 0, 0.3)); }
-#needle { fill: var(--thread); transform-box: fill-box; pointer-events: auto; cursor: pointer; }
+/* ---------- Thread (a canvas; the string physics live in thread.ts) ---------- */
+.thread { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 .js:not(.opened) .thread { opacity: 0; }
 
 /* ---------- Dock + toast ---------- */
@@ -283,7 +276,7 @@ input[type='text']:focus, textarea:focus { outline: 0; border-bottom-style: soli
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .seal, .seal::after, .cover-hint, .cue span, .ring-egg { animation: none; }
+  .seal, .seal::after, .cover-hint, .ring-egg { animation: none; }
   .js .reveal { opacity: 1; transform: none; filter: none; transition: none; }
 }
 
