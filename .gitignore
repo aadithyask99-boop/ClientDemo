@@ -3,3 +3,6 @@ node_modules/
 .env
 .env.*
 !.env.example
+
+# age private key (never commit)
+.age-key.txt

@@ -1,0 +1,18 @@
+---
+import { invitation as inv } from '../data/invitation';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const initials = `${inv.a[0]}&${inv.b[0]}`;
+---
+<!-- Only shown with JavaScript on (the .js class); tapping the seal opens the doors. -->
+<div class="cover" id="cover" aria-live="polite">
+  <div class="doors">
+    <div class="door door-l" style={`--img:url(${base}/art/linen.webp)`}></div>
+    <div class="door door-r" style={`--img:url(${base}/art/linen.webp)`}></div>
+  </div>
+  <button class="seal" id="seal" type="button" aria-label={`Open the invitation from ${inv.a} and ${inv.b}`}>
+    <img src={`${base}/art/seal.webp`} alt="" width="340" height="340" decoding="async" />
+    <span class="seal-mono">{initials}</span>
+  </button>
+  <p class="cover-hint script">touch the seal to open</p>
+  <p class="secret" id="secret" role="status" hidden></p>
+</div>

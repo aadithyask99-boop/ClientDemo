@@ -1,0 +1,46 @@
+---
+import Icon from './Icon.astro';
+import { invitation as inv } from '../data/invitation';
+const r = inv.rsvp;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<section class="rsvp" id="rsvp" data-knot>
+  <img class="side sl" src={`${base}/art/rosevine.webp`} alt="" width="512" height="1100" loading="lazy" decoding="async" />
+  <img class="side sr" src={`${base}/art/rosevine.webp`} alt="" width="512" height="1100" loading="lazy" decoding="async" />
+  <h2 class="reveal">Will you join us?</h2>
+  <p class="reveal rsvp-by">Please reply by {r.deadlineWords}</p>
+  <form id="rsvp-form" class="reveal" novalidate>
+    <div id="guests"></div>
+    <div class="field">
+      <label for="note">A message for the two of us</label>
+      <textarea id="note" name="note" rows="2" placeholder="A wish, a memory, a very good joke…"></textarea>
+    </div>
+    {r.extra.map((x) => (
+      <div class="field">
+        <span class="lab">{x.label}</span>
+        {x.options ? (
+          <div class="chips" role="radiogroup" aria-label={x.label}>
+            {x.options.map((o) => (
+              <label class="chip"><input type="radio" name={x.id} value={o} /><span>{o}</span></label>
+            ))}
+          </div>
+        ) : (
+          <input type="text" name={x.id} aria-label={x.label} autocomplete="off" />
+        )}
+      </div>
+    ))}
+    <p class="small">{r.note}</p>
+    <p class="error" id="rsvp-error" role="alert" hidden></p>
+    <button class="pill big" type="submit" id="rsvp-send"><Icon name="send" size={22} />Send our reply</button>
+  </form>
+  <div class="thanks" id="thanks" hidden aria-live="polite">
+    <svg class="envelope" viewBox="0 0 220 160" aria-hidden="true">
+      <path class="env-back" d="M16 40Q16 16 40 16h140q24 0 24 24v80q0 24-24 24H40q-24 0-24-24z" />
+      <path class="env-flap" d="M18 38Q110 108 202 38" />
+      <circle class="env-seal" cx="110" cy="78" r="17" />
+      <path class="env-heart" d="M110 88c-9-6-9-13-4-14 2 0 4 1 4 3 0-2 2-3 4-3 5 1 5 8-4 14z" />
+    </svg>
+    <h3 id="thanks-title">Thank you</h3>
+    <p id="thanks-text"></p>
+  </div>
+</section>

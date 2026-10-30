@@ -1,0 +1,9 @@
+---
+// Full-bleed illustrated divider between sections (pearls and roses, or a hanging wisteria curtain).
+interface Props { kind?: 'pearls' | 'curtain'; flip?: boolean }
+const { kind = 'pearls', flip = false } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<div class={`divider ${kind}${flip ? ' flip' : ''}`} aria-hidden="true">
+  <img src={`${base}/art/${kind}.webp`} alt="" loading="lazy" decoding="async" />
+</div>

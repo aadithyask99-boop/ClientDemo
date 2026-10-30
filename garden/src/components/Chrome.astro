@@ -1,0 +1,24 @@
+---
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+// Page furniture: the thread, fireflies, sound and night buttons, and the toast.
+---
+<canvas class="thread" id="thread" aria-hidden="true"></canvas>
+<div class="dapple" aria-hidden="true">
+  <img class="d1 day" src={`${base}/art/dapple.webp`} alt="" width="512" height="512" />
+  <img class="d2 day" src={`${base}/art/dapple.webp`} alt="" width="512" height="512" />
+  <img class="d1 nite" src={`${base}/art/dapple-night.webp`} alt="" width="512" height="512" />
+  <img class="d2 nite" src={`${base}/art/dapple-night.webp`} alt="" width="512" height="512" />
+</div>
+<div class="vines" aria-hidden="true">
+  <div class="vine vl"><img src={`${base}/art/vine.webp`} alt="" width="424" height="1100" /><img class="flip" src={`${base}/art/vine.webp`} alt="" width="424" height="1100" /><img src={`${base}/art/vine.webp`} alt="" width="424" height="1100" /></div>
+  <div class="vine vr"><img src={`${base}/art/vine.webp`} alt="" width="424" height="1100" /><img class="flip" src={`${base}/art/vine.webp`} alt="" width="424" height="1100" /><img src={`${base}/art/vine.webp`} alt="" width="424" height="1100" /></div>
+</div>
+<canvas class="petals" id="petals" aria-hidden="true"></canvas>
+<canvas class="fireflies" id="fireflies" aria-hidden="true"></canvas>
+<div class="dock" id="dock">
+  <button class="round" id="sound" type="button" aria-pressed="false" aria-label="Turn sound on"><i></i><i></i><i></i></button>
+  <button class="round" id="nightbtn" type="button" aria-pressed="false" aria-label="Switch between day and night">
+    <svg viewBox="0 0 48 48" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M31 7a17 17 0 1 0 10 26A15 15 0 0 1 31 7z"/></svg>
+  </button>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>

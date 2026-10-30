@@ -1,0 +1,38 @@
+---
+import { invitation as inv } from '../data/invitation';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const ring = '<svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="24" cy="29" r="11"/><path d="M24 6l5 6-5 6-5-6z"/></svg>';
+---
+<section class="finale" id="finale">
+  <!-- The sky turns to sunset as you scroll in (--dusk 0 to 1); the sun sinks behind the hills. -->
+  <div class="sky" aria-hidden="true"><div class="sun" id="sun"></div></div>
+
+  <div class="finale-copy">
+    <button class="swans" id="swans" type="button" aria-label="Two swans. Touch them.">
+      <img src={`${base}/art/swans.webp`} alt="" width="900" height="900" loading="lazy" decoding="async" />
+    </button>
+    <p class="names-end reveal">{inv.a} <span class="script">&amp;</span> {inv.b}</p>
+    <p class="date-end script reveal">{inv.dateWords}</p>
+    <button class="mini-seal" id="mini-seal" type="button" aria-label="A small wax seal. Hold it for a secret.">
+      <img src={`${base}/art/seal.webp`} alt="" width="120" height="120" loading="lazy" decoding="async" />
+    </button>
+    <p class="secret" id="secret2" role="status" hidden></p>
+  </div>
+
+  <div class="scene" id="scene">
+    <img class="hills" src={`${base}/art/hills.webp`} alt="" width="1700" height="816" loading="lazy" decoding="async" />
+    <div class="birds" id="birds" aria-hidden="true"></div>
+    <button class="prop church" id="church" type="button" data-say={inv.scene.church} aria-label="The village chapel. Touch to ring its bell.">
+      <img src={`${base}/art/church.webp`} alt="" width="617" height="760" loading="lazy" decoding="async" /><i class="glow"></i>
+    </button>
+    <button class="prop tree" id="tree" type="button" data-say={inv.scene.tree} aria-label="An old oak. Touch to shake its leaves.">
+      <img src={`${base}/art/tree.webp`} alt="" width="689" height="760" loading="lazy" decoding="async" />
+    </button>
+    <button class="prop bench" id="bench" type="button" data-say={inv.scene.bench} aria-label="A garden bench. Touch it.">
+      <img src={`${base}/art/bench.webp`} alt="" width="728" height="440" loading="lazy" decoding="async" />
+    </button>
+    <div class="roses-end"><img class="rl" src={`${base}/art/roses.webp`} alt="" width="1500" height="844" loading="lazy" decoding="async" /><img class="rr" src={`${base}/art/roses.webp`} alt="" width="1500" height="844" loading="lazy" decoding="async" />
+      <button class="ring-egg" data-ring="5" style="--x:22%;--y:40%" aria-label="A tiny hidden ring" set:html={ring}></button>
+    </div>
+  </div>
+</section>

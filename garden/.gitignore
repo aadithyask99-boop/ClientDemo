@@ -1,0 +1,4 @@
+art-raw/
+dist/
+.astro/
+node_modules/
