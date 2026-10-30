@@ -1,0 +1,17 @@
+---
+import { invitation as inv } from '../data/invitation';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<section class="hero" id="top">
+  <div class="stage" id="stage">
+    <div class="layer garland" data-depth="16"><img src={`${base}/art/garland.webp`} alt="" width="1800" height="1012" /></div>
+    <div class="layer window" data-depth="7"><div class="frame"><img src={`${base}/art/villa.webp`} alt="An embroidered Provençal farmhouse among lavender, with a fountain" width="1400" height="2489" fetchpriority="high" /></div></div>
+    <div class="layer roses" data-depth="24"><img src={`${base}/art/roses.webp`} alt="" width="1800" height="1012" /></div>
+    <button class="ring-egg" data-ring="1" style="--x:78%;--y:30%" aria-label="A tiny hidden ring"><svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="24" cy="29" r="11"/><path d="M24 6l5 6-5 6-5-6z"/></svg></button>
+  </div>
+  <h1 class="names" id="names">
+    <span class="n">{inv.a}</span><span class="amp script" aria-hidden="true">&amp;</span><span class="n">{inv.b}</span>
+  </h1>
+  <p class="getting script">are getting married</p>
+  <a class="cue" href="#welcome" aria-label="Scroll to the invitation"><span></span></a>
+</section>

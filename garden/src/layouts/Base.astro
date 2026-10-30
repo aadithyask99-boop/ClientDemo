@@ -1,0 +1,45 @@
+---
+import '@fontsource-variable/fraunces/soft.css';
+import '@fontsource-variable/fraunces/soft-italic.css';
+import '@fontsource-variable/newsreader/wght.css';
+import '@fontsource-variable/newsreader/wght-italic.css';
+import '@fontsource/pinyon-script/latin-400.css';
+import '../styles/global.css';
+
+interface Props { title: string; description: string }
+const { title, description } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#8a9a6b" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <link rel="preload" as="image" type="image/webp" href={`${base}/art/linen.webp`} />
+    <link rel="preload" as="image" type="image/webp" href={`${base}/art/seal.webp`} />
+    <script is:inline>
+      // Without JavaScript the cover never shows and the page is just a readable invitation.
+      (function () {
+        var d = document.documentElement;
+        var q = new URLSearchParams(location.search);
+        d.classList.add('js', 'locked');
+        var h = new Date().getHours();
+        if (q.get('night') === '1' || (q.get('night') !== '0' && (h >= 20 || h < 6))) d.classList.add('night');
+        // If the script never starts, never leave the page locked behind the cover
+        setTimeout(function () { if (!window.__garden) d.classList.remove('js', 'locked'); }, 6000);
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>

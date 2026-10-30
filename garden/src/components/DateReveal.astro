@@ -1,0 +1,41 @@
+---
+import { invitation as inv } from '../data/invitation';
+const [weekday, ...rest] = inv.dateWords.split(' ');
+const day = rest.join(' ');
+---
+<section class="date" id="date" data-knot>
+  <h2 class="sr-only">The date: {inv.dateWords}</h2>
+  <!-- The date is written in ink that blooms outward as you scroll: circles roughened by SVG turbulence act as a mask. -->
+  <svg class="ink" id="ink" viewBox="0 0 1000 440" role="img" aria-label={inv.dateWords}>
+    <defs>
+      <filter id="blot" x="-30%" y="-30%" width="160%" height="160%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="3" seed="7" result="n" />
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="150" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+      <mask id="inkmask" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="440">
+        <g filter="url(#blot)" fill="#fff">
+          <circle class="drop" cx="140" cy="230" r="0" />
+          <circle class="drop" cx="420" cy="170" r="0" />
+          <circle class="drop" cx="700" cy="260" r="0" />
+          <circle class="drop" cx="930" cy="190" r="0" />
+          <circle class="drop" cx="500" cy="350" r="0" />
+        </g>
+      </mask>
+    </defs>
+    <g class="ghost" font-family="'Fraunces Variable', serif" font-style="italic" text-anchor="middle" fill="currentColor">
+      <text x="500" y="170" font-size="118" opacity="0.1">{weekday}</text>
+      <text x="500" y="340" font-size="168" opacity="0.1">{day}</text>
+    </g>
+    <g mask="url(#inkmask)" font-family="'Fraunces Variable', serif" font-style="italic" text-anchor="middle" class="wet">
+      <text x="500" y="170" font-size="118">{weekday}</text>
+      <text x="500" y="340" font-size="168">{day}</text>
+    </g>
+  </svg>
+  <div class="hoops" id="hoops" role="timer" aria-live="off">
+    <div class="hoop"><b data-u="d">0</b><span>days</span></div>
+    <div class="hoop"><b data-u="h">0</b><span>hours</span></div>
+    <div class="hoop"><b data-u="m">0</b><span>minutes</span></div>
+    <div class="hoop"><b data-u="s">0</b><span>seconds</span></div>
+  </div>
+  <p class="count-note script" id="count-note"></p>
+</section>

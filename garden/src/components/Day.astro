@@ -1,0 +1,21 @@
+---
+import Icon from './Icon.astro';
+import { invitation as inv } from '../data/invitation';
+const fmt = (t: string) => {
+  const [h, m] = t.split(':').map(Number);
+  const hh = h % 12 || 12;
+  return `${hh}${m ? '.' + String(m).padStart(2, '0') : ''} ${h < 12 ? 'am' : 'pm'}`;
+};
+---
+<section class="day" id="day">
+  <h2 class="reveal">The day</h2>
+  <ol class="moments">
+    {inv.day.map((m) => (
+      <li class="moment reveal">
+        <span class="mi"><Icon name={m.icon} size={30} /></span>
+        <span class="mt">{fmt(m.time)}</span>
+        <span class="mc"><b>{m.title}</b>{m.note && <em>{m.note}</em>}</span>
+      </li>
+    ))}
+  </ol>
+</section>

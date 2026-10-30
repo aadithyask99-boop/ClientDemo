@@ -1,0 +1,20 @@
+---
+import { invitation as inv } from '../data/invitation';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<section class="finale" id="finale">
+  <button class="swans" id="swans" type="button" aria-label="Two swans. Touch them.">
+    <img src={`${base}/art/swans.webp`} alt="" width="900" height="900" loading="lazy" decoding="async" />
+  </button>
+  <p class="names-end reveal">{inv.a} <span class="script">&amp;</span> {inv.b}</p>
+  <p class="date-end script reveal">{inv.dateWords}</p>
+  <button class="mini-seal" id="mini-seal" type="button" aria-label="A small wax seal. Hold it for a secret.">
+    <img src={`${base}/art/seal.webp`} alt="" width="120" height="120" loading="lazy" decoding="async" />
+  </button>
+  <p class="secret" id="secret2" role="status" hidden></p>
+  <div class="roses-end"><img src={`${base}/art/roses.webp`} alt="" width="1800" height="1012" loading="lazy" decoding="async" />
+    <button class="ring-egg" data-ring="5" style="--x:22%;--y:40%" aria-label="A tiny hidden ring">
+      <svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="24" cy="29" r="11"/><path d="M24 6l5 6-5 6-5-6z"/></svg>
+    </button>
+  </div>
+</section>

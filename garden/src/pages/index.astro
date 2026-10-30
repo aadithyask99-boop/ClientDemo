@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import Cover from '../components/Cover.astro';
+import Chrome from '../components/Chrome.astro';
+import Hero from '../components/Hero.astro';
+import Welcome from '../components/Welcome.astro';
+import Journey from '../components/Journey.astro';
+import DateReveal from '../components/DateReveal.astro';
+import Venue from '../components/Venue.astro';
+import Day from '../components/Day.astro';
+import Dress from '../components/Dress.astro';
+import Gifts from '../components/Gifts.astro';
+import Rsvp from '../components/Rsvp.astro';
+import Finale from '../components/Finale.astro';
+import { invitation as inv } from '../data/invitation';
+---
+<Base title={`${inv.a} & ${inv.b} are getting married`} description={`${inv.dateWords}, ${inv.venue.name}. Join ${inv.a} and ${inv.b}.`}>
+  <Cover />
+  <Chrome />
+  <main id="page">
+    <Hero />
+    <Welcome />
+    <Journey />
+    <DateReveal />
+    <Venue />
+    <Day />
+    <Dress />
+    <Gifts />
+    <Rsvp />
+    <Finale />
+  </main>
+</Base>
