@@ -12,6 +12,7 @@ export const tilt = {
 };
 
 let lastG = 0;
+let baseG: number | null = null; // where the phone is normally held; the rope only reacts to leaning away from it
 let lastT = 0;
 let hinted = false;
 
@@ -25,12 +26,19 @@ function onOrientation(e: DeviceOrientationEvent): void {
   if (ang === 90) { gx = e.beta - 55; gy = -e.gamma; }
   else if (ang === 270 || ang === -90) { gx = -(e.beta - 55); gy = e.gamma; }
   else if (ang === 180) { gx = -e.gamma; gy = -(e.beta - 55); }
-  tilt.x = Math.max(-1, Math.min(1, gx / 20)); // 20 degrees is already a full lean
+  // Nobody holds a phone perfectly level. The baseline follows the angle it is held at (over about 12 s) and a small dead zone
+  // ignores sensor noise, so the rope bows when you lean the phone, not just because of how you hold it.
+  if (baseG === null) baseG = gx;
+  baseG += (gx - baseG) * 0.0014;
+  const rel = gx - baseG;
+  const dz = Math.abs(rel) < 1.5 ? 0 : rel - Math.sign(rel) * 1.5;
+  tilt.x = Math.max(-1, Math.min(1, dz / 16));
   tilt.y = Math.max(-1, Math.min(1, gy / 35)) * 0.5;
   const now = performance.now();
   if (lastT) {
     const dt = Math.max(0.008, (now - lastT) / 1000);
-    const rate = (gx - lastG) / dt; // degrees per second
+    let rate = (gx - lastG) / dt; // degrees per second
+    if (Math.abs(rate) < 10) rate = 0; // sensor noise
     tilt.jerk = Math.max(-2.5, Math.min(2.5, tilt.jerk * 0.7 + (rate / 90) * 0.3));
   }
   lastG = gx;

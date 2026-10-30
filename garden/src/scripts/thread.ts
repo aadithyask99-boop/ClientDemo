@@ -14,7 +14,7 @@ const K_NEIGH = 10; // a little bending stiffness
 const DAMP = 0.993; // low damping, so it swings and overshoots
 const WIND = 40;
 const GRAVITY = 36; // it hangs, just a little
-const TILT_G = 900; // sideways acceleration at full tilt
+const TILT_G = 700; // sideways acceleration at full tilt
 const RIPPLE = 900; // how hard rotating or shaking the phone ripples the string
 const REPEL = 2300;
 const DRAG = 6;
@@ -55,11 +55,24 @@ export function initThread(reduce: boolean): () => void {
     return { x: px, y: r.top + scrollY + Math.min(r.height * 0.1, 56), knot: false };
   };
 
-  const build = () => {
+  let rebuilds = 0;
+  let lastW = 0;
+  let lastDocH = 0;
+  // size the canvas to the screen. This is cheap and never touches the rope, because on a phone the address bar sliding
+  // away changes the height while you scroll, and that must not reset anything.
+  const fit = () => {
     W = root.clientWidth;
     H = innerHeight;
     canvas.width = W * dpr;
     canvas.height = H * dpr;
+  };
+  const build = () => {
+    rebuilds++;
+    // remember how far each point is from its resting place, so a rebuild keeps the rope's swing instead of snapping it
+    const keep = n ? { n, dx: Float32Array.from(x, (v, i) => v - rx[i]), dy: Float32Array.from(y, (v, i) => v - ry[i]) } : null;
+    fit();
+    lastW = W;
+    lastDocH = document.body.scrollHeight;
     const wide = W >= 900;
     sideCount = 0;
 
@@ -119,6 +132,13 @@ export function initThread(reduce: boolean): () => void {
       for (let i = 0; i < n; i++) { const d = Math.abs(rx[i] - a.x) + Math.abs(ry[i] - a.y); if (d < bd) { bd = d; best = i; } }
       pinned[best] = 1;
     }
+    if (keep && Math.abs(keep.n - n) <= 12) {
+      for (let i = 0; i < Math.min(n, keep.n); i++) {
+        if (pinned[i]) continue;
+        x[i] = ox[i] = rx[i] + keep.dx[i];
+        y[i] = oy[i] = ry[i] + keep.dy[i];
+      }
+    }
   };
 
   // ---------- inputs ----------
@@ -154,7 +174,7 @@ export function initThread(reduce: boolean): () => void {
     gust *= 0.97;
     let lo = -1, hi = -1;
     for (let i = 1; i < n - 1; i++) {
-      if (ry[i] < top || ry[i] > bottom) continue;
+      if (ry[i] < top || ry[i] > bottom) { x[i] = ox[i] = rx[i]; y[i] = oy[i] = ry[i]; continue; }
       if (lo < 0) lo = i;
       hi = i;
       if (pinned[i]) { x[i] = ox[i] = rx[i]; y[i] = oy[i] = ry[i]; continue; }
@@ -178,7 +198,7 @@ export function initThread(reduce: boolean): () => void {
     }
     if (lo < 0) return;
     // the rope cannot stretch: a few passes of distance constraints, fixed at the knots and at the edge of the simulated stretch
-    for (let it = 0; it < 4; it++) {
+    for (let it = 0; it < 7; it++) {
       for (let i = Math.max(0, lo - 1); i <= Math.min(n - 2, hi); i++) {
         const j = i + 1;
         const wi = pinned[i] || i < lo ? 0 : 1;
@@ -288,9 +308,11 @@ export function initThread(reduce: boolean): () => void {
   if (reduce) addEventListener('scroll', () => requestAnimationFrame(draw), { passive: true });
 
   let t0 = 0;
-  const rebuild = () => { clearTimeout(t0); t0 = window.setTimeout(() => { build(); run(); }, 120); };
-  addEventListener('resize', rebuild);
-  new ResizeObserver(rebuild).observe(document.body);
+  const rebuild = () => { clearTimeout(t0); t0 = window.setTimeout(() => { build(); run(); }, 250); };
+  // a change in width, or in the page's height (lazy pictures arriving), rebuilds the route; a change in the screen's height
+  // alone (the phone's address bar) only refits the canvas
+  addEventListener('resize', () => { if (root.clientWidth !== lastW) rebuild(); else if (innerHeight !== H) fit(); });
+  new ResizeObserver(() => { if (Math.abs(document.body.scrollHeight - lastDocH) > 6) rebuild(); }).observe(document.body);
   document.fonts?.ready.then(rebuild);
   addEventListener('load', rebuild);
   build();
@@ -300,6 +322,8 @@ export function initThread(reduce: boolean): () => void {
   (window as unknown as { __thread?: unknown }).__thread = {
     displacement: () => { let m = 0; for (let i = 0; i < n; i++) if (ry[i] > scrollY && ry[i] < scrollY + H) m = Math.max(m, Math.hypot(x[i] - rx[i], y[i] - ry[i])); return m; },
     points: () => n,
+    rebuilds: () => rebuilds,
+    health: () => { let nan = 0, stretch = 0, off = 0; for (let i = 0; i < n; i++) { if (!Number.isFinite(x[i]) || !Number.isFinite(y[i])) nan++; if (x[i] < -2 || x[i] > W + 2) off++; if (i) stretch = Math.max(stretch, Math.hypot(x[i] - x[i - 1], y[i] - y[i - 1]) / SP); } return { nan, stretch: +stretch.toFixed(2), off }; },
     at: (cy: number) => { const i = firstAbove(scrollY + cy); return [x[i], y[i] - scrollY]; },
   };
   return build;
