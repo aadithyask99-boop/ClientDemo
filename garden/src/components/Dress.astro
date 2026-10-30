@@ -1,7 +1,9 @@
 ---
 import { invitation as inv } from '../data/invitation';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
-<section class="dress" id="dress">
+<section class="dress band band-blush" id="dress">
+  <img class="guests reveal" src={`${base}/art/guests.webp`} alt="Six embroidered guests in garden formal dress holding champagne" width="1000" height="770" loading="lazy" decoding="async" />
   <h2 class="reveal">{inv.dress.code}</h2>
   <p class="reveal">{inv.dress.note}</p>
   <div class="swatches reveal" role="group" aria-label="Colour palette. Tap each colour to hear it.">

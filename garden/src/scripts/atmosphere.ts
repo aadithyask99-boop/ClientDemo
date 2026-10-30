@@ -143,8 +143,21 @@ export function initAtmosphere(reduce: boolean): Atmosphere {
 
   let raf = 0;
   let last = performance.now();
+  // Adaptive quality: on a device that cannot keep up, drop the heavy full-screen layers rather than stutter.
+  let slow = 0;
+  let lite = false;
   const frame = (t: number) => {
-    const dt = Math.min(0.05, (t - last) / 1000);
+    const raw = t - last;
+    if (!lite) {
+      slow = raw > 38 ? slow + 1 : Math.max(0, slow - 2);
+      if (slow > 90) {
+        lite = true;
+        document.documentElement.classList.add('lite');
+        parts.length = Math.min(parts.length, 8);
+        bfs.length = Math.min(bfs.length, 2);
+      }
+    }
+    const dt = Math.min(0.05, raw / 1000);
     last = t;
     gustV *= Math.exp(-dt * 0.9);
     const calm = 0.25 + 0.35 * Math.sin(t / 7000);

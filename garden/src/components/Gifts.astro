@@ -1,7 +1,9 @@
 ---
 import { invitation as inv } from '../data/invitation';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 <section class="gifts" id="gifts">
+  <img class="bow reveal" src={`${base}/art/bowframe.webp`} alt="" width="553" height="720" loading="lazy" decoding="async" />
   <h2 class="reveal">Gifts</h2>
   <p class="reveal">{inv.gifts}</p>
 </section>

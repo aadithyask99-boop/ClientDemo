@@ -6,6 +6,7 @@ import Hero from '../components/Hero.astro';
 import Welcome from '../components/Welcome.astro';
 import Journey from '../components/Journey.astro';
 import Dance from '../components/Dance.astro';
+import Divider from '../components/Divider.astro';
 import DateReveal from '../components/DateReveal.astro';
 import Venue from '../components/Venue.astro';
 import Day from '../components/Day.astro';
@@ -21,13 +22,16 @@ import { invitation as inv } from '../data/invitation';
   <main id="page">
     <Hero />
     <Welcome />
+    <Divider kind="pearls" />
     <Journey />
     <Dance />
     <DateReveal />
     <Venue />
+    <Divider kind="curtain" />
     <Day />
     <Dress />
     <Gifts />
+    <Divider kind="pearls" flip />
     <Rsvp />
     <Finale />
   </main>

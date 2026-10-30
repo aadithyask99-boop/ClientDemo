@@ -13,7 +13,7 @@ from PIL import Image
 raw = pathlib.Path(sys.argv[1])
 out = pathlib.Path(__file__).resolve().parent.parent / 'public' / 'art'
 (out / 'dance').mkdir(parents=True, exist_ok=True)
-FPS, W = 12, 400  # 12 fps; the last frame lands back on the start pose so the loop is seamless
+FPS, W = 24, 380  # 12 fps; the last frame lands back on the start pose so the loop is seamless
 clip = sys.argv[2] if len(sys.argv) > 2 else 'dance'
 
 PAPER = np.array([245, 239, 228], np.float32)
@@ -32,7 +32,7 @@ with tempfile.TemporaryDirectory() as t:
     frames = sorted(pathlib.Path(t).glob('f-*.png'))
     white = border_white(Image.open(frames[0]))
     for i, f in enumerate(frames):
-        level(Image.open(f), white).save(out / 'dance' / f'd-{i:02d}.webp', quality=74, method=6)
+        level(Image.open(f), white).save(out / 'dance' / f'd-{i:03d}.webp', quality=66, method=6)
     print(len(frames), 'frames')
 
 still = Image.open(raw / 'couple.jpg')

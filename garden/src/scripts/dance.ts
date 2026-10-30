@@ -5,7 +5,6 @@ import { hearts } from './eggs';
 import type { Atmosphere } from './atmosphere';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const FPS = 12;
 const CYCLES = 2; // dances this many full loops over the length of the section
 
 export function initDance(reduce: boolean, atmo: Atmosphere): void {
@@ -15,6 +14,7 @@ export function initDance(reduce: boolean, atmo: Atmosphere): void {
   const hint = document.getElementById('dance-hint')!;
   const ctx = canvas.getContext('2d');
   const N = Number(stage.dataset.frames || 60);
+  const FPS = Number(stage.dataset.fps || 12);
   if (!ctx || reduce) return; // the still image stays, nothing moves
 
   stage.addEventListener('contextmenu', (e) => e.preventDefault());
@@ -29,8 +29,9 @@ export function initDance(reduce: boolean, atmo: Atmosphere): void {
     for (let i = 0; i < N; i++) {
       const img = new Image();
       img.decoding = 'async';
-      img.onload = img.onerror = () => { if (++done === N) { ready = true; stage.classList.add('live'); } };
-      img.src = `${base}/art/dance/d-${String(i).padStart(2, '0')}.webp`;
+      img.src = `${base}/art/dance/d-${String(i).padStart(3, '0')}.webp`;
+      // decode up front so the first loop never hitches on image decoding
+      img.decode().catch(() => {}).then(() => { if (++done === N) { ready = true; stage.classList.add('live'); } });
       frames.push(img);
     }
   };
@@ -54,6 +55,7 @@ export function initDance(reduce: boolean, atmo: Atmosphere): void {
   stage.addEventListener('pointerdown', () => { timer = window.setTimeout(() => hold(true), 260); });
   ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => stage.addEventListener(ev, () => { clearTimeout(timer); if (held) hold(false); }));
 
+  let lastDrawn = -1;
   let lastT = performance.now();
   let lastScroll = scrollY;
   function tick(t: number) {
@@ -80,10 +82,20 @@ export function initDance(reduce: boolean, atmo: Atmosphere): void {
     lastScroll = scrollY;
     if (speed > 12 && r.top < innerHeight && r.bottom > 0) atmo.gust(Math.min(0.35, speed * 0.004));
     if (ready) {
-      const img = frames[((Math.floor(shown) % N) + N) % N];
-      if (img.naturalWidth) {
-        if (canvas.width !== img.naturalWidth) { canvas.width = img.naturalWidth; canvas.height = img.naturalHeight; }
-        ctx!.drawImage(img, 0, 0);
+      const f = ((shown % N) + N) % N;
+      if (Math.abs(f - lastDrawn) > 0.03) {
+        lastDrawn = f;
+        const i = Math.floor(f);
+        const a = frames[i];
+        if (a.naturalWidth) {
+          if (canvas.width !== a.naturalWidth) { canvas.width = a.naturalWidth; canvas.height = a.naturalHeight; }
+          ctx!.globalAlpha = 1;
+          ctx!.drawImage(a, 0, 0);
+          // blend toward the next frame so slow scrolling glides instead of stepping
+          const frac = f - i;
+          const nb = frames[(i + 1) % N];
+          if (frac > 0.03 && nb.naturalWidth) { ctx!.globalAlpha = frac; ctx!.drawImage(nb, 0, 0); ctx!.globalAlpha = 1; }
+        }
       }
     }
     requestAnimationFrame(tick);

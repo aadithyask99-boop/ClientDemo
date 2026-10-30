@@ -150,18 +150,10 @@ main { position: relative; z-index: 1; }
 /* ---------- Journey ---------- */
 .journey h2 { text-align: center; margin-bottom: clamp(2.5rem, 7vw, 5rem); }
 .steps { list-style: none; margin: 0 auto; padding: 0; max-width: 64rem; display: grid; gap: clamp(2.5rem, 7vw, 5.5rem); }
-.step { display: grid; grid-template-columns: 3.4rem 1fr; gap: 1.1rem; align-items: start; }
+.step { display: grid; grid-template-columns: 3.4rem minmax(0, 1fr); grid-template-areas: 'knot vig' '. copy'; gap: 1.1rem; align-items: start; }
 .knot { width: 3.4rem; height: 3.4rem; display: grid; place-items: center; border-radius: 50%; background: var(--paper); outline: 1.5px dashed var(--thread); outline-offset: -5px; color: var(--thread); position: relative; z-index: 2; }
 .copy h3 { margin-bottom: 0.5rem; }
 .when { color: var(--thread); font-size: 1.7rem; margin-top: 0.4rem; line-height: 1.1; }
-@media (min-width: 900px) {
-  .step { grid-template-columns: 1fr 4rem 1fr; gap: 2rem; align-items: center; }
-  .knot { grid-column: 2; grid-row: 1; width: 4rem; height: 4rem; justify-self: center; }
-  .step:nth-child(odd) .copy { grid-column: 1; grid-row: 1; text-align: right; }
-  .step:nth-child(even) .copy { grid-column: 3; grid-row: 1; }
-  .copy { max-width: 26rem; }
-  .step:nth-child(odd) .copy { justify-self: end; }
-}
 
 /* ---------- Date + ink + hoops ---------- */
 .date { text-align: center; display: grid; justify-items: center; gap: 2rem; }
@@ -295,18 +287,22 @@ input[type='text']:focus, textarea:focus { outline: 0; border-bottom-style: soli
   .js .reveal { opacity: 1; transform: none; filter: none; transition: none; }
 }
 
-/* ---------- Atmosphere: dappled leaf shadows and drifting petals ---------- */
-.dapple { position: fixed; inset: -12%; z-index: 3; pointer-events: none; mix-blend-mode: multiply; opacity: 0.1; }
-.dapple svg { position: absolute; inset: 0; width: 100%; height: 100%; fill: #2b3d22; will-change: transform; }
-.dapple .d1 { animation: drift1 38s ease-in-out infinite alternate; }
-.dapple .d2 { animation: drift2 52s ease-in-out infinite alternate; opacity: 0.8; }
-@keyframes drift1 { from { transform: translate3d(-3%, -2%, 0) rotate(-2deg) scale(1.06); } to { transform: translate3d(3%, 2%, 0) rotate(2deg) scale(1.12); } }
-@keyframes drift2 { from { transform: translate3d(4%, 2%, 0) rotate(3deg) scale(1.1); } to { transform: translate3d(-4%, -3%, 0) rotate(-2deg) scale(1.04); } }
-.night .dapple { mix-blend-mode: screen; opacity: 0.07; }
-.night .dapple svg { fill: #cfe0ff; }
+/* ---------- Atmosphere: dappled leaf shadows and drifting petals ----------
+   The leaf shadows are pre-blurred images moved with transform only, drawn with ordinary alpha blending.
+   (An earlier version used mix-blend-mode and a live SVG blur over the whole screen and cost ~10x the frame time.) */
+.dapple { position: fixed; inset: -6%; z-index: 3; pointer-events: none; opacity: 0.17; contain: strict; }
+.dapple img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; will-change: transform; }
+.dapple .d1 { animation: drift1 40s ease-in-out infinite alternate; }
+.dapple .d2 { animation: drift2 56s ease-in-out infinite alternate; opacity: 0.7; transform: scaleX(-1); }
+.dapple .nite { display: none; }
+.night .dapple .day { display: none; }
+.night .dapple .nite { display: block; }
+.night .dapple { opacity: 0.1; }
+@keyframes drift1 { from { transform: translate3d(-3%, -2%, 0); } to { transform: translate3d(3%, 2%, 0); } }
+@keyframes drift2 { from { transform: translate3d(4%, 2%, 0) scaleX(-1); } to { transform: translate3d(-4%, -3%, 0) scaleX(-1); } }
 .petals { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
 .js:not(.opened) .dapple, .js:not(.opened) .petals { display: none; }
-@media (max-width: 700px) { .dapple .d2 { display: none; } .dapple { opacity: 0.08; } }
+@media (max-width: 700px) { .dapple .d2 { display: none; } .dapple { opacity: 0.14; } }
 @media (prefers-reduced-motion: reduce) { .dapple .d1, .dapple .d2 { animation: none; } .petals { display: none; } }
 
 /* ---------- The first dance (inside an embroidery hoop) ---------- */
@@ -319,7 +315,7 @@ main > .dance { height: 250svh; padding: 0; }
   touch-action: pan-y; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: grab; transition: transform 0.6s var(--ease), box-shadow 0.6s;
 }
 .hoop-stage img, .hoop-stage canvas { position: absolute; inset: 6% 6% 3%; width: 88%; height: 91%; object-fit: contain; transition: opacity 0.6s; }
-.hoop-stage img, .hoop-stage canvas { -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 66%, transparent 100%); mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 66%, transparent 100%); }
+.hoop-stage::after { content: ''; position: absolute; inset: 0; border-radius: 50%; pointer-events: none; background: radial-gradient(ellipse 50% 50% at 50% 50%, transparent 64%, #f5efe4 100%); }
 .hoop-stage canvas { opacity: 0; }
 .hoop-stage.live canvas { opacity: 1; }
 .hoop-stage.live .still { opacity: 0; }
@@ -371,3 +367,88 @@ main > .dance { height: 250svh; padding: 0; }
 @keyframes vsway-r { from { transform: scaleX(-1) rotate(-1deg); } to { transform: scaleX(-1) rotate(1.3deg); } }
 .night .vine img { filter: brightness(0.7); }
 @media (prefers-reduced-motion: reduce) { .vine, .vr { animation: none; } }
+
+
+/* ================= Immersion pass: scale, colour blocking, painted content ================= */
+
+/* ---- Dividers ---- */
+.divider { position: relative; z-index: 1; width: 100%; line-height: 0; overflow: hidden; pointer-events: none; }
+.divider img { display: block; width: 100%; object-fit: cover; }
+.divider.pearls { margin-block: clamp(-2rem, -3vw, -0.5rem); }
+.divider.pearls img { height: clamp(7rem, 19vw, 17rem); object-position: 50% 35%; }
+.divider.curtain img { height: clamp(11rem, 33vw, 24rem); object-position: 50% 0; -webkit-mask-image: linear-gradient(#000 60%, transparent); mask-image: linear-gradient(#000 60%, transparent); }
+.divider.flip img { transform: scaleY(-1); }
+.night .divider img { filter: brightness(0.75); }
+
+/* ---- Welcome: words inside a grand arched gateway ---- */
+.welcome { padding-top: clamp(2.5rem, 7vw, 5rem); grid-template-columns: minmax(0, 1fr); }
+.gate { position: relative; width: min(calc(100% + 2 * var(--gutter) - 1.5rem), 31rem); margin: 0; container-type: inline-size; }
+.gate img { width: 100%; height: auto; display: block; }
+.gate-in { position: absolute; inset: 31% 25% 14%; display: grid; align-content: center; justify-items: center; gap: 0.5em; text-align: center; }
+.gate .hello { font-size: 10cqw; line-height: 1; }
+.gate .seat { font-size: 6.6cqw; margin: 0; }
+
+/* ---- Journey: each step is a painted scene beside its words ---- */
+.vignette { grid-area: vig; position: relative; margin: 0; width: min(100%, 17rem); aspect-ratio: 3 / 4; border-radius: 50% 50% 12% 12% / 34% 34% 8% 8%; overflow: hidden; box-shadow: 0 22px 50px rgba(60, 50, 30, 0.28); }
+.vignette::after { content: ''; position: absolute; inset: 0; border-radius: inherit; outline: 1.5px dashed rgba(255, 245, 225, 0.85); outline-offset: -11px; pointer-events: none; }
+.vignette img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.step .copy { grid-area: copy; }
+.step .knot { grid-area: knot; }
+@media (min-width: 900px) {
+  .steps { gap: clamp(3.5rem, 8vw, 7rem); }
+  .step { grid-template-columns: minmax(0, 1fr) 4rem minmax(0, 1fr); grid-template-areas: 'copy knot vig'; gap: clamp(1.5rem, 3vw, 3rem); align-items: center; }
+  .step:nth-child(even) { grid-template-areas: 'vig knot copy'; }
+  .step .knot { width: 4rem; height: 4rem; justify-self: center; }
+  .vignette { width: min(100%, 23rem); justify-self: start; }
+  .step:nth-child(even) .vignette { justify-self: end; }
+  .step:nth-child(odd) .copy { text-align: right; justify-self: end; }
+  .step .copy { max-width: 26rem; }
+  .copy h3 { font-size: clamp(1.9rem, 2.4vw, 2.6rem); }
+}
+
+/* ---- Colour-blocked bands with scalloped edges ---- */
+.band { --band: #4f6340; position: relative; }
+.band::before, .band::after { content: ''; position: absolute; left: 0; right: 0; height: 20px; z-index: 2; pointer-events: none; background-repeat: repeat-x; background-size: 28px 20px; }
+.band::before { top: -19px; background-image: radial-gradient(circle at 14px 20px, var(--band) 13.2px, transparent 13.8px); }
+.band::after { bottom: -19px; background-image: radial-gradient(circle at 14px 0, var(--band) 13.2px, transparent 13.8px); }
+.band-green { background-color: var(--band); background-image: var(--img); background-size: 520px; background-blend-mode: soft-light; color: #f6efe0; }
+.band-green *, .band-green p, .band-green h2 { text-shadow: none !important; }
+.band-green h2, .band-green p { color: #f6efe0; }
+.band-green .place { color: #ecd596; }
+.band-green .pill { background: #f3e8cf; border-color: #f3e8cf; color: #34432a; }
+.band-green .pill.ghost { background: transparent; color: #f6efe0; border: 1.5px dashed rgba(246, 239, 224, 0.75); }
+.band-blush { --band: #f0dcd3; background: var(--band); }
+.band-blush *, .band-blush p, .band-blush h2 { text-shadow: 0 0 0.5em var(--band), 0 0 0.9em var(--band) !important; }
+.night .band-blush { --band: #2b2a2c; }
+.night .band-green { --band: #2f3d2a; }
+
+/* ---- Venue: the conservatory, large, on green ---- */
+.venue { padding-inline: max(var(--gutter), calc((100% - 70rem) / 2)); }
+.venue .vista { width: min(84vw, 26rem); box-shadow: 0 28px 70px rgba(0, 0, 0, 0.4); }
+.venue .vista::after { content: ''; position: absolute; inset: 0; border-radius: inherit; outline: 1.5px dashed rgba(246, 239, 224, 0.8); outline-offset: -12px; pointer-events: none; }
+@media (min-width: 900px) { .venue { max-width: none; margin: 0; gap: clamp(3rem, 7vw, 7rem); } .venue .vista { width: clamp(22rem, 38vw, 33rem); } }
+
+/* ---- The day: painted icons ---- */
+.moments::before { left: 1.8rem; }
+.moment { grid-template-columns: 3.6rem 6.4rem 1fr; }
+.mi { width: 3.6rem; height: 3.6rem; background: none; outline: none; border-radius: 0; }
+.mi img { width: 100%; height: 100%; object-fit: contain; display: block; filter: drop-shadow(0 3px 4px rgba(60, 40, 20, 0.2)); }
+@media (max-width: 480px) { .moment { grid-template-columns: 3.6rem 1fr; } }
+
+/* ---- Dress, gifts ---- */
+.guests { width: min(94vw, 38rem); height: auto; margin-bottom: 0.4rem; filter: drop-shadow(0 12px 18px rgba(80, 50, 40, 0.18)); }
+.bow { width: min(56vw, 15rem); height: auto; margin-bottom: -0.4rem; }
+.night .guests, .night .bow { filter: brightness(0.8); }
+
+/* ---- Rose vines in the margins of mid-width screens (wide screens have the ivy) ---- */
+.day, .rsvp { overflow: hidden; }
+.side { display: none; position: absolute; top: 0; width: clamp(6rem, 15vw, 12rem); height: auto; pointer-events: none; z-index: 0; }
+@media (min-width: 900px) and (max-width: 1279px) {
+  .side { display: block; }
+  .sl { left: 0.5vw; }
+  .sr { right: 0.5vw; transform: scaleX(-1); }
+}
+.dance-pin .side { top: 3rem; }
+
+/* Lite mode: switched on by atmosphere.ts when the page cannot hold its frame rate. */
+.lite .dapple, .lite .vines { display: none !important; }

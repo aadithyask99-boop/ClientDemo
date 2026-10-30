@@ -2,6 +2,7 @@
 // is this file plus (optionally) their own artwork in public/art.
 
 export interface Milestone {
+  image: string; // painted scene in public/art
   when: string;
   title: string;
   text: string;
@@ -58,10 +59,10 @@ export const invitation: Invitation = {
   welcome:
     'We cannot wait to celebrate with the people who made us who we are. Come as you are, bring your dancing shoes, and stay until the lanterns burn low.',
   story: [
-    { when: 'Autumn 2018', title: 'A borrowed umbrella', text: 'A rainy platform in Bath, one umbrella between two strangers, and a very slow walk to a station that was only five minutes away.' },
-    { when: 'Summer 2021', title: 'Lavender and a wrong turn', text: 'A road trip through Provence with no map and a lot of confidence. We found the best lunch of our lives and each other, in that order.' },
-    { when: 'Winter 2025', title: 'The question', text: 'Beside the fountain at Hartwell, in the snow, with the dog wearing a bow tie. She said yes before he finished.' },
-    { when: '19 June 2027', title: 'The rest of it', text: 'Which is where you come in.' },
+    { image: 'story-umbrella', when: 'Autumn 2018', title: 'A borrowed umbrella', text: 'A rainy platform in Bath, one umbrella between two strangers, and a very slow walk to a station that was only five minutes away.' },
+    { image: 'story-road', when: 'Summer 2021', title: 'Lavender and a wrong turn', text: 'A road trip through Provence with no map and a lot of confidence. We found the best lunch of our lives and each other, in that order.' },
+    { image: 'story-fountain', when: 'Winter 2025', title: 'The question', text: 'Beside the fountain at Hartwell, in the snow, with the dog wearing a bow tie. She said yes before he finished.' },
+    { image: 'story-wedding', when: '19 June 2027', title: 'The rest of it', text: 'Which is where you come in.' },
   ],
   day: [
     { time: '14:00', title: 'Guests arrive', note: 'Find a seat in the orangery', icon: 'arrive' },

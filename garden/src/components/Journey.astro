@@ -1,24 +1,25 @@
 ---
 import Icon from './Icon.astro';
 import { invitation as inv } from '../data/invitation';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const icons = ['umbrella', 'lavender', 'ring', 'heart'];
+const ring = '<svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="24" cy="29" r="11"/><path d="M24 6l5 6-5 6-5-6z"/></svg>';
 ---
 <section class="journey" id="journey">
   <h2 class="reveal">How we got here</h2>
   <ol class="steps">
     {inv.story.map((s, i) => (
-      <li class="step reveal" data-knot data-ring-host={i === 2 ? '' : undefined}>
+      <li class="step reveal" data-knot>
         <span class="knot"><Icon name={icons[i % icons.length]} size={34} /></span>
+        <figure class="vignette">
+          <img src={`${base}/art/${s.image}.webp`} alt="" width="640" height="853" loading="lazy" decoding="async" />
+          {i === 1 && <button class="ring-egg" data-ring="2" style="--x:84%;--y:78%" aria-label="A tiny hidden ring" set:html={ring}></button>}
+        </figure>
         <div class="copy">
           <h3>{s.title}</h3>
           <p>{s.text}</p>
           <p class="when script">{s.when}</p>
         </div>
-        {i === 1 && (
-          <button class="ring-egg" data-ring="2" style="--x:88%;--y:70%" aria-label="A tiny hidden ring">
-            <svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="24" cy="29" r="11"/><path d="M24 6l5 6-5 6-5-6z"/></svg>
-          </button>
-        )}
       </li>
     ))}
   </ol>

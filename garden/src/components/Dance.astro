@@ -4,9 +4,11 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 <section class="dance" id="dance" data-knot>
   <div class="dance-pin">
+    <img class="side sl" src={`${base}/art/rosevine.webp`} alt="" width="512" height="1100" loading="lazy" decoding="async" />
+    <img class="side sr" src={`${base}/art/rosevine.webp`} alt="" width="512" height="1100" loading="lazy" decoding="async" />
     <h2>{inv.dance.title}</h2>
     <!-- The couple waltz inside an embroidery hoop: scroll scrubs the dance, press and hold plays it. -->
-    <div class="hoop-stage" id="hoop" data-hold={inv.dance.holdHint} data-frames="72">
+    <div class="hoop-stage" id="hoop" data-hold={inv.dance.holdHint} data-frames="144" data-fps="24">
       <img class="still" src={`${base}/art/couple.webp`} alt="An embroidered bride and groom about to dance" width="720" height="960" loading="lazy" decoding="async" />
       <canvas id="dance-canvas" width="400" height="534" aria-hidden="true"></canvas>
     </div>

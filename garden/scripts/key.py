@@ -16,6 +16,7 @@ JOBS = {
     'seal': ((0, 255, 0), 700), 'swans': ((0, 255, 0), 900),
     'garland': ((255, 0, 255), 1500), 'roses': ((255, 0, 255), 1500), 'arch': ((255, 0, 255), 900),
     'couple': (None, 900), 'venue': (None, 900),
+    'story-umbrella': (None, 640), 'story-road': (None, 640), 'story-fountain': (None, 640), 'story-wedding': (None, 640),
 }
 
 def border_colour(a):
@@ -69,8 +70,9 @@ def cells(path, cols, rows, names, family, longest):
 SHEETS = {
     'scenery': (3, 1, ['church', 'tree', 'bench'], (255, 0, 255), 760),
     'flutter': (3, 2, ['fly-0', 'fly-1', 'fly-2', 'fly-3', 'fly-4', 'fly-5'], (255, 0, 255), 150),
+    'icons': (3, 2, ['icon-0', 'icon-1', 'icon-2', 'icon-3', 'icon-4', 'icon-5'], (255, 0, 255), 240),
 }
-TRIMMED = {'hills': 1700, 'vine': 1100}  # keyed, trimmed to the artwork, longest side
+TRIMMED = {'hills': 1500, 'vine': 900, 'pearls': 1500, 'curtain': 1500, 'rosevine': 900, 'archgate': 900, 'guests': 1000, 'bowframe': 640}  # keyed, trimmed to the artwork, longest side
 
 for p in sorted(raw.iterdir()):
     name = p.stem
@@ -78,7 +80,7 @@ for p in sorted(raw.iterdir()):
     if name in TRIMMED:
         sp = trim(key_out(Image.open(p), (255, 0, 255)))
         sp.thumbnail((TRIMMED[name], TRIMMED[name]), Image.LANCZOS)
-        sp.save(out / f'{name}.webp', quality=86, method=6)
+        sp.save(out / f'{name}.webp', quality=78, method=6)
         print(name, sp.size, (out / f'{name}.webp').stat().st_size // 1024, 'KB'); continue
     if name == 'petals': petal_sprites(p); continue
     if name not in JOBS: continue

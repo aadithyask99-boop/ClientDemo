@@ -3,9 +3,10 @@ import { invitation as inv } from '../data/invitation';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 <section class="welcome" id="welcome" data-knot>
-  <div class="wreath reveal">
-    <img src={`${base}/art/arch.webp`} alt="" width="1400" height="1867" loading="lazy" decoding="async" />
-    <div class="wreath-in">
+  <!-- The invitation's first words sit inside a grand arched gateway of roses and wisteria. -->
+  <div class="gate reveal">
+    <img src={`${base}/art/archgate.webp`} alt="" width="781" height="1100" loading="lazy" decoding="async" />
+    <div class="gate-in">
       <p class="hello" id="hello">Welcome</p>
       <p class="seat script" id="seat">we saved you a seat</p>
     </div>

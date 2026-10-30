@@ -3,7 +3,7 @@ import Icon from './Icon.astro';
 import { invitation as inv } from '../data/invitation';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
-<section class="venue" id="venue" data-knot>
+<section class="venue band band-green" id="venue" data-knot style={`--img:url(${base}/art/linen.webp)`}>
   <div class="vista reveal">
     <img src={`${base}/art/venue.webp`} alt="An embroidered glass orangery in a walled rose garden at dusk" width="900" height="1200" loading="lazy" decoding="async" />
     <button class="ring-egg" data-ring="3" style="--x:50%;--y:82%" aria-label="A tiny hidden ring">

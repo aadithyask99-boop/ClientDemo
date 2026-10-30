@@ -1,18 +1,22 @@
 ---
-import Icon from './Icon.astro';
 import { invitation as inv } from '../data/invitation';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const fmt = (t: string) => {
   const [h, m] = t.split(':').map(Number);
   const hh = h % 12 || 12;
   return `${hh}${m ? '.' + String(m).padStart(2, '0') : ''} ${h < 12 ? 'am' : 'pm'}`;
 };
+// painted icons, one per kind of moment
+const pic: Record<string, number> = { arrive: 0, rings: 1, glass: 2, cake: 3, dance: 4, moon: 5 };
 ---
 <section class="day" id="day">
+  <img class="side sl" src={`${base}/art/rosevine.webp`} alt="" width="512" height="1100" loading="lazy" decoding="async" />
+  <img class="side sr" src={`${base}/art/rosevine.webp`} alt="" width="512" height="1100" loading="lazy" decoding="async" />
   <h2 class="reveal">The day</h2>
   <ol class="moments">
     {inv.day.map((m) => (
       <li class="moment reveal">
-        <span class="mi"><Icon name={m.icon} size={30} /></span>
+        <span class="mi"><img src={`${base}/art/icon-${pic[m.icon] ?? 0}.webp`} alt="" loading="lazy" decoding="async" /></span>
         <span class="mt">{fmt(m.time)}</span>
         <span class="mc"><b>{m.title}</b>{m.note && <em>{m.note}</em>}</span>
       </li>
