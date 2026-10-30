@@ -1,7 +1,6 @@
 // Ambient life: embroidered petals drifting down on a wind that you can feel. Scrolling fast stirs a gust,
 // moving the pointer (or dragging a finger) pushes them aside, and tapping one catches it.
 import gsap from 'gsap';
-import { chime } from './audio';
 import { petals as shower, toast } from './eggs';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -44,7 +43,7 @@ export function initAtmosphere(reduce: boolean): Atmosphere {
       x: x ?? Math.random() * (W + 120) - 60, y: y ?? (fromTop ? -60 - Math.random() * 120 : Math.random() * H),
       z, s: (26 + Math.random() * 20) * z * small, r: Math.random() * 6.28, vr: (Math.random() - 0.5) * 1.6,
       ph: Math.random() * 6.28, sp: 0.6 + Math.random() * 0.8, fl: Math.random() * 6.28, fs: 1.2 + Math.random() * 2,
-      vy: (34 + Math.random() * 34) * z, ix: 0, iy: 0, k: Math.floor(Math.random() * SPRITES.length), turb: 0.6 + Math.random() * 0.8, temp,
+      vy: (24 + Math.random() * 22) * z, ix: 0, iy: 0, k: Math.floor(Math.random() * SPRITES.length), turb: 0.6 + Math.random() * 0.8, temp,
     };
   };
   const resize = () => {
@@ -65,7 +64,7 @@ export function initAtmosphere(reduce: boolean): Atmosphere {
   addEventListener('scroll', () => {
     const now = performance.now();
     const v = Math.abs(scrollY - lastY) / Math.max(16, now - lastT);
-    gustV = Math.min(2.2, gustV + v * 0.35);
+    gustV = Math.min(1.6, gustV + v * 0.22);
     lastY = scrollY;
     lastT = now;
   }, { passive: true });
@@ -109,7 +108,6 @@ export function initAtmosphere(reduce: boolean): Atmosphere {
         b.ty = Math.max(40, b.y - 160 - Math.random() * 220);
         b.vx += (b.x - e.clientX) * 6;
         b.vy -= 220;
-        chime(6 + b.k, 0.7);
         spawn(b.x, b.y, 3);
         return;
       }
@@ -118,7 +116,6 @@ export function initAtmosphere(reduce: boolean): Atmosphere {
       if (p.temp && p.y < 0) continue;
       if (Math.hypot(p.x - e.clientX, p.y - e.clientY) < p.s * 0.8 + 12) {
         caught++;
-        chime(2 + (caught % 6), 0.8);
         spawn(p.x, p.y, 4);
         Object.assign(p, make(true));
         if (caught === 8) toast('Eight petals. Make a wish.');
@@ -200,13 +197,13 @@ export function initAtmosphere(reduce: boolean): Atmosphere {
         b.ty = H * 0.12 + Math.random() * H * 0.72;
         b.nt = 1.6 + Math.random() * 2.4;
       }
-      b.vx += ((b.tx - b.x) * 1.5 + Math.sin(t / 230 + b.k) * 46) * dt;
-      b.vy += ((b.ty - b.y) * 1.5 + Math.cos(t / 190 + b.k) * 46) * dt;
+      b.vx += ((b.tx - b.x) * 1.05 + Math.sin(t / 320 + b.k) * 30) * dt;
+      b.vy += ((b.ty - b.y) * 1.05 + Math.cos(t / 270 + b.k) * 30) * dt;
       const damp = Math.exp(-dt * (b.flee > 0 ? 1.1 : 2.3));
       b.vx *= damp;
       b.vy *= damp;
       const sp = Math.hypot(b.vx, b.vy);
-      const cap = b.flee > 0 ? 560 : 230;
+      const cap = b.flee > 0 ? 420 : 150;
       if (sp > cap) { b.vx *= cap / sp; b.vy *= cap / sp; }
       b.x += b.vx * dt;
       b.y += b.vy * dt;

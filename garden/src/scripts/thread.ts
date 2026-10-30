@@ -1,23 +1,26 @@
-// The gold thread, as a loose string with real physics. Its route down the page (hero to the swans) is only a
-// loose tether: every point is a Verlet particle that drifts on a slow wind, passes waves to its neighbours,
-// is pushed and dragged by the pointer, is stirred by scrolling, and on a phone feels the tilt (gravity) sensor.
-// It is drawn on a fixed canvas; only the points near the screen are simulated or drawn.
+// The gold thread, as a real rope. Its route down the page (hero to the swans) is only a loose tether. Every point is a
+// Verlet particle; the rope is pinned at each section's knot like string strung between hooks, its links cannot stretch
+// (so a push becomes a wave that swings and overshoots), gravity makes it hang, and it drifts on a slow wind. The mouse
+// pushes it; on a phone only the tilt (gravity) sensor moves it, never a tap. Drawn on a fixed canvas; only the points
+// near the screen are simulated.
 import { chime } from './audio';
 import { tilt } from './sensors';
 
 type Pt = { x: number; y: number; knot: boolean };
 
 const SP = 22; // px between particles
-const K_REST = 4.5; // pull back toward the route (loose, so it can float)
-const K_NEIGH = 34; // pull toward the average of neighbours (carries waves along the string)
-const DAMP = 0.972;
-const WIND = 60;
-const TILT_G = 560; // sideways acceleration at full tilt
+const K_REST = 3.4; // a gentle pull back toward the route, so it keeps its shape but can swing
+const K_NEIGH = 10; // a little bending stiffness
+const DAMP = 0.993; // low damping, so it swings and overshoots
+const WIND = 40;
+const GRAVITY = 36; // it hangs, just a little
+const TILT_G = 900; // sideways acceleration at full tilt
 const RIPPLE = 900; // how hard rotating or shaking the phone ripples the string
 const REPEL = 2300;
 const DRAG = 6;
 const R = 190; // pointer reach
 const MAX_DISP = 210;
+const LINK = SP * 1.08; // each link may be up to 8% longer than its resting span: that slack is what lets the rope bow and swing
 
 export function initThread(reduce: boolean): () => void {
   const canvas = document.getElementById('thread') as HTMLCanvasElement;
@@ -33,6 +36,7 @@ export function initThread(reduce: boolean): () => void {
   let y = new Float32Array(0);
   let ox = new Float32Array(0);
   let oy = new Float32Array(0);
+  let pinned = new Uint8Array(0); // 1 where the rope is tied (the knots)
   let colour = '#b0822f';
 
   const readColour = () => { colour = getComputedStyle(root).getPropertyValue('--thread').trim() || '#b0822f'; };
@@ -107,11 +111,20 @@ export function initThread(reduce: boolean): () => void {
     for (let i = 0; i < n; i++) { rx[i] = out[2 * i]; ry[i] = out[2 * i + 1]; }
     x = Float32Array.from(rx); y = Float32Array.from(ry);
     ox = Float32Array.from(rx); oy = Float32Array.from(ry);
+    pinned = new Uint8Array(n);
+    pinned[0] = 1;
+    pinned[n - 1] = 1;
+    for (const a of pts) { // tie the rope at every anchor (knots, section tops, the swans)
+      let best = 0, bd = 1e9;
+      for (let i = 0; i < n; i++) { const d = Math.abs(rx[i] - a.x) + Math.abs(ry[i] - a.y); if (d < bd) { bd = d; best = i; } }
+      pinned[best] = 1;
+    }
   };
 
   // ---------- inputs ----------
   let pX = -9999, pY = -9999, pVX = 0, pVY = 0, pT = -1e9; // pointer, in page coordinates
   addEventListener('pointermove', (e) => {
+    if (e.pointerType === 'touch') return; // a finger scrolling must not push the thread; only a mouse or pen does
     const now = performance.now();
     const nx = e.clientX + scrollX, ny = e.clientY + scrollY;
     const dt = Math.max(8, now - pT) / 1000;
@@ -124,7 +137,7 @@ export function initThread(reduce: boolean): () => void {
   let tiltX = 0, tiltY = 0;
 
   let lastScroll = scrollY, gust = 0;
-  addEventListener('scroll', () => { gust = Math.min(2.5, gust + Math.abs(scrollY - lastScroll) * 0.012); lastScroll = scrollY; }, { passive: true });
+  addEventListener('scroll', () => { gust = Math.min(1.6, gust + Math.abs(scrollY - lastScroll) * 0.008); lastScroll = scrollY; }, { passive: true });
 
   // ---------- simulation ----------
   const kick = (i: number, f: number) => {
@@ -133,18 +146,22 @@ export function initThread(reduce: boolean): () => void {
   const step = (dt: number, t: number) => {
     const top = scrollY - 500, bottom = scrollY + H + 500;
     const idle = t - pT > 1400;
-    tiltX += (tilt.x - tiltX) * 0.1;
-    tiltY += (tilt.y - tiltY) * 0.1;
+    tiltX += (tilt.x - tiltX) * 0.06;
+    tiltY += (tilt.y - tiltY) * 0.06;
     const ripple = tilt.jerk * RIPPLE + tilt.shake * RIPPLE;
     tilt.jerk *= 0.95;
     tilt.shake *= 0.96;
     gust *= 0.97;
+    let lo = -1, hi = -1;
     for (let i = 1; i < n - 1; i++) {
       if (ry[i] < top || ry[i] > bottom) continue;
+      if (lo < 0) lo = i;
+      hi = i;
+      if (pinned[i]) { x[i] = ox[i] = rx[i]; y[i] = oy[i] = ry[i]; continue; }
       let ax = (rx[i] - x[i]) * K_REST + ((x[i - 1] + x[i + 1]) * 0.5 - x[i]) * K_NEIGH;
-      let ay = (ry[i] - y[i]) * K_REST + ((y[i - 1] + y[i + 1]) * 0.5 - y[i]) * K_NEIGH;
-      ax += Math.sin(t * 0.0009 + i * 0.045) * WIND + Math.sin(t * 0.0031 + i * 0.07) * gust * 380 + tiltX * TILT_G + ripple * (0.55 + 0.45 * Math.sin(i * 0.07 + t * 0.006));
-      ay += Math.cos(t * 0.0007 + i * 0.05) * WIND * 0.35 + tiltY * TILT_G;
+      let ay = (ry[i] - y[i]) * K_REST + ((y[i - 1] + y[i + 1]) * 0.5 - y[i]) * K_NEIGH + GRAVITY;
+      ax += Math.sin(t * 0.0006 + i * 0.045) * WIND + Math.sin(t * 0.0022 + i * 0.07) * gust * 130 + tiltX * TILT_G + ripple * (0.55 + 0.45 * Math.sin(i * 0.07 + t * 0.006));
+      ay += Math.cos(t * 0.0005 + i * 0.05) * WIND * 0.3 + tiltY * TILT_G;
       if (!idle) {
         const dx = x[i] - pX, dy = y[i] - pY;
         const d = Math.hypot(dx, dy);
@@ -158,6 +175,26 @@ export function initThread(reduce: boolean): () => void {
       ox[i] = x[i]; oy[i] = y[i];
       x[i] += vx + ax * dt * dt;
       y[i] += vy + ay * dt * dt;
+    }
+    if (lo < 0) return;
+    // the rope cannot stretch: a few passes of distance constraints, fixed at the knots and at the edge of the simulated stretch
+    for (let it = 0; it < 4; it++) {
+      for (let i = Math.max(0, lo - 1); i <= Math.min(n - 2, hi); i++) {
+        const j = i + 1;
+        const wi = pinned[i] || i < lo ? 0 : 1;
+        const wj = pinned[j] || j > hi ? 0 : 1;
+        const sum = wi + wj;
+        if (!sum) continue;
+        const dx = x[j] - x[i], dy = y[j] - y[i];
+        const d = Math.hypot(dx, dy) || 0.0001;
+        if (d <= LINK) continue; // a rope can bunch up (no push when slack), it only cannot stretch
+        const diff = (d - LINK) / d;
+        x[i] += (dx * diff * wi) / sum; y[i] += (dy * diff * wi) / sum;
+        x[j] -= (dx * diff * wj) / sum; y[j] -= (dy * diff * wj) / sum;
+      }
+    }
+    for (let i = lo; i <= hi; i++) {
+      if (pinned[i]) continue;
       if (x[i] < 10) x[i] = 10; else if (x[i] > W - 10) x[i] = W - 10; // never swing off the screen
       const ex = x[i] - rx[i], ey = y[i] - ry[i], e = Math.hypot(ex, ey);
       if (e > MAX_DISP) { x[i] = rx[i] + (ex / e) * MAX_DISP; y[i] = ry[i] + (ey / e) * MAX_DISP; }
@@ -169,9 +206,9 @@ export function initThread(reduce: boolean): () => void {
     const top = scrollY - 500, bottom = scrollY + H + 500;
     for (let pass = 0; pass < 2; pass++) {
       for (let i = 1; i < n - 1; i++) {
-        if (ry[i] < top || ry[i] > bottom) continue;
-        x[i] += ((x[i - 1] + x[i + 1]) * 0.5 - x[i]) * 0.16;
-        y[i] += ((y[i - 1] + y[i + 1]) * 0.5 - y[i]) * 0.16;
+        if (ry[i] < top || ry[i] > bottom || pinned[i]) continue;
+        x[i] += ((x[i - 1] + x[i + 1]) * 0.5 - x[i]) * 0.07;
+        y[i] += ((y[i - 1] + y[i + 1]) * 0.5 - y[i]) * 0.07;
       }
     }
   };
@@ -231,7 +268,7 @@ export function initThread(reduce: boolean): () => void {
   // tap the needle: it chimes and the thread gives a flick
   let chimeStep = 0;
   addEventListener('pointerdown', (e) => {
-    if (reduce || !tip) return;
+    if (reduce || !tip || e.pointerType === 'touch') return;
     if (Math.hypot(e.clientX - x[tip], e.clientY - (y[tip] - scrollY)) < 30) { chime(chimeStep++ % 8, 0.9); kick(tip, 500); }
   }, { passive: true });
 

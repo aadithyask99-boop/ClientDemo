@@ -49,7 +49,7 @@ The page posts `text/plain` with `no-cors`, which Apps Script accepts, so there 
 
 - **Cover** (`cover.ts`): two linen doors in CSS 3D with a wax seal. Tapping the seal swings the doors open while the hero layers (garland, villa window, roses) push forward by different amounts, so it feels like walking in. The cover is only shown with JavaScript on; without it the page is a plain readable invitation.
 - **Tilt**: after opening, the stage tilts with the pointer on desktop and the phone's gyroscope on mobile (iOS permission is asked on the seal tap). Layers also drift apart as you scroll away.
-- **Thread** (`thread.ts`): a free-floating string with real physics, drawn on a fixed canvas. Its route (hero to the swans) is only a loose tether: every point is a Verlet particle that drifts on a slow wind, passes waves to its neighbours, is pushed and dragged by the pointer (it never follows the pointer, it flows away from it and floats back), is stirred by scrolling, and on a phone feels the tilt sensor (`deviceorientation`), so tilting swings it sideways like gravity. Only the points near the screen are simulated. A needle rides the tip, and tapping it chimes and flicks the string. Reduced motion draws it still.
+- **Thread** (`thread.ts`): a real rope, drawn on a fixed canvas. Its route (hero to the swans) is only a loose tether. Every point is a Verlet particle; the rope is **pinned at each section's knot** like string strung between hooks, its links can bunch but cannot stretch more than 8% (so a push becomes a wave that swings and overshoots), gravity makes it hang a little, and it drifts on a slow wind. **A mouse pushes it; touch never does.** On a phone only the tilt sensor moves it. Scrolling stirs a soft gust. Only the points near the screen are simulated. A needle rides the tip (a mouse click on it chimes and flicks the string). Reduced motion draws it still.
 
   **Phone sensors** (`sensors.ts`): steady left/right tilt is gravity (a 20 degree lean is a full swing); rotating or shaking the phone ripples the string either way; it never swings off-screen. iOS asks for "Motion & Orientation" access, requested inside the seal tap. If no readings arrive after a few seconds on a touch device, a phone button appears in the dock to ask again, and tapping it explains what is wrong (declined, or an embedded viewer / browser setting blocking sensors). Sensors need HTTPS and are blocked inside sandboxed viewers, so test on the deployed page. Add `?tilt=debug` to the address to see live readings.
 - **Ink date** (`ink.ts`, `DateReveal.astro`): circles roughened by SVG turbulence act as a mask over the date, growing with scroll.
@@ -69,6 +69,16 @@ Modelled on what makes the reference invitations feel immersive: art at scale, c
 ## Performance notes
 
 The leaf shadows are a pre-blurred image moved with `transform` only. An earlier version used `mix-blend-mode: multiply` over a live SVG blur across the whole screen, which cost about ten times the frame time (measured 351 ms per frame against 30 ms with it off); avoid full-screen blend modes and animated filters. The dance is 144 frames at 24 fps, decoded up front and cross-faded between frames, so slow scrolling glides.
+
+## The seal, music and sound
+
+- **The wax seal** (`Cover.astro`, `cover.ts`) is two halves cut along a jagged crack. Pressing dents it; releasing runs a crack through the wax with a synthesised snap, the halves tilt apart and fall under gravity with crumbs of wax, and the doors open. Long-press instead for the secret.
+- **Music** (`audio.ts`, the music button in the dock): starts inside the seal tap at **20% volume** (`music.volume` in `invitation.ts`) and can be paused or resumed from the dock; the choice is remembered. With no file set it plays a quiet royalty-free ambient loop synthesised in the browser. To use a licensed track, put the audio file in `public/music/` and set `music.src` to `` `${import.meta.env.BASE_URL}music/your-file.mp3` ``. Recordings of commercial songs are copyrighted, so the client needs the rights to use one; the repo does not include any.
+- **Sound effects** (the other dock button) are only for things you deliberately touch: the chapel bell, colour swatches, rings, swans, the oak, the seal. Nothing plays from incidental taps (catching a petal, scaring a butterfly).
+
+## Depth and calm (`parallax.ts`)
+
+Pictures inside their arched windows drift against the scroll, the pearl and curtain dividers slide slower than the page, the finale landscape separates into layers (hills, chapel, oak, bench), and the pointer or phone tilt gives the windows a slight drift. Every scroll link is scrubbed with a 1.4 to 1.8 s lag, smooth-scroll on desktop is slowed, reveals fade in over 1.5 s, and petals, butterflies and shadows move more slowly, so the whole page moves calmly.
 
 ## Atmosphere (`atmosphere.ts`)
 
