@@ -6,7 +6,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { tilt } from './sensors';
 
 export function initParallax(reduce: boolean): void {
-  if (reduce) return;
+  // Phones skip the scroll-driven picture drift entirely: it re-draws big images every frame, which a phone cannot afford, and
+  // a calmer page is the goal anyway. Mouse devices keep it.
+  if (reduce || !matchMedia('(pointer: fine)').matches) return;
   const scrub = (trigger: Element, extra: Partial<ScrollTrigger.Vars> = {}): ScrollTrigger.Vars => ({
     trigger, start: 'top bottom', end: 'bottom top', scrub: 1.6, ...extra,
   });

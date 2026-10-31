@@ -56,13 +56,12 @@ p { margin: 0; text-wrap: pretty; }
 button { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
 [hidden] { display: none !important; }
 
-main p, main h2, main h3, main .lab, main label, main .mt, main .mc { text-shadow: 0 0 0.5em var(--paper), 0 0 0.9em var(--paper), 0 0 1.3em var(--paper); }
 main > section { position: relative; z-index: 1; padding: clamp(4rem, 12vw, 9rem) var(--gutter); }
 main { position: relative; z-index: 1; }
 
 /* Scroll reveal: only hidden once JavaScript is running */
-.js .reveal { opacity: 0; transform: translateY(22px); filter: blur(3px); transition: opacity 1.5s var(--ease), transform 1.5s var(--ease), filter 1.5s var(--ease); }
-.js .reveal.in { opacity: 1; transform: none; filter: none; }
+.js .reveal { opacity: 0; transform: translateY(22px); transition: opacity 1.5s var(--ease), transform 1.5s var(--ease); }
+.js .reveal.in { opacity: 1; transform: none; }
 
 /* ---------- Pills (buttons) ---------- */
 .pill {
@@ -120,7 +119,6 @@ main { position: relative; z-index: 1; }
 .garland img { width: min(124vw, calc(var(--ww) * 1.55)); max-width: none; }
 .roses { bottom: -1%; }
 .roses img { width: min(112vw, calc(var(--ww) * 1.3)); max-width: none; }
-.night .layer img { filter: brightness(0.7) saturate(0.85); }
 .names { position: relative; z-index: 3; display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 0.1em 0.3em; margin: -1.5rem var(--gutter) 0; font-size: clamp(3.1rem, 1rem + 11.5vw, 9rem); font-weight: 300; text-shadow: 0 2px 24px var(--paper); }
 .names .amp { font-size: 1.15em; color: var(--thread); line-height: 0; }
 @media (max-width: 640px) { .names { flex-direction: column; align-items: center; gap: 0; line-height: 0.95; font-size: clamp(3.2rem, 17vw, 5rem); } .names .amp { line-height: 0.8; font-size: 0.8em; } }
@@ -254,13 +252,12 @@ input[type='text']:focus, textarea:focus { outline: 0; border-bottom-style: soli
 #secret2 { position: static; translate: 0 0; margin-top: 0.4rem; }
 
 /* ---------- Thread (a canvas; the string physics live in thread.ts) ---------- */
-.thread { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 .js:not(.opened) .thread { opacity: 0; }
 
 /* ---------- Dock + toast ---------- */
 .dock { position: fixed; right: max(0.9rem, env(safe-area-inset-right)); bottom: max(0.9rem, env(safe-area-inset-bottom)); z-index: 60; display: flex; flex-direction: column; gap: 0.6rem; }
 .js:not(.opened) .dock { display: none; }
-.round { width: 3rem; height: 3rem; border-radius: 50%; border: 1.5px dashed var(--thread); background: var(--veil); color: var(--ink); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: grid; place-items: center; cursor: pointer; transition: transform 0.4s var(--ease); }
+.round { width: 3rem; height: 3rem; border-radius: 50%; border: 1.5px dashed var(--thread); background: var(--veil); color: var(--ink); display: grid; place-items: center; cursor: pointer; transition: transform 0.4s var(--ease); }
 .round:hover { transform: scale(1.08); }
 #sound { grid-auto-flow: column; gap: 3px; place-content: center; }
 #sound i { width: 3px; height: 8px; border-radius: 2px; background: currentColor; opacity: 0.6; }
@@ -308,13 +305,13 @@ main > .dance { height: 250svh; padding: 0; }
   box-shadow: 0 26px 60px rgba(60, 50, 20, 0.28), inset 0 0 36px rgba(120, 90, 30, 0.14);
   touch-action: pan-y; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: grab; transition: transform 0.6s var(--ease), box-shadow 0.6s;
 }
-.hoop-stage img, .hoop-stage canvas { position: absolute; inset: 6% 6% 3%; width: 88%; height: 91%; object-fit: contain; transition: opacity 0.6s; }
+.hoop-stage img, .hoop-stage canvas { position: absolute; inset: 7% 8% 4%; width: 84%; height: 89%; object-fit: contain; transition: opacity 0.6s; }
 .hoop-stage::after { content: ''; position: absolute; inset: 0; border-radius: 50%; pointer-events: none; background: radial-gradient(ellipse 50% 50% at 50% 50%, transparent 64%, #f5efe4 100%); }
 .hoop-stage canvas { opacity: 0; }
 .hoop-stage.live canvas { opacity: 1; }
 .hoop-stage.live .still { opacity: 0; }
 .hoop-stage.held { transform: scale(1.04); box-shadow: 0 30px 80px rgba(176, 130, 47, 0.45), inset 0 0 36px rgba(120, 90, 30, 0.14); cursor: grabbing; }
-.night .hoop-stage { box-shadow: 0 0 80px rgba(226, 187, 104, 0.28), inset 0 0 36px rgba(120, 90, 30, 0.14); filter: brightness(0.92); }
+.night .hoop-stage { box-shadow: 0 0 80px rgba(226, 187, 104, 0.28), inset 0 0 36px rgba(120, 90, 30, 0.14); }
 .dance-pin .hint { font-size: clamp(1.45rem, 4.4vw, 1.9rem); max-width: 26rem; line-height: 1.15; }
 
 /* ---------- Finale landscape: sunset, hills, chapel, oak, bench ---------- */
@@ -328,7 +325,6 @@ main > .dance { height: 250svh; padding: 0; }
 .scene { position: relative; z-index: 2; width: calc(100% + 2 * var(--gutter)); margin: clamp(0rem, 2vw, 2rem) 0 0 calc(-1 * var(--gutter)); height: clamp(25rem, 54vw, 48rem); }
 .hills { position: absolute; left: 0; bottom: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%;
   -webkit-mask-image: linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%); mask-image: linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%); }
-.night .hills, .night .prop img { filter: brightness(0.62) saturate(0.85); }
 .prop { position: absolute; padding: 0; border: 0; background: none; cursor: pointer; transition: transform 0.5s var(--ease); -webkit-tap-highlight-color: transparent; }
 .prop img { display: block; height: 100%; width: auto; }
 .prop:hover { transform: translateY(-4px); }
@@ -345,7 +341,6 @@ main > .dance { height: 250svh; padding: 0; }
 .finale .roses-end .rl { left: -10%; }
 .finale .roses-end .rr { right: -10%; transform: scaleX(-1); }
 .scene::before { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 16%; z-index: 1; pointer-events: none; background: linear-gradient(to top, #8da071 0%, rgba(141, 160, 113, 0.85) 35%, rgba(141, 160, 113, 0) 100%); }
-.night .scene::before { filter: brightness(0.55); }
 .finale .ring-egg { pointer-events: auto; }
 .dusk .fireflies { display: block; }
 
@@ -359,7 +354,6 @@ main > .dance { height: 250svh; padding: 0; }
 .vr { right: max(0px, 0.5vw); transform: scaleX(-1); animation-name: vsway-r; }
 @keyframes vsway { from { transform: rotate(-1deg); } to { transform: rotate(1.3deg); } }
 @keyframes vsway-r { from { transform: scaleX(-1) rotate(-1deg); } to { transform: scaleX(-1) rotate(1.3deg); } }
-.night .vine img { filter: brightness(0.7); }
 @media (prefers-reduced-motion: reduce) { .vine, .vr { animation: none; } }
 
 
@@ -372,7 +366,6 @@ main > .dance { height: 250svh; padding: 0; }
 .divider.pearls img { height: clamp(7rem, 19vw, 17rem); object-position: 50% 35%; }
 .divider.curtain img { height: clamp(11rem, 33vw, 24rem); object-position: 50% 0; -webkit-mask-image: linear-gradient(#000 60%, transparent); mask-image: linear-gradient(#000 60%, transparent); }
 .divider.flip img { transform: scaleY(-1); }
-.night .divider img { filter: brightness(0.75); }
 
 /* ---- Welcome: words inside a grand arched gateway ---- */
 .welcome { padding-top: clamp(2.5rem, 7vw, 5rem); grid-template-columns: minmax(0, 1fr); }
@@ -412,7 +405,6 @@ main > .dance { height: 250svh; padding: 0; }
 .band-green .pill { background: #f3e8cf; border-color: #f3e8cf; color: #34432a; }
 .band-green .pill.ghost { background: transparent; color: #f6efe0; border: 1.5px dashed rgba(246, 239, 224, 0.75); }
 .band-blush { --band: #f0dcd3; background: var(--band); }
-.band-blush *, .band-blush p, .band-blush h2 { text-shadow: 0 0 0.5em var(--band), 0 0 0.9em var(--band) !important; }
 .night .band-blush { --band: #2b2a2c; }
 .night .band-green { --band: #2f3d2a; }
 
@@ -432,7 +424,6 @@ main > .dance { height: 250svh; padding: 0; }
 /* ---- Dress, gifts ---- */
 .guests { width: min(94vw, 38rem); height: auto; margin-bottom: 0.4rem; filter: drop-shadow(0 12px 18px rgba(80, 50, 40, 0.18)); }
 .bow { width: min(56vw, 15rem); height: auto; margin-bottom: -0.4rem; }
-.night .guests, .night .bow { filter: brightness(0.8); }
 
 /* ---- Rose vines in the margins of mid-width screens (wide screens have the ivy) ---- */
 .day, .rsvp { overflow: hidden; }
@@ -466,7 +457,6 @@ main > .dance { height: 250svh; padding: 0; }
   .f-vine img { display: block; width: 100%; height: auto; }
   .f-vl { left: calc(50% - min(39vw, 33rem)); right: auto; }
   .f-vr { right: calc(50% - min(39vw, 33rem)); left: auto; }
-  .night .fill img { filter: brightness(0.7); }
 }
 
 /* The footer seal sits at the foot of the landscape, where the path ends, like the stamp on a sealed letter. */
@@ -485,3 +475,18 @@ main > .dance { height: 250svh; padding: 0; }
 .knot-svg .t2 { animation-delay: -3.2s; }
 @keyframes tail { from { transform: rotate(-2.2deg); } to { transform: rotate(2.2deg); } }
 @media (prefers-reduced-motion: reduce) { .knot-svg .tail { animation: none; } }
+
+/* ---------- Performance (phones, night, slow devices) ---------- */
+/* Night: a single dark veil over the page instead of a brightness filter on every image */
+.night body::after { content: ''; position: fixed; inset: 0; z-index: 4; pointer-events: none; background: rgba(8, 12, 10, 0.22); }
+/* Touch devices: no drifting leaf-shadow layer (a full-screen layer composited on every frame of scrolling) */
+@media (pointer: coarse) { .dapple { display: none; } }
+/* The thread is an SVG laid over the page, so it scrolls natively with the content */
+.thread { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: visible; }
+.thread path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.th-shadow { stroke: rgba(80, 50, 0, 0.28); stroke-width: 3.6; }
+.th-solid { stroke: var(--thread); stroke-width: 2.6; }
+.th-ahead { stroke: var(--thread); stroke-width: 1.6; stroke-dasharray: 1 9; opacity: 0.45; }
+#th-needle { fill: var(--thread); }
+#th-needle circle { fill: rgba(255, 255, 255, 0.7); }
+.lite .fireflies { display: none !important; }

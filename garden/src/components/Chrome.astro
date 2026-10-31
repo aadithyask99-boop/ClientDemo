@@ -2,7 +2,14 @@
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 // Page furniture: the thread, fireflies, sound and night buttons, and the toast.
 ---
-<canvas class="thread" id="thread" aria-hidden="true"></canvas>
+<!-- The thread is an SVG laid over the whole page, so it scrolls natively with the content (a canvas redrawn from JavaScript always
+     lags behind scrolling on a phone). thread.ts only updates the path of the stretch near the screen. -->
+<svg class="thread" id="thread" aria-hidden="true">
+  <path class="th-shadow" id="th-shadow" transform="translate(0 1.5)" />
+  <path class="th-solid" id="th-solid" />
+  <path class="th-ahead" id="th-ahead" />
+  <g id="th-needle"><path d="M0 0L24 -3L22 0L24 3Z" /><circle cx="3" cy="0" r="1.4" /></g>
+</svg>
 <div class="dapple" aria-hidden="true">
   <img class="d1 day" src={`${base}/art/dapple.webp`} alt="" width="512" height="512" />
   <img class="d2 day" src={`${base}/art/dapple.webp`} alt="" width="512" height="512" />

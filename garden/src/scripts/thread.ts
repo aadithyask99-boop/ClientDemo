@@ -1,8 +1,8 @@
 // The gold thread, as a real rope. Its route down the page (hero to the swans) is only a loose tether. Every point is a
 // Verlet particle; the rope is pinned at each section's knot like string strung between hooks, its links cannot stretch
 // (so a push becomes a wave that swings and overshoots), gravity makes it hang, and it drifts on a slow wind. The mouse
-// pushes it; on a phone only the tilt (gravity) sensor moves it, never a tap. Drawn on a fixed canvas; only the points
-// near the screen are simulated.
+// pushes it; on a phone only the tilt (gravity) sensor moves it, never a tap. Drawn as an SVG that scrolls with the page, so it
+// cannot drift out of step with the content; only the points near the screen are simulated and drawn.
 import { chime } from './audio';
 import { tilt } from './sensors';
 
@@ -23,10 +23,14 @@ const MAX_DISP = 210;
 const LINK = SP * 1.08; // each link may be up to 8% longer than its resting span: that slack is what lets the rope bow and swing
 
 export function initThread(reduce: boolean): () => void {
-  const canvas = document.getElementById('thread') as HTMLCanvasElement;
-  const ctx = canvas.getContext('2d')!;
+  const svg = document.getElementById('thread') as unknown as SVGSVGElement;
+  const shadowP = document.getElementById('th-shadow') as unknown as SVGPathElement;
+  const solidP = document.getElementById('th-solid') as unknown as SVGPathElement;
+  const aheadP = document.getElementById('th-ahead') as unknown as SVGPathElement;
+  const needleG = document.getElementById('th-needle') as unknown as SVGGElement;
   const root = document.documentElement;
-  const dpr = Math.min(2, devicePixelRatio || 1);
+  const coarse = matchMedia('(pointer: coarse)').matches;
+  void svg;
   let W = 0;
   let H = 0;
   let n = 0;
@@ -37,11 +41,6 @@ export function initThread(reduce: boolean): () => void {
   let ox = new Float32Array(0);
   let oy = new Float32Array(0);
   let pinned = new Uint8Array(0); // 1 where the rope is tied (the knots)
-  let colour = '#b0822f';
-
-  const readColour = () => { colour = getComputedStyle(root).getPropertyValue('--thread').trim() || '#b0822f'; };
-  readColour();
-  new MutationObserver(readColour).observe(root, { attributes: true, attributeFilter: ['class'] });
 
   // ---------- the route ----------
   let sideCount = 0;
@@ -58,13 +57,11 @@ export function initThread(reduce: boolean): () => void {
   let rebuilds = 0;
   let lastW = 0;
   let lastDocH = 0;
-  // size the canvas to the screen. This is cheap and never touches the rope, because on a phone the address bar sliding
+  // note the screen's size. This is cheap and never touches the rope, because on a phone the address bar sliding
   // away changes the height while you scroll, and that must not reset anything.
   const fit = () => {
     W = root.clientWidth;
     H = innerHeight;
-    canvas.width = W * dpr;
-    canvas.height = H * dpr;
   };
   const build = () => {
     rebuilds++;
@@ -238,81 +235,58 @@ export function initThread(reduce: boolean): () => void {
   // ---------- drawing ----------
   let tip = 0;
   const firstAbove = (yy: number) => { let lo = 0, hi = n - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (ry[m] < yy) lo = m + 1; else hi = m; } return lo; };
+  const r1 = (v: number) => Math.round(v * 10) / 10;
   const trace = (i0: number, i1: number) => {
-    ctx.beginPath();
-    ctx.moveTo(x[i0], y[i0] - scrollY);
-    for (let i = i0 + 1; i < i1; i++) ctx.quadraticCurveTo(x[i], y[i] - scrollY, (x[i] + x[i + 1]) / 2, (y[i] + y[i + 1]) / 2 - scrollY);
-    ctx.lineTo(x[i1], y[i1] - scrollY);
+    let d = 'M' + r1(x[i0]) + ' ' + r1(y[i0]);
+    for (let i = i0 + 1; i < i1; i++) d += 'Q' + r1(x[i]) + ' ' + r1(y[i]) + ' ' + r1((x[i] + x[i + 1]) / 2) + ' ' + r1((y[i] + y[i + 1]) / 2);
+    return d + 'L' + r1(x[i1]) + ' ' + r1(y[i1]);
   };
   const draw = () => {
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, W, H);
     if (n < 3) return;
-    const v0 = Math.max(0, firstAbove(scrollY - 60) - 1);
-    const v1 = Math.min(n - 1, firstAbove(scrollY + H + 60) + 1);
+    // The SVG scrolls natively, so a stretch a screen beyond the viewport each way is drawn: the page may move a long way
+    // between two of our updates (momentum scrolling) and the ends of the thread must never be visible.
+    const pad = 640;
+    const v0 = reduce ? 0 : Math.max(0, firstAbove(scrollY - pad) - 1);
+    const v1 = reduce ? n - 1 : Math.min(n - 1, firstAbove(scrollY + H + pad) + 1);
     tip = reduce ? n - 1 : Math.min(n - 1, firstAbove(scrollY + H * 0.62));
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
     if (tip > v0 + 1) { // the thread already laid
-      const e = Math.min(tip, v1);
-      ctx.strokeStyle = 'rgba(80, 50, 0, 0.28)';
-      ctx.lineWidth = 3.6;
-      ctx.save(); ctx.translate(0, 1.5); trace(v0, e); ctx.stroke(); ctx.restore();
-      ctx.strokeStyle = colour;
-      ctx.lineWidth = 2.6;
-      trace(v0, e);
-      ctx.stroke();
-    }
-    if (!reduce && tip < v1 - 1) { // the way ahead, faintly dotted
-      ctx.strokeStyle = colour;
-      ctx.globalAlpha = 0.45;
-      ctx.lineWidth = 1.6;
-      ctx.setLineDash([1, 9]);
-      trace(Math.max(v0, tip), v1);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.globalAlpha = 1;
-    }
+      const d = trace(v0, Math.min(tip, v1));
+      solidP.setAttribute('d', d);
+      shadowP.setAttribute('d', d);
+    } else { solidP.setAttribute('d', ''); shadowP.setAttribute('d', ''); }
+    if (!reduce && tip < v1 - 1) aheadP.setAttribute('d', trace(Math.max(v0, tip), v1)); else aheadP.setAttribute('d', '');
     if (!reduce && tip > 1 && tip < n - 1) { // the needle at the tip
-      const a = Math.atan2(y[tip + 1] - y[tip - 1], x[tip + 1] - x[tip - 1]);
-      ctx.save();
-      ctx.translate(x[tip], y[tip] - scrollY);
-      ctx.rotate(a);
-      ctx.fillStyle = colour;
-      ctx.beginPath();
-      ctx.moveTo(0, 0); ctx.lineTo(24, -3); ctx.lineTo(22, 0); ctx.lineTo(24, 3); ctx.closePath();
-      ctx.fill();
-      ctx.beginPath(); ctx.arc(3, 0, 1.4, 0, 6.3); ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.fill();
-      ctx.restore();
-    }
+      const a = (Math.atan2(y[tip + 1] - y[tip - 1], x[tip + 1] - x[tip - 1]) * 180) / Math.PI;
+      needleG.setAttribute('transform', 'translate(' + r1(x[tip]) + ' ' + r1(y[tip]) + ') rotate(' + r1(a) + ')');
+      needleG.style.display = '';
+    } else needleG.style.display = 'none';
   };
 
   // tap the needle: it chimes and the thread gives a flick
   let chimeStep = 0;
   addEventListener('pointerdown', (e) => {
     if (reduce || !tip || e.pointerType === 'touch') return;
-    if (Math.hypot(e.clientX - x[tip], e.clientY - (y[tip] - scrollY)) < 30) { chime(chimeStep++ % 8, 0.9); kick(tip, 500); }
+    if (Math.hypot(e.clientX - x[tip], e.clientY + scrollY - y[tip]) < 30) { chime(chimeStep++ % 8, 0.9); kick(tip, 500); }
   }, { passive: true });
 
   // ---------- loop ----------
-  let raf = 0, last = performance.now(), acc = 0;
+  let raf = 0, last = performance.now(), acc = 0, lastDraw = 0;
   const frame = (t: number) => {
     acc += Math.min(0.05, (t - last) / 1000);
     last = t;
     let guard = 3;
     while (acc >= 1 / 60 && guard--) { step(1 / 60, t); smooth(); acc -= 1 / 60; }
     if (guard < 0) acc = 0;
-    draw();
+    if (!coarse || t - lastDraw >= 33) { draw(); lastDraw = t; } // phones: redraw at most 30 times a second
     raf = requestAnimationFrame(frame);
   };
   const run = () => { cancelAnimationFrame(raf); if (reduce) { draw(); return; } if (!document.hidden) { last = performance.now(); raf = requestAnimationFrame(frame); } };
   document.addEventListener('visibilitychange', run);
-  if (reduce) addEventListener('scroll', () => requestAnimationFrame(draw), { passive: true });
 
   let t0 = 0;
   const rebuild = () => { clearTimeout(t0); t0 = window.setTimeout(() => { build(); run(); }, 250); };
   // a change in width, or in the page's height (lazy pictures arriving), rebuilds the route; a change in the screen's height
-  // alone (the phone's address bar) only refits the canvas
+  // alone (the phone's address bar) changes nothing but the stored size
   addEventListener('resize', () => { if (root.clientWidth !== lastW) rebuild(); else if (innerHeight !== H) fit(); });
   new ResizeObserver(() => { if (Math.abs(document.body.scrollHeight - lastDocH) > 6) rebuild(); }).observe(document.body);
   document.fonts?.ready.then(rebuild);
