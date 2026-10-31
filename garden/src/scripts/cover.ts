@@ -9,6 +9,8 @@ export function prepareCover(reduce: boolean): void {
   gsap.set('.garland', { y: -70, scale: 1.32, transformOrigin: '50% 0%' });
   gsap.set('.window', { scale: 1.3, transformOrigin: '50% 72%' });
   gsap.set('.roses', { y: 90, scale: 1.4, transformOrigin: '50% 100%' });
+  gsap.set('.f-curtain', { y: -70 });
+  gsap.set('.f-vine', { y: -90, scale: 1.18, transformOrigin: '50% 0%' });
   gsap.set('.names, .getting', { autoAlpha: 0, y: 24 });
 }
 
@@ -27,12 +29,13 @@ function crumbs(seal: HTMLElement): void {
   }
 }
 
-export function openCover(reduce: boolean): Promise<void> {
+export function openCover(reduce: boolean, ready: Promise<void> = Promise.resolve()): Promise<void> {
   return new Promise((resolve) => {
     unlock();
     arpeggio(0);
     const cover = q<HTMLElement>('#cover');
     const seal = q<HTMLElement>('#seal');
+    const hint = q<HTMLElement>('.cover-hint');
     seal.style.animation = 'none';
     seal.style.pointerEvents = 'none';
     const finish = () => {
@@ -44,29 +47,43 @@ export function openCover(reduce: boolean): Promise<void> {
       gsap.set('.names, .getting', { autoAlpha: 1, y: 0 });
       return;
     }
-    const tl = gsap.timeline({ onComplete: finish });
-    tl.to(seal, { scale: 0.9, duration: 0.16, ease: 'power2.out' }) // pressed in
-      .to('.crack path', { strokeDashoffset: 0, duration: 0.22, ease: 'none' }) // the crack runs through the wax
+    // 1. the seal: pressed in, a crack runs through the wax, the halves fall. This always happens at once, even if the
+    //    garden behind the doors is still arriving, so a tap never feels ignored.
+    gsap.timeline()
+      .to(hint, { autoAlpha: 0, duration: 0.3 }, 0)
+      .to(seal, { scale: 0.9, duration: 0.16, ease: 'power2.out' }, 0)
+      .to('.crack path', { strokeDashoffset: 0, duration: 0.22, ease: 'none' })
       .add(() => { crack(); crumbs(seal); })
       .to('.hl', { x: -30, y: 160, rotation: -17, duration: 1.0, ease: 'power2.in' }, '>')
       .to('.hr', { x: 38, y: 210, rotation: 24, duration: 1.05, ease: 'power2.in' }, '<')
-      .to(seal, { autoAlpha: 0, duration: 0.3 }, '>-0.3')
-      .to('.cover-hint', { autoAlpha: 0, duration: 0.3 }, 0)
-      .to('.door-l', { rotationY: -112, duration: 2.7, ease: 'power2.inOut' }, 0.85)
-      .to('.door-r', { rotationY: 112, duration: 2.7, ease: 'power2.inOut' }, 0.9)
-      .to('.window', { scale: 1, duration: 2.8, ease: 'expo.out' }, 1.1)
-      .to('.garland', { y: 0, scale: 1, duration: 2.7, ease: 'expo.out' }, 1.2)
-      .to('.roses', { y: 0, scale: 1, duration: 2.7, ease: 'expo.out' }, 1.3)
-      .to(cover, { autoAlpha: 0, duration: 0.6, ease: 'power1.inOut' }, 3.1)
-      .to('.names', { autoAlpha: 1, y: 0, duration: 1.2, ease: 'power3.out' }, 2.9)
-      .to('.getting', { autoAlpha: 1, y: 0, duration: 1, ease: 'power3.out' }, 3.2);
+      .to(seal, { autoAlpha: 0, duration: 0.3 }, '>-0.3');
+
+    // 2. the doors swing and the garden pushes forward, but only once its art is decoded (never before the seal has fallen a little)
+    let waiting = true;
+    const note = window.setTimeout(() => { if (waiting) { hint.textContent = 'one moment'; gsap.to(hint, { autoAlpha: 0.9, duration: 0.8 }); } }, 1700);
+    Promise.all([ready, new Promise((r) => window.setTimeout(r, 850))]).then(() => {
+      waiting = false;
+      clearTimeout(note);
+      gsap.to(hint, { autoAlpha: 0, duration: 0.3 });
+      gsap.timeline({ onComplete: finish })
+        .to('.door-l', { rotationY: -112, duration: 2.7, ease: 'power2.inOut' }, 0)
+        .to('.door-r', { rotationY: 112, duration: 2.7, ease: 'power2.inOut' }, 0.05)
+        .to('.window', { scale: 1, duration: 2.8, ease: 'expo.out' }, 0.25)
+        .to('.garland', { y: 0, scale: 1, duration: 2.7, ease: 'expo.out' }, 0.35)
+        .to('.roses', { y: 0, scale: 1, duration: 2.7, ease: 'expo.out' }, 0.45)
+        .to('.f-curtain', { y: 0, duration: 2.6, ease: 'expo.out' }, 0.3)
+        .to('.f-vine', { y: 0, scale: 1, duration: 2.8, ease: 'expo.out' }, 0.4)
+        .to(cover, { autoAlpha: 0, duration: 0.6, ease: 'power1.inOut' }, 2.25)
+        .to('.names', { autoAlpha: 1, y: 0, duration: 1.2, ease: 'power3.out' }, 2.05)
+        .to('.getting', { autoAlpha: 1, y: 0, duration: 1, ease: 'power3.out' }, 2.35);
+    });
   });
 }
 
 /** Depth: the stage tilts toward the pointer (or the phone's tilt) and each layer slides by its own amount. */
 export function initTilt(): void {
   const stage = q<HTMLElement>('#stage');
-  const layers = [...stage.querySelectorAll<HTMLElement>('.layer')].map((el) => ({
+  const layers = [...document.querySelectorAll<HTMLElement>('.hero .layer')].map((el) => ({
     inner: el.firstElementChild as HTMLElement,
     depth: Number(el.dataset.depth || 0),
   }));

@@ -51,7 +51,7 @@ export function initThread(reduce: boolean): () => void {
     const r = (knot ?? el).getBoundingClientRect();
     if (knot) return { x: r.left + r.width / 2 + scrollX, y: r.top + r.height / 2 + scrollY, knot: true };
     // sections without a knot: wide screens use the left margin before the journey and the right after it; phones the left margin
-    const px = vw >= 900 ? (sideCount++ === 0 ? vw * 0.1 : vw * 0.92) : Math.max(30, vw * 0.08);
+    const px = vw >= 900 ? (sideCount++ === 0 ? vw * 0.135 : vw * 0.865) : Math.max(30, vw * 0.08); // clear of the ivy at the screen edges
     return { x: px, y: r.top + scrollY + Math.min(r.height * 0.1, 56), knot: false };
   };
 
@@ -78,10 +78,12 @@ export function initThread(reduce: boolean): () => void {
 
     const pts: Pt[] = [];
     const cue = document.querySelector<HTMLElement>('.getting');
-    if (cue) { const r = cue.getBoundingClientRect(); pts.push({ x: W / 2, y: r.bottom + scrollY + 6, knot: false }); }
+    // phones: it starts under the names. Wide screens: it hangs in from above the page, down the left margin, so it never has a loose end
+    if (wide) pts.push({ x: W * 0.135, y: -30, knot: false });
+    else if (cue) { const r = cue.getBoundingClientRect(); pts.push({ x: W / 2, y: r.bottom + scrollY + 6, knot: false }); }
     document.querySelectorAll<HTMLElement>('[data-knot]').forEach((el) => pts.push(anchor(el)));
     const finale = document.getElementById('finale');
-    if (finale) pts.push({ x: wide ? W * 0.92 : Math.max(30, W * 0.08), y: finale.getBoundingClientRect().top + scrollY + 30, knot: false });
+    if (finale) pts.push({ x: wide ? W * 0.865 : Math.max(30, W * 0.08), y: finale.getBoundingClientRect().top + scrollY + 30, knot: false });
     const swans = document.getElementById('swans');
     if (swans) { const r = swans.getBoundingClientRect(); pts.push({ x: W / 2, y: r.top + scrollY + r.height * 0.55, knot: false }); }
     if (pts.length < 2) return;

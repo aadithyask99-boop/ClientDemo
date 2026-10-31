@@ -5,10 +5,12 @@ import '@fontsource-variable/newsreader/wght.css';
 import '@fontsource-variable/newsreader/wght-italic.css';
 import '@fontsource/pinyon-script/latin-400.css';
 import '../styles/global.css';
+import { invitation as inv } from '../data/invitation';
 
 interface Props { title: string; description: string }
 const { title, description } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const mono = `${inv.a[0]} & ${inv.b[0]}`;
 ---
 
 <!doctype html>
@@ -21,22 +23,107 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <meta name="description" content={description} />
     <meta name="robots" content="noindex" />
     <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
-    <link rel="preload" as="image" type="image/webp" href={`${base}/art/linen.webp`} />
-    <link rel="preload" as="image" type="image/webp" href={`${base}/art/seal.webp`} />
+    <link rel="preload" as="image" type="image/webp" href={`${base}/art/linen.webp`} fetchpriority="high" />
+    <link rel="preload" as="image" type="image/webp" href={`${base}/art/seal.webp`} fetchpriority="high" />
+    <style is:inline>
+      /* first paint: the paper colour (never white) and the preloader, before the main stylesheet arrives */
+      html { background: #efe8d8; }
+      html.night { background: #18211d; }
+      #pre { display: none; position: fixed; inset: 0; z-index: 300; place-items: center; background: #efe8d8; color: #b0822f; opacity: 0; }
+      html.night #pre { background: #18211d; color: #e2bb68; }
+      #pre.on { display: grid; animation: pre-in 0.8s ease forwards; }
+      #pre.on.out { animation: pre-out 0.9s ease forwards; pointer-events: none; }
+      @keyframes pre-in { to { opacity: 1; } }
+      @keyframes pre-out { from { opacity: 1; } to { opacity: 0; } }
+      .pre-svg { width: min(54vw, 15rem); height: auto; overflow: visible; }
+      .pre-guide { fill: none; stroke: currentColor; stroke-width: 1.4; stroke-dasharray: 1 7; stroke-linecap: round; opacity: 0.35; }
+      .pre-stitch { fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-dasharray: 8 6; }
+      .pre-reveal { fill: none; stroke: #fff; stroke-width: 14; }
+      .pre-needle { fill: currentColor; }
+      .pre-mono { font-family: 'Fraunces Variable', Georgia, serif; font-style: italic; font-weight: 300; font-size: 36px; fill: currentColor; opacity: 0; transition: opacity 1.2s ease 0.3s; }
+      html.fonts .pre-mono { opacity: 1; }
+    </style>
     <script is:inline>
-      // Without JavaScript the cover never shows and the page is just a readable invitation.
+      // Without JavaScript the cover and preloader never show and the page is just a readable invitation.
       (function () {
         var d = document.documentElement;
         var q = new URLSearchParams(location.search);
         d.classList.add('js', 'locked');
         var h = new Date().getHours();
         if (q.get('night') === '1' || (q.get('night') !== '0' && (h >= 20 || h < 6))) d.classList.add('night');
-        // If the script never starts, never leave the page locked behind the cover
-        setTimeout(function () { if (!window.__garden) d.classList.remove('js', 'locked'); }, 6000);
+        // If the main script never starts, never leave the page locked behind the cover
+        setTimeout(function () { if (!window.__garden) d.classList.remove('js', 'locked', 'pre'); }, 14000);
       })();
     </script>
   </head>
   <body>
+    <!-- Preloader: a needle stitches a ring around the couple's initials. Shown only if loading takes over 0.4 s. -->
+    <div id="pre" aria-hidden="true">
+      <svg class="pre-svg" viewBox="0 0 200 200">
+        <defs>
+          <mask id="pre-mask" maskUnits="userSpaceOnUse" x="-20" y="-20" width="240" height="240">
+            <ellipse class="pre-reveal" cx="100" cy="100" rx="78" ry="62" />
+          </mask>
+        </defs>
+        <g transform="rotate(-90 100 100)">
+          <ellipse class="pre-guide" cx="100" cy="100" rx="78" ry="62" />
+          <g mask="url(#pre-mask)"><ellipse class="pre-stitch" cx="100" cy="100" rx="78" ry="62" /></g>
+          <path class="pre-needle" d="M0 0 L22 -3.2 L19.5 0 L22 3.2 Z" />
+        </g>
+        <text class="pre-mono" x="100" y="112" text-anchor="middle">{mono}</text>
+      </svg>
+    </div>
+    <script is:inline>
+      // Preloader: the cover is held back until its own pieces (fonts, linen, seal) are decoded and the script is running,
+      // so it appears whole instead of painting in. If that takes under 0.4 s nothing is shown at all; otherwise a needle
+      // stitches a ring, driven by the real progress, and the cover fades in once it is finished.
+      (function () {
+        var d = document.documentElement;
+        var pre = document.getElementById('pre');
+        if (!d.classList.contains('js')) { if (pre) pre.remove(); return; }
+        if (!pre) return;
+        d.classList.add('pre');
+        var t0 = performance.now(), done = 0, total = 4, shown = false, finished = false, p = 0;
+        var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var reveal = pre.querySelector('.pre-reveal'), guide = pre.querySelector('.pre-guide'), needle = pre.querySelector('.pre-needle');
+        var L = guide.getTotalLength();
+        reveal.style.strokeDasharray = L; reveal.style.strokeDashoffset = L;
+        function mark() { done++; }
+        var fl = document.fonts;
+        if (fl && fl.load) {
+          Promise.all([fl.load('italic 300 24px "Fraunces Variable"'), fl.load('16px "Newsreader Variable"'), fl.load('24px "Pinyon Script"')]).catch(function () {}).then(function () { d.classList.add('fonts'); mark(); });
+        } else { d.classList.add('fonts'); mark(); }
+        Array.prototype.forEach.call(document.querySelectorAll('link[rel=preload][as=image]'), function (l) {
+          var im = new Image();
+          im.src = l.href;
+          (im.decode ? im.decode() : Promise.resolve()).catch(function () {}).then(mark);
+        });
+        var iv = setInterval(function () { if (window.__garden) { clearInterval(iv); mark(); } }, 50);
+        function finish() {
+          if (finished) return;
+          finished = true;
+          clearInterval(iv);
+          d.classList.remove('pre');
+          d.classList.add('ready');
+          if (shown) { pre.classList.add('out'); setTimeout(function () { pre.remove(); }, 1100); } else pre.remove();
+        }
+        function frame(now) {
+          if (finished) return;
+          if (done >= total && !shown) { finish(); return; } // fast: never show it
+          if (!shown && now - t0 > 400 && !reduce) { shown = true; pre.classList.add('on'); }
+          p += (done / total - p) * 0.06;
+          if (done >= total && p > 0.985) p = 1;
+          reveal.style.strokeDashoffset = L * (1 - p);
+          var a = guide.getPointAtLength(L * p), b = guide.getPointAtLength(Math.min(L, L * p + 2));
+          needle.setAttribute('transform', 'translate(' + a.x + ' ' + a.y + ') rotate(' + (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI + ')');
+          if (p >= 1 && (!shown || now - t0 > 400 + 1300)) { finish(); return; } // once seen, it stays long enough to finish its stitch
+          requestAnimationFrame(frame);
+        }
+        if (reduce) { var w = setInterval(function () { if (done >= total) { clearInterval(w); finish(); } }, 50); }
+        else requestAnimationFrame(frame);
+        setTimeout(finish, 14000);
+      })();
+    </script>
     <slot />
     <script>
       import '../scripts/main';
