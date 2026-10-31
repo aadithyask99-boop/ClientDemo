@@ -13,10 +13,6 @@ const ring = '<svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke
     </button>
     <p class="names-end reveal">{inv.a} <span class="script">&amp;</span> {inv.b}</p>
     <p class="date-end script reveal">{inv.dateWords}</p>
-    <button class="mini-seal" id="mini-seal" type="button" aria-label="A small wax seal. Hold it for a secret.">
-      <img src={`${base}/art/seal.webp`} alt="" width="120" height="120" loading="lazy" decoding="async" />
-    </button>
-    <p class="secret" id="secret2" role="status" hidden></p>
   </div>
 
   <div class="scene" id="scene">
@@ -31,6 +27,10 @@ const ring = '<svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke
     <button class="prop bench" id="bench" type="button" data-say={inv.scene.bench} aria-label="A garden bench. Touch it.">
       <img src={`${base}/art/bench.webp`} alt="" width="728" height="440" loading="lazy" decoding="async" />
     </button>
+    <button class="mini-seal" id="mini-seal" type="button" aria-label="A small wax seal. Hold it for a secret.">
+      <img src={`${base}/art/seal.webp`} alt="" width="120" height="120" loading="lazy" decoding="async" />
+    </button>
+    <p class="secret" id="secret2" role="status" hidden></p>
     <div class="roses-end"><img class="rl" src={`${base}/art/roses.webp`} alt="" width="1500" height="844" loading="lazy" decoding="async" /><img class="rr" src={`${base}/art/roses.webp`} alt="" width="1500" height="844" loading="lazy" decoding="async" />
       <button class="ring-egg" data-ring="5" style="--x:22%;--y:40%" aria-label="A tiny hidden ring" set:html={ring}></button>
     </div>

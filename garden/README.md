@@ -70,6 +70,16 @@ Modelled on what makes the reference invitations feel immersive: art at scale, c
 
 The leaf shadows are a pre-blurred image moved with `transform` only. An earlier version used `mix-blend-mode: multiply` over a live SVG blur across the whole screen, which cost about ten times the frame time (measured 351 ms per frame against 30 ms with it off); avoid full-screen blend modes and animated filters. The dance is 144 frames at 24 fps, decoded up front and cross-faded between frames, so slow scrolling glides.
 
+## Preloader (`layouts/Base.astro`)
+
+The cover is held back until its own pieces are ready (the fonts, the linen and seal images, and the script itself), so it appears whole and never paints in piece by piece. **If that takes under 0.4 s, nothing is shown at all.** Otherwise a needle stitches a ring of gold running stitches around the couple's initials, driven by the real loading progress, and the cover fades in when it finishes (the preloader stays at least a second once seen, so it never flashes). Related behaviour:
+
+- The first paint is the paper colour, never white (a small inline stylesheet).
+- "touch the seal to open" only fades in once the cover, and so the seal, is there.
+- The garden art behind the doors loads at low priority, after the cover's own art.
+- Tap the seal early and it cracks at once; if the garden art is still arriving the doors wait ("one moment") and open as soon as it is ready.
+- Reduced motion never shows the preloader. If the script never starts, the page unlocks after 14 s.
+
 ## The seal, music and sound
 
 - **The wax seal** (`Cover.astro`, `cover.ts`) is two halves cut along a jagged crack. Pressing dents it; releasing runs a crack through the wax with a synthesised snap, the halves tilt apart and fall under gravity with crumbs of wax, and the doors open. Long-press instead for the secret.

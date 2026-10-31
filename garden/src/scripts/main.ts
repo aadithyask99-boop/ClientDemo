@@ -81,6 +81,11 @@ musicBtn.addEventListener('click', () => { toggleMusic(); syncMusic(); });
 
 // ----- Cover -----
 prepareCover(reduce);
+// the garden art behind the doors is fetched at low priority; the doors wait for it (but never for longer than 10 s)
+const heroReady: Promise<void> = Promise.race([
+  Promise.all([...document.querySelectorAll<HTMLImageElement>('.hero img')].map((im) => im.decode().catch(() => {}))).then(() => {}),
+  new Promise<void>((r) => window.setTimeout(r, 10000)),
+]);
 const seal = q<HTMLButtonElement>('#seal');
 const sealPress = sealSecret(seal);
 // pressing dents the wax before it lets go
@@ -95,7 +100,7 @@ seal.addEventListener('click', async () => {
   startMusic(inv.music.src, inv.music.volume);
   syncMusic();
   void askMotionPermission();
-  await openCover(reduce);
+  await openCover(reduce, heroReady);
   afterOpen();
 });
 

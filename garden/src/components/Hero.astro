@@ -3,10 +3,16 @@ import { invitation as inv } from '../data/invitation';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 <section class="hero" id="top">
+  <!-- Desktop only: the wide hero is filled with a wisteria curtain across the top and rose vines hanging either side of the window -->
+  <div class="fill" aria-hidden="true">
+    <div class="layer f-curtain" data-depth="8"><img src={`${base}/art/curtain.webp`} alt="" width="1500" height="786" fetchpriority="low" decoding="async" /></div>
+    <div class="layer f-vine f-vl" data-depth="20"><img src={`${base}/art/rosevine.webp`} alt="" width="419" height="900" fetchpriority="low" decoding="async" /></div>
+    <div class="layer f-vine f-vr" data-depth="20"><img src={`${base}/art/rosevine-r.webp`} alt="" width="419" height="900" fetchpriority="low" decoding="async" /></div>
+  </div>
   <div class="stage" id="stage">
-    <div class="layer garland" data-depth="16"><img src={`${base}/art/garland.webp`} alt="" width="1800" height="1012" /></div>
-    <div class="layer window" data-depth="7"><div class="frame"><img src={`${base}/art/villa.webp`} alt="An embroidered Provençal farmhouse among lavender, with a fountain" width="1400" height="2489" fetchpriority="high" /></div></div>
-    <div class="layer roses" data-depth="24"><img src={`${base}/art/roses.webp`} alt="" width="1800" height="1012" /></div>
+    <div class="layer garland" data-depth="16"><img src={`${base}/art/garland.webp`} alt="" width="1800" height="1012" fetchpriority="low" decoding="async" /></div>
+    <div class="layer window" data-depth="7"><div class="frame"><img src={`${base}/art/villa.webp`} alt="An embroidered Provençal farmhouse among lavender, with a fountain" width="1400" height="2489" fetchpriority="low" decoding="async" /></div></div>
+    <div class="layer roses" data-depth="24"><img src={`${base}/art/roses.webp`} alt="" width="1800" height="1012" fetchpriority="low" decoding="async" /></div>
     <button class="ring-egg" data-ring="1" style="--x:78%;--y:30%" aria-label="A tiny hidden ring"><svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="24" cy="29" r="11"/><path d="M24 6l5 6-5 6-5-6z"/></svg></button>
   </div>
   <h1 class="names" id="names">
