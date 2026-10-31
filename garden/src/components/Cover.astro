@@ -9,11 +9,22 @@ const initials = `${inv.a[0]}&${inv.b[0]}`;
     <div class="door door-l" style={`--img:url(${base}/art/linen.webp)`}></div>
     <div class="door door-r" style={`--img:url(${base}/art/linen.webp)`}></div>
   </div>
-  <!-- The wax seal is two halves cut along a jagged crack, so it can snap in two when pressed. -->
+  <!-- A gold thread is wrapped across both doors and tied in a bow under the wax seal. Tapping the seal unties it. -->
+  <svg class="cord" viewBox="0 0 1000 60" preserveAspectRatio="none" aria-hidden="true">
+    <path class="cs" pathLength="100" d="M500 31 C 400 28, 250 37, -20 31" />
+    <path class="cs" pathLength="100" d="M500 31 C 600 34, 750 25, 1020 31" />
+    <path class="ch" pathLength="100" d="M500 29.4 C 400 26.4, 250 35.4, -20 29.4" />
+    <path class="ch" pathLength="100" d="M500 29.4 C 600 32.4, 750 23.4, 1020 29.4" />
+  </svg>
+  <svg class="knot-svg" viewBox="0 0 200 200" aria-hidden="true">
+    <path class="loop" d="M100 100 C 70 58, 16 68, 24 102 C 30 130, 80 120, 100 100" />
+    <path class="loop" d="M100 100 C 130 58, 184 68, 176 102 C 170 130, 120 120, 100 100" />
+    <path class="tail t1" pathLength="100" d="M97 104 C 92 140, 80 168, 62 196" />
+    <path class="tail t2" pathLength="100" d="M103 104 C 110 140, 122 170, 140 198" />
+  </svg>
   <button class="seal" id="seal" type="button" aria-label={`Open the invitation from ${inv.a} and ${inv.b}`}>
-    <span class="half hl"><img src={`${base}/art/seal.webp`} alt="" width="340" height="340" decoding="async" /><span class="seal-mono">{initials}</span></span>
-    <span class="half hr"><img src={`${base}/art/seal.webp`} alt="" width="340" height="340" decoding="async" /><span class="seal-mono">{initials}</span></span>
-    <svg class="crack" viewBox="0 0 100 100" aria-hidden="true"><path pathLength="100" d="M52 2 L46 20 L55 36 L47 54 L56 72 L49 88 L53 99" /></svg>
+    <img src={`${base}/art/seal.webp`} alt="" width="340" height="340" decoding="async" />
+    <span class="seal-mono">{initials}</span>
   </button>
   <p class="cover-hint script">touch the seal to open</p>
   <p class="secret" id="secret" role="status" hidden></p>
