@@ -146,40 +146,32 @@ function applyMusic(): void {
   }
 }
 
-/** Sound effects (chimes, the bell, the seal cracking) can be muted without touching the music. */
+/** Sound effects (chimes, the bell, the thread slipping free) can be muted without touching the music. */
 export function setSound(next: boolean): void {
   on = next;
   try { localStorage.setItem('garden-sound', next ? 'on' : 'off'); } catch { /* ignore */ }
   if (next) unlock();
 }
 
-/** A wax seal cracking: a short bright snap over a low thud. */
-export function crack(): void {
+/** A thread slipping free: a soft breath of filtered noise sweeping downward. Quiet and short, nothing sharp. */
+export function swish(): void {
   if (!on || !ctx || !master) return;
   const t = ctx.currentTime;
-  const len = Math.floor(ctx.sampleRate * 0.16);
+  const len = Math.floor(ctx.sampleRate * 0.9);
   const buf = ctx.createBuffer(1, len, ctx.sampleRate);
   const d = buf.getChannelData(0);
-  for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3);
+  for (let i = 0; i < len; i++) { const e = Math.sin((Math.PI * i) / len); d[i] = (Math.random() * 2 - 1) * e * e; }
   const n = ctx.createBufferSource();
   n.buffer = buf;
   const bp = ctx.createBiquadFilter();
   bp.type = 'bandpass';
-  bp.frequency.value = 2100;
-  bp.Q.value = 0.9;
-  const ng = ctx.createGain();
-  ng.gain.value = 0.7;
-  n.connect(bp); bp.connect(ng); ng.connect(master);
+  bp.Q.value = 1.2;
+  bp.frequency.setValueAtTime(3200, t);
+  bp.frequency.exponentialRampToValueAtTime(700, t + 0.9);
+  const g = ctx.createGain();
+  g.gain.value = 0.16;
+  n.connect(bp); bp.connect(g); g.connect(master);
   n.start(t);
-  const o = ctx.createOscillator();
-  const og = ctx.createGain();
-  o.type = 'sine';
-  o.frequency.setValueAtTime(130, t);
-  o.frequency.exponentialRampToValueAtTime(55, t + 0.14);
-  og.gain.setValueAtTime(0.4, t);
-  og.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
-  o.connect(og); og.connect(master);
-  o.start(t); o.stop(t + 0.18);
 }
 
 /** A church bell: inharmonic partials with a long decay, struck a few times. */

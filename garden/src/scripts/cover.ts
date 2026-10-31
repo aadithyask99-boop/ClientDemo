@@ -1,5 +1,5 @@
 import gsap from 'gsap';
-import { arpeggio, crack, unlock } from './audio';
+import { arpeggio, swish, unlock } from './audio';
 
 const q = <T extends Element>(s: string) => document.querySelector<T>(s)!;
 
@@ -12,21 +12,6 @@ export function prepareCover(reduce: boolean): void {
   gsap.set('.f-curtain', { y: -70 });
   gsap.set('.f-vine', { y: -90, scale: 1.18, transformOrigin: '50% 0%' });
   gsap.set('.names, .getting', { autoAlpha: 0, y: 24 });
-}
-
-/** Little chips of wax that fly off when the seal cracks and fall under gravity. */
-function crumbs(seal: HTMLElement): void {
-  const r = seal.getBoundingClientRect();
-  const host = document.getElementById('cover')!;
-  for (let i = 0; i < 11; i++) {
-    const c = document.createElement('i');
-    c.className = 'wax-crumb';
-    const sz = 4 + Math.random() * 7;
-    c.style.cssText = `width:${sz}px;height:${sz * 0.8}px;left:${r.left + r.width * (0.38 + Math.random() * 0.24)}px;top:${r.top + r.height * (0.2 + Math.random() * 0.6)}px`;
-    host.appendChild(c);
-    gsap.to(c, { x: (Math.random() - 0.5) * 120, y: 280 + Math.random() * 200, rotation: (Math.random() - 0.5) * 400, duration: 0.9 + Math.random() * 0.6, ease: 'power2.in', onComplete: () => c.remove() });
-    gsap.to(c, { autoAlpha: 0, duration: 0.3, delay: 0.7 + Math.random() * 0.4 });
-  }
 }
 
 export function openCover(reduce: boolean, ready: Promise<void> = Promise.resolve()): Promise<void> {
@@ -47,21 +32,25 @@ export function openCover(reduce: boolean, ready: Promise<void> = Promise.resolv
       gsap.set('.names, .getting', { autoAlpha: 1, y: 0 });
       return;
     }
-    // 1. the seal: pressed in, a crack runs through the wax, the halves fall. This always happens at once, even if the
-    //    garden behind the doors is still arriving, so a tap never feels ignored.
+    // 1. the thread unties: the seal is pressed, the bow loosens and its tails are drawn in, then the thread unwinds from
+    //    the middle outwards and sags away. It always starts at once, even if the garden behind the doors is still arriving,
+    //    so a tap never feels ignored.
     gsap.timeline()
       .to(hint, { autoAlpha: 0, duration: 0.3 }, 0)
-      .to(seal, { scale: 0.9, duration: 0.16, ease: 'power2.out' }, 0)
-      .to('.crack path', { strokeDashoffset: 0, duration: 0.22, ease: 'none' })
-      .add(() => { crack(); crumbs(seal); })
-      .to('.hl', { x: -30, y: 160, rotation: -17, duration: 1.0, ease: 'power2.in' }, '>')
-      .to('.hr', { x: 38, y: 210, rotation: 24, duration: 1.05, ease: 'power2.in' }, '<')
-      .to(seal, { autoAlpha: 0, duration: 0.3 }, '>-0.3');
+      .to(seal, { scale: 0.92, duration: 0.18, ease: 'power2.out' }, 0)
+      .add(() => swish(), 0.2)
+      .to('.tail', { strokeDashoffset: 100, duration: 0.95, ease: 'power2.inOut', stagger: 0.1 }, 0.3)
+      .to('.loop', { scale: 0.12, rotation: (i: number) => (i ? 28 : -28), autoAlpha: 0, duration: 0.9, ease: 'power2.inOut' }, 0.5)
+      .to(seal, { rotation: -3, y: 10, duration: 1.0, ease: 'power2.inOut' }, 0.5)
+      .to('.cord path', { strokeDashoffset: -100, duration: 1.4, ease: 'power1.inOut' }, 0.8)
+      .to('.cord', { y: 30, duration: 1.4, ease: 'power1.in' }, 0.8)
+      .to(seal, { autoAlpha: 0, scale: 0.95, duration: 0.9, ease: 'power2.inOut' }, 1.15)
+      .to('.knot-svg', { autoAlpha: 0, duration: 0.5 }, 1.4);
 
-    // 2. the doors swing and the garden pushes forward, but only once its art is decoded (never before the seal has fallen a little)
+    // 2. the doors swing and the garden pushes forward, but only once its art is decoded (never before the thread has come loose)
     let waiting = true;
     const note = window.setTimeout(() => { if (waiting) { hint.textContent = 'one moment'; gsap.to(hint, { autoAlpha: 0.9, duration: 0.8 }); } }, 1700);
-    Promise.all([ready, new Promise((r) => window.setTimeout(r, 850))]).then(() => {
+    Promise.all([ready, new Promise((r) => window.setTimeout(r, 1500))]).then(() => {
       waiting = false;
       clearTimeout(note);
       gsap.to(hint, { autoAlpha: 0, duration: 0.3 });

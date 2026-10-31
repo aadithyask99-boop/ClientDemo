@@ -77,14 +77,14 @@ The cover is held back until its own pieces are ready (the fonts, the linen and 
 - The first paint is the paper colour, never white (a small inline stylesheet).
 - "touch the seal to open" only fades in once the cover, and so the seal, is there.
 - The garden art behind the doors loads at low priority, after the cover's own art.
-- Tap the seal early and it cracks at once; if the garden art is still arriving the doors wait ("one moment") and open as soon as it is ready.
+- Tap the seal early and the thread unties at once; if the garden art is still arriving the doors wait ("one moment") and open as soon as it is ready.
 - Reduced motion never shows the preloader. If the script never starts, the page unlocks after 14 s.
 
 ## The seal, music and sound
 
-- **The wax seal** (`Cover.astro`, `cover.ts`) is two halves cut along a jagged crack. Pressing dents it; releasing runs a crack through the wax with a synthesised snap, the halves tilt apart and fall under gravity with crumbs of wax, and the doors open. Long-press instead for the secret.
+- **The cover** (`Cover.astro`, `cover.ts`): a gold thread is wrapped across both linen doors and tied in a bow under the wax seal. Pressing the seal dents it; letting go unties the thread: the bow's tails are drawn in and its loops shrink away, the thread unwinds from the middle outwards and sags off, the seal fades gently, and the doors part, with a soft thread-slip sound (nothing sharp). Long-press the seal instead for the secret.
 - **Music** (`audio.ts`, the music button in the dock): starts inside the seal tap at **20% volume** (`music.volume` in `invitation.ts`) and can be paused or resumed from the dock; the choice is remembered. With no file set it plays a quiet royalty-free ambient loop synthesised in the browser. To use a licensed track, put the audio file in `public/music/` and set `music.src` to `` `${import.meta.env.BASE_URL}music/your-file.mp3` ``. Recordings of commercial songs are copyrighted, so the client needs the rights to use one; the repo does not include any.
-- **Sound effects** (the other dock button) are only for things you deliberately touch: the chapel bell, colour swatches, rings, swans, the oak, the seal. Nothing plays from incidental taps (catching a petal, scaring a butterfly).
+- **Sound effects** (the other dock button) are only for things you deliberately touch: the chapel bell, colour swatches, rings, swans, the oak, the seal's thread. Nothing plays from incidental taps (catching a petal, scaring a butterfly).
 
 ## Depth and calm (`parallax.ts`)
 
