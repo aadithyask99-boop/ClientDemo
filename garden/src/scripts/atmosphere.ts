@@ -24,7 +24,7 @@ export function initAtmosphere(reduce: boolean): Atmosphere {
   const imgs: HTMLImageElement[] = SPRITES.map((src) => { const i = new Image(); i.decoding = 'async'; i.src = src; return i; });
   const bimgs: HTMLImageElement[] = BUTTERFLIES.map((src) => { const i = new Image(); i.decoding = 'async'; i.src = src; return i; });
   const fine = matchMedia('(pointer: fine)').matches;
-  const dpr = Math.min(2, devicePixelRatio || 1);
+  const dpr = Math.min(fine ? 1.5 : 1.25, devicePixelRatio || 1);
   let W = 0;
   let H = 0;
   let parts: P[] = [];
@@ -46,12 +46,22 @@ export function initAtmosphere(reduce: boolean): Atmosphere {
       vy: (24 + Math.random() * 22) * z, ix: 0, iy: 0, k: Math.floor(Math.random() * SPRITES.length), turb: 0.6 + Math.random() * 0.8, temp,
     };
   };
+  let lastW = 0;
+  // petals and butterflies are only created once; a change in the screen's height (a phone's address bar sliding away as you
+  // scroll) just refits the canvas, and a change in width rescales their positions. They never respawn, so nothing jumps.
   const resize = () => {
+    const first = !W;
     W = innerWidth;
     H = innerHeight;
     canvas.width = W * dpr;
     canvas.height = H * dpr;
-    const n = W < 700 ? 11 : 20;
+    if (!first) {
+      if (W !== lastW) { const k = W / lastW; parts.forEach((p) => { p.x *= k; }); bfs.forEach((b) => { b.x *= k; b.tx *= k; }); }
+      lastW = W;
+      return;
+    }
+    lastW = W;
+    const n = W < 700 ? 8 : 20;
     parts = Array.from({ length: n }, () => make(false));
     bfs = Array.from({ length: W < 700 ? 2 : 4 }, (_, i) => ({ x: Math.random() * W, y: H * 0.25 + Math.random() * H * 0.5, vx: 0, vy: 0, tx: Math.random() * W, ty: Math.random() * H * 0.7, nt: 0, k: i % 3, s: W < 700 ? 34 : 46, fl: Math.random() * 6, flee: 0 }));
   };
@@ -144,6 +154,7 @@ export function initAtmosphere(reduce: boolean): Atmosphere {
   let slow = 0;
   let lite = false;
   const frame = (t: number) => {
+    if (!fine && t - last < 30) { raf = requestAnimationFrame(frame); return; } // phones: 30 fps (calmer and cheaper)
     const raw = t - last;
     if (!lite) {
       slow = raw > 38 ? slow + 1 : Math.max(0, slow - 2);

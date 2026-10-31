@@ -124,3 +124,11 @@ Pieces that need transparency (seal, garland, roses, swans, wreath, the six peta
 ## Accessibility and performance
 
 Everything is skipped under `prefers-reduced-motion`; the cover then simply fades. Interactive pieces have labels and visible focus. The fireflies render only at night and only while the tab is visible. Images are WebP (about 3.3 MB in total, the dance frames load only as you near that section) and below-the-fold art is lazy-loaded.
+
+## Performance notes
+
+- The rope is an in-document SVG (`#thread`), so it scrolls natively with the page instead of lagging behind a fixed canvas. On touch it redraws at most every 33 ms.
+- Fireflies use one pre-drawn glow sprite at 30 fps and are never respawned on resize. Petals and butterflies only refit on height-only resizes (the mobile address bar).
+- Night mode is a single fixed veil, not per-element filters. No blurred text shadows, no backdrop filters.
+- On touch devices the pointer parallax and leaf-shadow layer are off.
+- Profiling: `PROFILE=1 OUT_DIR=dist-prof npx astro build` gives an unminified build in `dist-prof/` (git-ignored).
