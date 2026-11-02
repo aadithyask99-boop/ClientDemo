@@ -3,10 +3,10 @@
 //   node gen-media.mjs jobs.json [--out generated] [--budget 2] [--dry]
 //
 // jobs.json: an array. Image: { "type":"image", "name":"hero-a", "prompt":"...", "refs":["a.png"], "aspect":"3:4" }
-//            Video: { "type":"video", "name":"intro", "prompt":"...", "first":"a.jpg", "last":"b.jpg", "duration":6, "resolution":"480p", "aspect":"16:9" }
+//            Video: { "type":"video", "name":"intro", "prompt":"...", "first":"a.jpg", "last":"b.jpg", "duration":6, "resolution":"720p", "aspect":"16:9", "audio":false }
 //
 // Key: OPENROUTER_API_KEY from the environment, else from a git-ignored .env at the repo root. Never paste it into chat.
-// Defaults (change by env or .env): IMAGE_MODEL=bytedance-seed/seedream-5-0-flash, VIDEO_MODEL=alibaba/wan-3.0, BUDGET_USD=2.
+// Defaults (change by env or .env): IMAGE_MODEL=bytedance-seed/seedream-5-0-flash, VIDEO_MODEL=google/veo-3.1-lite, BUDGET_USD=2.
 // Jobs run one at a time and stop as soon as the run's spend reaches the budget, so the most it can overshoot is one job.
 // --dry prints the plan and touches nothing. Every call is appended to spend-ledger.jsonl (no secrets) next to the skill.
 import { readFileSync, writeFileSync, appendFileSync, mkdirSync, existsSync } from 'node:fs';
@@ -28,7 +28,7 @@ if (!jobsFile) { console.error('usage: node gen-media.mjs jobs.json [--out gener
 
 const KEY = process.env.OPENROUTER_API_KEY;
 const IMAGE_MODEL = process.env.IMAGE_MODEL || 'bytedance-seed/seedream-5-0-flash';
-const VIDEO_MODEL = process.env.VIDEO_MODEL || 'alibaba/wan-3.0';
+const VIDEO_MODEL = process.env.VIDEO_MODEL || 'google/veo-3.1-lite';
 const BUDGET = Number(opt('budget', process.env.BUDGET_USD || 2));
 const OUT = resolve(opt('out', 'generated'));
 const ledger = resolve(here, '../spend-ledger.jsonl');
@@ -67,7 +67,7 @@ async function video(j) {
   const frames = [];
   if (j.first) frames.push({ type: 'image_url', image_url: { url: dataUri(j.first) }, frame_type: 'first_frame' });
   if (j.last) frames.push({ type: 'image_url', image_url: { url: dataUri(j.last) }, frame_type: 'last_frame' });
-  const body = { model: VIDEO_MODEL, prompt: j.prompt, resolution: j.resolution || '480p', duration: j.duration || 5, ...(j.aspect ? { aspect_ratio: j.aspect } : {}), ...(frames.length ? { frame_images: frames } : {}) };
+  const body = { model: VIDEO_MODEL, prompt: j.prompt, resolution: j.resolution || '720p', duration: j.duration || 6, ...(typeof j.audio === 'boolean' ? { generate_audio: j.audio } : {}), ...(j.aspect ? { aspect_ratio: j.aspect } : {}), ...(frames.length ? { frame_images: frames } : {}) };
   const r = await fetch('https://openrouter.ai/api/v1/videos', { method: 'POST', headers: H, body: JSON.stringify(body) });
   const s = await r.json();
   if (!r.ok || !s.polling_url) throw new Error(JSON.stringify(s).slice(0, 300));

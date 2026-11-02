@@ -1,4 +1,4 @@
 [
   { "type": "image", "name": "example-hero", "prompt": "A hand-embroidered garden scene on linen, soft light", "aspect": "3:4" },
-  { "type": "video", "name": "example-intro", "prompt": "Slow push in, gentle breeze", "first": "generated/example-hero.png", "duration": 5, "resolution": "480p", "aspect": "3:4" }
+  { "type": "video", "name": "example-intro", "prompt": "Slow push in, gentle breeze", "first": "generated/example-hero.png", "duration": 6, "resolution": "720p", "aspect": "9:16", "audio": false }
 ]
