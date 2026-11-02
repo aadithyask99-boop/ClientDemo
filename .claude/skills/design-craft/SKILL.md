@@ -24,7 +24,7 @@ Most approved work here is reference-led. The owner's usual inputs are a screen 
 3. **Rebuild structure and motion**, then replace everything else: brand, copy, imagery, code. Never copy a reference's words, pictures or code.
 4. **Make the assets original and consistent.** Anything that must look identical from every angle (a product, a label, type) is rendered or drawn in code, not generated. Photos can be generated, then cut out and keyed cleanly.
 5. **Check phone and reduced motion** as part of the design, not after it. Phones get a lighter version, not a squeezed desktop.
-6. **Record what you learned** in `references/` (see section 6).
+6. **Look at the real page** (section 6), then **record what you learned** in `references/` (section 7).
 
 ## 3. What makes these sites not generic
 
@@ -58,7 +58,20 @@ Impeccable (https://github.com/pbakaus/impeccable, Apache-2.0) supplies generic 
 
 Impeccable is not installed in this repo. Ask the owner before installing it, because its installer can add hooks and it sends anonymous telemetry unless turned off (`npx impeccable telemetry off`).
 
-## 6. Keep the library growing
+## 6. Previewing a site (screenshots and clips)
+
+Look at the real page, not only the code. The live demos are at `https://clientdemo.maximusmediascape.workers.dev/<slug>/` (slugs: `halcyon`, `more-coffee`, `orra`, `ileife`, `djeska`, `doves-uk`, `garden`).
+
+- **Screenshots:** Playwright and Chromium are pre-installed in cloud sessions (`require('playwright')`). Capture desktop (1280x800) and a phone width (390), and check the first screen, a mid-page section and the footer.
+- **60 fps clips:** `portfolio/scripts/record-demo.mjs` (branch `claude/admiring-pasteur-b27yph`) steps the browser clock 1/60 s per frame, so no stutter. It takes 5 to 15 minutes, so run it in the background. Never stop it with `pkill -f record-demo` (it kills your own shell); kill by PID.
+
+```
+node scripts/record-demo.mjs <slug> <url> [--length 18] [--start 6] [--scroll 4200] [--gate "click to open"] [--sync-video] [--fps 60]
+```
+
+Settings used for the current clips: doves-uk `--start 3.5 --scroll 4800`; ileife `--start 4 --scroll 4800`; orra `--start 5 --scroll 5200`; more-coffee `--start 4 --scroll 5200`; djeska `--start 4 --gate "click to open" --scroll 4800`; halcyon `--length 20 --start 8 --scroll 5200 --sync-video`. `--start` is how long the site's own loader gets before scrolling; `--gate` is for an enter screen; `--sync-video` is for an intro that is a `<video>`. Look at a contact sheet of the frames in `/tmp/record-<slug>/` before trusting the result.
+
+## 7. Keep the library growing
 
 After each site or major section, add or update a short file in `references/`:
 
@@ -78,4 +91,4 @@ Index of case studies:
 | ILE IFE (facials studio) | `ileife/` | Client mock | `references/ileife.md` |
 | DJ ESKA | `djeska/` | Recreate structure of a template | `references/djeska.md` |
 | Doves UK (funeral and repatriation) | `doves-uk/` | Recreate from client reference | `references/doves-uk.md` |
-| Owner's freelance portfolio | published artifact only | Original | `references/portfolio.md` |
+| Owner's freelance portfolio | `portfolio/` on branch `claude/admiring-pasteur-b27yph` | Original | `references/portfolio.md` |

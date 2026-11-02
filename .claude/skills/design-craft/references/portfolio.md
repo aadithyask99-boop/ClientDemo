@@ -1,29 +1,41 @@
-# Owner's freelance portfolio (published artifact)
+# Owner's freelance portfolio ("Aadi")
 
-Source: a published artifact, not in this repo (https://claude.ai/artifact/XtfJSKPuMxD2NUuVCKuQXd, "Aadithya Sunil"). Mode: **original**. Read on the day this skill was written; re-read before relying on it.
+Source: `portfolio/` on branch `claude/admiring-pasteur-b27yph` (not on this branch or `main` at the time of writing). Also published as an artifact: https://claude.ai/artifact/XtfJSKPuMxD2NUuVCKuQXd, a single-file build of the same site. Mode: **original**, with the Work section "built on the mechanism of the reference" (the owner's reference for showing project clips).
+
+Read `portfolio/README.md` and `portfolio/CLAUDE.md` on that branch before changing anything there; they are detailed and accurate.
 
 ## Positioning (the owner's own words on the page)
 
-- "I make cool, SEO-friendly websites." Digital marketer and web designer, based in the UK, remote worldwide.
-- "Built bespoke for your business. Nothing generic." Services copy repeats "none of that generic AI-made look".
-- A four-part "Site Chemistry" idea: Design, SEO, Marketing, Build, meeting at enquiries. "Pretty is easy. Pretty that gets you enquiries is the job."
-- Offer: five-page bespoke animated website, from £1,299. "I design your homepage first. You only pay once you love it."
-- Tone: plain, friendly, confident. Calm enquiry copy, short answers in a pricing FAQ.
+- "Hi, I'm Aadi and I make cool, SEO-friendly websites." Digital marketer and web designer, UK, remote worldwide.
+- "Built bespoke for your business. Nothing generic." Copy repeats "none of that generic AI-made look".
+- "Site Chemistry": Design, SEO, Marketing, Build meet at ENQUIRIES. "Pretty is easy. Pretty that gets you enquiries is the job."
+- Offer: five-page bespoke animated website, £1,299. "I design your homepage first. You only pay once you love it."
+- Six listed concept builds: Halcyon, Brew More, Orra, ILE IFE, DJ ESKA, Doves UK. The Garden is not listed.
 
-## Selected work listed (concept builds)
+## Design language (this one is the owner's own brand, different from the client sites)
 
-Halcyon, Brew More, Orra, ILE IFE, DJ ESKA, Doves UK. The Garden is not listed. Links point to the shared demo deploy.
+- **Two worlds:** cream `hsl(39 50% 95%)` and black. The header changes colour with whichever is under it.
+- **One accent:** orange `#ff5a1f` for fills and anything on black; `#f5501a` for large text on cream (plain orange fails contrast).
+- **Type:** Geist at weight 600 with very tight tracking (-0.065em), line-height 1. Geist Mono for small labels.
+- **Signature:** pixels. A 7x7 icon that scatters and reforms as design, build, SEO and marketing; pixel card backs; a portrait that resolves from huge blocks to a photo as you scroll; headings built from pixels with real text kept in the page.
+- **Motion rules:** transform and opacity only. The headline never reflows (words not yet shown are offset, not removed), which keeps layout shift at about 0.
+- **Progressive:** a mouse gets the full pinned and physics page; touch gets the same content with native scrolling; no JavaScript or reduced motion shows everything finished.
+- **Playful but earned:** many easter eggs (type `seo`, hold Shift, flick a card, a sleeping cursor, a rocket at the bottom). Small triggers, scenes loaded only when found, hints limited to six per visit.
 
-## Interaction patterns on the page
+## Page order (what a client asks, in order)
 
-Playful draggable and flickable service cards ("Drag a card. Flick it hard."), a "Pull me" panel, a live London clock, click-to-copy email, a sound toggle, embedded work videos (six videos in the page), a pricing panel with FAQ.
+Who is this (loader is the headline) then show me (Work clips) then why it works (Site Chemistry) then what do I get (three draggable service cards) then who am I hiring (portrait) then the call to action, pricing sheet and contact.
+
+## Performance bar (measured, keep it)
+
+Largest contentful paint about 1.0 s desktop and 1.7 s throttled phone, layout shift about 0, JavaScript about 63 KB gzipped. Rules that protect it: the longest headline word must remain the largest paint; no picture in the first screen; below-the-fold setup runs after the headline lands; no `will-change` on hundreds of small things; one Work clip plays at a time. Re-measure after touching the intro.
+
+## Recording the Work clips
+
+Use `portfolio/scripts/record-demo.mjs` on that branch. It does not screen-record. It pauses the browser clock and steps it 1/60 s per frame, so a clip is exactly 60 fps and takes 5 to 15 minutes. Needs Playwright and ffmpeg. See the "Previewing a site" section of `SKILL.md` for the command and per-site settings.
 
 ## What this means for design decisions
 
-- The portfolio's promise is the quality bar: every site here must pass "does this look like every other AI site?" If it might, push further.
-- SEO is part of the pitch, so structure, speed and accessibility are design requirements, not extras.
-- The six listed sites should stay consistent with what the page claims. If a site changes materially, tell the owner so the portfolio can be refreshed.
-
-## Not found
-
-No screen-recording script was found in the repo, and the portfolio's own source is not committed. The videos on the page are embedded in the artifact. If the owner has a recording script, ask where it lives before assuming.
+- The portfolio's promise is the quality bar: every site must pass "does this look like every other AI site?" If it might, push further.
+- SEO is part of the pitch, so structure, speed and accessibility are design requirements.
+- If a listed site changes materially, tell the owner so its clip and poster can be re-recorded.
