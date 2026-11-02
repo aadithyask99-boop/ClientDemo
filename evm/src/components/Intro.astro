@@ -1,9 +1,12 @@
 ---
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+import { site } from '../data/site';
+import Mark from './Mark.astro';
 const slices = [0, 1, 2, 3, 4, 5];
 ---
 <div class="intro" aria-hidden="true">
+  <p class="intro__tag intro__tag--1" data-type>{site.tagOne}</p>
+  <p class="intro__tag intro__tag--2" data-type>{site.tagTwo}</p>
   <div class="intro__mark">
-    {slices.map((i) => <img src={`${base}/evm-logo.svg`} alt="" style={`--i:${i};clip-path:inset(${i * 16.7}% 0 ${100 - (i + 1) * 16.7}% 0)`} />)}
+    {slices.map((i) => <span class="intro__slice" style={`clip-path:inset(${i * 16.67}% 0 ${100 - (i + 1) * 16.67}% 0)`}><Mark /></span>)}
   </div>
 </div>

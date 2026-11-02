@@ -1,9 +1,8 @@
 ---
 import { site } from '../data/site';
-const words = site.statement.split(' ');
+const s = site.statement;
 ---
 <section class="statement" id="statement" data-theme="light">
-  <p class="statement__text" aria-label={site.statement}>
-    {words.map((w) => <span class="w" aria-hidden="true">{w} </span>)}
-  </p>
+  <p class="label">{s.label}</p>
+  <p class="big">{s.text}</p>
 </section>

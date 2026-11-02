@@ -1,19 +1,19 @@
 ---
 import { site } from '../data/site';
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+import Mark from './Mark.astro';
 ---
 <footer class="footer" id="contact" data-theme="light">
-  <div class="footer__cols">
-    <div>
-      <h2>Our business</h2>
-      <ul>{site.footer.businesses.map((b) => <li>{b}</li>)}</ul>
-    </div>
-    <div>
-      <h2>Menu</h2>
-      <ul>{site.nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}</ul>
-    </div>
-    <p class="footer__note">{site.footer.note}</p>
+  <div class="footer__top">
+    <p class="label">{site.tagOne}</p>
+    <p class="label">{site.footer.address}</p>
+    <nav class="footer__links" aria-label="Footer">
+      {site.nav.slice(0, 4).map((n) => <a href={n.href}>{n.label}</a>)}
+    </nav>
   </div>
-  <img class="footer__mark" src={`${base}/evm-logo.svg`} alt="EVM Group" />
-  <p class="footer__legal">Copyright 2026 EVM Group. All rights reserved.</p>
+  <Mark class="footer__mark" />
+  <div class="footer__contact">
+    <p class="label label--mute">Contact</p>
+    <p class="label">{site.footer.contactNote}</p>
+  </div>
+  <p class="label footer__legal">{site.footer.legal}</p>
 </footer>

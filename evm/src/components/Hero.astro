@@ -1,24 +1,16 @@
 ---
 import { site } from '../data/site';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-let n = 0;
 ---
 <section class="hero" id="top" data-theme="dark">
-  <div class="hero__pin">
-    <div class="hero__film">
-      <video class="hero__video" muted playsinline preload="metadata" poster={`${base}/img/hero-poster.webp`} aria-label={site.hero.filmAlt}>
-        <source src={`${base}/video/hero.mp4`} type="video/mp4" />
-      </video>
-      <div class="hero__shade"></div>
-    </div>
-    <h1 class="hero__title" aria-label={site.hero.lines.join(' ')}>
-      {site.hero.lines.map((l) => (
-        <span class="line" aria-hidden="true">
-          {[...l].map((c) => <span class="ch" style={`--k:${n++}`}>{c === ' ' ? ' ' : c}</span>)}
-        </span>
-      ))}
-    </h1>
-    <p class="hero__sub">{site.hero.sub}</p>
-    <a class="hero__cta" href="#marques">{site.hero.cta} <span aria-hidden="true">&rarr;</span></a>
+  <div class="hero__film">
+    <video class="hero__video" muted playsinline preload="metadata" poster={`${base}/img/hero-poster.webp`} aria-label={site.hero.filmAlt}>
+      <source src={`${base}/video/hero.mp4`} type="video/mp4" />
+    </video>
   </div>
+  <h1 class="hero__title" aria-label={site.hero.lines.join(' ')}>
+    {site.hero.lines.map((l) => <span class="line" data-type aria-hidden="true">{l}</span>)}
+  </h1>
+  <p class="hero__sub" data-type>{site.hero.sub}</p>
+  <a class="hero__cta" href="#statement" data-type>{site.hero.cta}</a>
 </section>

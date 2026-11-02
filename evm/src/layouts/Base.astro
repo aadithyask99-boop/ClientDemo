@@ -1,5 +1,5 @@
 ---
-import '@fontsource-variable/sora';
+import '@fontsource-variable/hanken-grotesk';
 import '../styles/global.css';
 import { site } from '../data/site';
 const { title = site.title, description = site.description } = Astro.props;
@@ -12,7 +12,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#0b0b0c" />
+    <meta name="theme-color" content="#000000" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
