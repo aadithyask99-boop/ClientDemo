@@ -1,0 +1,15 @@
+---
+import { site } from '../data/site';
+const s = site.story;
+---
+<section class="story" id="story" data-theme="light">
+  <h2 class="story__title">{s.title}</h2>
+  <div class="story__track">
+    <div class="story__line"><i></i></div>
+    <ol class="story__items">
+      {s.items.map((it) => (
+        <li class="story__item"><span class="story__year">{it.year}</span><p>{it.text}</p></li>
+      ))}
+    </ol>
+  </div>
+</section>

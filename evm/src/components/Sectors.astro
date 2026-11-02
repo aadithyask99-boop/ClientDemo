@@ -1,0 +1,17 @@
+---
+import { site } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const s = site.sectors;
+---
+<section class="sectors" id="sectors" data-theme="dark">
+  <h2 class="sectors__title">{s.title}</h2>
+  <ul class="sectors__list">
+    {s.items.map((it) => (
+      <li class="sector" tabindex="0">
+        <h3>{it.name}</h3>
+        <p>{it.text}</p>
+        <img src={`${base}/img/${it.img}`} alt={it.alt} loading="lazy" />
+      </li>
+    ))}
+  </ul>
+</section>

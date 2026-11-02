@@ -4,32 +4,55 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const doc = document.documentElement;
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
-const ease = (t: number) => 1 - Math.pow(1 - t, 3);
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const canHover = matchMedia('(hover: hover)').matches;
+const $ = <T extends HTMLElement>(s: string, r: ParentNode = document) => r.querySelector<T>(s)!;
+const $$ = <T extends HTMLElement>(s: string, r: ParentNode = document) => [...r.querySelectorAll<T>(s)];
+if (!reduce) doc.classList.add('js');
 
-// Header: colour follows the section underneath, and the phone menu.
-const header = document.querySelector<HTMLElement>('.header')!;
-const menu = document.querySelector<HTMLElement>('#menu')!;
-const menuBtn = document.querySelector<HTMLButtonElement>('.header__menu')!;
-const themeEls = [...document.querySelectorAll<HTMLElement>('[data-theme]')].filter((e) => e !== header);
+// Header colour follows the section underneath it.
+const header = $('.header');
+const themeEls = $$('[data-theme]').filter((e) => e !== header);
 const syncTheme = () => {
   const y = 40;
   const hit = themeEls.find((e) => { const r = e.getBoundingClientRect(); return r.top <= y && r.bottom > y; });
   header.dataset.theme = hit?.dataset.theme ?? 'dark';
 };
-const setMenu = (open: boolean) => {
-  menu.hidden = !open;
-  menuBtn.setAttribute('aria-expanded', String(open));
-  menuBtn.textContent = open ? 'Close' : 'Menu';
-  header.style.color = open ? '#f5f5f2' : '';
-  document.body.style.overflow = open ? 'hidden' : '';
-};
-menuBtn.addEventListener('click', () => setMenu(menu.hidden));
-menu.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) setMenu(false); });
 
-// Hero film: plays muted, fades out and restarts so the loop has no hard cut.
-const film = document.querySelector<HTMLElement>('.hero__film')!;
-const video = document.querySelector<HTMLVideoElement>('.hero__video')!;
+// Menu overlay with a photo that follows the hovered link.
+const menu = $('#menu');
+const menuBtn = $<HTMLButtonElement>('.header__menu');
+const links = $$<HTMLAnchorElement>('.menu__links a');
+const previews = $$('.menu__preview img');
+const linkBox = $('.menu__links');
+let lenis: Lenis | null = null;
+const setPreview = (i: number) => {
+  links.forEach((a, k) => a.classList.toggle('is-on', k === i));
+  previews.forEach((p, k) => p.classList.toggle('is-on', k === i));
+};
+const setMenu = (open: boolean) => {
+  menu.classList.toggle('is-open', open);
+  header.classList.toggle('is-open', open);
+  menu.setAttribute('aria-hidden', String(!open));
+  menuBtn.setAttribute('aria-expanded', String(open));
+  menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  links.forEach((a) => (a.tabIndex = open ? 0 : -1));
+  if (open) { lenis?.stop(); setPreview(0); } else { lenis?.start(); linkBox.classList.remove('is-hovering'); }
+  if (!lenis) document.body.style.overflow = open ? 'hidden' : '';
+};
+menuBtn.addEventListener('click', () => setMenu(!menu.classList.contains('is-open')));
+addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+links.forEach((a, i) => {
+  const on = () => { linkBox.classList.add('is-hovering'); setPreview(i); };
+  a.addEventListener('pointerenter', on);
+  a.addEventListener('focus', on);
+  a.addEventListener('click', () => setMenu(false));
+});
+linkBox.addEventListener('pointerleave', () => linkBox.classList.remove('is-hovering'));
+
+// Hero film: plays muted; fades out and restarts so the loop has no hard cut.
+const film = $('.hero__film');
+const video = $<HTMLVideoElement>('.hero__video');
 if (!reduce) {
   const play = () => video.play().catch(() => {});
   play();
@@ -37,85 +60,80 @@ if (!reduce) {
   video.addEventListener('ended', () => { video.currentTime = 0; delete film.dataset.fade; play(); });
 }
 
+// Marques roller: scroll steps through brands, hover or focus picks one.
+const marques = $('.marques');
+const mItems = $$('.marques__list li');
+const mImgs = $$('.marques__frame img');
+const mNotes = $$('.marques__note span');
+let mActive = 0;
+const setMarque = (i: number) => {
+  if (i === mActive) return;
+  mActive = i;
+  [mItems, mImgs, mNotes].forEach((g) => g.forEach((el, k) => el.classList.toggle('is-active', k === i)));
+};
+mItems.forEach((li, i) => {
+  li.addEventListener('pointerenter', () => canHover && setMarque(i));
+  li.addEventListener('focus', () => setMarque(i));
+  li.addEventListener('click', () => setMarque(i));
+});
+
 if (!reduce) {
   gsap.registerPlugin(ScrollTrigger);
-  const lenis = new Lenis({ lerp: 0.085, wheelMultiplier: 0.9 });
+  lenis = new Lenis({ lerp: 0.085, wheelMultiplier: 0.9 });
   lenis.on('scroll', () => { ScrollTrigger.update(); syncTheme(); });
-  gsap.ticker.add((t) => lenis.raf(t * 1000));
+  gsap.ticker.add((t) => lenis!.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
   doc.classList.add('lenis');
 
-  // Anchor links scroll with Lenis.
   document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) => {
     a.addEventListener('click', (e) => {
       const id = a.getAttribute('href')!;
-      if (a.classList.contains('panel')) return;
-      const el = id === '#top' ? document.body : document.querySelector<HTMLElement>(id);
-      if (!el) return;
+      const el = id === '#top' ? null : document.querySelector<HTMLElement>(id);
+      if (id !== '#top' && !el) return;
       e.preventDefault();
-      lenis.scrollTo(id === '#top' ? 0 : el, { duration: 1.4 });
+      lenis!.scrollTo(el ?? 0, { duration: 1.5 });
     });
   });
 
-  // Hero scene: film, then three panels rise, hover widens one, scrolling on expands the chosen car.
-  const hero = document.querySelector<HTMLElement>('.hero')!;
-  const title = hero.querySelector<HTMLElement>('.hero__title')!;
-  const row = hero.querySelector<HTMLElement>('.hero__panels')!;
-  const panels = [...hero.querySelectorAll<HTMLElement>('.panel')];
-  const dims = panels.map((p) => p.querySelector<HTMLElement>('.panel__dim')!);
-  const caps = panels.map((p) => p.querySelector<HTMLElement>('.panel__cap')!);
-  const canHover = matchMedia('(hover: hover)').matches;
-  const grow = panels.map(() => 1);
-  let hover = -1;
-  let sel = 0;
-  let active = true;
-
-  panels.forEach((el, i) => {
-    if (canHover) {
-      el.addEventListener('pointerenter', () => { hover = i; sel = i; });
-      el.addEventListener('pointerleave', () => { if (hover === i) hover = -1; });
+  // Hero: the film slowly pushes in and darkens as you scroll; the headline lifts away. The cursor nudges the film.
+  const hero = $('.hero');
+  const sx = gsap.quickTo(film, 'x', { duration: 1.2, ease: 'power3.out' });
+  const sy = gsap.quickTo(film, 'y', { duration: 1.2, ease: 'power3.out' });
+  if (canHover) hero.addEventListener('pointermove', (e) => {
+    sx(-(e.clientX / innerWidth - 0.5) * 36);
+    sy(-(e.clientY / innerHeight - 0.5) * 22);
+  });
+  const mRange = () => marques.offsetHeight - innerHeight;
+  let lastIdx = -1;
+  gsap.ticker.add(() => {
+    const hr = hero.getBoundingClientRect();
+    if (hr.bottom > 0) {
+      const p = clamp(-hr.top / (hero.offsetHeight - innerHeight));
+      hero.style.setProperty('--hs', (1.04 + 0.1 * p).toFixed(4));
+      hero.style.setProperty('--hd', (0.24 + 0.5 * p).toFixed(3));
+      hero.style.setProperty('--ty', `${(-p * 90).toFixed(1)}px`);
+      hero.style.setProperty('--to', String(clamp(1 - p * 1.5)));
     }
-    el.addEventListener('click', (e) => {
-      e.preventDefault();
-      sel = i; hover = i;
-      const range = hero.offsetHeight - innerHeight;
-      lenis.scrollTo(hero.offsetTop + range * 1.0 + 2, { duration: 1.6 });
-    });
+    const mr = marques.getBoundingClientRect();
+    if (mr.top < innerHeight && mr.bottom > 0) {
+      const p = clamp(-mr.top / mRange());
+      const idx = Math.min(mItems.length - 1, Math.floor(p * mItems.length));
+      if (idx !== lastIdx) { lastIdx = idx; setMarque(idx); }
+    }
   });
 
-  new IntersectionObserver(([e]) => { active = e.isIntersecting; }, { rootMargin: '10% 0px' }).observe(hero);
-
-  const render = () => {
-    if (!active) return;
-    const range = hero.offsetHeight - innerHeight;
-    const p = clamp(-hero.getBoundingClientRect().top / range);
-    const rise = clamp((p - 0.16) / 0.26);
-    const open = ease(clamp((p - 0.72) / 0.24));
-    row.style.transform = `translate3d(0, ${(1 - ease(rise)) * 100}%, 0)`;
-    const tp = clamp(p / 0.22);
-    title.style.opacity = String(1 - tp);
-    title.style.transform = `translate3d(0, ${-tp * 60}px, 0)`;
-    panels.forEach((el, i) => {
-      const base = hover === i ? 2.4 : 1;
-      const end = i === sel ? 30 : 0.0001;
-      const target = base + (end - base) * open;
-      grow[i] += (target - grow[i]) * 0.16;
-      el.style.flexGrow = grow[i].toFixed(4);
-      dims[i].style.opacity = hover >= 0 && hover !== i && open < 0.5 ? '0.5' : '0';
-      caps[i].style.opacity = String(i === sel ? 1 : 1 - clamp(open * 3));
-    });
-    syncTheme();
-  };
-  gsap.ticker.add(render);
+  // Story: entries rise in and the red line draws down the column.
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -12% 0px' });
+  $$('.story__item').forEach((el) => io.observe(el));
+  const track = $('.story__track');
+  gsap.fromTo(track, { '--sl': 0 }, { '--sl': 1, ease: 'none', scrollTrigger: { trigger: track, start: 'top 70%', end: 'bottom 60%', scrub: true } });
 
   // Statement: words go from grey to ink as you scroll.
-  const words = gsap.utils.toArray<HTMLElement>('.statement .w');
-  gsap.to(words, {
+  gsap.to($$('.statement .w'), {
     color: '#0b0b0c', ease: 'none', stagger: 0.12,
     scrollTrigger: { trigger: '.statement__text', start: 'top 78%', end: 'bottom 45%', scrub: true },
   });
 } else {
-  syncTheme();
   addEventListener('scroll', syncTheme, { passive: true });
 }
 syncTheme();

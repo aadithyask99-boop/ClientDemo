@@ -1,0 +1,19 @@
+---
+import { site } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<footer class="footer" id="contact" data-theme="light">
+  <div class="footer__cols">
+    <div>
+      <h2>Our business</h2>
+      <ul>{site.footer.businesses.map((b) => <li>{b}</li>)}</ul>
+    </div>
+    <div>
+      <h2>Menu</h2>
+      <ul>{site.nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}</ul>
+    </div>
+    <p class="footer__note">{site.footer.note}</p>
+  </div>
+  <img class="footer__mark" src={`${base}/evm-logo.svg`} alt="EVM Group" />
+  <p class="footer__legal">Copyright 2026 EVM Group. All rights reserved.</p>
+</footer>

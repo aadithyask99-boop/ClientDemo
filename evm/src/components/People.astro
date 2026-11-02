@@ -1,0 +1,14 @@
+---
+import { site } from '../data/site';
+const p = site.people;
+---
+<section class="people" id="people" data-theme="light">
+  <h2 class="people__title">{p.title}</h2>
+  <ul class="people__list">
+    {p.items.map((it) => <li><strong>{it.name}</strong><span>{it.role}</span></li>)}
+  </ul>
+  <h2 class="people__title people__title--sub">{p.awardsTitle}</h2>
+  <ul class="awards">
+    {p.awards.map((a) => <li><strong>{a.brand}</strong><p>{a.text}</p></li>)}
+  </ul>
+</section>

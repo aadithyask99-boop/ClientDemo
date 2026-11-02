@@ -1,0 +1,25 @@
+---
+import { site } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const m = site.marques;
+---
+<section class="marques" id="marques" data-theme="dark" style={`--n:${m.items.length}`}>
+  <div class="marques__pin">
+    <h2 class="marques__title">{m.title}</h2>
+    <ol class="marques__list">
+      {m.items.map((it, i) => (
+        <li class={i === 0 ? 'is-active' : ''} data-i={i} tabindex="0"><span>{it.name}</span></li>
+      ))}
+    </ol>
+    <div class="marques__stage">
+      <div class="marques__frame">
+        {m.items.map((it, i) => (
+          <img class={i === 0 ? 'is-active' : ''} src={`${base}/img/${it.img}`} alt={it.alt} style={`object-position:${it.pos}`} loading="lazy" />
+        ))}
+      </div>
+      <p class="marques__note">
+        {m.items.map((it, i) => <span class={i === 0 ? 'is-active' : ''}>{it.note}</span>)}
+      </p>
+    </div>
+  </div>
+</section>
