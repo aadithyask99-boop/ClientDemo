@@ -5,31 +5,34 @@ How generated images and video are made, what they cost, and how the cap works.
 ## Defaults
 
 - **Images:** `bytedance-seed/seedream-5-0-flash` on OpenRouter (about 2 cents per image in earlier jobs).
-- **Video:** `google/veo-3.1-lite`, 720p, 6 s, **audio off**. Chosen from the live catalog on 2026-11-02 for price and for first-frame plus last-frame control, which is how the Halcyon intro was made. It is unproven for our work, so the first real use is an A/B test (below). Wan 3.0, used for the Garden dance, was found not to be the best.
+- **Video:** `bytedance/seedance-1-5-pro`, 720p, 6 s, **audio off**. Cheapest model with first-frame plus last-frame control in the live catalog on 2026-11-02 (about $0.026 per second at 720p without audio, about $0.16 per 6 s clip), and the one that made the approved Halcyon intro. Challengers are Veo 3.1 Lite and Seedance 2.0 Fast (A/B test below). Wan 3.0, used for the Garden dance, was found not to be the best.
 - Change either with `IMAGE_MODEL` and `VIDEO_MODEL` in the environment or `.env`.
 
 ### Video models compared (live OpenRouter catalog, 2026-11-02)
 
-Prices are US dollars per second of output, without audio unless stated. A web clip is played muted, so use `"audio": false` and do not pay for sound. "Frames" = accepts a first frame and a last frame. Re-check before choosing, no key needed: `curl -s https://openrouter.ai/api/v1/videos/models`.
+US dollars per second of output, **without audio** (a web clip is played muted, so use `"audio": false`). "Frames" = accepts a first and a last frame. The website's headline "Priced from $X" is the **lowest resolution**, usually 480p: compare at the same resolution. Re-check before choosing, no key needed: `curl -s https://openrouter.ai/api/v1/videos/models`.
 
-| Model | Frames | 720p $/s | 6 s clip | Notes |
-| --- | --- | --- | --- | --- |
-| `tbc/mischief-1` | first only | 0.01 (480p 0.005) | $0.06 | cheapest by far, 16:9, 3 to 5 s; unknown quality |
-| `xai: grok-imagine-video-1.5-lite` | first only | 0.03 (480p 0.02) | $0.18 | cheap, 1 to 15 s, many aspects |
-| **`google/veo-3.1-lite`** | **both** | **0.03** (0.05 with audio) | **$0.18** | **default**; 16:9 and 9:16, 4 to 8 s |
-| `minimax/hailuo-3-max` | both | 480p 0.05, 768p 0.08 | $0.30 to $0.48 | 5 to 15 s, no audio |
-| `alibaba/wan-3.0` | both | 0.10 (480p 0.05) | $0.30 to $0.60 | the one we used; found weaker |
-| `bytedance/seedance-2.0-fast` | both | about 0.09 (estimate) | about $0.54 | token priced; same family as the Halcyon clip |
-| `google/veo-3.1-fast` | both | 0.08 (0.10 with audio) | $0.48 | step up in quality from Lite |
-| `kwaivgi/kling-v3.0-std` | both | 0.084 (0.126 with audio) | $0.50 | 3 to 15 s; Pro is 0.112 |
-| `bytedance/seedance-2.5` | both | about 0.23 (estimate) | about $1.39 | long clips to 30 s; not cheap per second |
-| `google/veo-3.1` | both | 0.20 (0.40 with audio) | $1.20 | top quality, expensive |
+| Model | Frames | 480p $/s | 720p $/s | 6 s at 720p | Notes |
+| --- | --- | --- | --- | --- | --- |
+| `tbc/mischief-1` | first | 0.005 | 0.01 | $0.06 | cheapest; 16:9 only, 3 to 5 s; quality unknown |
+| **`bytedance/seedance-1-5-pro`** | both | about 0.012 | about 0.026 | **about $0.16** | **default**; made the Halcyon intro; 4 to 12 s |
+| `google/veo-3.1-lite` | both | n/a | 0.03 | $0.18 | 16:9 and 9:16, up to 8 s; main challenger |
+| `x-ai/grok-imagine-video-1.5-lite` | first | 0.02 | 0.03 | $0.18 | 1 to 15 s |
+| `bytedance/seedance-2.0-mini` | both | about 0.034 | about 0.076 | about $0.45 | 4 to 15 s |
+| `bytedance/seedance-2.0-fast` | both | about 0.040 | about 0.091 | about $0.54 | challenger |
+| `alibaba/wan-3.0` | both | 0.05 | 0.10 | $0.60 | found weaker |
+| `minimax/hailuo-3-max` | both | 0.05 | 768p 0.08 | $0.48 at 768p | no audio option |
+| `google/veo-3.1-fast` | both | n/a | 0.08 | $0.48 | step up from Lite |
+| `kwaivgi/kling-v3.0-std` | both | n/a | 0.084 | $0.50 | 720p; Pro is 0.112 |
+| `bytedance/seedance-2.0` | both | about 0.067 | about 0.151 | about $0.91 | |
+| `bytedance/seedance-2.5` | both | 0.1028 | about 0.231 | about $1.39 | long clips to 30 s; its "from $0.1028" is the 480p price |
+| `google/veo-3.1` | both | n/a | 0.20 | $1.20 | top quality |
 
-Seedance is priced per video token, not per second. The figures above are estimates using 24 fps and tokens = width x height x fps x seconds / 1024; confirm from the `cost` the tool prints on a real run.
+Seedance is priced per video token. The estimates use 24 fps and tokens = width x height x fps x seconds / 1024; this reproduces OpenRouter's displayed Seedance 2.5 price of $0.1028 per second at 480p exactly, so the formula can be trusted. Confirm from the `cost` the tool prints on a real run. Cheap does not mean good: price says nothing about quality.
 
 ### A/B test before trusting the default
 
-With the same first frame and prompt, make one 6 s clip each on `google/veo-3.1-lite`, `bytedance/seedance-2.0-fast` and `kwaivgi/kling-v3.0-std` (about $1.20 in total at 720p, no audio). Compare motion, whether the last frame lands where intended, artefacts and loop quality. Record the winner and why in `feedback.md`, then set `VIDEO_MODEL`.
+With the same first frame and prompt, make one 6 s clip each on `bytedance/seedance-1-5-pro`, `google/veo-3.1-lite`, `bytedance/seedance-2.0-fast` and `kwaivgi/kling-v3.0-std` (about $1.40 in total at 720p, no audio). Compare motion, whether the last frame lands where intended, artefacts and loop quality. Record the winner and why in `feedback.md`, then set `VIDEO_MODEL`.
 
 ## The key and the $2 cap
 
