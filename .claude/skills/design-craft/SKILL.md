@@ -67,6 +67,8 @@ Most approved work here is reference-led. The owner's usual inputs are a screen 
 - Performance is part of design: avoid full-screen blend modes and animated filters; pre-blur shadows; prefer a pre-rendered video to stitched, filtered stills; load heavy WebGL after the intro.
 - Never state a model name in commits or files pushed to a repo.
 
+**Stack defaults** (what every approved site here uses): **Astro** with TypeScript and plain CSS, static output, because it ships very little JavaScript and stays fast (the portfolio measures about 1.0 s largest contentful paint). Add only what the design needs: GSAP (ScrollTrigger, SplitText) for motion, Lenis for smooth scroll on desktop pointers, Swiper for sliders. Use Three.js or canvas only when it is the signature idea (Halcyon's glass and keycaps, Brew More's rendered tub), and load it after the intro so it cannot block the first paint. Keep content in one data file per site. Use another framework only if the client needs something Astro cannot do, and say why first.
+
 ## 5. One workflow, two tools
 
 This skill is the single entry point. Impeccable (https://github.com/pbakaus/impeccable, Apache-2.0) is a helper that this skill calls at set moments. The owner should never have to invoke the two separately.
