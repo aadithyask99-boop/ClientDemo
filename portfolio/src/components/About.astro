@@ -1,0 +1,34 @@
+---
+import { site } from '../data/site';
+import { portraitFile } from '../data/portrait';
+import PortraitArt from './PortraitArt.astro';
+
+/* Who you would be working with. Drop a photo at public/portrait.jpg and it replaces the pixel-art stand-in. As you scroll past, the picture
+   goes from pixels to sharp as it reaches the middle of the screen and back to pixels as it leaves (scripts/portrait.ts). */
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<section class="about" id="about" data-world-section="dark" aria-labelledby="about-title">
+  <figure class="portrait" data-portrait>
+    {
+      portraitFile ? (
+        <img class="portrait__img" src={`${base}/${portraitFile}`} alt={`Portrait of ${site.owner}`} width="800" height="1000" loading="lazy" decoding="async" />
+      ) : (
+        <PortraitArt class="portrait__face" />
+      )
+    }
+    <canvas class="portrait__cv" aria-hidden="true"></canvas>
+  </figure>
+
+  <div class="about__copy">
+    <h2 id="about-title" class="about__title">Every detail, one designer.</h2>
+    <p>
+      I'm {site.owner}, a {site.role.toLowerCase()} based in the UK. I design the site, build it, set it up so search engines can read it, and
+      help get it in front of the right people.
+    </p>
+    <p>
+      Nothing templated, and nothing that looks like every other AI-generated site. One person from the first sketch to launch day, so nothing
+      gets lost in a hand-off.
+    </p>
+  </div>
+</section>

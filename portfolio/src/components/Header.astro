@@ -1,0 +1,48 @@
+---
+import { site } from '../data/site';
+const links = [
+  ['Work', '#work'],
+  ['Services', '#services'],
+  ['About', '#about'],
+  ['Connect', '#pricing'],
+];
+---
+
+<header class="hdr" data-header>
+  <!-- The menu is a tab that hangs from the top-right edge ("pull" it and a cream panel unrolls down from the top; scripts/menu.ts). It is a <details>, so it
+       opens and closes with no JavaScript too. -->
+  <details class="menu" data-menu>
+    <summary class="menu__tab" aria-label="Menu">
+      <span class="menu__face">
+        <span class="menu__hole" aria-hidden="true"></span>
+        <span class="menu__word menu__word--open">Pull me</span>
+        <span class="menu__word menu__word--close">Close</span>
+      </span>
+    </summary>
+    <nav class="menu__panel" aria-label="Primary" data-menu-panel>
+      {
+        links.map(([label, href]) => (
+          <a class="menu__link" href={href} {...(href === '#pricing' ? { 'data-pricing-open': '' } : { 'data-nav': '' })}>
+            <span class="menu__lbl"><span class="menu__t">{label}</span></span>
+            <span class="menu__go" aria-hidden="true">
+              <svg viewBox="0 0 12 12" width="12" height="12"><path d="M2 9.5 9.5 2M4 2h5.5v5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </span>
+          </a>
+        ))
+      }
+    </nav>
+  </details>
+
+  <!-- the clock is also the way into the local-time panel (scripts/clock-panel.ts); the location label folds to a thin line once the page is scrolled -->
+  <button class="hdr__clock" type="button" data-open-clock aria-haspopup="dialog" title={`Local time (${site.timezone})`}>
+    {
+      site.location && (
+        <span class="hdr__loc">
+          <span class="hdr__loc-t">{site.location}<span class="hdr__sep" aria-hidden="true"> · </span></span>
+          <span class="hdr__line" aria-hidden="true"></span>
+        </span>
+      )
+    }
+    <span class="hdr__time" data-clock data-tz={site.timezone}>--:--</span>
+  </button>
+</header>

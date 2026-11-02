@@ -1,0 +1,55 @@
+---
+/* The stand-in portrait, a smooth illustration (not pixel art), so the scroll effect has something to turn from blocks into: it resolves from a few huge
+   blocks to this picture as it comes up the screen. Drop a photo at public/portrait.jpg and it is replaced by that. */
+interface Props {
+  class?: string;
+}
+const { class: cls = '' } = Astro.props;
+---
+
+<svg class={cls} viewBox="0 0 400 500" role="img" aria-label="Illustrated portrait" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="pa-bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0" stop-color="#ff8a4d"></stop>
+      <stop offset="1" stop-color="#ff5a1f"></stop>
+    </radialGradient>
+    <linearGradient id="pa-skin" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6d9bf"></stop>
+      <stop offset="1" stop-color="#e2ad88"></stop>
+    </linearGradient>
+    <linearGradient id="pa-coat" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a2a2e"></stop>
+      <stop offset="1" stop-color="#0b0b0c"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="500" fill="url(#pa-bg)"></rect>
+  <circle cx="320" cy="90" r="120" fill="#ffffff" fill-opacity="0.08"></circle>
+  <!-- shoulders and collar -->
+  <path d="M-10 500 V430 C-10 380 60 350 140 335 L200 400 L260 335 C340 350 410 380 410 430 V500Z" fill="url(#pa-coat)"></path>
+  <path d="M160 338 L200 408 L240 338 L222 332 L200 372 L178 332Z" fill="#f5efe3"></path>
+  <!-- neck -->
+  <path d="M168 290 V345 C168 368 232 368 232 345 V290Z" fill="#d79c78"></path>
+  <path d="M168 318 C190 340 212 340 232 318 V300 H168Z" fill="#b97d5c" fill-opacity="0.55"></path>
+  <!-- ears -->
+  <ellipse cx="128" cy="238" rx="16" ry="25" fill="#e2ad88"></ellipse>
+  <ellipse cx="272" cy="238" rx="16" ry="25" fill="#e2ad88"></ellipse>
+  <!-- head -->
+  <path d="M132 220 C132 140 164 108 200 108 C236 108 268 140 268 220 C268 284 238 322 200 322 C162 322 132 284 132 220Z" fill="url(#pa-skin)"></path>
+  <!-- hair -->
+  <path d="M126 224 C112 150 138 82 200 78 C268 76 292 146 274 226 C268 190 256 160 236 146 C214 156 176 154 156 134 C140 156 132 190 126 224Z" fill="#17120f"></path>
+  <path d="M150 128 C170 150 210 156 238 142" fill="none" stroke="#3b2f28" stroke-width="3" stroke-linecap="round" stroke-opacity="0.7"></path>
+  <!-- brows and eyes -->
+  <path d="M160 202 C170 194 184 194 192 200" fill="none" stroke="#17120f" stroke-width="5" stroke-linecap="round"></path>
+  <path d="M208 200 C216 194 230 194 240 202" fill="none" stroke="#17120f" stroke-width="5" stroke-linecap="round"></path>
+  <ellipse cx="176" cy="224" rx="12" ry="9" fill="#fbf6ee"></ellipse>
+  <ellipse cx="224" cy="224" rx="12" ry="9" fill="#fbf6ee"></ellipse>
+  <circle cx="178" cy="224" r="6.5" fill="#2a1a12"></circle>
+  <circle cx="222" cy="224" r="6.5" fill="#2a1a12"></circle>
+  <circle cx="180" cy="221.5" r="2" fill="#fff"></circle>
+  <circle cx="224" cy="221.5" r="2" fill="#fff"></circle>
+  <!-- nose, cheeks, smile -->
+  <path d="M200 232 C196 252 192 262 198 268 C204 270 208 268 210 266" fill="none" stroke="#b97d5c" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.8"></path>
+  <ellipse cx="154" cy="262" rx="17" ry="11" fill="#ff7a4a" fill-opacity="0.35"></ellipse>
+  <ellipse cx="246" cy="262" rx="17" ry="11" fill="#ff7a4a" fill-opacity="0.35"></ellipse>
+  <path d="M174 282 C190 302 212 302 228 282" fill="none" stroke="#7a3b2a" stroke-width="5" stroke-linecap="round"></path>
+</svg>
