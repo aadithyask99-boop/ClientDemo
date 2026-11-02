@@ -49,22 +49,31 @@ Most approved work here is reference-led. The owner's usual inputs are a screen 
 - Performance is part of design: avoid full-screen blend modes and animated filters; pre-blur shadows; prefer a pre-rendered video to stitched, filtered stills; load heavy WebGL after the intro.
 - Never state a model name in commits or files pushed to a repo.
 
-## 5. Pair with Impeccable
+## 5. One workflow, two tools
 
-Impeccable (https://github.com/pbakaus/impeccable, Apache-2.0) supplies generic anti-slop vocabulary and a rule-based detector. This skill supplies the owner's taste and process. Use them in this order:
+This skill is the single entry point. Impeccable (https://github.com/pbakaus/impeccable, Apache-2.0) is a helper that this skill calls at set moments. The owner should never have to invoke the two separately.
 
-1. This skill: mode, study, signature idea, rules above.
-2. Build.
-3. Impeccable as a final pass, when it is installed: `npx impeccable detect <site>/src` for the deterministic checks, then `/impeccable critique` and `/impeccable audit` on single sections. Fix the findings that conflict with section 4 first; treat the rest as suggestions.
+**How it starts:** it loads automatically when the owner describes design work ("rebuild the Orra hero like this video", "restyle the footer"), or on demand with `/design-craft`. Impeccable has its own `/impeccable` commands; use them only as the steps below say.
 
-Impeccable is not installed in this repo. Ask the owner before installing it, because its installer can add hooks and it sends anonymous telemetry unless turned off (`npx impeccable telemetry off`).
+**Is Impeccable installed?** Check with `test -d .claude/skills/impeccable`. If it is not installed, do every step except the Impeccable ones and say so in one line. Do not install it without the owner's approval (its installer can add hooks, and it sends anonymous telemetry unless turned off with `npx impeccable telemetry off`).
+
+| Step | Who | What |
+| --- | --- | --- |
+| 1. Brief | this skill | Decide the mode (section 1). Read the matching case studies in `references/`. |
+| 2. Study | this skill | Study the reference; look at the real pages (section 6). |
+| 3. Context | Impeccable, if installed | If the site has no `PRODUCT.md` / `DESIGN.md`, run `/impeccable init` and seed it from this skill's case study for that site, so per-site context is written once. |
+| 4. Build | this skill | Apply sections 3 and 4. |
+| 5. Review | Impeccable, if installed | `npx impeccable detect <site>/src`, then `/impeccable critique <section>` and `/impeccable audit` on the parts that changed. If not installed, review against section 4 by hand. |
+| 6. Log | this skill | Add what was learned to `references/` (section 7). |
+
+**Precedence when they disagree:** this skill and the owner's approved sites win over Impeccable's generic rules. An approved choice is deliberate (for example garden's italic serif, or a gradient that depicts a sunset). When the detector flags one, record it as ignored with a reason (`npx impeccable ignores add-value <rule> <value> --reason "..."`) instead of changing the site. Accept Impeccable's findings freely when they point at real defects (contrast, spacing, heading levels, accessibility).
 
 ## 6. Previewing a site (screenshots and clips)
 
 Look at the real page, not only the code. The live demos are at `https://clientdemo.maximusmediascape.workers.dev/<slug>/` (slugs: `halcyon`, `more-coffee`, `orra`, `ileife`, `djeska`, `doves-uk`, `garden`).
 
 - **Screenshots:** Playwright and Chromium are pre-installed in cloud sessions (`require('playwright')`). Capture desktop (1280x800) and a phone width (390), and check the first screen, a mid-page section and the footer.
-- **60 fps clips:** `portfolio/scripts/record-demo.mjs` (branch `claude/admiring-pasteur-b27yph`) steps the browser clock 1/60 s per frame, so no stutter. It takes 5 to 15 minutes, so run it in the background. Never stop it with `pkill -f record-demo` (it kills your own shell); kill by PID.
+- **60 fps clips:** `portfolio/scripts/record-demo.mjs` steps the browser clock 1/60 s per frame, so no stutter. It takes 5 to 15 minutes, so run it in the background. Never stop it with `pkill -f record-demo` (it kills your own shell); kill by PID.
 
 ```
 node scripts/record-demo.mjs <slug> <url> [--length 18] [--start 6] [--scroll 4200] [--gate "click to open"] [--sync-video] [--fps 60]
@@ -92,4 +101,4 @@ Index of case studies:
 | ILE IFE (facials studio) | `ileife/` | Client mock | `references/ileife.md` |
 | DJ ESKA | `djeska/` | Recreate structure of a template | `references/djeska.md` |
 | Doves UK (funeral and repatriation) | `doves-uk/` | Recreate from client reference | `references/doves-uk.md` |
-| Owner's freelance portfolio | `portfolio/` on branch `claude/admiring-pasteur-b27yph` | Original | `references/portfolio.md` |
+| Owner's freelance portfolio | `portfolio/` | Original | `references/portfolio.md` |

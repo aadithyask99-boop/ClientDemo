@@ -1,8 +1,8 @@
 # Owner's freelance portfolio ("Aadi")
 
-Source: `portfolio/` on branch `claude/admiring-pasteur-b27yph` (not on this branch or `main` at the time of writing). Also published as an artifact: https://claude.ai/artifact/XtfJSKPuMxD2NUuVCKuQXd, a single-file build of the same site. Mode: **original**, with the Work section "built on the mechanism of the reference" (the owner's reference for showing project clips).
+Source: `portfolio/` in this repo (merged from branch `claude/admiring-pasteur-b27yph`). Also published as an artifact: https://claude.ai/artifact/XtfJSKPuMxD2NUuVCKuQXd, a single-file build of the same site. Mode: **original**, with the Work section "built on the mechanism of the reference" (the owner's reference for showing project clips).
 
-Read `portfolio/README.md` and `portfolio/CLAUDE.md` on that branch before changing anything there; they are detailed and accurate.
+Read `portfolio/README.md` and `portfolio/CLAUDE.md` before changing anything there; they are detailed and accurate.
 
 ## Positioning (the owner's own words on the page)
 
