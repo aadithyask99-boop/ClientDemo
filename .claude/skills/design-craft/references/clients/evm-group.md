@@ -67,3 +67,22 @@ About Us hero (text left, MINI photo right with a blue block overlapping the ima
 
 - Phone capture (390 wide), speed numbers, scroll recording, Impeccable URL scan (blocked by the same certificate issue), Sectors, Career and Contact pages.
 - Owner questions: what does the client dislike or want more of, is there a reference site, must the site stay Angular or may it be rebuilt in Astro as a separate demo, which brands may use their logos, is real photography available beyond manufacturer press images.
+
+## References chosen by the owner (2026-11-02)
+
+Priority 1: https://www.esrbespoke.au/ (love the whole design language, animation and smoothness). Priority 2: https://forgeautomotive.co.uk/ (love the hero and its interactivity; dislikes its font and basic design). Mode: inspiration, not copy. Client wants interactive and modern. Astro is fine. Porsche, BMW and MINI imagery is authorised by the client. Existing images may be reused if good; generated images and a short video allowed with a small budget. Pages in scope: homepage and about. Goal: impress on the homepage, draw visitors to other pages. Nothing is built until the direction is approved.
+
+### ESR Bespoke (Next.js, Sanity CMS) as measured
+- **Type:** one grotesk family (Gelion-like wide geometric sans). Display statements 40px at weight 500, sentence case, tight leading; tiny 14px uppercase wide-tracked labels in the corners (it works as wayfinding, not as an eyebrow above a title). Giant wordmark at 92px. Nothing else.
+- **Colour:** only black and white, alternating full-bleed sections (white, black, #191919, white, black). All colour comes from the film and photography.
+- **Structure (homepage):** black intro with an enormous ESR wordmark, looping film hero ("Exceptional is our standard", "Three decades of restoring"), white statement section where one large paragraph is the content, a full-bleed photo that the page scrolls through, a marques roller (the list of brands stacked huge, the active one turns black while the others fade to grey, with its badge in a small square beside it), a black statement, a numbered services list (01 to 06, hairline rows), a white footer with the wordmark again.
+- **Motion:** smooth scroll, text revealing as you scroll, scroll-driven image and video sections, section colour flips, a small square preview that changes with the list item. 3 videos and 18 canvases on the page.
+- **Weak spots to beat:** largest contentful paint 12 s, 57 MB transferred, 90 requests, all 17 images lack alt text, no structured data, no phone-specific design beyond stacking. The aim is the same smoothness at a fraction of the weight.
+
+### Forge Automotive as measured
+- **Type:** Geist Sans 300 for body, a condensed editorial serif for display ("For Those Who Refuse Ordinary"), ultra-small tracked caps. Black (#0c0c0c) with cream text (#f2f1ed).
+- **Hero:** entry gate (Accept & Enter), then a black textured surface with a centred serif headline, a small line of copy at the foot, a navigate button and social icons. It uses canvas, and the cursor appears to drive the effect. The headless capture did not show a vehicle, so exactly what the visitor sees on move needs the owner's description or a screen recording.
+- **Weak spots:** very thin content, 80px display, tiny 8 to 10px text, gate before content (a conversion cost), empty h1.
+
+### Fit with EVM
+EVM's story and brand list suit ESR's two best devices almost exactly: the marques roller for the dealership brands (Porsche, BMW, MINI, VW, Skoda, Honda, Nissan, Isuzu, MG), and the full-sentence statement for the 1952 founder story. The numbered hairline list suits the sectors (Automobile, Hospitality, Plantation, Transportation, Entertainment).
