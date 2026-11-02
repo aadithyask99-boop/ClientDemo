@@ -61,22 +61,22 @@ if (!reduce) {
   video.addEventListener('ended', () => { video.currentTime = 0; delete film.dataset.fade; play(); });
 }
 
-// Marques roller: scroll steps through brands, hover or focus picks one.
-const marques = $('.marques');
-const mItems = $$('.marques__list li');
-const mImgs = $$('.marques__frame img');
-const mNotes = $$('.marques__note span');
-let mActive = 0;
-const setMarque = (i: number) => {
-  if (i === mActive) return;
-  mActive = i;
-  [mItems, mImgs, mNotes].forEach((g) => g.forEach((el, k) => el.classList.toggle('is-active', k === i)));
-};
-mItems.forEach((li, i) => {
-  li.addEventListener('pointerenter', () => canHover && setMarque(i));
-  li.addEventListener('focus', () => setMarque(i));
-  li.addEventListener('click', () => setMarque(i));
-});
+// Rollers (marques, sectors): scroll steps through the items, hover or focus picks one.
+type Roller = { el: HTMLElement; items: HTMLElement[]; imgs: HTMLElement[]; notes: HTMLElement[]; active: number; last: number };
+const rollers: Roller[] = $$('.roller').map((el) => {
+  const r: Roller = { el, items: $$('.roller__list li', el), imgs: $$('.roller__frame img', el), notes: $$('.roller__note span', el), active: 0, last: -1 };
+  const set = (i: number) => {
+    if (i === r.active) return;
+    r.active = i;
+    [r.items, r.imgs, r.notes].forEach((g) => g.forEach((n, k) => n.classList.toggle('is-active', k === i)));
+  };
+  r.items.forEach((li, i) => {
+    li.addEventListener('pointerenter', () => canHover && set(i));
+    li.addEventListener('focusin', () => set(i));
+  });
+  (r as Roller & { set: (i: number) => void }).set = set;
+  return r;
+}) as (Roller & { set: (i: number) => void })[];
 
 if (!reduce) {
   gsap.registerPlugin(ScrollTrigger);
@@ -110,6 +110,7 @@ if (!reduce) {
     });
   });
 
+  const brk = $('.break');
   // Hero: the film slowly pushes in and darkens as you scroll; the headline lifts away. The cursor nudges the film.
   const hero = $('.hero');
   const sx = gsap.quickTo(film, 'x', { duration: 1.2, ease: 'power3.out' });
@@ -118,30 +119,30 @@ if (!reduce) {
     sx(-(e.clientX / innerWidth - 0.5) * 36);
     sy(-(e.clientY / innerHeight - 0.5) * 22);
   });
-  const mRange = () => marques.offsetHeight - innerHeight;
-  let lastIdx = -1;
   gsap.ticker.add(() => {
     const hr = hero.getBoundingClientRect();
     if (hr.bottom > 0) {
       const p = clamp(-hr.top / (hero.offsetHeight - innerHeight));
       hero.style.setProperty('--hs', (1.04 + 0.1 * p).toFixed(4));
-      hero.style.setProperty('--hd', (0.24 + 0.5 * p).toFixed(3));
+      hero.style.setProperty('--hd', (0.14 + 0.5 * p).toFixed(3));
       hero.style.setProperty('--ty', `${(-p * 90).toFixed(1)}px`);
       hero.style.setProperty('--to', String(clamp(1 - p * 1.5)));
     }
-    const mr = marques.getBoundingClientRect();
-    if (mr.top < innerHeight && mr.bottom > 0) {
-      const p = clamp(-mr.top / mRange());
-      const idx = Math.min(mItems.length - 1, Math.floor(p * mItems.length));
-      if (idx !== lastIdx) { lastIdx = idx; setMarque(idx); }
-    }
+    rollers.forEach((r) => {
+      const rect = r.el.getBoundingClientRect();
+      if (rect.top < innerHeight && rect.bottom > 0) {
+        const p = clamp(-rect.top / (r.el.offsetHeight - innerHeight));
+        const idx = Math.min(r.items.length - 1, Math.floor(p * r.items.length));
+        if (idx !== r.last) { r.last = idx; r.set(idx); }
+      }
+    });
+    const br = brk.getBoundingClientRect();
+    if (br.bottom > 0 && br.top < innerHeight) brk.style.setProperty('--by', `${((br.top + br.height / 2 - innerHeight / 2) * -0.12).toFixed(1)}px`);
   });
 
-  // Story: entries rise in and the red line draws down the column.
-  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -12% 0px' });
-  $$('.story__item').forEach((el) => io.observe(el));
-  const track = $('.story__track');
-  gsap.fromTo(track, { '--sl': 0 }, { '--sl': 1, ease: 'none', scrollTrigger: { trigger: track, start: 'top 70%', end: 'bottom 60%', scrub: true } });
+  // Story scenes reveal as they enter; the photo break drifts slower than the page.
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -18% 0px' });
+  $$('.scene').forEach((el) => io.observe(el));
 
   // Statement: words go from grey to ink as you scroll.
   gsap.to($$('.statement .w'), {

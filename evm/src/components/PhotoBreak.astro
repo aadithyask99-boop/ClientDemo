@@ -1,0 +1,9 @@
+---
+import { site } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const b = site.photoBreak;
+---
+<section class="break" data-theme="dark">
+  <img class="break__img" src={`${base}/img/${b.img}`} alt={b.alt} loading="lazy" />
+  <p class="break__line">{b.line}</p>
+</section>

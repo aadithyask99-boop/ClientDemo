@@ -1,15 +1,23 @@
 ---
 import { site } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const s = site.story;
 ---
 <section class="story" id="story" data-theme="light">
   <h2 class="story__title">{s.title}</h2>
-  <div class="story__track">
-    <div class="story__line"><i></i></div>
-    <ol class="story__items">
-      {s.items.map((it) => (
-        <li class="story__item"><span class="story__year">{it.year}</span><p>{it.text}</p></li>
-      ))}
-    </ol>
+  {s.scenes.map((it, i) => (
+    <article class={`scene ${i % 2 ? 'scene--flip' : ''}`}>
+      <p class="scene__year" aria-label={it.year}>{it.year}</p>
+      <figure class="scene__media">
+        <img src={`${base}/img/${it.img}`} alt={it.alt} loading="lazy" />
+      </figure>
+      <p class="scene__text">{it.text}</p>
+    </article>
+  ))}
+  <div class="ledger">
+    <h3>{s.ledgerTitle}</h3>
+    <ul>
+      {s.ledger.map((it) => <li><strong>{it.year}</strong><span>{it.text}</span></li>)}
+    </ul>
   </div>
 </section>
