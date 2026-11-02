@@ -19,4 +19,4 @@ Run on screenshots at 1280 wide and 390 wide: the first screen, three mid-page s
 
 When a review finds a defect that is not covered here, add it as a new numbered line.
 15. **Reference comparison done.** For reference-led work, `compare-sheets.py` was run at least twice. Sections with a reference counterpart match it in composition, type scale, spacing, colour balance and motion; new sections are recognisably the same family. No layout is repeated more than twice; Impeccable did not add devices foreign to the reference.
-16. **Content inventory complete.** Every piece of the client's content that matters is on the page; anything cut is listed with the reason. The reference's section list did not decide what was left out.
+16. **Curated, not pasted.** Length is at most 1.5 times the reference, text at most 3 times, sections at most the reference's plus 3. One short moment per kind of content; the rest is linked. Content from other pages that was read only to understand the client is not copied onto the page. Every cut or moved item is listed with where it lives.
