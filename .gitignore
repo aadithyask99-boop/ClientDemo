@@ -13,3 +13,6 @@ node_modules/
 
 # Generated assets from the shared tool (keep the ledger, not the outputs)
 generated/
+
+# Raw captures of client sites (large); commit only the written audit and a few small images
+captures/

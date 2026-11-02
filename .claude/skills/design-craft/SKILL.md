@@ -18,6 +18,8 @@ Everything is in this repository (ClientDemo). Nothing is stored outside it, so 
 | Sameness check: one row per site, devices that already repeat | `.claude/skills/design-craft/references/fingerprints.md` |
 | Review checklist built from real defects | `.claude/skills/design-craft/references/checklist.md` |
 | Feedback and learning log (the memory of the loop) | `.claude/skills/design-craft/references/feedback.md` |
+| Capture of an existing site (screenshots, design language, scroll video) | `.claude/skills/design-craft/scripts/capture-site.mjs`, output in `captures/<site>/` (git-ignored) |
+| Written audits of client sites (as-is design, decisions, before and after) | `.claude/skills/design-craft/references/clients/<client>.md` |
 | Image and video generation, budget, key, 3D notes | `.claude/skills/design-craft/references/assets.md` and `scripts/gen-media.mjs` |
 | Spend ledger (every generation call, no secrets) | `.claude/skills/design-craft/spend-ledger.jsonl` |
 | Impeccable, once installed | `.claude/skills/impeccable/` |
@@ -37,6 +39,7 @@ Say which mode the job is in before you design anything. If the user has not sai
 - **Recreate**: "make it like this reference". Success is fidelity: structure, order, typography, motion and the signature idea (for example the 3D product turn). Study first, match first, improve only afterwards. Swap in an original brand, copy and assets.
 - **Inspiration**: "use this as a starting point". Work out why the reference feels the way it does, then build something that is not a copy.
 - **Original**: no reference. Pick one strong idea (section 3) and commit to it.
+- **Improve an existing site**: the client already has a site; make it better, often using a reference for direction. Follow section 9. This is common: the job is not always to build something new.
 
 **The brief, five quick questions** (ask only what is not already clear): recreate or inspiration? What is the reference (video, screenshots, homepage)? The feeling in three words? What must be copied exactly? What must be avoided? Record the answers in the feedback log.
 
@@ -153,3 +156,21 @@ The aim is that each job makes the next one better, and that the reasons are wri
 **Promote:** when the same lesson shows up twice, move it out of the log. A new rule goes into section 4. A defect goes into `checklist.md`. A new device or a site goes into `fingerprints.md`. Impeccable findings that it caught and the checklist missed also become checklist lines. Commit and push, because a new chat only knows what is committed.
 
 **Assets and money:** generation goes through `scripts/gen-media.mjs` with the $2 budget described in `references/assets.md`. Ask before any run that could exceed the budget, and never ask for a key to be pasted in chat.
+
+## 9. Improving an existing client site
+
+Sometimes the job is not to build something new: the client has a site and the owner wants it better (more interactive, more distinctive, clearer), often with a reference for direction. The homepage comes first.
+
+**Ask first (only what is unclear):** the client's URL; which pages (start with the homepage); what the owner or client dislikes or wants more of; the reference, if any, and whether to recreate or take inspiration; whether the site must stay on its current platform (for example WordPress or Wix) or may be rebuilt in Astro as a separate demo; anything that must not change (brand colours, logo, legal text, URLs that already rank).
+
+**Steps**
+1. **Capture the current site.** Run `node .claude/skills/design-craft/scripts/capture-site.mjs <url> --out captures/<client> --video`. It writes full-page and viewport-strip screenshots at 1440 and 390 wide, a real-time scroll recording with a contact sheet, and `design-language.json` and `report.md` (fonts by amount of text, sizes, weights, text and background colours, headings, nav, libraries, SEO basics, measured speed, other pages found). Look at the screenshots and the contact sheet yourself; do not rely on the report alone. Only capture pages the owner is allowed to review.
+2. **Write the as-is audit** in `references/clients/<client>.md`: the design language in plain words (type, colour, spacing, imagery, tone, motion), what works and should be kept, what is generic or broken (run `references/checklist.md` on the screenshots), the SEO basics that must be preserved (title, description, h1 and headings, URLs, structured data), speed numbers, and the first-screen element today.
+3. **Run Impeccable on the live page** if installed: `.claude/skills/impeccable/scripts/impeccable detect <url>` (a URL scan also runs the rules that need a rendered page), then `/impeccable critique` and `/impeccable audit` on the homepage. Note which findings are real.
+4. **Study the reference** (section 2) and write the signature idea for the improved version. Run the sameness check (section 8) against `fingerprints.md` and against the client's current look; it must be clearly better, not just different.
+5. **Checkpoint with the owner:** show the as-is findings, the proposed direction and the plan for the homepage (what stays, what changes, what is added) before building. Wait for approval.
+6. **Build the improved homepage** as a separate demo in this repo (a new `<client>/` Astro folder, deployed like the others), not on the client's live site. Keep the preserved SEO items, keep the client's content and brand assets, and say what is placeholder.
+7. **Prove it:** capture the new version with the same tool and put before and after side by side (first screen at 1440 and 390, speed, SEO basics, Impeccable and checklist results). Show the owner the first screen before polishing the rest.
+8. **Log** in `feedback.md` and update `references/clients/<client>.md` and `fingerprints.md`.
+
+**Rules for this mode:** improve what is weak and keep what works; never remove content that ranks or that the client must keep; speed and accessibility must not get worse; and never present a generated likeness or invented claim as the client's own.
