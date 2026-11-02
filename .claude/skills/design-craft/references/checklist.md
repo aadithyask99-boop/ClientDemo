@@ -18,5 +18,5 @@ Run on screenshots at 1280 wide and 390 wide: the first screen, three mid-page s
 14. **Generated imagery is checked at full size** for realism and artefacts (hands, text, reflections).
 
 When a review finds a defect that is not covered here, add it as a new numbered line.
-15. **Reference comparison done.** For reference-led work, `compare-sheets.py` was run at least twice and every section has a counterpart that matches in composition, type scale, spacing, colour balance and motion. No layout is repeated more than twice; Impeccable did not add devices the reference lacks.
-
+15. **Reference comparison done.** For reference-led work, `compare-sheets.py` was run at least twice. Sections with a reference counterpart match it in composition, type scale, spacing, colour balance and motion; new sections are recognisably the same family. No layout is repeated more than twice; Impeccable did not add devices foreign to the reference.
+16. **Content inventory complete.** Every piece of the client's content that matters is on the page; anything cut is listed with the reason. The reference's section list did not decide what was left out.
