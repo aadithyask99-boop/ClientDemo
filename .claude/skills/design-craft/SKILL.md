@@ -103,7 +103,7 @@ This skill is the single entry point. Impeccable (https://github.com/pbakaus/imp
 | 5. Review | Impeccable (installed), automatic | `npx impeccable detect <site>/src`, then `/impeccable critique <section>` and `/impeccable audit` on the parts that changed. Run these yourself, every job, without asking. Only if `.claude/skills/impeccable/` is missing, review against section 4 by hand and say so. Always run `references/checklist.md` on desktop and phone screenshots too. |
 | 6. Log | this skill | Write a `feedback.md` entry with the reasons, the mistakes and the lesson (section 8). |
 
-**Precedence when they disagree:** this skill and the owner's approved sites win over Impeccable's generic rules. An approved choice is deliberate (for example garden's italic serif, or a gradient that depicts a sunset). When the detector flags one, record it as ignored with a reason (`npx impeccable ignores add-value <rule> <value> --reason "..."`) instead of changing the site. Accept Impeccable's findings freely when they point at real defects (contrast, spacing, heading levels, accessibility).
+**Precedence when they disagree:** (1) the owner's words and the reference they chose, then (2) the owner's approved sites and this skill's rules, then (3) Impeccable. Impeccable is a defect finder, not a designer: accept its findings about real defects (contrast, accessibility, broken layout, performance, heading order) and do not let its taste findings ("too much text on flat fields", "add colour or imagery") add devices that the reference does not have. When the reference is the aim, a critique that says the build is plainer than Impeccable would like is not a defect. Record deliberate choices as ignored with a reason (`impeccable ignores add-value ...`).
 
 ## 6. Previewing a site (screenshots and clips)
 
@@ -144,7 +144,7 @@ Index of case studies:
 
 The aim is that each job makes the next one better, and that the reasons are written down, not only the results.
 
-**Before building (sameness check):** read `references/fingerprints.md`. State the new site's typeface, palette, signature idea, first-screen element and motion style. It must differ clearly from every existing site on at least three of those five. If it leans on a device that already repeats (see the list in that file), say why it is right for this client.
+**Before building (sameness check, for original work and loose inspiration; skip it for recreate and for any job where the owner loves a reference's design language, because there the reference decides, see section 11):** read `references/fingerprints.md`. State the new site's typeface, palette, signature idea, first-screen element and motion style. It must differ clearly from every existing site on at least three of those five. If it leans on a device that already repeats (see the list in that file), say why it is right for this client.
 
 **While building (decision notes):** keep one line per important choice in the working notes: what was chosen, why, and the risk. These become the "choices and reasons" in the log.
 
@@ -191,3 +191,20 @@ A job is **not finished and must not be handed over** until every line below is 
 **The handover message** is the last thing, and it contains: the artifact link first; three lines on what you built and the main design idea; what Impeccable and the checklist found and what you fixed; anything you assumed, any placeholder, and anything not verified (for example not tested on a real phone); the spend if images or video were generated. Then stop and wait for the owner's changes. Do not end with questions such as "should I run Impeccable?" or "should I publish?": those are already done.
 
 **Iteration:** when the owner asks for changes, make them, rerun steps 2 to 5 on what changed, republish to the same url, and give the new handover.
+
+## 11. Reference fidelity protocol (for recreate, and whenever the owner loves a reference)
+
+The owner's best results used to come from giving a reference (screenshots, a screen recording, a homepage) and having it matched closely. When the owner says they love a reference's design language, animation or smoothness, the reference decides the design. Treat it as **high-fidelity** even if the word "inspiration" is used: match first, then put the client's content into it. Improvements come second and only where the reference is weak (speed, accessibility, SEO). Never replace the reference's choices with the house look, the case studies, `fingerprints.md` or Impeccable's taste.
+
+**Why this section exists (evidence):** the EVM Group homepage (reference: esrbespoke.au) took the reference's parts but not its character. The reference is sparse, black and white only, one idea per section, real cinematic footage. The build used a dark two-column "list left, image right" layout twice more, added giant red years and red accents the reference does not have, and used generated stills in one moody dusk look. Its own log says it read the reference's motion from a small contact sheet and never compared the navigation up close, and Impeccable's critique then pushed it further from the reference.
+
+**Steps**
+1. **Capture the reference at full quality**, not as a thumbnail: `scripts/capture-site.mjs <reference url> --out captures/<ref> --video`. Look at each strip at full size. For the first screen and any intro, extract frames at full resolution (`ffmpeg -i scroll.webm -vf fps=5 frames/f%03d.png`) and look at them one by one, in order, until you can describe every change. Contact sheets are for orientation only.
+2. **Read the reference's own code** when you can fetch it (stylesheets, the animation script): record real values (type sizes and weights, easings, durations, scroll triggers, colour hex values), as `more-nutrition/ANIMATION-STUDY.md` did. Measured values beat estimates.
+3. **Write the section map:** one row per section of the reference with its composition (what dominates, layout, type size and weight, colours, spacing, motion) and the matching row for the build. The build has the same number of distinct compositions as the reference. No two neighbouring sections use the same layout, and no layout is used three times.
+4. **Source material must be of the same kind.** If the reference depends on real cinematography or photography, use real footage or photographs (the client's own, or licensed stock) for the hero and key sections, or ask once for them. Do not fill a page with many generated stills in one grade. If you generate images, use varied compositions and lighting and the client's own photos as references.
+5. **Build to match**, then **compare**: capture the build with the same tool and run `python3 .claude/skills/design-craft/scripts/compare-sheets.py captures/<ref> captures/<build> captures/<build>/compare.png`. Look at `compare.png` and `compare-first.png`. For each section write one line: same composition, type scale, spacing, colour balance and motion as its reference counterpart, yes or no. Fix every "no" and compare again. Do at least two comparison rounds before delivering; the first round almost never matches.
+6. **Impeccable and the checklist** run after the comparison and only fix defects (section 5 precedence). If a fix would move the build away from the reference, do not apply it.
+7. **State in the handover** which parts match the reference, which parts deliberately differ and why, and what could not be matched (for example motion that needs the client's footage).
+
+**The rule of thumb:** if the owner had to say "this does not look like the reference", the comparison step was skipped or too forgiving.

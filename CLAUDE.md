@@ -12,3 +12,7 @@ Site folders may have their own `README.md` and `CLAUDE.md`; read them before ed
 
 Run the whole job in one pass and hand over a finished, published result; do not stop to ask permission along the way. Impeccable is installed and the checks run automatically as part of the job. A job is only done when it has been built, checked with Impeccable and the checklist, published as an artifact (link first in the handover), and logged. The exact steps are in the `design-craft` skill, section 10. Ask a question only when something essential is missing and cannot be reasonably assumed (no reference, no URL, no brand).
 
+## When there is a reference
+
+When the owner gives a reference (screenshots, a recording, a homepage) and likes its design language, the reference decides the design: match it closely first, then fill in the client's content. Study it from full-resolution frames and its own code, never from small contact sheets. Before delivering, compare the build against the reference side by side with `compare-sheets.py` at least twice and fix every section that does not match. Impeccable fixes real defects only; it must not add devices the reference does not have. Details: `design-craft` skill, section 11.
+

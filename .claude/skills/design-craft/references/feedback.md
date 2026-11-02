@@ -55,3 +55,12 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - Check on the bundler: the first build had Orra's name mask pointing at a missing file because an inline `style="--house: url(img/house.webp)"` resolves against the stylesheet, not the page; the bundler now copies such files under `assets/` too. Lesson: verify a bundle on a local server for 404s before publishing.
 - Lesson: a quality step that is optional or phrased as a question will be skipped; make it a gate in the definition of done.
 - Promote to: SKILL.md section 10 (done) and CLAUDE.md (done).
+
+### 2026-11-02  Why reference-led work drifted from the reference (EVM Group vs ESR Bespoke)
+- Owner's words: the chat "seems like it's just repeating the same designs and not following the reference"; results used to be really good with just a screenshot and a screen grab, without Impeccable or a skill.
+- What I found by comparing the live reference with the build: the build copied parts (roller, statements, plain nav) but not the character. Reference: black and white only, one idea per section, real cinematic footage. Build: a dark two-column list-and-image layout repeated, giant red years and red accents the reference does not have, generated stills in one dusk grade.
+- Causes: (1) my one-pass change removed the tight loop that made the old results good, and nothing replaced the owner as the comparer; (2) the reference was studied from small contact sheets, not frame by frame or from its code; (3) Impeccable's taste critique ("text on flat fields, red used only in tiny accents") pulled the build further from the reference; (4) the sameness check and house rules pushed toward "do not copy" even though the owner loved ESR's whole design language; (5) generated stills cannot match real cinematography.
+- Fix: SKILL.md section 11 (reference fidelity protocol), a side-by-side comparison tool with at least two rounds, a precedence rule that the reference beats Impeccable's taste, a source-material rule, and checklist item 15.
+- Lesson: the owner's fast visual comparison is what produced good results; if the owner is removed from the loop, the build must compare itself against the reference side by side, repeatedly, and not let a design tool's taste override the reference.
+- Promote to: SKILL.md section 11 (done).
+
