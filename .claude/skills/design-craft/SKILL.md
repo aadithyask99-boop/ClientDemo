@@ -15,6 +15,11 @@ Everything is in this repository (ClientDemo). Nothing is stored outside it, so 
 | --- | --- |
 | This skill and entry point (`/design-craft`) | `.claude/skills/design-craft/SKILL.md` |
 | Case studies, lessons, defects found (read and add to these) | `.claude/skills/design-craft/references/` |
+| Sameness check: one row per site, devices that already repeat | `.claude/skills/design-craft/references/fingerprints.md` |
+| Review checklist built from real defects | `.claude/skills/design-craft/references/checklist.md` |
+| Feedback and learning log (the memory of the loop) | `.claude/skills/design-craft/references/feedback.md` |
+| Image and video generation, budget, key, 3D notes | `.claude/skills/design-craft/references/assets.md` and `scripts/gen-media.mjs` |
+| Spend ledger (every generation call, no secrets) | `.claude/skills/design-craft/spend-ledger.jsonl` |
 | Impeccable, once installed | `.claude/skills/impeccable/` |
 | The approved sites | `<slug>/` at the repo root, each with its own `README.md` |
 | Videos and posters of the sites (60 fps clips) | `portfolio/public/work/<slug>.mp4` and `<slug>.webp` |
@@ -32,6 +37,8 @@ Say which mode the job is in before you design anything. If the user has not sai
 - **Recreate**: "make it like this reference". Success is fidelity: structure, order, typography, motion and the signature idea (for example the 3D product turn). Study first, match first, improve only afterwards. Swap in an original brand, copy and assets.
 - **Inspiration**: "use this as a starting point". Work out why the reference feels the way it does, then build something that is not a copy.
 - **Original**: no reference. Pick one strong idea (section 3) and commit to it.
+
+**The brief, five quick questions** (ask only what is not already clear): recreate or inspiration? What is the reference (video, screenshots, homepage)? The feeling in three words? What must be copied exactly? What must be avoided? Record the answers in the feedback log.
 
 Most approved work here is reference-led. The owner's usual inputs are a screen recording, a few screenshots and the reference homepage, plus a short explanation of the feeling they want.
 
@@ -85,12 +92,12 @@ This skill is the single entry point. Impeccable (https://github.com/pbakaus/imp
 
 | Step | Who | What |
 | --- | --- | --- |
-| 1. Brief | this skill | Decide the mode (section 1). Read the matching case studies in `references/`. |
+| 1. Brief | this skill | Ask the brief questions and decide the mode (section 1). Read `feedback.md`, `fingerprints.md` and the matching case studies. Run the sameness check (section 8). |
 | 2. Study | this skill | Study the reference; look at the real pages (section 6). |
 | 3. Context | Impeccable, if installed | If the site has no `PRODUCT.md` / `DESIGN.md`, run `/impeccable init` and seed it from this skill's case study for that site, so per-site context is written once. |
 | 4. Build | this skill | Apply sections 3 and 4. |
-| 5. Review | Impeccable, if installed | `npx impeccable detect <site>/src`, then `/impeccable critique <section>` and `/impeccable audit` on the parts that changed. If not installed, review against section 4 by hand. |
-| 6. Log | this skill | Add what was learned to `references/` (section 7). |
+| 5. Review | Impeccable, if installed | `npx impeccable detect <site>/src`, then `/impeccable critique <section>` and `/impeccable audit` on the parts that changed. If not installed, review against section 4 by hand. Always run `references/checklist.md` on desktop and phone screenshots too. |
+| 6. Log | this skill | Write a `feedback.md` entry with the reasons, the mistakes and the lesson (section 8). |
 
 **Precedence when they disagree:** this skill and the owner's approved sites win over Impeccable's generic rules. An approved choice is deliberate (for example garden's italic serif, or a gradient that depicts a sunset). When the detector flags one, record it as ignored with a reason (`npx impeccable ignores add-value <rule> <value> --reason "..."`) instead of changing the site. Accept Impeccable's findings freely when they point at real defects (contrast, spacing, heading levels, accessibility).
 
@@ -128,3 +135,21 @@ Index of case studies:
 | DJ ESKA | `djeska/` | Recreate structure of a template | `references/djeska.md` |
 | Doves UK (funeral and repatriation) | `doves-uk/` | Recreate from client reference | `references/doves-uk.md` |
 | Owner's freelance portfolio | `portfolio/` | Original | `references/portfolio.md` |
+
+## 8. The loop (learn, mistake, learn again)
+
+The aim is that each job makes the next one better, and that the reasons are written down, not only the results.
+
+**Before building (sameness check):** read `references/fingerprints.md`. State the new site's typeface, palette, signature idea, first-screen element and motion style. It must differ clearly from every existing site on at least three of those five. If it leans on a device that already repeats (see the list in that file), say why it is right for this client.
+
+**While building (decision notes):** keep one line per important choice in the working notes: what was chosen, why, and the risk. These become the "choices and reasons" in the log.
+
+**Checkpoints with the owner:** I am better at catching defects than at judging distinctiveness, so show the owner two things before building the rest: the direction (reference, signature idea, type, palette, first screen as a sketch or screenshot), then the built first screen. Do not build the whole page on an unchecked first screen.
+
+**After building (review):** run `references/checklist.md` on desktop and phone screenshots, then Impeccable (section 5). Note which findings were right, and which were overridden and why.
+
+**Log:** add an entry to `references/feedback.md` using its template: choices and reasons, what Impeccable and the checklist said, the owner's reaction in their own words, the mistake and its real cause, and one lesson.
+
+**Promote:** when the same lesson shows up twice, move it out of the log. A new rule goes into section 4. A defect goes into `checklist.md`. A new device or a site goes into `fingerprints.md`. Impeccable findings that it caught and the checklist missed also become checklist lines. Commit and push, because a new chat only knows what is committed.
+
+**Assets and money:** generation goes through `scripts/gen-media.mjs` with the $2 budget described in `references/assets.md`. Ask before any run that could exceed the budget, and never ask for a key to be pasted in chat.
