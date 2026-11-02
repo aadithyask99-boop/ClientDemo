@@ -1,14 +1,10 @@
 ---
 import { site } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const s = site.statement;
 ---
-<section class="statement" aria-label="About EVM Group" id="statement" data-theme="light">
+<section class="statement" id="statement" data-theme="light" aria-label="About EVM Group">
   <p class="label">{s.label}</p>
   <p class="big">{s.text}</p>
-  <div class="numbers">
-    {s.numbers.map((n) => (
-      <div class="numbers__item"><p class="numbers__n">{n.n}</p><p class="label">{n.t}</p></div>
-    ))}
-    <p class="label label--mute numbers__note">{s.numbersNote}</p>
-  </div>
+  <p class="more">{s.links.map((l) => <a href={`${base}${l.href}`}>{l.label}</a>)}</p>
 </section>

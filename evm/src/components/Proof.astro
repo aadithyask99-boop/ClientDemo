@@ -1,0 +1,16 @@
+---
+import { site } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const p = site.proof;
+---
+<section class="proof" id="proof" data-theme="dark" aria-label="What people say">
+  <p class="label">{p.label}</p>
+  <blockquote><p class="big">{p.quote}</p><cite class="label">{p.who}</cite></blockquote>
+  <p class="more"><a href={`${base}${p.reviews.href}`}>{p.reviews.label}</a></p>
+  <div class="sectors__row">
+    <p class="label">{p.awardsLabel}<br /><span class="more"><a href={`${base}${p.awardsLink.href}`}>{p.awardsLink.label}</a></span></p>
+    <ol class="rows rows--text">
+      {p.awards.map((a, i) => <li class="rows__item"><span class="rows__n">{String(i + 1).padStart(2, '0')}</span><span class="rows__name">{a}</span></li>)}
+    </ol>
+  </div>
+</section>

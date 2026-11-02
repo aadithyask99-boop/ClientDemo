@@ -1,7 +1,9 @@
 ---
 import { site } from '../data/site';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const { which = 'photo' } = Astro.props;
+const ph = which === 'two' ? site.photoTwo : site.photo;
 ---
 <section class="photo" data-theme="dark">
-  <img src={`${base}/img/${site.photo.img}`} alt={site.photo.alt} loading="lazy" />
+  <img src={`${base}/img/${ph.img}`} alt={ph.alt} loading="lazy" />
 </section>

@@ -62,58 +62,7 @@ const byCentre = () => {
     r.items.forEach((li, i) => { const b = li.getBoundingClientRect(); const d = Math.abs(b.top + b.height / 2 - mid); if (d < bd) { bd = d; best = i; } });
     r.set(best);
   });
-  // Chronicle: the decade on the left follows the dated row nearest the middle.
-  const rowsBox = chroniRows[0]?.getBoundingClientRect();
-  if (rowsBox && rowsBox.top < innerHeight && chroniRows[chroniRows.length - 1].getBoundingClientRect().bottom > 0) {
-    let best = chroniRows[0], bd = 1e9;
-    chroniRows.forEach((row) => { const b = row.getBoundingClientRect(); const d = Math.abs(b.top + b.height / 2 - mid); if (d < bd) { bd = d; best = row; } });
-    setDecade(best.dataset.decade ?? '');
-  }
-  // Reader: scroll position picks the customer.
-  const rb = reader.getBoundingClientRect();
-  if (rb.top < innerHeight && rb.bottom > 0 && doc.classList.contains('anim')) {
-    const p = Math.min(1, Math.max(0, -rb.top / (reader.offsetHeight - innerHeight)));
-    setQuote(Math.min(rQuotes.length - 1, Math.floor(p * rQuotes.length)));
-  }
 };
-
-// Chronicle decade label.
-const chroniRows = $$('.chronicle__row');
-const decadeEl = $('.chronicle__decade span');
-let decade = decadeEl.textContent ?? '';
-const setDecade = (d: string) => {
-  if (!d || d === decade) return;
-  decade = d;
-  decadeEl.style.opacity = '0';
-  setTimeout(() => { decadeEl.textContent = d; decadeEl.style.opacity = '1'; }, 160);
-};
-
-// Reader: names list and quotes.
-const reader = $('.reader');
-const rNames = $$('.reader__names li');
-const rQuotes = $$('.reader__quotes blockquote');
-let rActive = 0;
-const setQuote = (i: number) => {
-  if (i === rActive) return;
-  rActive = i;
-  rNames.forEach((n, k) => n.classList.toggle('is-active', k === i));
-  rQuotes.forEach((q, k) => q.classList.toggle('is-active', k === i));
-};
-rNames.forEach((n, i) => {
-  n.addEventListener('click', () => {
-    if (!lenis) return setQuote(i);
-    const range = reader.offsetHeight - innerHeight;
-    lenis.scrollTo(reader.offsetTop + ((i + 0.5) / rNames.length) * range, { duration: 1.1 });
-  });
-});
-
-// Forms are a demo: nothing is sent.
-$$<HTMLFormElement>('form[data-demo]').forEach((f) => f.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const st = f.querySelector<HTMLElement>('.form__status');
-  if (st) st.textContent = 'Thank you. This demo does not send messages.';
-  f.reset();
-}));
 
 // Hero film: plays muted; fades out and restarts so the loop has no hard cut.
 const film = $('.hero__film');

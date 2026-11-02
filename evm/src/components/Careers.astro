@@ -1,0 +1,10 @@
+---
+import { site } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const c = site.careers;
+---
+<section class="careers" id="careers" data-theme="light" aria-label="Careers">
+  <p class="label">{c.label}</p>
+  <p class="big">{c.text}</p>
+  <p class="more">{c.links.map((l) => <a href={`${base}${l.href}`}>{l.label}</a>)}</p>
+</section>
