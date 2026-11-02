@@ -6,3 +6,10 @@ node_modules/
 
 # age private key (never commit)
 .age-key.txt
+
+# Impeccable: platform engine binary is downloaded per machine and checksum-verified; hooks are personal
+.claude/skills/impeccable/scripts/bin/
+.claude/settings.local.json
+
+# Generated assets from the shared tool (keep the ledger, not the outputs)
+generated/

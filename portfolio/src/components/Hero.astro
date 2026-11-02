@@ -1,0 +1,58 @@
+---
+import { site } from '../data/site';
+import { portraitFile } from '../data/portrait';
+import Pixel from './Pixel.astro';
+import PixelFace from './PixelFace.astro';
+
+/* The headline is real text in the page. The words are separate so the intro can build the sentence one word at a time,
+   but screen readers get the whole sentence from the label and search engines read the text as written. */
+const label = `Hi, I'm ${site.short} and I make cool, SEO-friendly websites.`;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<section class="hero" id="top" data-world-section="light">
+  <h1 class="hero__title" data-hero-title aria-label={label} data-cursor="Replay">
+    <span class="wd" data-wd>Hi,</span>{' '}
+    <span class="wd" data-wd>I'm</span>{' '}
+    <span class="wd" data-wd>{site.short}</span><span class="brk brk--m"></span>{' '}
+    <span class="wd" data-wd>and</span>{' '}
+    <span class="wd" data-wd>I</span>{' '}
+    <span class="wd" data-wd>make</span><span class="brk"></span>{' '}
+    <span class="wd wd--cool" data-wd="cool"><span class="rot" data-rot>cool</span><span class="comma" data-comma>,</span></span>{' '}
+    <span class="wd wd--seo" data-wd="seo">SEO-friendly</span><span class="brk brk--m"></span>{' '}
+    <span class="wd" data-wd>websites.</span>
+  </h1>
+
+  <div class="hero__mid">
+    <Pixel class="hero__pixel" />
+    <p class="hero__credits">
+      <span class="mm" data-mm>
+        <span class="mm__av" data-mm-av aria-hidden="true">
+          {
+            portraitFile ? (
+              /* with a photo: the face is that photo, pixelated (scripts/hero.ts) */
+              <canvas class="mm__face" data-face-src={`${base}/${portraitFile}`} width="88" height="88" />
+            ) : (
+              <PixelFace class="mm__face" from={2} to={22} />
+            )
+          }
+        </span>
+        <span class="mm__text" data-mm-text>{site.owner} · {site.role}</span>
+      </span>
+    </p>
+    <p class="hero__late" data-late hidden></p>
+  </div>
+
+  <!-- The note on the left is for desktop; on a phone it is kept for search engines and screen readers but not shown, so the foot is just the globe. Pressing
+       the globe shows the time somewhere else (scripts/eggs.ts). -->
+  <div class="hero__foot">
+    <p class="hero__note">Built bespoke for your business. Nothing generic.</p>
+    <button class="hero__chip hero__loc" type="button" data-globe aria-label="Remote worldwide. Press to see the time somewhere else.">
+      <span>Remote worldwide</span>
+      <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9.5"></circle>
+        <path d="M2.5 12h19M12 2.5c-3.6 3.6-3.6 15.4 0 19M12 2.5c3.6 3.6 3.6 15.4 0 19"></path>
+      </svg>
+    </button>
+  </div>
+</section>

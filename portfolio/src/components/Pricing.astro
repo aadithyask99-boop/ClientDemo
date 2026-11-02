@@ -1,0 +1,82 @@
+---
+import { site } from '../data/site';
+import Pixel from './Pixel.astro';
+import Credit from './Credit.astro';
+/* The pricing sheet: opens from "Pricing" in the menu and from the footer (scripts/pricing.ts). It follows the reference: a flat cream sheet that rises over 80% of
+   the screen (the top fifth stays showing), a big headline with a little pixel icon, one package in a row (name, what it is, price, two little looping clips),
+   five answers as in the reference (press a question to open it), the contact form (one line at a time; scripts/finale.ts runs it) and "Crafted by" along the bottom. No boxes, no lines, no labels, no numbers. */
+const pages = ['Home', 'About us', 'Services', 'Contact us', 'Blog'];
+const faq = [
+  ['Do I pay before I see my homepage?', 'No. I design your homepage first and you only pay once you are happy with it. Then I build the rest.'],
+  ['What is in the five pages?', 'Home, About us, Services, Contact us and a Blog, all bespoke, fully animated and built with the SEO fundamentals, ready to go live.'],
+  ['What if I need more than five pages?', 'Tell me what you need and I will quote for it. The five-page website is the starting point, not a limit.'],
+  ['Will people find it on Google?', 'Every site is built with the SEO fundamentals in from the start: clear structure, page titles and descriptions, a sitemap and fast loading on phones.'],
+]
+const roll = ['Home that grabs', 'About that builds trust', 'Services that sell', 'Contact that gets replies', 'Blog that gets found'];
+---
+
+<div class="pr" data-pricing hidden>
+  <div class="pr__veil" data-pricing-close></div>
+  <div class="pr__sheet" role="dialog" aria-modal="true" aria-labelledby="pr-title" tabindex="-1" data-lenis-prevent>
+    <button class="pr__x" type="button" data-pricing-close>Close</button>
+
+    <div class="pr__body">
+      <div class="pr__head" data-pr-in>
+        <h2 class="pr__title" id="pr-title">Fair pricing. Your homepage first, payment second.</h2>
+        <Pixel class="pr__icon" pattern="window" />
+      </div>
+
+      <div class="pr__row" data-pr-in>
+        <p class="pr__name">Five-page website</p>
+        <div class="pr__info">
+          <p class="pr__text">Bespoke and fully animated, with the SEO fundamentals done. {pages.join(', ').replace(/, ([^,]+)$/, ' and $1')}. Ready to go live.</p>
+          <p class="pr__roll" data-pricing-roll aria-label="What each page does">{roll.map((w) => <span class="pr__roll-w">{w}</span>)}</p>
+          <p class="pr__price"><span class="pr__amount">£1,299</span></p>
+          <p class="pr__text">I design your homepage first. You only pay once you love it, then I build the rest.</p>
+        </div>
+        <div class="pr__clips" aria-hidden="true">
+          <span class="pr__clip" data-pricing-clip="0"></span>
+          <span class="pr__clip" data-pricing-clip="1"></span>
+          <span class="pr__clip" data-pricing-clip="2"></span>
+          <span class="pr__clip" data-pricing-clip="3"></span>
+        </div>
+      </div>
+
+      <div class="pr__faq" data-pr-in>
+        {
+          faq.map(([q, a]) => (
+            <details>
+              <summary><span class="pr__q">{q}</span><span class="pr__open" aria-hidden="true"></span></summary>
+              <p>{a}</p>
+            </details>
+          ))
+        }
+      </div>
+
+      <!-- contact: the form (one line at a time) and the other places to find me -->
+      <div class="pr__row pr__contact" data-pr-in data-pricing-contact>
+        <span></span>
+        <div class="pr__info">
+          <p class="pr__text">Tell me a little about your business and I will start on your homepage.</p>
+          {
+            site.email && (
+              <form class="cform" data-contact-form data-to={site.email} novalidate>
+                <div class="cform__step"><input class="cform__f" name="name" type="text" placeholder="Your name" aria-label="Your name" autocomplete="name" enterkeyhint="next" required /></div>
+                <div class="cform__step"><input class="cform__f" name="company" type="text" placeholder="Company (optional)" aria-label="Company, optional" autocomplete="organization" enterkeyhint="next" /></div>
+                <div class="cform__step"><input class="cform__f" name="email" type="email" placeholder="Your email" aria-label="Your email" autocomplete="email" enterkeyhint="next" required /></div>
+                <div class="cform__step">
+                  <textarea class="cform__f" name="message" rows="1" placeholder="What are you after?" aria-label="Your message" required />
+                  <button class="cform__send" type="submit">Send message <svg viewBox="0 0 110 95" aria-hidden="true"><path fill="currentColor" d="M110 47.42 66.064 95 54.92 83.702l26.108-27.848H0V38.987h81.028L54.92 11.139 66.064 0z" /></svg></button>
+                </div>
+                <p class="cform__nav" data-form-nav hidden><button type="button" data-back>Back</button><button type="button" data-next>Next</button></p>
+                <p class="cform__note" role="status" aria-live="polite" data-form-note></p>
+              </form>
+            )
+          }
+          {site.socials.length > 0 && <ul class="pr__chan">{site.socials.map((s) => <li><a href={s.href} target="_blank" rel="noopener me">{s.label}</a></li>)}</ul>}
+        </div>
+      </div>
+    </div>
+    <p class="pr__craft"><Credit text={`Crafted by ${site.short}`} /> <Pixel class="pixel--mini" /></p>
+  </div>
+</div>
