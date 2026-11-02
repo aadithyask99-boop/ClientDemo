@@ -33,3 +33,10 @@ Sky turning to night. A fixed layer changes the sky to dusk then night as you sc
 ## Weaker / watch
 
 - A lot of bespoke interaction per section; phones needed re-spacing so no screen is empty (about 2,700 px shorter).
+
+## Seen in the portfolio clip (18 to 20 s, 8 frames)
+
+- Pale sky, the kingfisher flies in, fills the frame, and the page settles into a light blue hero: "Foresight & security" on the left with the bird on the right, a pill nav, three glass cards bottom right (one with a large "42%").
+- The headline runs behind the bird's head, so the bird reads as part of the layout, not a sticker. The card body text is very small at this size; check legibility on phones.
+- Scrolling turns the sky to deep navy. Condensed all-caps statement ("WE DON'T JUST MONITOR. WE RESPOND TOO. NETWORKS. CLOUD. PEOPLE.") lights word by word.
+- Work tiles glow in different hues (teal radar, orange layered cloud, violet feed) against near-black. Each tile has one colour, which keeps four live toys from feeling noisy.

@@ -24,3 +24,10 @@ Her own portrait, real booking URL, address and hours, own photography replacing
 ## Weaker / watch
 
 - Stock photography limits distinctiveness; the design leans on colour and motion to compensate.
+
+## Seen in the portfolio clip
+
+- Plum preloader with the heart-shaped logo and "The house of love for your skin", then a full-bleed dark portrait hero with serif headline "Restorative skin care, delivered with intention." and a line link "Find your skin persona".
+- The page colour eases from dark to cream to rose as you scroll. Four facials are a hairline list with price and a round arrow button, not cards. A before/after drag slider sits on a rose section.
+- **Discrepancy to check:** the README says upright serif only and no italic font files, but accent words ("delivered", "your own terms", "one standard of care", "difference") appear slanted in the clip. It may be a synthesised slant. Decide whether the slant is intended and make the README or the font loading match.
+- Section titles use one italic-looking accent word per line, a repeating device that works but risks sameness across sections.

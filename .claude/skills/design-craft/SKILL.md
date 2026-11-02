@@ -33,6 +33,7 @@ Most approved work here is reference-led. The owner's usual inputs are a screen 
 - **Type with a reason.** Usually one or two families, chosen for the client, applied with one weight rule. Big, tight headlines are fine when they carry a single highlighted phrase or word, never a gradient fill.
 - **Restrained colour.** A small palette sampled from the client's logo or product. The accent is used sparingly (gold only on the wordmark, pills and small marks; orange only as a spark).
 - **Motion is layout.** Sections pin, scrub, fade or squash for a purpose. Calm beats busy. Slow easings, long reveals.
+- **One dominant element on the first screen.** Seen in every approved site: a giant wordmark (Brew More, Orra, DJ ESKA), a full-bleed portrait or photograph (ILE IFE, Doves), or a single creature (Halcyon's kingfisher). Everything else on that screen is small. Do not fill the first screen with several competing headlines or cards.
 - **Real or rendered imagery** in place of stock-looking filler, with generated art held to one shared style prompt.
 
 ## 4. Hard rules (learned from approved work and stated by the owner)

@@ -29,3 +29,10 @@ Hero and event photos generated from his Instagram photo (likeness needs his app
 ## Weaker / watch
 
 - Quality depends on his real photography and mixes arriving.
+
+## Seen in the portfolio clip
+
+- Black gate: the logo sleeve with a gold "Click to open" pill; the record slides out and spins, then the sleeve and gate disappear. The sticky player bar is already at the bottom.
+- The hero arrives by a **pixel-block dissolve** (square black blocks clearing) onto a black-and-white photo with a huge gold DJ ESKA wordmark running edge to edge and cropped by the next section.
+- Music section: his photo left, condensed white all-caps "SOUNDTRACK TO YOUR BEST NIGHTS" right, with a live gold waveform of vertical bars. Gold appears only on wordmark, pill and waveform.
+- Very strong contrast and a single accent. The weakest element is the photo itself (generated from an Instagram image), which is flagged in the README.

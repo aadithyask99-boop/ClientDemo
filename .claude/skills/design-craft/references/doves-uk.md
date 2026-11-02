@@ -30,3 +30,10 @@ Restraint. White space, full-bleed photography, one grotesque at weight 400 for 
 
 - Stock photography rights and regulatory wording are open items in the README.
 - Calm editorial work depends on photography quality more than any other site here.
+
+## Seen in the portfolio clip
+
+- Full-bleed family photos crossfade behind a heavily darkened overlay with the headline "Bringing peace of mind across borders" in plain white weight 400 and one outline "Apply Now" pill. Frosted white capsule nav, Login and Apply on the right, a thin info strip at the very top.
+- Then plain white sections: a large centred statement, "Repatriation & Expatriation" title left with copy right, a photo with a narrow white card ("Doves Global Plan"), four numbered steps joined by thin lines, and a photo grid of vehicles.
+- It reads as calm and trustworthy because nothing competes: one typeface, one weight, one accent colour, photography doing the emotional work.
+- The dark overlay on the hero is heavy; if the client supplies brighter photography, lighten it.

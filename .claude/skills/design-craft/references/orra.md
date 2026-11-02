@@ -31,3 +31,10 @@ Phones and touch get a lighter version of the same content: fades, slow strips, 
 
 - Many pinned sections; each needs a deliberate phone fallback.
 - Heavy dependence on generated architectural imagery; check realism at full size.
+
+## Seen in the portfolio clip
+
+- Opens on a blurred scene that sharpens: the giant white ORRA sits behind the villa, with the outline showing through the glass roof. Pill nav top right, a short blurb left, glass stat cards right, "LIVE WHERE THE HORIZON BEGINS" bottom left, four round thumbnails bottom right.
+- A light curtain slides up over the hero. The studio section is quiet: a serif paragraph with a hanging indent, small meta columns, awards and publications.
+- The homes table uses a dark hover bar; the pen sketch of the villa appears in large black ink on pale paper under "From Sketch to Shore".
+- Lesson: one hero image can do all the work if the type interacts with it.

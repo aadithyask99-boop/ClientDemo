@@ -61,3 +61,9 @@ Scale: everything is in `em`; 1em = 16px at 1440px wide and the whole layout sca
 - For a "recreate this" brief, success is fidelity to the reference (structure, type, motion, 3D idea), not novelty. Study the reference first and match it before improving anything.
 - For a "take inspiration" brief the bar is different: extract why the reference feels the way it does, then build something that is not a copy. Ask which one is wanted if it is not stated.
 - Always say which mode a project is in at the top of its DESIGN.md.
+
+## Seen in the portfolio clip
+
+- Loader: caramel screen with the condensed BREW MORE wordmark alone, then the hero: huge wordmark, small Buy more pill, handwritten "Real coffee, bold taste" with an arrow, circular fact badges, the tub rising out of a thick white ring, "BREWED TO BUILD" bottom right, and a dark curved ribbon of "IT'S A LATTE(R)" text.
+- Then cream sections: polaroids, then rotated caramel statement cards with small smiley badges, while the tub tumbles between sides and a white swoosh line runs behind. The cards read as pinned notes, not UI boxes, because they are tilted and have character.
+- Strong first-screen rule: one dominant element (the wordmark) plus one object (the tub), everything else small.
