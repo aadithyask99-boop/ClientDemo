@@ -39,3 +39,10 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - Impeccable's detector flagged Garden's Fraunces font as overused; recorded as an approved ignore with a reason.
 - Lesson: looking at real screenshots catches defects that code review misses; Impeccable's generic rules can disagree with an approved identity.
 - Promote to: `checklist.md` (done) and `SKILL.md` section 6 (done).
+
+### 2026-11-02  Video model choice  (mode: n/a)
+- Choices and reasons: default video model is `bytedance/seedance-1-5-pro` at 720p, 6 s, audio off, because it is the cheapest model with first-frame plus last-frame control (about $0.16 per 6 s clip) and it made the approved Halcyon intro. Image default is `bytedance-seed/seedream-5-0-flash`.
+- Owner reaction (their words): the four-model A/B test is not needed; "Seedance 1.5 Pro is fine for now".
+- Mistake and cause: I first recommended Veo 3.1 Lite as the cheapest and left Seedance 1.5 Pro out of my table. The owner's own look at OpenRouter's displayed prices exposed it. The cause was comparing at different resolutions and not checking the catalog fully. Independent rankings later showed Veo 3.1 Lite is cheap because it ranks near the bottom.
+- Lesson: compare prices at the same resolution, read the whole catalog, and do not treat price as quality.
+- Promote to: nothing yet. If model choices come up again, the comparison and ranking are in `assets.md`.
