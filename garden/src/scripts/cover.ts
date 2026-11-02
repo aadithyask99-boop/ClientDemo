@@ -28,6 +28,7 @@ export function openCover(reduce: boolean, ready: Promise<void> = Promise.resolv
       resolve();
     };
     if (reduce) {
+      document.documentElement.classList.add('opening');
       gsap.to(cover, { autoAlpha: 0, duration: 0.5, onComplete: finish });
       gsap.set('.names, .getting', { autoAlpha: 1, y: 0 });
       return;
@@ -39,19 +40,21 @@ export function openCover(reduce: boolean, ready: Promise<void> = Promise.resolv
       .to(hint, { autoAlpha: 0, duration: 0.3 }, 0)
       .to(seal, { scale: 0.92, duration: 0.18, ease: 'power2.out' }, 0)
       .add(() => swish(), 0.2)
-      .to('.tail', { strokeDashoffset: 100, duration: 0.95, ease: 'power2.inOut', stagger: 0.1 }, 0.3)
-      .to('.loop', { scale: 0.12, rotation: (i: number) => (i ? 28 : -28), autoAlpha: 0, duration: 0.9, ease: 'power2.inOut' }, 0.5)
-      .to(seal, { rotation: -3, y: 10, duration: 1.0, ease: 'power2.inOut' }, 0.5)
-      .to('.cord path', { strokeDashoffset: -100, duration: 1.4, ease: 'power1.inOut' }, 0.8)
-      .to('.cord', { y: 30, duration: 1.4, ease: 'power1.in' }, 0.8)
-      .to(seal, { autoAlpha: 0, scale: 0.95, duration: 0.9, ease: 'power2.inOut' }, 1.15)
-      .to('.knot-svg', { autoAlpha: 0, duration: 0.5 }, 1.4);
+      .to('.tail', { strokeDashoffset: 100, duration: 0.8, ease: 'power2.inOut', stagger: 0.08 }, 0.25)
+      .to('.loop', { scale: 0.12, rotation: (i: number) => (i ? 28 : -28), autoAlpha: 0, duration: 0.75, ease: 'power2.inOut' }, 0.4)
+      .to(seal, { rotation: -3, y: 10, duration: 0.8, ease: 'power2.inOut' }, 0.4)
+      .to('.cord path', { strokeDashoffset: -100, duration: 0.95, ease: 'power1.inOut' }, 0.55)
+      .to('.cord', { y: 30, duration: 0.95, ease: 'power1.in' }, 0.55)
+      .to(seal, { autoAlpha: 0, scale: 0.95, duration: 0.7, ease: 'power2.inOut' }, 0.8)
+      // the thread is gone before the doors move, so it never trails across the garden
+      .to('.cord, .knot-svg', { autoAlpha: 0, duration: 0.25 }, 1.25);
 
     // 2. the doors swing and the garden pushes forward, but only once its art is decoded (never before the thread has come loose)
     let waiting = true;
     const note = window.setTimeout(() => { if (waiting) { hint.textContent = 'one moment'; gsap.to(hint, { autoAlpha: 0.9, duration: 0.8 }); } }, 1700);
-    Promise.all([ready, new Promise((r) => window.setTimeout(r, 1500))]).then(() => {
+    Promise.all([ready, new Promise((r) => window.setTimeout(r, 1450))]).then(() => {
       waiting = false;
+      document.documentElement.classList.add('opening');
       clearTimeout(note);
       gsap.to(hint, { autoAlpha: 0, duration: 0.3 });
       gsap.timeline({ onComplete: finish })

@@ -79,9 +79,9 @@ export const invitation: Invitation = {
   },
   dance: { title: 'Save us a dance', hint: 'scroll to spin them into the dip, or press and hold to let them dance on', holdHint: 'dancing… let go to take over' },
   scene: {
-    church: 'The chapel bell will ring at half past two. Please do not be the reason it rings twice.',
-    tree: 'The Hartwell oak is three hundred years old and has seen far worse proposals.',
-    bench: 'Reserved for anyone who needs a sit-down, a shoe off and a gossip.',
+    church: 'The chapel bell rings at half past two. Listen for it: it is the sound of everyone we love arriving in one place.',
+    tree: 'The Hartwell oak is three hundred years old and still in leaf, which feels like a very good omen for the next sixty years of ours.',
+    bench: 'Kept for anyone who fancies a sit-down, shoes off, and a long, happy catch-up. Stay as long as you like.',
   },
   gifts:
     'Your being there is the gift. If you would still like to give something, a contribution to our honeymoon in Provence would make us very happy.',

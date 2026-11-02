@@ -28,7 +28,7 @@ const ring = '<svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke
       <img src={`${base}/art/bench.webp`} alt="" width="728" height="440" loading="lazy" decoding="async" />
     </button>
     <button class="mini-seal" id="mini-seal" type="button" aria-label="A small wax seal. Hold it for a secret.">
-      <img src={`${base}/art/seal.webp`} alt="" width="120" height="120" loading="lazy" decoding="async" />
+      <img src={`${base}/art/seal.webp`} alt="" width="120" height="120" loading="lazy" decoding="async" /><span class="seal-mono">{inv.a[0]}&amp;{inv.b[0]}</span>
     </button>
     <p class="secret" id="secret2" role="status" hidden></p>
     <div class="roses-end"><img class="rl" src={`${base}/art/roses.webp`} alt="" width="1500" height="844" loading="lazy" decoding="async" /><img class="rr" src={`${base}/art/roses.webp`} alt="" width="1500" height="844" loading="lazy" decoding="async" />
