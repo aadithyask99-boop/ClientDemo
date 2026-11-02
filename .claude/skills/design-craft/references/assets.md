@@ -55,7 +55,7 @@ With the same first frame and prompt, make one 6 s clip each on `bytedance/seeda
 ## The key and the $2 cap
 
 - The key is `OPENROUTER_API_KEY`. It must never be pasted into chat or committed.
-- **Cloud sessions:** the owner adds it as an environment variable (or API credential) in the cloud environment settings: the environment menu in the session's title bar, then Edit. A new session picks it up.
+- **Cloud sessions:** the owner adds it in the cloud environment settings (the environment menu in the session's title bar, then Edit). Either as an environment variable `OPENROUTER_API_KEY`, or as a **network secret**: Add secret, type Bearer, allowed website `openrouter.ai`, header `Authorization`, prefix `Bearer`, value the key. A new session picks it up. With a network secret the sandbox never sees the key and the network layer adds the header, so `gen-media.mjs` runs without finding a key and sends no Authorization header itself. The owner set it up this way on 2026-11-02; the first real run confirms it works.
 - **Local use:** copy the root `.env.example` to `.env` (git-ignored) and fill it in. There is also `secrets/env.age` (an age-encrypted copy opened by `scripts/env.sh`), which needs a private key that is not in the repo.
 - **Two layers of cap:**
   1. Set a credit limit of $2 on the key itself when creating it on OpenRouter. That is the hard stop. (Check the key's settings; I cannot verify the limit from here.)
