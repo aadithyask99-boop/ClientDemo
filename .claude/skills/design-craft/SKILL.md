@@ -7,6 +7,24 @@ description: How to design and build websites for this owner's client demos and 
 
 The owner sells bespoke, fast, distinctive websites and states on their own portfolio: "Nothing generic" and "none of that generic AI-made look". Every site here has been approved. Treat them as proof of the standard, not as templates to copy.
 
+## 0. Where everything lives (one map)
+
+Everything is in this repository (ClientDemo). Nothing is stored outside it, so any new chat that opens the repo has all of it. If a path below is missing, the branch you are on is out of date: say so.
+
+| What | Where |
+| --- | --- |
+| This skill and entry point (`/design-craft`) | `.claude/skills/design-craft/SKILL.md` |
+| Case studies, lessons, defects found (read and add to these) | `.claude/skills/design-craft/references/` |
+| Impeccable, once installed | `.claude/skills/impeccable/` |
+| The approved sites | `<slug>/` at the repo root, each with its own `README.md` |
+| Videos and posters of the sites (60 fps clips) | `portfolio/public/work/<slug>.mp4` and `<slug>.webp` |
+| Recorder for those clips | `portfolio/scripts/record-demo.mjs` |
+| Image generation scripts | `garden/scripts/gen-art.mjs`, `more-coffee/scripts/gen.mjs` |
+| Runs commands with the encrypted API key | `scripts/env.sh` |
+| Deploy of all demos | `wrangler.jsonc`, `demo-index/index.html` |
+
+**Logging and improving:** after each job, add what was learned to the matching file in `references/` (or a new file), then commit and push. That commit is the memory. A new chat only knows what is committed.
+
 ## 1. Decide the mode first
 
 Say which mode the job is in before you design anything. If the user has not said, ask once.
