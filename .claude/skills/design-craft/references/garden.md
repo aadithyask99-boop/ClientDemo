@@ -35,3 +35,22 @@ Stitching and thread. Dashed "stitch" outlines on buttons, knots, hoops and the 
 - A lot of simultaneous motion (petals, butterflies, fireflies, rope, parallax). It stays calm only because each is slowed and each can switch off; a new site should add fewer layers.
 - Art is generated (Seedream) and usually cannot be copyrighted, so a client does not get exclusivity. Say so.
 - The sensor and rope work took many iterations on real phones. Test on a real device early.
+
+## Seen on the live page (screenshots, desktop 1280 and phone 390)
+
+Checked from `https://clientdemo.maximusmediascape.workers.dev/garden/`. The page is about 14,700 px tall on desktop and 12,000 px on phone. The seal must be clicked (`#seal`) before the page unlocks; a script that does not click it only ever sees the cover.
+
+- **Cover:** sage linen doors, gold thread in a bow under a cream cameo seal marked "I&T". Quiet and tactile; nothing else on screen.
+- **Hero:** an embroidered arched window of a stone villa and lavender, a wisteria curtain across the top, ivy down both margins, and very large italic names ("Imogen & Theo") with a gold script ampersand. The gold thread starts at the top-left. On the phone the arch fills the width and the names stack. This is the standard to match: art at scale, large type, almost no UI.
+- **Journey:** one painted arch scene per story step, alternating sides, with the thread passing through round knot icons.
+- **Venue:** a green linen band with scalloped edge, the conservatory in an oval arch on the left, white serif text and a pill button on the right. Strong colour change from the cream pages.
+- **Finale:** a stitched countryside (chapel, oak, bench on a winding path) with roses in both corners and the date in gold script above it.
+- **First dance (phone):** the couple in an oval embroidery hoop on plain paper, a hint line below.
+
+### Defects seen (fix before showing a client)
+
+1. **Cover hint is partly hidden (desktop).** "Touch the seal to open" collides with the thread's bow tails: the first letter is covered and the end is clipped ("ouch the seal to oper"). Move the hint below the tails or shorten the tails.
+2. **Dance hint is clipped by the dock buttons (phone).** The script line "scroll to spin them into the dip, or press and hold…" runs under the round buttons on the right and is cut off ("or pr"). Add right padding on small screens or lift the line above the dock.
+3. **Butterflies land on text.** A butterfly sat on a story date ("Winter 2025"), hiding it. Keep text clear of the wandering layer, for example by raising the text above it.
+4. **Large empty paper between journey steps on desktop.** Some stretches are bare; consider tightening the spacing or filling with the existing ivy and petals.
+5. **Low contrast on the finale date.** Gold script on a peach sky is hard to read; darken it.
