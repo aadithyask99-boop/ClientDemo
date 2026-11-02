@@ -1,0 +1,16 @@
+---
+import { site } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<header class="header" data-theme="dark">
+  <a class="header__logo" href="#top" aria-label="EVM Group, home">
+    <img src={`${base}/evm-logo.svg`} alt="EVM" width="86" height="28" />
+  </a>
+  <nav class="header__nav" aria-label="Main">
+    {site.nav.map((n) => <a href={n.href}>{n.label}</a>)}
+  </nav>
+  <button class="header__menu" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
+</header>
+<div class="menu" id="menu" hidden>
+  {site.nav.map((n) => <a href={n.href}>{n.label}</a>)}
+</div>

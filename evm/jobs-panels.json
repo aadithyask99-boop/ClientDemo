@@ -1,0 +1,29 @@
+[
+ {
+  "type": "image",
+  "name": "panel-porsche",
+  "prompt": "Red Porsche 911 GT3 in three-quarter rear view. Re-photograph it as a tall portrait cinematic automotive photograph on a dark wet road at dusk, moody low light, deep black shadows, soft rim light on the bodywork, shallow depth of field, premium magazine quality, car fills the lower two thirds of frame, empty dark space above, no text, no people, no extra badges. Keep this exact car: same model, colour, wheels and design details.",
+  "refs": [
+   "evm/raw/brand/-o1Iuz5_qDl1EePPiOwR4eiATi7sIBkH.jpg"
+  ],
+  "aspect": "9:16"
+ },
+ {
+  "type": "image",
+  "name": "panel-bmw",
+  "prompt": "White BMW M car with blue and red M stripes, rear three-quarter view. Re-photograph it as a tall portrait cinematic automotive photograph on a dark wet road at dusk, moody low light, deep black shadows, soft rim light on the bodywork, shallow depth of field, premium magazine quality, car fills the lower two thirds of frame, empty dark space above, no text, no people, no extra badges. Keep this exact car: same model, colour, wheels and design details.",
+  "refs": [
+   "evm/raw/brand/rZXayF3_0ab83A_x-QksuamPd2wlho1X.jpg"
+  ],
+  "aspect": "9:16"
+ },
+ {
+  "type": "image",
+  "name": "panel-mini",
+  "prompt": "Teal MINI Cooper convertible, front three-quarter view. Re-photograph it as a tall portrait cinematic automotive photograph on a dark wet road at dusk, moody low light, deep black shadows, soft rim light on the bodywork, shallow depth of field, premium magazine quality, car fills the lower two thirds of frame, empty dark space above, no text, no people, no extra badges. Keep this exact car: same model, colour, wheels and design details.",
+  "refs": [
+   "evm/raw/brand/5qexMsJp67LeaHXVNzbAi6BHt5aWJ5gR.jpg"
+  ],
+  "aspect": "9:16"
+ }
+]
