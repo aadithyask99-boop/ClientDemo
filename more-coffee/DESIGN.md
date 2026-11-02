@@ -48,10 +48,16 @@ Scale: everything is in `em`; 1em = 16px at 1440px wide and the whole layout sca
 - The comparison table, review slider and payment row are conventional DTC patterns; they work because of the type and motion around them.
 - Several sections share the same large-headline-plus-handwritten-note pattern. It is on-brand but repeated.
 - The `Mix your own` and `3pm test` sections were added later and follow the established system, but were not part of the original reference.
-- The fonts, the hero-to-ribbon composition and many interactions mirror the reference. Treat them as a studied homage, not a unique identity. **(you)** if this site is meant for a client, say how far from the reference you want it to go.
+- The fonts, the hero-to-ribbon composition and many interactions mirror the reference by design (see the brief). Treat it as a faithful recreation, not a unique identity. If it ever goes to a client as their own brand, it would need to move further from the reference.
 
-## Questions for you **(you)**
+## The brief (from the owner)
 
-- What was the exact brief: "recreate this reference with our own brand", or "take inspiration"?
-- Which parts did you point at in the video and say "this, exactly"? Those are the real design intent.
-- What did you reject in earlier versions (the generic, boxy, gradient-heavy ones)? I would like your own words.
+- **Recreate this reference, nothing more.** The inputs were a screen recording, a couple of screenshots and the reference's homepage. The goal was a faithful rebuild with an original brand, not a loose take on it.
+- **Copied exactly on purpose:** the 3D product idea (the tub that turns and tumbles through a scroll sequence), the typography, and the overall Google-style design feel.
+- **Why earlier attempts were rejected:** not remembered. The general complaint across sites was boxy layouts, headline-heavy sections and needless gradients.
+
+## What this means for future work
+
+- For a "recreate this" brief, success is fidelity to the reference (structure, type, motion, 3D idea), not novelty. Study the reference first and match it before improving anything.
+- For a "take inspiration" brief the bar is different: extract why the reference feels the way it does, then build something that is not a copy. Ask which one is wanted if it is not stated.
+- Always say which mode a project is in at the top of its DESIGN.md.
