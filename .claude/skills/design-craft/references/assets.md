@@ -30,9 +30,27 @@ US dollars per second of output, **without audio** (a web clip is played muted, 
 
 Seedance is priced per video token. The estimates use 24 fps and tokens = width x height x fps x seconds / 1024; this reproduces OpenRouter's displayed Seedance 2.5 price of $0.1028 per second at 480p exactly, so the formula can be trusted. Confirm from the `cost` the tool prints on a real run. Cheap does not mean good: price says nothing about quality.
 
+### Quality ranking (Artificial Analysis, image-to-video, read 2026-11-02)
+
+Price says nothing about quality. Artificial Analysis publishes an Elo leaderboard from blind human votes (board "AA-Video-I2V v2.1"; the page shows no timestamp, newest entries are Oct 2026). Kling 3.0 Pro is the fixed anchor at 1000. Their prices are per minute of 1080p and differ from OpenRouter's, so use OpenRouter's table above for cost. These numbers were read from the public pages by a helper agent and not independently re-checked.
+
+| Rank | Model | Elo | OpenRouter $/s | Reading |
+| --- | --- | --- | --- | --- |
+| 1 | Seedance 2.5 | 1153 | 0.23 at 720p | best, expensive |
+| 3 | Seedance 2.0 | 1136 | 0.15 at 720p | |
+| 4 | MiniMax H3 (768p) | 1128 | 0.08 at 768p | **best value** (AA price $4.80 per minute matches OpenRouter's `hailuo-3-max` 768p; the names differ, so confirm it is the same model) |
+| 9 | Wan 3.0 | 1111 | 0.10 at 720p | ranks well here, though the owner found it weaker for our clips |
+| 17 | Kling 3.0 Pro | 1000 | 0.112 | the anchor |
+| 22 | Veo 3.1 Fast | 937 | 0.08 | |
+| 24 | Veo 3.1 Lite | 929 | 0.03 | cheap because it ranks near the bottom |
+
+Not on the board: Seedance 1.5 Pro, Seedance 2.0 Fast and Mini, Kling 3.0 Standard. Their quality is unranked. (Text-to-video ranks differ, with Wan 3.0 first, but we mostly use image-to-video.)
+
+Reading: Veo 3.1 Lite is cheap, not good. The best value in the ranking is MiniMax H3 / Hailuo 3 Max at 768p. Seedance 1.5 Pro stays the default because it is cheap and made the approved Halcyon intro, but nothing here proves it is better than Hailuo 3 Max; the A/B test decides.
+
 ### A/B test before trusting the default
 
-With the same first frame and prompt, make one 6 s clip each on `bytedance/seedance-1-5-pro`, `google/veo-3.1-lite`, `bytedance/seedance-2.0-fast` and `kwaivgi/kling-v3.0-std` (about $1.40 in total at 720p, no audio). Compare motion, whether the last frame lands where intended, artefacts and loop quality. Record the winner and why in `feedback.md`, then set `VIDEO_MODEL`.
+With the same first frame and prompt, make one 6 s clip each on `bytedance/seedance-1-5-pro`, `minimax/hailuo-3-max` (768p), `bytedance/seedance-2.0-fast` and `alibaba/wan-3.0` (about $1.50 in total, no audio). Add `bytedance/seedance-2.5` (about $1.40 on its own) only for a hero shot where the best quality matters. Compare motion, whether the last frame lands where intended, artefacts and loop quality. Record the winner and why in `feedback.md`, then set `VIDEO_MODEL`.
 
 ## The key and the $2 cap
 
