@@ -53,3 +53,21 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - **Impeccable said:** detector found two contrast failures (fixed). Design review: the back half was text on flat fields with one repeated row layout, red used only in tiny accents, no onward links. Fix applied: pinned list plus large image rollers for marques and sectors, five giant red year scenes, a full-bleed photo break.
 - **Lessons (promote if repeated):** study a reference's motion frame by frame before building; make each section carry one image or object, not a text row; use the brand colour at large scale once; generate from the client's own photos as references when brand accuracy matters.
 - **Tooling notes:** `gen-media.mjs` needs `NODE_USE_ENV_PROXY=1` and a dummy `OPENROUTER_API_KEY` in this cloud setup (the proxy injects the real key). Free stock sites Pexels and Pixabay return 403 here; Coverr works.
+
+### 2026-11-02  Skill was not doing the job end to end  (mode: process)
+- What the owner saw (their words): Impeccable does not run automatically and the chat asks whether to run it; the work should be "compiled, done, made, then given to me, and then I'll ask for changes"; it should publish an artifact automatically so they can see it.
+- Evidence from the EVM Group chat: it published an artifact, but built the bundle by hand each time, and its handover said "I haven't run Impeccable or the full checklist". It only studied the reference closely after the owner pushed back.
+- Cause: the skill phrased Impeccable as "if installed" and "ask", added two owner checkpoints and a "wait for approval", and had no single gate saying a job is not finished until the checks run and the artifact exists. Nothing forced the last steps.
+- Fix: removed the checkpoints and approval waits; Impeccable and the checklist are mandatory and automatic; added `scripts/bundle-preview.mjs` and a definition of done (SKILL.md section 10) with a fixed handover format; put the same rule in the root `CLAUDE.md` so it applies even if the skill is not opened.
+- Check on the bundler: the first build had Orra's name mask pointing at a missing file because an inline `style="--house: url(img/house.webp)"` resolves against the stylesheet, not the page; the bundler now copies such files under `assets/` too. Lesson: verify a bundle on a local server for 404s before publishing.
+- Lesson: a quality step that is optional or phrased as a question will be skipped; make it a gate in the definition of done.
+- Promote to: SKILL.md section 10 (done) and CLAUDE.md (done).
+
+### 2026-11-02  Why reference-led work drifted from the reference (EVM Group vs ESR Bespoke)
+- Owner's words: the chat "seems like it's just repeating the same designs and not following the reference"; results used to be really good with just a screenshot and a screen grab, without Impeccable or a skill.
+- What I found by comparing the live reference with the build: the build copied parts (roller, statements, plain nav) but not the character. Reference: black and white only, one idea per section, real cinematic footage. Build: a dark two-column list-and-image layout repeated, giant red years and red accents the reference does not have, generated stills in one dusk grade.
+- Causes: (1) my one-pass change removed the tight loop that made the old results good, and nothing replaced the owner as the comparer; (2) the reference was studied from small contact sheets, not frame by frame or from its code; (3) Impeccable's taste critique ("text on flat fields, red used only in tiny accents") pulled the build further from the reference; (4) the sameness check and house rules pushed toward "do not copy" even though the owner loved ESR's whole design language; (5) generated stills cannot match real cinematography.
+- Fix: SKILL.md section 11 (reference fidelity protocol), a side-by-side comparison tool with at least two rounds, a precedence rule that the reference beats Impeccable's taste, a source-material rule, and checklist item 15.
+- Lesson: the owner's fast visual comparison is what produced good results; if the owner is removed from the loop, the build must compare itself against the reference side by side, repeatedly, and not let a design tool's taste override the reference.
+- Promote to: SKILL.md section 11 (done).
+

@@ -18,3 +18,5 @@ Run on screenshots at 1280 wide and 390 wide: the first screen, three mid-page s
 14. **Generated imagery is checked at full size** for realism and artefacts (hands, text, reflections).
 
 When a review finds a defect that is not covered here, add it as a new numbered line.
+15. **Reference comparison done.** For reference-led work, `compare-sheets.py` was run at least twice and every section has a counterpart that matches in composition, type scale, spacing, colour balance and motion. No layout is repeated more than twice; Impeccable did not add devices the reference lacks.
+

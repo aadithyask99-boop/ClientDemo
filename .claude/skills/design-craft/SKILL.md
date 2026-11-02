@@ -22,7 +22,8 @@ Everything is in this repository (ClientDemo). Nothing is stored outside it, so 
 | Written audits of client sites (as-is design, decisions, before and after) | `.claude/skills/design-craft/references/clients/<client>.md` |
 | Image and video generation, budget, key, 3D notes | `.claude/skills/design-craft/references/assets.md` and `scripts/gen-media.mjs` |
 | Spend ledger (every generation call, no secrets) | `.claude/skills/design-craft/spend-ledger.jsonl` |
-| Impeccable, once installed | `.claude/skills/impeccable/` |
+| Preview bundler for publishing a built site as an artifact | `.claude/skills/design-craft/scripts/bundle-preview.mjs` (output in `captures/<site>/preview/`) |
+| Impeccable (installed) | `.claude/skills/impeccable/` |
 | The approved sites | `<slug>/` at the repo root, each with its own `README.md` |
 | Videos and posters of the sites (60 fps clips) | `portfolio/public/work/<slug>.mp4` and `<slug>.webp` |
 | Recorder for those clips | `portfolio/scripts/record-demo.mjs` |
@@ -34,14 +35,14 @@ Everything is in this repository (ClientDemo). Nothing is stored outside it, so 
 
 ## 1. Decide the mode first
 
-Say which mode the job is in before you design anything. If the user has not said, ask once.
+Say which mode the job is in before you design anything. If the user has not said, infer it from what they gave you and state it; ask only if you truly cannot tell.
 
 - **Recreate**: "make it like this reference". Success is fidelity: structure, order, typography, motion and the signature idea (for example the 3D product turn). Study first, match first, improve only afterwards. Swap in an original brand, copy and assets.
 - **Inspiration**: "use this as a starting point". Work out why the reference feels the way it does, then build something that is not a copy.
 - **Original**: no reference. Pick one strong idea (section 3) and commit to it.
 - **Improve an existing site**: the client already has a site; make it better, often using a reference for direction. Follow section 9. This is common: the job is not always to build something new.
 
-**The brief, five quick questions** (ask only what is not already clear): recreate or inspiration? What is the reference (video, screenshots, homepage)? The feeling in three words? What must be copied exactly? What must be avoided? Record the answers in the feedback log.
+**The brief, five points** (read them from what the owner gave you; ask only for what is missing and cannot be reasonably assumed, and never ask permission to proceed): recreate or inspiration? What is the reference (video, screenshots, homepage)? The feeling in three words? What must be copied exactly? What must be avoided? Record the answers in the feedback log.
 
 Most approved work here is reference-led. The owner's usual inputs are a screen recording, a few screenshots and the reference homepage, plus a short explanation of the feeling they want.
 
@@ -85,7 +86,7 @@ This skill is the single entry point. Impeccable (https://github.com/pbakaus/imp
 
 **How it starts:** it loads automatically when the owner describes design work ("rebuild the Orra hero like this video", "restyle the footer"), or on demand with `/design-craft`. Impeccable has its own `/impeccable` commands; use them only as the steps below say.
 
-**Is Impeccable installed?** It is installed at project scope in `.claude/skills/impeccable/` (engine v0.1.18). Check with `test -d .claude/skills/impeccable`; if the folder is missing, do every step except the Impeccable ones and say so in one line.
+**Impeccable is installed** in `.claude/skills/impeccable/`. Use it automatically at the steps below; never ask the owner whether to run it or to install it. If the folder is somehow missing, say so in one line and review by hand.
 
 - The engine binary is not stored in git (it is about 22 MB and platform specific). The launcher `.claude/skills/impeccable/scripts/impeccable` downloads the right one on first use and verifies it against `engine-checksums.txt`. If a session has no network access to download it, say so and review by hand.
 - Telemetry is off for this repo (`.impeccable/config.json`). Do not turn it on.
@@ -97,12 +98,12 @@ This skill is the single entry point. Impeccable (https://github.com/pbakaus/imp
 | --- | --- | --- |
 | 1. Brief | this skill | Ask the brief questions and decide the mode (section 1). Read `feedback.md`, `fingerprints.md` and the matching case studies. Run the sameness check (section 8). |
 | 2. Study | this skill | Study the reference; look at the real pages (section 6). |
-| 3. Context | Impeccable, if installed | If the site has no `PRODUCT.md` / `DESIGN.md`, run `/impeccable init` and seed it from this skill's case study for that site, so per-site context is written once. |
+| 3. Context | Impeccable (installed) | If the site has no `PRODUCT.md` / `DESIGN.md`, run `/impeccable init` and seed it from this skill's case study for that site, so per-site context is written once. |
 | 4. Build | this skill | Apply sections 3 and 4. |
-| 5. Review | Impeccable, if installed | `npx impeccable detect <site>/src`, then `/impeccable critique <section>` and `/impeccable audit` on the parts that changed. If not installed, review against section 4 by hand. Always run `references/checklist.md` on desktop and phone screenshots too. |
+| 5. Review | Impeccable (installed), automatic | `npx impeccable detect <site>/src`, then `/impeccable critique <section>` and `/impeccable audit` on the parts that changed. Run these yourself, every job, without asking. Only if `.claude/skills/impeccable/` is missing, review against section 4 by hand and say so. Always run `references/checklist.md` on desktop and phone screenshots too. |
 | 6. Log | this skill | Write a `feedback.md` entry with the reasons, the mistakes and the lesson (section 8). |
 
-**Precedence when they disagree:** this skill and the owner's approved sites win over Impeccable's generic rules. An approved choice is deliberate (for example garden's italic serif, or a gradient that depicts a sunset). When the detector flags one, record it as ignored with a reason (`npx impeccable ignores add-value <rule> <value> --reason "..."`) instead of changing the site. Accept Impeccable's findings freely when they point at real defects (contrast, spacing, heading levels, accessibility).
+**Precedence when they disagree:** (1) the owner's words and the reference they chose, then (2) the owner's approved sites and this skill's rules, then (3) Impeccable. Impeccable is a defect finder, not a designer: accept its findings about real defects (contrast, accessibility, broken layout, performance, heading order) and do not let its taste findings ("too much text on flat fields", "add colour or imagery") add devices that the reference does not have. When the reference is the aim, a critique that says the build is plainer than Impeccable would like is not a defect. Record deliberate choices as ignored with a reason (`impeccable ignores add-value ...`).
 
 ## 6. Previewing a site (screenshots and clips)
 
@@ -143,11 +144,11 @@ Index of case studies:
 
 The aim is that each job makes the next one better, and that the reasons are written down, not only the results.
 
-**Before building (sameness check):** read `references/fingerprints.md`. State the new site's typeface, palette, signature idea, first-screen element and motion style. It must differ clearly from every existing site on at least three of those five. If it leans on a device that already repeats (see the list in that file), say why it is right for this client.
+**Before building (sameness check, for original work and loose inspiration; skip it for recreate and for any job where the owner loves a reference's design language, because there the reference decides, see section 11):** read `references/fingerprints.md`. State the new site's typeface, palette, signature idea, first-screen element and motion style. It must differ clearly from every existing site on at least three of those five. If it leans on a device that already repeats (see the list in that file), say why it is right for this client.
 
 **While building (decision notes):** keep one line per important choice in the working notes: what was chosen, why, and the risk. These become the "choices and reasons" in the log.
 
-**Checkpoints with the owner:** I am better at catching defects than at judging distinctiveness, so show the owner two things before building the rest: the direction (reference, signature idea, type, palette, first screen as a sketch or screenshot), then the built first screen. Do not build the whole page on an unchecked first screen.
+**No mid-job approvals.** Decide, state the assumptions you made in the handover, and finish the whole job in one pass. The owner reviews the finished, published result and then asks for changes. Ask a question mid-job only when something essential is missing and cannot be guessed (no reference, no URL, no brand to work from).
 
 **After building (review):** run `references/checklist.md` on desktop and phone screenshots, then Impeccable (section 5). Note which findings were right, and which were overridden and why.
 
@@ -155,22 +156,55 @@ The aim is that each job makes the next one better, and that the reasons are wri
 
 **Promote:** when the same lesson shows up twice, move it out of the log. A new rule goes into section 4. A defect goes into `checklist.md`. A new device or a site goes into `fingerprints.md`. Impeccable findings that it caught and the checklist missed also become checklist lines. Commit and push, because a new chat only knows what is committed.
 
-**Assets and money:** generation goes through `scripts/gen-media.mjs` with the $2 budget described in `references/assets.md`. Ask before any run that could exceed the budget, and never ask for a key to be pasted in chat.
+**Assets and money:** generation goes through `scripts/gen-media.mjs` with the $2 budget described in `references/assets.md`. Stay inside the budget without asking; stop and ask only if the job genuinely needs more than the cap. Never ask for a key to be pasted in chat.
 
 ## 9. Improving an existing client site
 
 Sometimes the job is not to build something new: the client has a site and the owner wants it better (more interactive, more distinctive, clearer), often with a reference for direction. The homepage comes first.
 
-**Ask first (only what is unclear):** the client's URL; which pages (start with the homepage); what the owner or client dislikes or wants more of; the reference, if any, and whether to recreate or take inspiration; whether the site must stay on its current platform (for example WordPress or Wix) or may be rebuilt in Astro as a separate demo; anything that must not change (brand colours, logo, legal text, URLs that already rank).
+**Gather (ask only what is missing):** the client's URL; which pages (start with the homepage); what the owner or client dislikes or wants more of; the reference, if any, and whether to recreate or take inspiration; whether the site must stay on its current platform (for example WordPress or Wix) or may be rebuilt in Astro as a separate demo; anything that must not change (brand colours, logo, legal text, URLs that already rank).
 
 **Steps**
 1. **Capture the current site.** Run `node .claude/skills/design-craft/scripts/capture-site.mjs <url> --out captures/<client> --video`. It writes full-page and viewport-strip screenshots at 1440 and 390 wide, a real-time scroll recording with a contact sheet, and `design-language.json` and `report.md` (fonts by amount of text, sizes, weights, text and background colours, headings, nav, libraries, SEO basics, measured speed, other pages found). Look at the screenshots and the contact sheet yourself; do not rely on the report alone. Only capture pages the owner is allowed to review.
 2. **Write the as-is audit** in `references/clients/<client>.md`: the design language in plain words (type, colour, spacing, imagery, tone, motion), what works and should be kept, what is generic or broken (run `references/checklist.md` on the screenshots), the SEO basics that must be preserved (title, description, h1 and headings, URLs, structured data), speed numbers, and the first-screen element today.
-3. **Run Impeccable on the live page** if installed: `.claude/skills/impeccable/scripts/impeccable detect <url>` (a URL scan also runs the rules that need a rendered page), then `/impeccable critique` and `/impeccable audit` on the homepage. Note which findings are real: the URL scan gives specific, useful results (for example text over photo overlays at about 2.6 to 2.9:1 contrast) but also some false positives (a "1.0:1" on identical colours is usually hidden or layered text), so confirm each one on the screenshots before acting.
+3. **Run Impeccable on the live page** (automatically): `.claude/skills/impeccable/scripts/impeccable detect <url>` (a URL scan also runs the rules that need a rendered page), then `/impeccable critique` and `/impeccable audit` on the homepage. Note which findings are real: the URL scan gives specific, useful results (for example text over photo overlays at about 2.6 to 2.9:1 contrast) but also some false positives (a "1.0:1" on identical colours is usually hidden or layered text), so confirm each one on the screenshots before acting.
 4. **Study the reference** (section 2) and write the signature idea for the improved version. Run the sameness check (section 8) against `fingerprints.md` and against the client's current look; it must be clearly better, not just different.
-5. **Checkpoint with the owner:** show the as-is findings, the proposed direction and the plan for the homepage (what stays, what changes, what is added) before building. Wait for approval.
+5. **State the plan, then continue:** write the plan in a short paragraph (what stays, what changes, what is added) and carry on building. Do not wait for approval; the owner reacts to the finished result.
 6. **Build the improved homepage** as a separate demo in this repo (a new `<client>/` Astro folder, deployed like the others), not on the client's live site. Keep the preserved SEO items, keep the client's content and brand assets, and say what is placeholder.
-7. **Prove it:** capture the new version with the same tool and put before and after side by side (first screen at 1440 and 390, speed, SEO basics, Impeccable and checklist results). Show the owner the first screen before polishing the rest.
+7. **Prove it:** capture the new version with the same tool and put before and after side by side (first screen at 1440 and 390, speed, SEO basics, Impeccable and checklist results), then deliver it as in section 10.
 8. **Log** in `feedback.md` and update `references/clients/<client>.md` and `fingerprints.md`.
 
 **Rules for this mode:** improve what is weak and keep what works; never remove content that ranks or that the client must keep; speed and accessibility must not get worse; and never present a generated likeness or invented claim as the client's own.
+
+## 10. Definition of done and delivery (one pass, then publish)
+
+A job is **not finished and must not be handed over** until every line below is true. Do all of it yourself, in one pass, without asking the owner anything in between.
+
+1. **Built** in this repo as an Astro site (a new `<site>/` folder, or the existing one), following sections 3 and 4.
+2. **Impeccable run:** `.claude/skills/impeccable/scripts/impeccable detect <built page or live url>`, then `/impeccable critique` and `/impeccable audit` on what you built. Fix every real finding; record any you overrode and why (`impeccable ignores add-value ...` for approved choices).
+3. **Checklist run:** `references/checklist.md` on screenshots at 1440 and 390 wide (`scripts/capture-site.mjs` on the preview, or your own Playwright shots). Fix what fails.
+4. **Published as an artifact**, so the owner can open it: run `node .claude/skills/design-craft/scripts/bundle-preview.mjs <site-folder> --title "<Name> homepage (concept)"`, then call the Artifact tool with `file_path` = the bundle's `page.html`, `root` = the bundle folder, `files` = the contents of `files.json` (first publish) or `files-update.json` (updates; it also removes stale files), and an `icon` word on the first publish. To update, publish again with the same `url`. The bundler needs to be checked on a local server first: serve the bundle folder and confirm no 404s and no console errors (a missing file shows as a broken page). Over 255 files or 64 MB, publish in parts to the same url.
+5. **Logged and committed:** a `feedback.md` entry, case-study or fingerprint updates, committed and pushed to the branch.
+
+**Real client names and branding:** a redesign of a real client's site uses their name, so title the artifact as a concept ("EVM Group homepage concept"), never as the official site, and keep it private (artifacts are private by default). If the Artifact tool refuses, deliver the files and screenshots and do not look for another host.
+
+**The handover message** is the last thing, and it contains: the artifact link first; three lines on what you built and the main design idea; what Impeccable and the checklist found and what you fixed; anything you assumed, any placeholder, and anything not verified (for example not tested on a real phone); the spend if images or video were generated. Then stop and wait for the owner's changes. Do not end with questions such as "should I run Impeccable?" or "should I publish?": those are already done.
+
+**Iteration:** when the owner asks for changes, make them, rerun steps 2 to 5 on what changed, republish to the same url, and give the new handover.
+
+## 11. Reference fidelity protocol (for recreate, and whenever the owner loves a reference)
+
+The owner's best results used to come from giving a reference (screenshots, a screen recording, a homepage) and having it matched closely. When the owner says they love a reference's design language, animation or smoothness, the reference decides the design. Treat it as **high-fidelity** even if the word "inspiration" is used: match first, then put the client's content into it. Improvements come second and only where the reference is weak (speed, accessibility, SEO). Never replace the reference's choices with the house look, the case studies, `fingerprints.md` or Impeccable's taste.
+
+**Why this section exists (evidence):** the EVM Group homepage (reference: esrbespoke.au) took the reference's parts but not its character. The reference is sparse, black and white only, one idea per section, real cinematic footage. The build used a dark two-column "list left, image right" layout twice more, added giant red years and red accents the reference does not have, and used generated stills in one moody dusk look. Its own log says it read the reference's motion from a small contact sheet and never compared the navigation up close, and Impeccable's critique then pushed it further from the reference.
+
+**Steps**
+1. **Capture the reference at full quality**, not as a thumbnail: `scripts/capture-site.mjs <reference url> --out captures/<ref> --video`. Look at each strip at full size. For the first screen and any intro, extract frames at full resolution (`ffmpeg -i scroll.webm -vf fps=5 frames/f%03d.png`) and look at them one by one, in order, until you can describe every change. Contact sheets are for orientation only.
+2. **Read the reference's own code** when you can fetch it (stylesheets, the animation script): record real values (type sizes and weights, easings, durations, scroll triggers, colour hex values), as `more-nutrition/ANIMATION-STUDY.md` did. Measured values beat estimates.
+3. **Write the section map:** one row per section of the reference with its composition (what dominates, layout, type size and weight, colours, spacing, motion) and the matching row for the build. The build has the same number of distinct compositions as the reference. No two neighbouring sections use the same layout, and no layout is used three times.
+4. **Source material must be of the same kind.** If the reference depends on real cinematography or photography, use real footage or photographs (the client's own, or licensed stock) for the hero and key sections, or ask once for them. Do not fill a page with many generated stills in one grade. If you generate images, use varied compositions and lighting and the client's own photos as references.
+5. **Build to match**, then **compare**: capture the build with the same tool and run `python3 .claude/skills/design-craft/scripts/compare-sheets.py captures/<ref> captures/<build> captures/<build>/compare.png`. Look at `compare.png` and `compare-first.png`. For each section write one line: same composition, type scale, spacing, colour balance and motion as its reference counterpart, yes or no. Fix every "no" and compare again. Do at least two comparison rounds before delivering; the first round almost never matches.
+6. **Impeccable and the checklist** run after the comparison and only fix defects (section 5 precedence). If a fix would move the build away from the reference, do not apply it.
+7. **State in the handover** which parts match the reference, which parts deliberately differ and why, and what could not be matched (for example motion that needs the client's footage).
+
+**The rule of thumb:** if the owner had to say "this does not look like the reference", the comparison step was skipped or too forgiving.
