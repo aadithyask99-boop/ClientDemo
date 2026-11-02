@@ -5,7 +5,10 @@
 // jobs.json: an array. Image: { "type":"image", "name":"hero-a", "prompt":"...", "refs":["a.png"], "aspect":"3:4" }
 //            Video: { "type":"video", "name":"intro", "prompt":"...", "first":"a.jpg", "last":"b.jpg", "duration":6, "resolution":"720p", "aspect":"16:9", "audio":false }
 //
-// Key: OPENROUTER_API_KEY from the environment, else from a git-ignored .env at the repo root. Never paste it into chat.
+// Key, either way (never paste it into chat):
+//   1. OPENROUTER_API_KEY in the environment, or in a git-ignored .env at the repo root; or
+//   2. a network secret for openrouter.ai in the cloud environment settings (Authorization: Bearer). The sandbox never sees that
+//      key; the network layer adds the header, so with no key found this tool sends its requests without an Authorization header.
 // Defaults (change by env or .env): IMAGE_MODEL=bytedance-seed/seedream-5-0-flash, VIDEO_MODEL=bytedance/seedance-1-5-pro, BUDGET_USD=2.
 // Jobs run one at a time and stop as soon as the run's spend reaches the budget, so the most it can overshoot is one job.
 // --dry prints the plan and touches nothing. Every call is appended to spend-ledger.jsonl (no secrets) next to the skill.
@@ -37,12 +40,10 @@ const jobs = JSON.parse(readFileSync(jobsFile, 'utf8'));
 console.log(`Plan: ${jobs.length} job(s), image model ${IMAGE_MODEL}, video model ${VIDEO_MODEL}, budget $${BUDGET}, out ${OUT}`);
 for (const j of jobs) console.log(`  - ${j.type || 'image'} ${j.name}`);
 if (dry) { console.log('Dry run: nothing sent.'); process.exit(0); }
-if (!KEY) {
-  console.error('OPENROUTER_API_KEY is missing. Add it as an environment variable in the cloud environment settings, or in a git-ignored .env at the repo root. Do not paste it into chat.');
-  process.exit(1);
-}
+if (!KEY) console.log('No OPENROUTER_API_KEY found: sending requests without an Authorization header and relying on a network secret for openrouter.ai. A 401 below means that secret is not set up for this session.');
 
-const H = { Authorization: `Bearer ${KEY}`, 'Content-Type': 'application/json' };
+const H = { ...(KEY ? { Authorization: `Bearer ${KEY}` } : {}), 'Content-Type': 'application/json' };
+const authFail = (r) => { if (r.status === 401 || r.status === 403) throw new Error(`HTTP ${r.status}: OpenRouter did not accept the request. Check the key or network secret for openrouter.ai in the cloud environment settings (new chats pick it up; this one may predate it).`); };
 const dataUri = (p) => `data:image/${/\.png$/i.test(p) ? 'png' : 'jpeg'};base64,${readFileSync(p).toString('base64')}`;
 const log = (type, model, name, cost) => appendFileSync(ledger, JSON.stringify({ date: new Date().toISOString().slice(0, 10), type, model, name, cost }) + '\n');
 
@@ -51,6 +52,7 @@ async function image(j) {
   const body = { model: IMAGE_MODEL, modalities: ['image'], messages: [{ role: 'user', content }] };
   if (j.aspect) body.image_config = { aspect_ratio: j.aspect };
   const r = await fetch('https://openrouter.ai/api/v1/chat/completions', { method: 'POST', headers: H, body: JSON.stringify(body) });
+  authFail(r);
   const d = await r.json();
   const url = d.choices?.[0]?.message?.images?.[0]?.image_url?.url;
   if (!url) throw new Error(JSON.stringify(d.error || d).slice(0, 300));
@@ -69,6 +71,7 @@ async function video(j) {
   if (j.last) frames.push({ type: 'image_url', image_url: { url: dataUri(j.last) }, frame_type: 'last_frame' });
   const body = { model: VIDEO_MODEL, prompt: j.prompt, resolution: j.resolution || '720p', duration: j.duration || 6, ...(typeof j.audio === 'boolean' ? { generate_audio: j.audio } : {}), ...(j.aspect ? { aspect_ratio: j.aspect } : {}), ...(frames.length ? { frame_images: frames } : {}) };
   const r = await fetch('https://openrouter.ai/api/v1/videos', { method: 'POST', headers: H, body: JSON.stringify(body) });
+  authFail(r);
   const s = await r.json();
   if (!r.ok || !s.polling_url) throw new Error(JSON.stringify(s).slice(0, 300));
   for (let i = 0; i < 90; i++) {
@@ -77,7 +80,7 @@ async function video(j) {
     if (p.status === 'failed') throw new Error(JSON.stringify(p).slice(0, 300));
     if (p.status === 'completed') {
       const url = (p.unsigned_urls || p.urls || [])[0];
-      const v = await fetch(url, { headers: { Authorization: `Bearer ${KEY}` } });
+      const v = await fetch(url, { headers: KEY ? { Authorization: `Bearer ${KEY}` } : {} });
       const file = resolve(OUT, `${j.name}.mp4`);
       mkdirSync(dirname(file), { recursive: true });
       writeFileSync(file, Buffer.from(await v.arrayBuffer()));
