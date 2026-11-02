@@ -1,0 +1,86 @@
+[
+ {
+  "type": "image",
+  "name": "brand-vw",
+  "prompt": "Red Volkswagen Polo, front three-quarter view. Re-photograph this exact car as a sharp cinematic automotive photograph, wide landscape composition, dark moody dusk, wet road reflecting lights, soft rim light on the bodywork, deep black shadows, premium magazine quality, no text, no people, no extra badges. Keep the same model, colour, wheels and design details.",
+  "refs": [
+   "evm/raw/brand/vZ-cjZzz9Jv9b71sSYerLXCnlbilRVRf.jpg"
+  ],
+  "aspect": "4:3"
+ },
+ {
+  "type": "image",
+  "name": "brand-skoda",
+  "prompt": "Orange Skoda Karoq SUV, front three-quarter view. Re-photograph this exact car as a sharp cinematic automotive photograph, wide landscape composition, dark moody dusk, wet road reflecting lights, soft rim light on the bodywork, deep black shadows, premium magazine quality, no text, no people, no extra badges. Keep the same model, colour, wheels and design details.",
+  "refs": [
+   "evm/raw/brand/F9Md5zkQyUvepfXjVxre3fybu6U3jPw6.jpg"
+  ],
+  "aspect": "4:3"
+ },
+ {
+  "type": "image",
+  "name": "brand-nissan",
+  "prompt": "Silver Nissan Sunny sedan, front three-quarter view. Re-photograph this exact car as a sharp cinematic automotive photograph, wide landscape composition, dark moody dusk, wet road reflecting lights, soft rim light on the bodywork, deep black shadows, premium magazine quality, no text, no people, no extra badges. Keep the same model, colour, wheels and design details.",
+  "refs": [
+   "evm/raw/brand/jJRWgvjUu7znWNE0qKzUs5r4Hgg37Rwz.jpg"
+  ],
+  "aspect": "4:3"
+ },
+ {
+  "type": "image",
+  "name": "brand-isuzu",
+  "prompt": "Dark grey Isuzu D-Max pickup, front three-quarter view. Re-photograph this exact car as a sharp cinematic automotive photograph, wide landscape composition, dark moody dusk, wet road reflecting lights, soft rim light on the bodywork, deep black shadows, premium magazine quality, no text, no people, no extra badges. Keep the same model, colour, wheels and design details.",
+  "refs": [
+   "evm/raw/brand/HV06yOolb91iDx-kA7B85Jt-r79oUG3Z.jpg"
+  ],
+  "aspect": "4:3"
+ },
+ {
+  "type": "image",
+  "name": "brand-motorrad",
+  "prompt": "White BMW Motorrad motorcycle with blue and red stripes, side view. Re-photograph this exact car as a sharp cinematic automotive photograph, wide landscape composition, dark moody dusk, wet road reflecting lights, soft rim light on the bodywork, deep black shadows, premium magazine quality, no text, no people, no extra badges. Keep the same model, colour, wheels and design details.",
+  "refs": [
+   "evm/raw/brand/eD3qb9klV08iITGotaq6hzJuiH_XdEgo.jpg"
+  ],
+  "aspect": "4:3"
+ },
+ {
+  "type": "image",
+  "name": "brand-indian",
+  "prompt": "Dark red Indian Scout motorcycle, side three-quarter view. Re-photograph this exact car as a sharp cinematic automotive photograph, wide landscape composition, dark moody dusk, wet road reflecting lights, soft rim light on the bodywork, deep black shadows, premium magazine quality, no text, no people, no extra badges. Keep the same model, colour, wheels and design details.",
+  "refs": [
+   "evm/raw/brand/eMgtTqAviv7jt75sU9gE-ceWoTa1yJ9G.jpg"
+  ],
+  "aspect": "4:3"
+ },
+ {
+  "type": "image",
+  "name": "sector-hotel",
+  "prompt": "A boutique resort hotel and infinity pool in Kerala at blue hour, palm trees, warm lit windows. Cinematic photograph, moody blue hour light, rich detail, premium editorial quality, no text, no people, no logos.",
+  "aspect": "3:2"
+ },
+ {
+  "type": "image",
+  "name": "sector-plantation",
+  "prompt": "Rolling tea plantation hills near Munnar, Kerala at sunrise with low mist. Cinematic photograph, moody blue hour light, rich detail, premium editorial quality, no text, no people, no logos.",
+  "aspect": "3:2"
+ },
+ {
+  "type": "image",
+  "name": "sector-transport",
+  "prompt": "A modern freight truck driving on a highway at dusk with warm headlights. Cinematic photograph, moody blue hour light, rich detail, premium editorial quality, no text, no people, no logos.",
+  "aspect": "3:2"
+ },
+ {
+  "type": "image",
+  "name": "sector-cinema",
+  "prompt": "An empty cinema auditorium with rows of red seats lit by soft aisle lights. Cinematic photograph, moody blue hour light, rich detail, premium editorial quality, no text, no people, no logos.",
+  "aspect": "3:2"
+ },
+ {
+  "type": "image",
+  "name": "sector-auto",
+  "prompt": "A dark premium car showroom at night with three sports cars under strip lighting. Cinematic photograph, moody blue hour light, rich detail, premium editorial quality, no text, no people, no logos.",
+  "aspect": "3:2"
+ }
+]

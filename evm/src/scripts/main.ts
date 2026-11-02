@@ -17,6 +17,7 @@ const syncTheme = () => {
   const y = 40;
   const hit = themeEls.find((e) => { const r = e.getBoundingClientRect(); return r.top <= y && r.bottom > y; });
   header.dataset.theme = hit?.dataset.theme ?? 'dark';
+  header.classList.toggle('is-scrolled', scrollY > 120);
 };
 
 // Menu overlay with a photo that follows the hovered link.
@@ -85,6 +86,20 @@ if (!reduce) {
   gsap.ticker.lagSmoothing(0);
   doc.classList.add('lenis');
 
+  // Intro: the wordmark assembles from slices with a short glitch, then lifts away; the headline types in.
+  const intro = $('.intro');
+  const slices = $$('.intro__mark img');
+  lenis.stop();
+  const ready = () => doc.classList.add('ready');
+  const tl = gsap.timeline({ delay: 0.15 });
+  slices.forEach((img, i) =>
+    tl.fromTo(img, { x: () => gsap.utils.random(-160, 160), opacity: 0 }, { x: 0, opacity: 1, duration: 0.75, ease: 'power4.out' }, i * 0.07));
+  tl.to(slices, { x: (i: number) => (i % 2 ? 1 : -1) * gsap.utils.random(10, 34), duration: 0.09, yoyo: true, repeat: 3, ease: 'none' }, '>-0.1');
+  tl.to(slices, { x: 0, duration: 0.08 });
+  tl.to(intro, { clipPath: 'inset(0 0 100% 0)', duration: 1.1, ease: 'power4.inOut' }, '+=0.3');
+  tl.add(ready, '<0.45');
+  tl.add(() => { intro.classList.add('is-done'); lenis!.start(); });
+
   document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) => {
     a.addEventListener('click', (e) => {
       const id = a.getAttribute('href')!;
@@ -134,6 +149,7 @@ if (!reduce) {
     scrollTrigger: { trigger: '.statement__text', start: 'top 78%', end: 'bottom 45%', scrub: true },
   });
 } else {
+  doc.classList.add('ready');
   addEventListener('scroll', syncTheme, { passive: true });
 }
 syncTheme();

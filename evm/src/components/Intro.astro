@@ -1,0 +1,9 @@
+---
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const slices = [0, 1, 2, 3, 4, 5];
+---
+<div class="intro" aria-hidden="true">
+  <div class="intro__mark">
+    {slices.map((i) => <img src={`${base}/evm-logo.svg`} alt="" style={`--i:${i};clip-path:inset(${i * 16.7}% 0 ${100 - (i + 1) * 16.7}% 0)`} />)}
+  </div>
+</div>

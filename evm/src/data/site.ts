@@ -5,6 +5,7 @@ export const site = {
   description:
     'EVM Group has built automobile dealerships, hotels, plantations, transport and cinemas across Kerala since 1952. Future is our business.',
   lang: 'en-IN',
+  tagline: 'Automotive and hospitality group',
   nav: [
     { label: 'Home', href: '#top', img: 'hero-poster.webp' },
     { label: 'About', href: '#statement', img: 'sector-plantation.webp' },
@@ -15,7 +16,7 @@ export const site = {
   ],
   hero: {
     lines: ['Future is', 'our Business'],
-    sub: 'Automobile, hospitality, plantations, transport and cinemas across Kerala since 1952.',
+    sub: 'Seven decades of dealerships, hotels, plantations, transport and cinemas across Kerala.',
     filmAlt: 'A white Porsche 911 cabriolet parked outside a villa',
   },
   statement:
@@ -27,12 +28,12 @@ export const site = {
       { name: 'Porsche', note: 'Porsche Centre Kochi, Kerala\'s sole Porsche dealer', img: 'panel-porsche.webp', alt: 'A red Porsche 911 GT3 on a wet road at dusk', pos: '50% 62%' },
       { name: 'BMW', note: 'Cochin, Trivandrum and a host of service facilities', img: 'panel-bmw.webp', alt: 'A white BMW M car with blue and red stripes at dusk', pos: '45% 58%' },
       { name: 'MINI', note: 'EVM Autokraft, the MINI dealership for Kerala', img: 'panel-mini.webp', alt: 'A teal MINI Convertible on a wet road at dusk', pos: '50% 62%' },
-      { name: 'Volkswagen', note: 'The first Volkswagen dealership of the family, set up in 2008', img: 'brand-vw.webp', alt: 'A red Volkswagen Polo on a hill road', pos: '55% 50%' },
-      { name: 'Skoda', note: 'EVM Skoda, with a 25 bay workshop in Muttom, Cochin', img: 'brand-skoda.webp', alt: 'An orange Skoda SUV in front of lava rock', pos: '52% 50%' },
-      { name: 'Nissan', note: 'Five full dealerships across north and central Kerala', img: 'brand-nissan.webp', alt: 'A silver Nissan sedan on a curved road', pos: '38% 50%' },
-      { name: 'Isuzu', note: 'Trivandrum and Pathanamthitta districts', img: 'brand-isuzu.webp', alt: 'A dark Isuzu pickup in a desert landscape', pos: '85% 50%' },
-      { name: 'BMW Motorrad', note: 'Motorcycles from the flagship EVM two wheeler dealerships', img: 'brand-motorrad.webp', alt: 'A BMW motorcycle in front of a bridge', pos: '62% 50%' },
-      { name: 'Indian Motorcycle', note: 'A brand that defines prestige and legacy', img: 'brand-indian.webp', alt: 'A dark red Indian motorcycle in a studio', pos: '78% 50%' },
+      { name: 'Volkswagen', note: 'The first Volkswagen dealership of the family, set up in 2008', img: 'brand-vw.webp', alt: 'A red Volkswagen Polo on a wet road at dusk', pos: '50% 58%' },
+      { name: 'Skoda', note: 'EVM Skoda, with a 25 bay workshop in Muttom, Cochin', img: 'brand-skoda.webp', alt: 'An orange Skoda SUV on a wet road at dusk', pos: '50% 58%' },
+      { name: 'Nissan', note: 'Five full dealerships across north and central Kerala', img: 'brand-nissan.webp', alt: 'A silver Nissan sedan on a wet road at dusk', pos: '50% 58%' },
+      { name: 'Isuzu', note: 'Trivandrum and Pathanamthitta districts', img: 'brand-isuzu.webp', alt: 'A dark grey Isuzu pickup on a wet road at dusk', pos: '50% 58%' },
+      { name: 'BMW Motorrad', note: 'Motorcycles from the flagship EVM two wheeler dealerships', img: 'brand-motorrad.webp', alt: 'A white BMW motorcycle on a wet road at dusk', pos: '50% 58%' },
+      { name: 'Indian Motorcycle', note: 'A brand that defines prestige and legacy', img: 'brand-indian.webp', alt: 'A dark red Indian motorcycle on a wet road at dusk', pos: '50% 58%' },
     ],
   },
   story: {
@@ -54,20 +55,20 @@ export const site = {
   sectors: {
     title: 'Beyond the showroom',
     items: [
-      { name: 'Automobile', text: 'Cars and motorcycles across Kerala, from Porsche and BMW to Nissan and Honda.', img: 'sector-porsche.webp', alt: 'A blue Porsche 911 by the sea' },
-      { name: 'Hotels and resorts', text: 'From Hotel Matha at Kothamangalam to Hill View in Munnar.', img: 'sector-hotel.webp', alt: 'A resort pool with umbrellas and palm trees' },
-      { name: 'Plantation', text: 'Hill produce and lemongrass from the high ranges, with tea trade since the 1970s.', img: 'sector-plantation.webp', alt: 'Tea plantation hills at sunrise' },
-      { name: 'Transportation', text: 'Buses, freight and the C and F agency for Tata Tea, plus EVM Wheels self drive cars.', img: 'sector-transport.webp', alt: 'A freight truck on the road at sunset' },
+      { name: 'Automobile', text: 'Cars and motorcycles across Kerala, from Porsche and BMW to Nissan and Honda.', img: 'sector-auto.webp', alt: 'Three sports cars in a dark showroom' },
+      { name: 'Hotels and resorts', text: 'From Hotel Matha at Kothamangalam to Hill View in Munnar.', img: 'sector-hotel.webp', alt: 'A resort hotel and pool at blue hour' },
+      { name: 'Plantation', text: 'Hill produce and lemongrass from the high ranges, with tea trade since the 1970s.', img: 'sector-plantation.webp', alt: 'Tea plantation hills at sunrise with mist' },
+      { name: 'Transportation', text: 'Buses, freight and the C and F agency for Tata Tea, plus EVM Wheels self drive cars.', img: 'sector-transport.webp', alt: 'A freight truck on a highway at dusk' },
       { name: 'Entertainment', text: 'EVM Cinemas, from the Jawahar theatre in 1985 to Kavitha in Kochi.', img: 'sector-cinema.webp', alt: 'Red cinema seats' },
     ],
   },
   people: {
     title: 'The family behind it',
     items: [
-      { name: 'E.V. Mathai', role: 'Founder' },
-      { name: 'E.M. Johny', role: 'Chairman' },
-      { name: 'Sabu Johny', role: 'Managing Director' },
-      { name: 'Divya Paul', role: 'Director' },
+      { name: 'E.V. Mathai', role: 'Founder', av: 0 },
+      { name: 'E.M. Johny', role: 'Chairman', av: 1 },
+      { name: 'Sabu Johny', role: 'Managing Director', av: 2 },
+      { name: 'Divya Paul', role: 'Director', av: 3 },
     ],
     awardsTitle: 'Recognition',
     awards: [
@@ -84,6 +85,6 @@ export const site = {
   ],
   footer: {
     businesses: ['Plantation', 'Transportation', 'Entertainment', 'Hotels and resorts', 'EVM Wheels self drive'],
-    note: 'Demo concept for EVM Group. Figures and recognition are taken from the current website and need client confirmation.',
+    note: 'Demo concept for EVM Group. Figures and recognition come from the current website and need client confirmation. Portraits are placeholder illustrations. Car and sector images are generated for this concept.',
   },
 };
