@@ -80,3 +80,12 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - **Mistakes and real causes:** the previous version added red years, a list-left image-right layout three times and scrubbed words because I followed Impeccable's "add colour and imagery" critique and the house case studies instead of the reference; and I had read the reference from thumbnails. The cure is the order: frames, measured values, section map, build, compare, then defects only.
 - **Could not match:** the hero film (ESR uses wide cinematic shots; free stock gives close-ups of Porsche details and night traffic), the geometric ESR wordmark (the EVM mark is a serif italic), and the uppercase labels (owner's rule).
 - **Lesson (promote if repeated):** when a reference is loved, extract its section list and measured sizes first and make Impeccable the last step, defects only.
+
+### 2026-11-02  Overcorrection: copied the reference and dropped the client's content (EVM Group again)
+- Owner's words: it "just replicated everything" and "did not try to use logic to add content from the other client website"; it "removed some bits"; what it should do is understand the reference, replicate it, then come up with new solutions or designs for the leftover content in the same design language. It "did a decent job, but it wasn't perfect".
+- Evidence: the latest build, rebuilt "to the ESR section map", has Intro, Hero, Statement, Marques, History, Footer. Sectors, Directors and Testimonials from the earlier version are gone, although the Sectors data is still in the data file.
+- Cause: my section 11 told it to match the reference's section map, keep the same number of distinct compositions and add no devices the reference lacks. It had no content inventory and no step for content without a counterpart, so it dropped what did not fit.
+- Fix: section 11 rewritten as two jobs (replicate the design system and signature moments; solve the client's content in that language), with a design-system step, a content inventory, a mapping step with new sections derived from the reference's vocabulary, and a comparison that checks both fidelity and content completeness. Checklist item 16 added.
+- Lesson: fidelity rules need a counterweight that protects the client's content; "match the reference" must mean match its language, not its section list. I swung from too different to too literal; check both sides of a rule.
+- Promote to: SKILL.md section 11 (done), checklist 16 (done).
+
