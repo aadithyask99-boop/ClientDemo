@@ -81,4 +81,3 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - Fix: section 11 rewritten shorter as four rules (copy the language; curate, do not paste, with size limits; design the leftover content in the same language; compare); the comparison tool now prints length, word and section ratios and warns; checklist item 16 now means curated, not pasted; other pages are for understanding only.
 - Lesson: I swung between two extremes by adding rules each time. A rule that protects the client's content needs a rule that limits it, and a fidelity rule needs a measurement. Prefer a short principle with a number that can be checked.
 - Promote to: SKILL.md section 11 (done), checklist 16 (done).
-\n
