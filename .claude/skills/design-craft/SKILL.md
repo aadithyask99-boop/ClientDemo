@@ -73,7 +73,13 @@ This skill is the single entry point. Impeccable (https://github.com/pbakaus/imp
 
 **How it starts:** it loads automatically when the owner describes design work ("rebuild the Orra hero like this video", "restyle the footer"), or on demand with `/design-craft`. Impeccable has its own `/impeccable` commands; use them only as the steps below say.
 
-**Is Impeccable installed?** Check with `test -d .claude/skills/impeccable`. If it is not installed, do every step except the Impeccable ones and say so in one line. Do not install it without the owner's approval (its installer can add hooks, and it sends anonymous telemetry unless turned off with `npx impeccable telemetry off`).
+**Is Impeccable installed?** It is installed at project scope in `.claude/skills/impeccable/` (engine v0.1.18). Check with `test -d .claude/skills/impeccable`; if the folder is missing, do every step except the Impeccable ones and say so in one line.
+
+- The engine binary is not stored in git (it is about 22 MB and platform specific). The launcher `.claude/skills/impeccable/scripts/impeccable` downloads the right one on first use and verifies it against `engine-checksums.txt`. If a session has no network access to download it, say so and review by hand.
+- Telemetry is off for this repo (`.impeccable/config.json`). Do not turn it on.
+- Its auto-run hooks (a check after every edit and a deep pass on stop) were installed locally in `.claude/settings.local.json`, which is git-ignored. They are not part of the shared setup. Run the checks yourself at step 5 instead.
+- Quick check: `.claude/skills/impeccable/scripts/impeccable detect <site>/src`. Without a built page this only runs regex rules, so it undercounts; for the full check scan a built `.html` or the dev server.
+- Recorded ignores (deliberate, approved choices) live in `.impeccable/config.json`. Currently: Garden's Fraunces font.
 
 | Step | Who | What |
 | --- | --- | --- |

@@ -1,0 +1,15 @@
+{
+  "telemetry": false,
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "fraunces",
+        "createdAt": "2026-11-02T15:15:40.458Z",
+        "reason": "Approved: Garden's embroidered italic serif is its identity (see design-craft references/garden.md)"
+      }
+    ]
+  }
+}
