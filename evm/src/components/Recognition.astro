@@ -2,13 +2,9 @@
 import { site } from '../data/site';
 const r = site.recognition;
 ---
-<section class="recognition" id="recognition" data-theme="light">
+<section class="recognition" aria-label="Recognition" id="recognition" data-theme="light">
   <p class="label">{r.label}</p>
   <ul class="table">
     {r.items.map((it) => <li><span class="table__a">{it.name}</span><span class="table__b">{it.text}</span></li>)}
-  </ul>
-  <p class="label recognition__sub">{r.peopleLabel}</p>
-  <ul class="table table--people">
-    {r.people.map((p) => <li><span class="table__a">{p.name}</span><span class="table__b">{p.role}</span></li>)}
   </ul>
 </section>

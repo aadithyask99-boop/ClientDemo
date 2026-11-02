@@ -1,22 +1,22 @@
 # EVM Group homepage (concept)
 
-Homepage only. Astro 7, plain CSS, GSAP and Lenis. Content lives in `src/data/site.ts`.
+Homepage only. Astro 7, plain CSS, GSAP and Lenis. All content lives in `src/data/site.ts`.
 
 ## Direction
-Reference: https://www.esrbespoke.au/ (cinematic intro, fast-cut film, plain-text navigation, scroll-driven marque list). Secondary reference: https://forgeautomotive.co.uk/ (interactivity only). Mode: inspiration. Built to the section map in `.claude/skills/design-craft/references/clients/evm-group-section-map.md`. Palette: black, white and pale grey only (no red; the EVM mark is shown in one colour). Font: Hanken Grotesk.
+Reference: esrbespoke.au. Job A: its design system and signature moments (intro, typed headline, black and white, three-column grid, statement, full-bleed photograph, marques roller with a sticky tile, numbered rows, footer wordmark). Job B: all of EVM's content, designed as new sections in the same type, grid, colours and motion. The design system, content inventory and section map are in `.claude/skills/design-craft/references/clients/evm-group-section-map.md`.
+Font: Hanken Grotesk. Colours: black, white, greys. No red anywhere. Labels are sentence case (owner's rule), the reference uses small uppercase.
 
-## Placeholder content (needs the client)
-- Copy, dates, recognition and the three customer quotes come from the current site and need confirming. "68 years" and "12 lakh customers" are left out on purpose.
-- Directors are listed by name and role only; no portraits (the old ones were too low resolution).
-- The three customer quotes were dropped: the reference has no testimonials. They remain in the old site copy if the client wants them back.
-- Porsche, BMW, MINI, Volkswagen, Skoda, Nissan, Isuzu, BMW Motorrad and Indian scenes, all five sector images and the showroom photo break are generated for this concept (the cars from the client's press photos). Replace with real photography.
-- The hero film is cut from free Coverr stock clips (free for commercial use, no attribution required).
-- The EVM mark is redrawn as SVG (`public/evm-mark.svg`, one colour) in a Times-style bold italic. Check it against the original. Showing it in one colour instead of the client's red follows the reference; say if the client wants the red back.
-- Labels are sentence case, not uppercase, by the owner's rule (the reference uses small uppercase).
-- Contact details are not in the source site copy; the footer has none yet.
-
-## Links that lead to pages not built yet
-Brand and sector rows link to these routes (they 404 until built): `/marques/{porsche,bmw,mini,volkswagen,skoda,nissan,isuzu,bmw-motorrad,indian-motorcycle}` and `/sectors/{automobile,hotels,plantation,transportation,entertainment}`. The Contact button and the footer anchor scroll in page.
+## Content source and what needs the client
+- Copy comes from evmgroup.co.in (pages, its public data endpoints, and the contact blocks in its script bundle). Typos are fixed.
+- Figures "68 years" and "12 lakh customers" are the old site's 2020 numbers. Update them.
+- The Chairman's message says the group was established in 1957; the history says 1952. The client should choose.
+- Both messages are excerpts: the old site only shows the opening paragraphs behind "Read more".
+- Portraits for directors and top management are placeholders (initials in a tile). Real portraits needed.
+- The Datsun caption is only its name: the old site has no text for it. EUROREPAR, a sector with no content, is left out.
+- Contact and careers forms are a front-end demo. They send nothing. Connect them to the client's mail endpoint.
+- Car, motorcycle, truck, hotel, plantation, cinema and showroom images are generated for this concept (cars from the client's own press photos as references). Replace with real photography.
+- The hero film is cut from free Coverr stock clips (free for commercial use, no attribution).
+- The EVM mark is redrawn as SVG (`public/evm-mark.svg`) in one colour, in a Times-style bold italic. Check it against the original.
 
 ## Run
 `npm install`, `npm run dev`. Demo deploy: `node scripts/stage.mjs` (serves under `/evm`; not yet added to the root `wrangler.jsonc` or `demo-index`).

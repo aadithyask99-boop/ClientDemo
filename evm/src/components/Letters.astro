@@ -1,0 +1,15 @@
+---
+import { site } from '../data/site';
+const l = site.letters;
+---
+<section class="letters" id="messages" data-theme="light">
+  <p class="label">{l.label}</p>
+  {l.items.map((it) => (
+    <article class="letter">
+      <p class="label letter__who">{it.who}<br />{it.role}</p>
+      <h2 class="letter__lead">{it.lead}</h2>
+      <div class="letter__body">{it.body.map((p) => <p>{p}</p>)}</div>
+    </article>
+  ))}
+  <p class="label label--mute letters__note">{l.note}</p>
+</section>

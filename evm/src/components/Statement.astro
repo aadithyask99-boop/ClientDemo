@@ -2,7 +2,13 @@
 import { site } from '../data/site';
 const s = site.statement;
 ---
-<section class="statement" id="statement" data-theme="light">
+<section class="statement" aria-label="About EVM Group" id="statement" data-theme="light">
   <p class="label">{s.label}</p>
   <p class="big">{s.text}</p>
+  <div class="numbers">
+    {s.numbers.map((n) => (
+      <div class="numbers__item"><p class="numbers__n">{n.n}</p><p class="label">{n.t}</p></div>
+    ))}
+    <p class="label label--mute numbers__note">{s.numbersNote}</p>
+  </div>
 </section>

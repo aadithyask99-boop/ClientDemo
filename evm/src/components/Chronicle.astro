@@ -1,0 +1,18 @@
+---
+import { site } from '../data/site';
+const h = site.history;
+const decade = (y: string) => `${y.slice(0, 3)}0s`;
+---
+<section class="chronicle" aria-label="Our history" id="history" data-theme="dark">
+  <p class="label chronicle__label">{h.label}</p>
+  <p class="label chronicle__caption">{h.caption}</p>
+  <div class="chronicle__decade" aria-hidden="true"><span>{decade(h.items[0].y)}</span></div>
+  <ol class="chronicle__rows">
+    {h.items.map((it) => (
+      <li class="chronicle__row" data-decade={decade(it.y)}>
+        <span class="chronicle__y">{it.y}</span>
+        <span class="chronicle__t">{it.t}</span>
+      </li>
+    ))}
+  </ol>
+</section>

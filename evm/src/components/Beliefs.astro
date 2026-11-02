@@ -1,0 +1,14 @@
+---
+import { site } from '../data/site';
+const b = site.beliefs;
+---
+<section class="beliefs" aria-label="Mission and vision" id="beliefs" data-theme="light">
+  <div class="beliefs__block">
+    <p class="label">{b.missionLabel}</p>
+    <p class="big">{b.mission}</p>
+  </div>
+  <div class="beliefs__block">
+    <p class="label">{b.visionLabel}</p>
+    <ul class="big beliefs__vision">{b.vision.map((v) => <li>{v}</li>)}</ul>
+  </div>
+</section>

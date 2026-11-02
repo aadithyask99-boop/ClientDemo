@@ -1,0 +1,18 @@
+---
+import { site } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const s = site.sectors;
+---
+<section class="sectors" aria-label="Our sectors" id="sectors" data-theme="dark">
+  <p class="label">{s.label}</p>
+  <p class="big">{s.text}</p>
+  <ol class="rows">
+    {s.items.map((it, i) => (
+      <li class="rows__item" tabindex="0">
+        <span class="rows__n">{String(i + 1).padStart(2, '0')}</span>
+        <span class="rows__body"><span class="rows__name">{it.name}</span><span class="rows__text">{it.text}</span></span>
+        <img class="rows__tile" src={`${base}/img/${it.img}`} alt={it.alt} loading="lazy" />
+      </li>
+    ))}
+  </ol>
+</section>

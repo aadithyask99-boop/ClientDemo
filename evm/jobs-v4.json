@@ -1,0 +1,35 @@
+[
+ {
+  "type": "image",
+  "name": "brand-datsun",
+  "prompt": "Blue Datsun Go Plus compact MPV, front three-quarter view. Re-photograph this exact vehicle as a sharp cinematic automotive photograph, wide landscape composition, dark moody dusk, wet road reflecting lights, soft rim light on the bodywork, deep black shadows, premium magazine quality, no text, no people, no extra badges. Keep the same model, colour, wheels and design details.",
+  "refs": [
+   "evm/raw/brandlogo/evm-datsun.jpg"
+  ],
+  "aspect": "4:3"
+ },
+ {
+  "type": "image",
+  "name": "brand-honda",
+  "prompt": "Dark grey Honda retro roadster motorcycle, side three-quarter view. Re-photograph this exact vehicle as a sharp cinematic automotive photograph, wide landscape composition, dark moody dusk, wet road reflecting lights, soft rim light on the bodywork, deep black shadows, premium magazine quality, no text, no people, no extra badges. Keep the same model, colour, wheels and design details.",
+  "refs": [
+   "evm/raw/brandlogo/evm-honda.jpg"
+  ],
+  "aspect": "4:3"
+ },
+ {
+  "type": "image",
+  "name": "brand-ashok",
+  "prompt": "Red Ashok Leyland container truck, front three-quarter view. Re-photograph this exact vehicle as a sharp cinematic automotive photograph, wide landscape composition, dark moody dusk, wet road reflecting lights, soft rim light on the bodywork, deep black shadows, premium magazine quality, no text, no people, no extra badges. Keep the same model, colour, wheels and design details.",
+  "refs": [
+   "evm/raw/brandlogo/evm-ashok-leyland.jpg"
+  ],
+  "aspect": "4:3"
+ },
+ {
+  "type": "image",
+  "name": "brand-mg",
+  "prompt": "Red MG Hector SUV, front three-quarter view, wet road at dusk, dark moody, premium magazine quality, no text, no people, no extra badges.",
+  "aspect": "4:3"
+ }
+]
