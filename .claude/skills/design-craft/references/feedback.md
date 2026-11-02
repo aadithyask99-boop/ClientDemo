@@ -72,3 +72,12 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - Lesson: fidelity rules need a counterweight that protects the client's content; "match the reference" must mean match its language, not its section list. I swung from too different to too literal; check both sides of a rule.
 - Promote to: SKILL.md section 11 (done), checklist 16 (done).
 
+
+
+### 2026-11-02  Third swing: pasted the whole About page onto the homepage (EVM Group)
+- Owner's words: it "took literally all the content ... and just pasted it there without thinking and making it better, removing unnecessary stuff"; "looks cluttered and looks so bad"; instead of becoming easier it became complicated. Also: the home and About pages were crawled "for the AI to understand more of the website", not to add everything from About onto the homepage.
+- Evidence: the latest build has 13 sections, 2,023 words (reference 319, 6.3x), 12 sections measured against 7, and a page 2.9x the reference's length, including the mission, vision, chairman's letters, a decade-by-decade timeline and a list of every director.
+- Cause: the instruction I gave the chat ("put ALL of EVM's content back", plus "nothing that matters is dropped") and my skill's inventory step. I fixed the dropped-content failure and created a pasting failure; nothing said to curate, nothing said that other pages are only for understanding, and nothing measured size against the reference.
+- Fix: section 11 rewritten shorter as four rules (copy the language; curate, do not paste, with size limits; design the leftover content in the same language; compare); the comparison tool now prints length, word and section ratios and warns; checklist item 16 now means curated, not pasted; other pages are for understanding only.
+- Lesson: I swung between two extremes by adding rules each time. A rule that protects the client's content needs a rule that limits it, and a fidelity rule needs a measurement. Prefer a short principle with a number that can be checked.
+- Promote to: SKILL.md section 11 (done), checklist 16 (done).

@@ -8,7 +8,7 @@ sheet underneath at the same scale, plus a second image <out>-first.png with the
 Look at both. For recreate and high-fidelity jobs the build must read as the same site: same composition per section, same type scale,
 same spacing, same colour balance. If it does not, fix the build and run this again.
 """
-import glob, sys
+import glob, json, os, sys
 from PIL import Image, ImageDraw
 
 args = [a for a in sys.argv[1:] if not a.startswith('--')]
@@ -30,6 +30,28 @@ def sheet(folder, label):
     for i, im in enumerate(ims):
         img.paste(im.resize((w, h)), (6 + (i % cols) * (w + 6), 28 + (i // cols) * (h + 6)))
     return img
+
+
+def load(folder):
+    try:
+        return json.load(open(os.path.join(folder, 'design-language.json')))
+    except Exception:
+        return {}
+
+ra, rb = load(ref), load(build)
+if ra.get('pageHeight') and rb.get('pageHeight'):
+    hr = rb['pageHeight'] / ra['pageHeight']
+    print(f"Length: build {rb['pageHeight']}px vs reference {ra['pageHeight']}px = {hr:.1f}x")
+    if ra.get('wordCount') and rb.get('wordCount'):
+        wr = rb['wordCount'] / ra['wordCount']
+        print(f"Words:  build {rb['wordCount']} vs reference {ra['wordCount']} = {wr:.1f}x")
+    sa, sb = ra.get('counts', {}).get('sections'), rb.get('counts', {}).get('sections')
+    if sa and sb:
+        print(f"Sections: build {sb} vs reference {sa}")
+    if ra.get('wordCount') and rb.get('wordCount') and rb['wordCount'] / ra['wordCount'] > 3:
+        print('WARNING: more than 3x the reference word count. Rewrite long text into one strong line each and move the rest to its own page.')
+    if hr > 1.5:
+        print('WARNING: the build is more than 1.5x the reference length. It reads as pasted, not curated. Cut: one short moment per content type, link out for the rest.')
 
 a, b = sheet(ref, 'REFERENCE'), sheet(build, 'BUILD')
 W = max(a.width, b.width)

@@ -117,7 +117,7 @@ async function extract() {
   const lcp = (await seen('largest-contentful-paint')).slice(-1)[0];
   const cls = (await seen('layout-shift')).filter((e) => !e.hadRecentInput).reduce((s, e) => s + e.value, 0);
   return {
-    url: location.href, pageBackground: pageBg,
+    url: location.href, pageBackground: pageBg, pageHeight: document.documentElement.scrollHeight, wordCount: (document.body.innerText || '').split(/\s+/).filter(Boolean).length,
     fontsInUse: top(fonts, 6), loadedFontFaces: [...new Set([...document.fonts].filter((f) => f.status === 'loaded').map((f) => f.family.replace(/["']/g, '')))],
     fontSizes: top(sizes, 10), fontWeights: top(weights, 5), textColors: top(textColors, 6),
     backgroundColorsByArea: top(bgAreas, 6), buttonAndLinkBackgrounds: top(accents, 5),
