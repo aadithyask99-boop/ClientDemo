@@ -70,7 +70,8 @@ Most approved work here is reference-led. The owner's usual inputs are a screen 
 
 ## 4. Hard rules (learned from approved work and stated by the owner)
 
-- No generic boxy layouts: avoid rows of same-size rounded cards. Use hairline lists, arches, ovals, photography, columns split by lines, or objects with character.
+- No generic boxy layouts: avoid rows of same-size rounded cards. Use arches, ovals, photography, large type, or objects with character.
+- **No hairline rows or rules and no small section labels, in any mode, even when the reference uses them** (ESR does; do not copy that). Separate rows with space, scale, colour or motion instead, and let a section's own large content or object announce it. Earlier case studies that praise hairline lists are history, not a pattern to repeat.
 - No headline-heavy walls. Every large headline must earn its space.
 - No gradients for decoration. Gradients only where they depict something real (a sunset sky, a glow, a fade into the page colour).
 - No small label above a section title (no "eyebrow" labels).
@@ -207,6 +208,10 @@ The owner's best results came from giving a reference (screenshots, a screen rec
 **First, choose the path** (count the content blocks against the reference's sections, and say which path you are on):
 - **Replicate:** the owner gives a reference and their own content, wants it matched, and changes only a few things (some colours, their copy). No client site is needed; the owner's content comes from their message. Map their content into the reference's sections one to one, in the reference's order. Change only what they ask for. **Skip the inspiration research and the curation:** use their content as given, shortened only where a slot's design demands it (and say so). The plan is a short slot map. Ask only if some content fits no slot, and offer the options: a new section (then run the funnel for that section alone), fold it into an existing slot, or leave it out or link it.
 - **Extend:** the owner has more content than the reference has sections for, or an existing site is being improved. Rules 0 to 5 below apply in full, and the funnel runs for each section the reference has no counterpart for.
+
+**Inspiration keeps the reference's look system and changes the subject.** Keep: its type feel (one grotesk or serif family at the same weight and scale logic), its colour discipline (how few colours it uses, the ground and ink balance), its spacing and its motion feel. Change: the subject, the imagery, the spine, the hero and one accent colour taken from the client's logo. Do not invent a new palette or typeface, and do not turn a reference's restraint into decoration. Palette limit: two ground colours plus one accent, no more. Exceptions to the reference's own habits are only the hard rules in section 4 (for example no hairline rows or small labels).
+
+**Look before you hand over.** Put full-resolution screenshots of the build next to the reference's and answer, in the handover, in plain words: Is the typeface the reference's feel? Is the colour as disciplined? Does anything clash, look odd or like a stray artifact? Is any section plain or a repeat? Fix what you find. Passing probes and audits is not enough; they cannot see an ugly palette or wrong type.
 
 **Offer three hero options first.** The hero is the first impression and the main thing that makes a site feel unique. Before the section list, offer three hero options for this client from `references/hero-options.md` (3D object, scripted film, type with the image, a gate to touch, a transition reveal, a pointer world, film with a moment), each with what the visitor sees, the technique, what it needs, one risk and the precedent from our sites; recommend one. At least one option is interactive or 3D and at most one is a plain film. The chosen hero is where the spine starts.
 
