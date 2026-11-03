@@ -34,3 +34,4 @@ When a review finds a defect that is not covered here, add it as a new numbered 
 28. **Easter eggs exist.** Two or three subject-rooted hidden moments, with touch equivalents, lazy-loaded, listed in the README (`references/easter-eggs.md`).
 29. **No gold.** No gold, champagne, brass or metallic yellow-brown anywhere (accent, text, lines, icons, imagery grade).
 30. **The reference was read, not remembered.** The plan opened with a capture-backed readout (palette, type, hero, rhythm, photography, motion) and a kept and changed list; the build still shares the reference's lightness or weight.
+31. **The critic ran twice.** `owner-critic` reviewed the draft plan and the finished build; its hard passes and rebuild-or-cut items were fixed, and the handover says what it changed.
