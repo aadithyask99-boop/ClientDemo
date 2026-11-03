@@ -2,7 +2,10 @@
 
 On a reference-led job, after studying the reference and the client's current site and before building or spending anything, show the owner this plan and wait for "go". It exists so they know what to expect before tokens are spent. After the go, run to the end without further questions. If they change the plan, update it and proceed; do not ask again.
 
-## Read these first, and think before writing
+## Replicate path: a short plan
+If the owner wants the reference replicated with their own content and every content block has a counterpart in the reference, the plan is only: (1) the slot map: each reference section, the owner's content that goes in it, and what changes (colours, copy, images); (2) the palette line; (3) any content that fits no slot, with the options (a new section, fold it into a slot, leave it out or link it); (4) the sentence "no new sections, so the inspiration research is not needed". Do not run the funnel for sections that already exist in the reference. End with "Reply go, or tell me what to change."
+
+## Read these first, and think before writing (extend path)
 1. **The client's current site** (`captures/<client>/report.md`, the as-is audit): the brand cues worth keeping (logo, colour accents, tone, imagery) and what is weak.
 2. **The reference**: its design system, its section patterns and its motion spec.
 3. **Our own sites**: `patterns.md` (mechanisms by content type), `fingerprints.md` (so the result is not a sibling of an existing site) and the two or three closest case studies.
@@ -13,7 +16,7 @@ For every section that has no counterpart in the reference, answer five question
 ## Format (about one page, plain words)
 1. **The story in one sentence:** what the visitor should feel and learn, in order.
 2. **The palette:** ground, ink and one accent (and a spark, if any), the reason from the client's core idea and the reference's colour rules, the contrast result from `scripts/palette.mjs`, and one alternative (see `colour.md`).
-2b. **The flow, as a table:** `#`, section, purpose, content shown (the one to three highlights), source (reference counterpart or new), layout and focal element, motion, assets (real, stock or generated).
+2b. **The flow, as a table:** `#`, section, purpose, content shown (the one to three highlights), source and relation to the reference (copy, adapt or new; in inspiration mode at most half of the sections may be copy, and say where the client's own identity shows at scale), layout and focal element, motion, assets (real, stock or generated).
 3. **Each new section, a short block (required):** the recommended design and one alternative, the answers to the five questions in a line or two, and the precedent from our own sites (named, from `patterns.md`). A plan whose new sections lack a precedent and an alternative is incomplete. Add an **inspiration shortlist** of two or three real examples per new section (link, what it does, the mechanism borrowed, how it is re-skinned in the reference's language, the risk), found with the funnel in `inspiration-research.md`, one of them rooted in the client's subject. Copy the blocks into the section map file as well, so they survive the chat.
 4. **What stays from the client's current design and what changes.**
 5. **Cut or linked out:** what is not on this page and where it will live.

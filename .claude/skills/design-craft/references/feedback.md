@@ -208,3 +208,19 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - **Honest limits:** the portraits are 212 x 269 px (one is 131 x 166); the tile is drawn at 200 px so three are sharp, the fourth stays soft until the client supplies a larger photo.
 - **Real defects found:** the white-background portrait floated as a box on the grey tile (fixed by levelling lights to the tile grey); my script patch for the portrait logic silently did not apply because I had assumed an older script structure (check an anchor exists before replacing, and print whether the replacement happened); the preview server had stopped (restart it before screenshots).
 - **Lessons:** (1) small portraits work as one tile that changes, not as a grid; (2) greyscale plus one crop makes mixed client photographs read as a set; (3) a fact said in the new section (the leaders) must be removed where it was said before (the statement).
+
+### 2026-11-03  Replicate-with-my-content jobs (no old site) were not clearly covered
+- Owner's question: if a reference is given and no old client site, and the owner mostly wants the reference replicated with their own content and a few colour changes, would the chat still go looking for other section designs?
+- Finding: the research funnel was written for new sections only, so it should not run when every block fits, but the text never said it could be skipped; the "curate, never paste" rule was written for content pulled from an old site and could trim the owner's own content; and an explicit colour instruction was not placed above the reference's and the client's colours.
+- Change: a path choice at the top of section 11 (replicate or extend), a short slot-map plan for replicate, "when not to run" in the research doc, the owner's explicit colour instructions first in colour.md, and a line in CLAUDE.md.
+- Lesson: a rule needs an explicit off switch for the case it was not written for.
+- Promote to: SKILL.md section 11 (done).
+
+### 2026-11-03  EVM reads as a copy of ESR although the brief was inspiration, not copy
+- Owner's words: the design looks replicated, the process is hectic, and a simple video plus reference plus ideas used to give a better result.
+- Evidence: after the detail pass the audit is clean (7 distinct files across 10 sections, no repeated text, one navigation system, destinations linked at most 3 times), and a "Who leads it" people section was added. But the section order and look follow ESR closely: hero film, a 40 px statement, a full-bleed photograph, a brand roller, a black statement with numbered rows, new sections built from ESR's own patterns, and a giant wordmark footer. EVM's own identity appears as logos, a small red diamond and the footer mark. The owner's recorded brief was "inspiration, not copy".
+- Cause: rule 1 told every reference job to copy the language closely; the checks I built (side-by-side, motion match, section map, fingerprints switched off for reference jobs) all reward closeness to the reference; "inspiration" and "recreate" were not separated, and nothing measured the client's identity or distinctness. Building the skill while a job was running also made the process heavy for the owner (merges, pasted prompts, rules changing between rounds).
+- Fix: the mode now decides how close to copy; inspiration is the default for "love the design language"; at most half the sections may mirror a reference section; the client's identity at scale in at least two places; the plan marks copy, adapt or new; checklist item 24; similarity checks are a floor, not a goal.
+- Lesson: a metric you optimise becomes the target. When every check measures closeness to the reference, the result converges on a copy. Measure what the owner asked for.
+- Promote to: SKILL.md section 11, plan-template, CLAUDE.md, checklist 24 (done).
+

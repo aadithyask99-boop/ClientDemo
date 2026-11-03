@@ -2,7 +2,8 @@
 
 Colour that looks professional is chosen, not decorated. It comes from the client's core idea, and from the reference's own colour rules when there is one. The tool `scripts/palette.mjs` suggests candidates and checks contrast; the judgement is yours.
 
-## 1. Where colour comes from (in this order)
+## 1. Where colour comes from
+**The owner's explicit instructions come first** ("make the accent burgundy", "keep it all blue"): do what they say, check it with `palette.mjs`, and if a pairing fails contrast say so and offer the nearest one that passes. Otherwise, in this order:
 1. **The reference's colour rules, when the owner loves a reference.** ESR Bespoke is black and white with no accent: keep that. Add the client's colour only if the client needs it, and then as one small accent.
 2. **The client's core idea:** the logo colours, the product or subject, the audience and the mood. Read the current site's colours (`capture-site.mjs` report: text colours, background colours, button colours) and the logo. EVM is cars with a red mark; Doves is care, so calm blue; DJ ESKA's gold comes from his logo.
 3. **Then the pairing rules below.** Never start from a trendy palette.
