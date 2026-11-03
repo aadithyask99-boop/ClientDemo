@@ -90,3 +90,9 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - Lesson: if a quality cannot be measured, it gets skipped. Curation reduces how much is shown, not how well each part is made.
 - Promote to: SKILL.md section 11 (done), checklist 17 (done).
 
+### 2026-11-03  Owner wants a plan before the build, for sections the reference does not cover
+- Owner's words: before the AI builds the sections that must be designed beyond the reference, it should say what it intends to build, so they know what to expect before tokens are wasted; describe the content and design flow for the parts not on the reference; base it on the client's current design, the reference design and the websites we already built (all unique), and use real thinking.
+- Change: one deliberate checkpoint, kept separate from the earlier rule against asking permission. Section 11, rule 0: present a section plan (`references/plan-template.md`) and wait for "go"; after that run to the end. Added `references/patterns.md` (our own mechanisms by content type) so new sections can borrow proven mechanisms, and five questions the chat must answer for each new section.
+- Lesson: the owner does not object to being asked about design direction, only to being asked for permission to do the process. Ask once, about the decision only the owner can judge, and ask it cheaply.
+- Promote to: SKILL.md section 11 rule 0 (done), checklist 18 (done).
+

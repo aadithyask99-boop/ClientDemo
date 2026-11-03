@@ -148,7 +148,7 @@ The aim is that each job makes the next one better, and that the reasons are wri
 
 **While building (decision notes):** keep one line per important choice in the working notes: what was chosen, why, and the risk. These become the "choices and reasons" in the log.
 
-**No mid-job approvals.** Decide, state the assumptions you made in the handover, and finish the whole job in one pass. The owner reviews the finished, published result and then asks for changes. Ask a question mid-job only when something essential is missing and cannot be guessed (no reference, no URL, no brand to work from).
+**No mid-job approvals, except the plan checkpoint in section 11 (rule 0) on reference-led jobs.** Otherwise decide, state the assumptions you made in the handover, and finish the whole job in one pass. The owner reviews the finished, published result and then asks for changes. Ask a question mid-job only when something essential is missing and cannot be guessed (no reference, no URL, no brand to work from).
 
 **After building (review):** run `references/checklist.md` on desktop and phone screenshots, then Impeccable (section 5). Note which findings were right, and which were overridden and why.
 
@@ -169,7 +169,7 @@ Sometimes the job is not to build something new: the client has a site and the o
 2. **Write the as-is audit** in `references/clients/<client>.md`: the design language in plain words (type, colour, spacing, imagery, tone, motion), what works and should be kept, what is generic or broken (run `references/checklist.md` on the screenshots), the SEO basics that must be preserved (title, description, h1 and headings, URLs, structured data), speed numbers, and the first-screen element today.
 3. **Run Impeccable on the live page** (automatically): `.claude/skills/impeccable/scripts/impeccable detect <url>` (a URL scan also runs the rules that need a rendered page), then `/impeccable critique` and `/impeccable audit` on the homepage. Note which findings are real: the URL scan gives specific, useful results (for example text over photo overlays at about 2.6 to 2.9:1 contrast) but also some false positives (a "1.0:1" on identical colours is usually hidden or layered text), so confirm each one on the screenshots before acting.
 4. **Study the reference** (section 2) and write the signature idea for the improved version. Run the sameness check (section 8) against `fingerprints.md` and against the client's current look; it must be clearly better, not just different.
-5. **State the plan, then continue:** write the plan in a short paragraph (what stays, what changes, what is added) and carry on building. Do not wait for approval; the owner reacts to the finished result.
+5. **Present the section plan and wait for the owner's go** (section 11, rule 0): what stays, what changes, what is added, and for new sections the design and the reasoning. After the go, run to the end.
 6. **Build the improved homepage** as a separate demo in this repo (a new `<client>/` Astro folder, deployed like the others), not on the client's live site. Keep the preserved SEO items, keep the client's content and brand assets, and say what is placeholder.
 7. **Prove it:** capture the new version with the same tool and put before and after side by side (first screen at 1440 and 390, speed, SEO basics, Impeccable and checklist results), then deliver it as in section 10.
 8. **Log** in `feedback.md` and update `references/clients/<client>.md` and `fingerprints.md`.
@@ -178,7 +178,7 @@ Sometimes the job is not to build something new: the client has a site and the o
 
 ## 10. Definition of done and delivery (one pass, then publish)
 
-A job is **not finished and must not be handed over** until every line below is true. Do all of it yourself, in one pass, without asking the owner anything in between.
+A job is **not finished and must not be handed over** until every line below is true. Do all of it yourself, in one pass, without asking the owner anything in between (the only stop is the plan in section 11, rule 0, before the build).
 
 1. **Built** in this repo as an Astro site (a new `<site>/` folder, or the existing one), following sections 3 and 4.
 2. **Impeccable run:** `.claude/skills/impeccable/scripts/impeccable detect <built page or live url>`, then `/impeccable critique` and `/impeccable audit` on what you built. Fix every real finding; record any you overrode and why (`impeccable ignores add-value ...` for approved choices).
@@ -194,7 +194,9 @@ A job is **not finished and must not be handed over** until every line below is 
 
 ## 11. Working from a reference: copy the language, curate the content
 
-The owner's best results came from giving a reference (screenshots, a screen recording, a homepage) and getting back something that clearly belongs to it, with the client's content in it. Four rules, in this order.
+The owner's best results came from giving a reference (screenshots, a screen recording, a homepage) and getting back something that clearly belongs to it, with the client's content in it. Rule 0 is the one place you stop and wait for the owner; after their go, run to the end. Then rules 1 to 5, in this order.
+
+**0. Plan first, and wait for the owner's go (the only checkpoint).** After studying the reference and the client's current site, and before building or spending anything, present a short section plan in the format of `references/plan-template.md`: the page's flow, each section with its content, layout, focal element and motion, and, for every section the reference has no counterpart for, the design you propose and why. Think it through against three sources: the client's current design (which brand cues to keep), the reference's design system and patterns, and our own sites (`references/patterns.md` for mechanisms by content type, `fingerprints.md` to avoid sameness, the two or three closest case studies). Give a recommended option and one alternative for each new section. End with "Reply go, or tell me what to change." After the go, run to the end without further questions; if the owner edits the plan, update it and proceed, do not ask again.
 
 **1. Copy the reference's design language and signature moments closely.** Type, scale, colour balance, spacing, grid, image treatment, motion, and its hero and intro. Study it from full-resolution frames and its own code, never from small contact sheets. Do not copy its words, photos or code.
 
