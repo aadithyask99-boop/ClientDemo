@@ -19,3 +19,7 @@ The owner: the hero is what makes a site feel unique; interactivity, immersion a
 - At least one option must be interactive or 3D, and at most one may be a plain film.
 - The chosen hero should be the first place the **spine** (section 11) shows: the same idea that runs down the page starts here.
 - Look for extra ideas on details.so (hero, cursor-interaction, 3d categories) and in the owner's own sites; use them to make options specific, not to copy.
+
+## Where to look for more hero ideas
+- **motionsites.ai** (owner's tip; a paid library of AI website prompts, previews are public). Browse the public previews by tag (3D, Interactive, Scroll-Driven, Landing Page) for how a hero behaves: a 3D object you orbit (Roadster 3D, a 3D character), a scroll-driven hero (Freight Scroll Hero, Jellyfish Scroll), a hero where type and image interact, looping video backgrounds. Take only the idea of the first five seconds and re-root it in the client's subject. Do not use its paid prompts or code, do not copy a template, and do not use its section layouts: many previews are SaaS or AI-agent pages in dark glass, and templates are shared by many buyers, so copying them makes a site look like everyone else's. Use it after the three options are drafted, to make one of them more specific.
+
