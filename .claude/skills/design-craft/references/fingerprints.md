@@ -12,6 +12,7 @@ One row per approved site. Before building a new site, read this table and requi
 | DJ ESKA | Archivo Variable (wide), Figtree | black, ink, gold only | vinyl gate that starts the music | edge-to-edge gold wordmark over B/W photo | pixel-block dissolve, sticky player | template recreate |
 | Doves UK | Schibsted Grotesk, one weight | white, Doves blue | calm editorial restraint | full-bleed family photo + one plain headline | crossfade, quiet fades, no parallax | recreate from client reference |
 | EVM Group v2 | Bricolage Grotesque 600, Hanken Grotesk | night lagoon green-black, paper, EVM red, tea green | one road through Kerala: rail line, headlamp and km readout | procedural WebGL night drive behind a large headline | scroll-scrubbed pinned scenes, per-letter swaps, drawn road | inspiration |
+| Kerala, after dark | Cormorant light, Instrument Sans, Noto Serif Malayalam | cream, lamp-black, kasavu gold | one night of Kathakali lit by a lamp; ink reveals | ink-lifted Kathakali face with headline bottom-left | ink wipes, pinned face painting, lamp cursor | inspiration (reddottours.com) |
 | Portfolio | Geist 600, Geist Mono | cream and black, orange accent | pixels, headline as loader | the headline itself | physics cards, easter eggs, scrubbed scenes | original |
 
 ## Devices that already repeat (do not reuse by default)

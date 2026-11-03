@@ -1,0 +1,184 @@
+---
+import '@fontsource/cormorant/300.css';
+import '@fontsource/cormorant/400.css';
+import '@fontsource-variable/instrument-sans';
+import '@fontsource/noto-serif-malayalam/400.css';
+import '../styles/global.css';
+import { site } from '../data/site';
+
+const B = import.meta.env.BASE_URL;
+// Accent word styling: split a headline so one word is gold
+const accent = (text: string, word: string) => {
+  const i = text.indexOf(word);
+  return i < 0 ? [text, '', ''] : [text.slice(0, i), word, text.slice(i + word.length)];
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kerala, after dark (homepage concept)</title>
+    <meta name="description" content="A concept homepage for Kerala Tourism: one night of living heritage, from the first lamp to the first light." />
+    <meta name="theme-color" content="#17110D" />
+    <link rel="icon" href={`${B}favicon.svg`} type="image/svg+xml" />
+    <link rel="preload" as="image" href={site.hero.image} fetchpriority="high" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body data-tone="dark">
+    <div class="flame" aria-hidden="true"><i></i></div>
+
+    <header class="bar">
+      <nav class="bar-links" aria-label="Sections">
+        {site.nav.map((n) => <a href={n.href}>{n.label}</a>)}
+      </nav>
+      <a class="bar-mark" href="#top" aria-label="Kerala, back to the top">KERALA</a>
+      <a class="pill" href={site.visit} target="_blank" rel="noopener">{site.footer.cta}</a>
+    </header>
+
+    <main>
+      <!-- 1. Curtain rises: ink reveals the face -->
+      <section class="hero" id="top" data-tone="dark">
+        <div class="hero-media">
+          <img class="hero-img" src={site.hero.image} alt={site.hero.alt} width="3840" height="2880" fetchpriority="high" decoding="async" />
+          <canvas class="hero-ink" aria-hidden="true"></canvas>
+          <div class="hero-lamp" aria-hidden="true"></div>
+          <div class="hero-fade" aria-hidden="true"></div>
+        </div>
+        <div class="hero-copy">
+          <h1 class="hero-title" aria-label="Kerala, after dark.">
+            {site.hero.title.map((w) => (
+              <span class="hw" aria-hidden="true"><span class={`hi ${w === site.hero.accent ? 'gold' : ''}`}>{w}</span></span>
+            ))}
+          </h1>
+          <p class="hero-sub">{site.hero.sub}</p>
+        </div>
+        <a class="cue" href="#statement" aria-label="Scroll to begin">
+          <svg viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="27" fill="none" stroke="currentColor" stroke-dasharray="3 4" stroke-width="1.2" /><path d="M28 17v21m-7-7 7 7 7-7" fill="none" stroke="currentColor" stroke-width="1.4" /></svg>
+          <span>Scroll to begin</span>
+        </a>
+      </section>
+
+      <!-- 2. Statement: words light up as you scroll -->
+      <section class="statement" id="statement" data-tone="paper">
+        <p class="statement-text">
+          {site.statement.words.split(' ').map((w) => (
+            <span class={`sw ${site.statement.accent.includes(w) ? 'gold' : ''}`}>{w} </span>
+          ))}
+        </p>
+      </section>
+
+      <!-- 3. The arts: a list that wipes ink over the page -->
+      <section class="arts" id="arts" data-tone="paper">
+        <div class="arts-bg" aria-hidden="true">
+          <div class="arts-stage">
+            {site.arts.items.map((a, i) => (
+              <img class="art-img" data-i={i} src={a.image} alt="" loading="lazy" decoding="async" />
+            ))}
+            <div class="arts-shade"></div>
+          </div>
+        </div>
+        <div class="arts-inner">
+          <h2 class="arts-title">{site.arts.title}</h2>
+          <ul class="arts-list">
+            {site.arts.items.map((a, i) => (
+              <li><button type="button" class="art" data-i={i} data-line={a.line}>
+                <span class="art-name">{a.name}</span>
+              </button></li>
+            ))}
+          </ul>
+          <p class="arts-caption" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- 4. The painting of a face (pinned, ink wipes between stages) -->
+      <section class="faces" id="faces" data-tone="dark">
+        <div class="faces-pin">
+          <div class="faces-text">
+            {site.faces.steps.map((s, i) => {
+              const [a, b, c] = accent(s.head, s.accent);
+              return (
+                <div class="step" data-i={i}>
+                  <img class="step-img" src={s.image} alt="" aria-hidden="true" loading="lazy" decoding="async" />
+                  <h2 class="step-head">{a}<span class="gold">{b}</span>{c}</h2>
+                  <p class="step-text">{s.text}</p>
+                </div>
+              );
+            })}
+          </div>
+          <div class="faces-frame">
+            <div class="faces-glow" aria-hidden="true"></div>
+            <div class="faces-imgs">
+              {site.faces.steps.map((s, i) => (
+                <img class="face-img" data-i={i} src={s.image} alt={s.alt} loading="lazy" decoding="async" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Pooram night -->
+      <section class="pooram" id="pooram" data-tone="dark">
+        <div class="pooram-hero">
+          <img class="pooram-img" src={site.pooram.image} alt={site.pooram.alt} loading="lazy" decoding="async" />
+          <div class="pooram-lamp" aria-hidden="true"></div>
+          <div class="pooram-shade" aria-hidden="true"></div>
+          <div class="pooram-copy">
+            <h2 class="pooram-title">{(() => { const [a, b, c] = accent(site.pooram.title, site.pooram.accent); return <Fragment>{a}<span class="gold">{b}</span>{c}</Fragment>; })()}</h2>
+            <p class="pooram-lead">{site.pooram.lead}</p>
+          </div>
+        </div>
+        <div class="pooram-lower">
+          <p class="pooram-big" data-split>{site.pooram.drumLine}</p>
+          <figure class="pooram-fig">
+            <img src={site.pooram.lamps.image} alt={site.pooram.lamps.alt} loading="lazy" decoding="async" />
+            <figcaption>{site.pooram.lampsLine}</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- 6. Houses: gable-shaped windows -->
+      <section class="houses" id="houses" data-tone="paper">
+        <h2 class="houses-title" data-split>{(() => { const [a, b, c] = accent(site.houses.title, site.houses.accent); return <Fragment>{a}<span class="gold">{b}</span>{c}</Fragment>; })()}</h2>
+        <div class="houses-row">
+          {site.houses.items.map((h, i) => (
+            <figure class={`house h${i}`}>
+              <div class="gable"><img src={h.image} alt={h.alt} loading="lazy" decoding="async" /></div>
+              <figcaption><strong>{h.name}</strong><span>{h.line}</span></figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      <!-- 7. A border of gold: kasavu woven as you scroll -->
+      <section class="kasavu" id="kasavu" data-tone="paper">
+        <div class="weave weave-top" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="kasavu-inner">
+          <h2 class="kasavu-title" data-split>{(() => { const [a, b, c] = accent(site.kasavu.title, site.kasavu.accent); return <Fragment>{a}<span class="gold">{b}</span>{c}</Fragment>; })()}</h2>
+          <p class="kasavu-text">{site.kasavu.lines[0]}</p>
+        </div>
+        <div class="weave weave-bottom" aria-hidden="true"><i></i><i></i><i></i></div>
+      </section>
+
+      <!-- 8. Dawn -->
+      <section class="dawn" id="dawn" data-tone="dark">
+        <img class="dawn-img" src={site.dawn.image} alt={site.dawn.alt} loading="lazy" decoding="async" />
+        <div class="dawn-shade" aria-hidden="true"></div>
+        <h2 class="dawn-title" data-split>{(() => { const [a, b, c] = accent(site.dawn.title, site.dawn.accent); return <Fragment>{a}<span class="gold">{b}</span>{c}</Fragment>; })()}</h2>
+      </section>
+    </main>
+
+    <!-- 9. Footer -->
+    <footer class="foot" data-tone="paper">
+      <p class="foot-title" data-split>{site.footer.title}</p>
+      <a class="pill pill-big" href={site.visit} target="_blank" rel="noopener">{site.footer.cta} <span aria-hidden="true">→</span></a>
+      <div class="foot-mark" aria-hidden="true"><span>{site.malayalam}</span></div>
+      <p class="foot-note">A concept homepage. <a href={`${B}credits/`}>Photography credits</a></p>
+    </footer>
+
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>
