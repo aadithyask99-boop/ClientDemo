@@ -17,3 +17,19 @@ Used in the plan step, for every new section the reference has no counterpart fo
 
 ## Worked example (2026-11-03, EVM Group milestones: four dated moments)
 Categories read: `steps` (8 free examples) and `pinned-scroll` (7). Real sites studied in full: Daylight (godaylight.com), Understory (understory.io); The Art of Documentary could not be seen because of a pop-up. See the cards `inspiration/daylight-stacked-steps.md` and `inspiration/understory-stacked-cards.md`.
+
+## The details.so MCP (optional, paid)
+
+What it is: a remote HTTP MCP server at `https://api.details.so/mcp`, marked BETA on their site, with a browser sign-in (OAuth). It is included on every paid plan: Pro lists 300 MCP credits a month and Max 1,000. It searches their whole library (3,400+ examples) in natural language, beyond the free slice the funnel can read.
+
+Checked from a cloud session on 2026-11-03, without credentials:
+- An unauthenticated request returns 401 with standard OAuth discovery metadata, and the response headers carry credit counters (`X-Details-Credits-Limit`, `X-Details-Credits-Remaining`).
+- Its OAuth server supports dynamic client registration, authorisation code with PKCE and refresh tokens, which is what claude.ai custom connectors use. So it should be addable as a connector.
+
+Not verified (needs an account): the sign-in itself, the list of tools, what a result contains (links, stills, video), how many credits one search costs, and whether claude.ai accepts this particular server.
+
+How to connect it for cloud chats: subscribe, then add a custom connector at claude.ai/customize/connectors with the URL above and sign in, then start a new chat (connectors are read when a session starts). The `claude mcp add details ...` command on their site registers it only on the owner's own computer and does not carry over to cloud. A `.mcp.json` in the repository will not work either, because the sign-in needs a browser.
+
+When its tools are available in a session: use them for funnel step 1 instead of the free pages, then do steps 2 to 5 as before (reason in writing, study the top three on their own sites, shortlist, cards). Budget at most 5 searches per job and report the credits used in the handover. Judge it by whether the shortlists contain ideas the free slice would not have, not by how many results it returns.
+
+First test once connected: ask for "a pinned timeline of four dated moments, restrained and monochrome, automotive or hospitality" and see whether the results include links to the real sites that the capture tools can study.
