@@ -37,3 +37,5 @@ Colours carry different meanings by industry and culture (white, red and gold es
 2. Run `palette.mjs <brand hex> --html captures/<client>/palette.html` and look at the four candidates.
 3. In the plan, state the palette (ground, ink, accent and, if any, spark), the reason from the client's core idea and the reference, the contrast result, and one alternative, so the owner can choose before the build.
 4. Check it on the real page (Impeccable's contrast findings and `checklist.md` item 20).
+
+**Owner's rule: no gold.** Never propose gold, champagne, brass or metallic yellow-brown, and never use "black and gold" or "cream and gold" as a luxury default. Choose another hue from the client's logo or subject.

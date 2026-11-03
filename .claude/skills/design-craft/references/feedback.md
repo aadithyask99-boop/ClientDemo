@@ -181,3 +181,6 @@ I wrote "leave the glass panels" for the owner's motionsites picks. The owner ne
 - Impeccable (built page): flagged ghost-state statement words (intended scrub state), organic clip-path (the ink blobs are the signature, kept), repeating-stripe gradient (kasavu thread, kept), a real low contrast on the dawn headline (fixed with a darker tint), and a straggler (fixed with text-wrap). Media check: 0 upscaled; detail audit: one wording flag caused by the pin spacer, arts links reduced from 7 to 0.
 - Not run: motion-probe and compare-sheets against the reference (no time in this pass), real phone test.
 - Lesson: when the stock source is blocked, a licensed archive with API metadata (Wikimedia Commons) gives larger, better originals than stock sites; always look at a contact sheet and record author and licence in the build.
+
+## Owner dislikes gold (2026-11-03)
+Owner: "not a fan of gold colour so hard pass." Earlier approved sites used gold (Garden thread, DJ ESKA wordmark); that is history. Rule added to SKILL.md section 4, colour.md, checklist 29; the black-and-gold candidate was removed from palette.mjs.

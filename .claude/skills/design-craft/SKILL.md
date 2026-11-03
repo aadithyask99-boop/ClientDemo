@@ -74,6 +74,7 @@ Most approved work here is reference-led. The owner's usual inputs are a screen 
 - **No hairline rows or rules and no small section labels, in any mode, even when the reference uses them** (ESR does; do not copy that). Separate rows with space, scale, colour or motion instead, and let a section's own large content or object announce it. Earlier case studies that praise hairline lists are history, not a pattern to repeat.
 - No headline-heavy walls. Every large headline must earn its space.
 - No gradients for decoration. Gradients only where they depict something real (a sunset sky, a glow, a fade into the page colour).
+- **No gold or brass-yellow accents. Hard pass (owner).** Do not use gold, champagne, brass or metallic yellow-brown as an accent or a luxury shorthand, in any mode and for any client, including "black and gold" or "cream and gold" pairings. Pick the accent from the client's logo or subject in another hue (red, deep blue, green, burgundy, orange, a clean off-white). Earlier case studies that use gold (the Garden's thread, DJ ESKA) are history, not a pattern to repeat. If a client's own logo is gold, say so in the plan and propose an alternative accent for the owner to choose.
 - No small label above a section title (no "eyebrow" labels).
 - No italics and no em dashes in page copy, unless the site's own rules allow them (garden is deliberately italic serif).
 - Content lives in one data file per site (`src/data/site.ts` or `invitation.ts`) so a new client is mostly one file plus new art.

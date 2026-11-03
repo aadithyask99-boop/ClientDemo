@@ -29,7 +29,6 @@ if (args.includes('--classics')) {
     ['White and blue', '#ffffff', '#0b3d91', 'trust, clarity, care, finance, health (Doves UK uses #084b9a)'],
     ['Ivory and burgundy', '#f7f1e8', '#6d1a36', 'heritage, professional, hospitality, legal, wine'],
     ['Cream and forest', '#f4f1e8', '#1f4d3a', 'natural, calm, estates, wellbeing, finance'],
-    ['Black and gold', '#0b0b0b', '#c8a45c', 'luxury, events, ceremony (DJ ESKA uses gold #d6ae52 on black)'],
     ['Charcoal and signal orange', '#1b1b1b', '#ff5a1f', 'modern, confident, creative, trades (our portfolio)'],
     ['Cream and plum', '#f4ede3', '#2d2230', 'intimate, care, beauty (ILE IFE)'],
     ['Oat and espresso with toffee', '#f1e8d8', '#3a2113', 'warm, tactile, food and drink (Brew More)'],
