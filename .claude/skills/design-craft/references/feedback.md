@@ -177,3 +177,10 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - Lesson: sharpness is measurable (scale and bitrate); do not accept a low tier of a free source without saying so, and ask for the file or the domain allowance.
 - Promote to: media.md and checklist 21 and 22 (done).
 
+
+## EVM Group homepage, round seven: sharp media and scale (2026-11-03)
+- **Owner's words:** the hero looked pixelated; polish the scale of the Milestones tile and caption, the Proof captions and figures and the Where next descriptions.
+- **Cause of the pixelation (measured by `media-quality.mjs`):** a 1440x810 film drawn at 1440x900 (scale 1.11) at about 750 kbps. I had taken the wide shots from Coverr's 720p tier and squeezed the montage to save weight. Coverr's 1080p tier is its highest (no 4K); the montage rebuilt from it at 3.65 Mbps measures 0 upscaled.
+- **What I did:** rebuilt the film at 1080p with a portrait 720x1080 phone version, re-exported the photographs at native size, drew the logos as images and scaled the type and tiles named above.
+- **Mistakes and real causes:** (1) I optimised file size before checking sharpness; the check should come with the first encode. (2) The probe's under-scaled count dropped from 7 to 4 against 3, and the four left include artifacts of splitting text into single letters and digits (the probe skips one-character text nodes): measure the real font size on the page before scaling more. (3) The best CC0 photographs (4000 px or more) are on Wikimedia, which rate-limits this container (HTTP 429); say so in the handover instead of pretending the 2048 px originals are retina-sharp.
+- **Lessons:** (1) take video at the highest tier the source offers and encode at 3 to 4 Mbps for 1080p, with a separate phone crop; (2) when a measurement tool and the page disagree, read the computed style before changing the design; (3) record sources and licences in the README in the same commit as the media.

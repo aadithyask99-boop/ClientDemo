@@ -21,7 +21,7 @@ const digits = [0, 1, 2, 3];
       <div class="ms__tile">
         {m.items.map((it, i) => it.img
           ? <img class={i === 0 ? 'is-active' : ''} src={`${base}/img/${it.img}`} alt={it.alt} loading="lazy" />
-          : <span class={`ms__logos ${i === 0 ? 'is-active' : ''}`}>{it.logos!.map((l) => <i class="logo" style={`--m:url(${base}/logos/${l}.svg)`}></i>)}</span>)}
+          : <span class={`ms__logos ${i === 0 ? 'is-active' : ''}`}>{it.logos!.map((l) => <img class="logo" src={`${base}/logos/${l}.svg`} alt="" width="120" height="120" />)}</span>)}
       </div>
       <p class="ms__caption" aria-live="polite">
         {m.items.map((it, i) => <span class={i === 0 ? 'is-active' : ''}>{it.t}</span>)}
