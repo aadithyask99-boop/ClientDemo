@@ -1,0 +1,29 @@
+---
+import '@fontsource/cormorant/300.css';
+import '@fontsource/cormorant/400.css';
+import '@fontsource-variable/instrument-sans';
+import '../../styles/global.css';
+import credits from '../../../credits.json';
+const B = import.meta.env.BASE_URL;
+const names: Record<string, string> = { hero: 'Opening portrait', mk1: 'Make-up by the lamp', mk2: 'Make-up, drawing the face', mk3: 'Make-up, green and white frame', mk4: 'Crowned performer', kathakali: 'Kathakali', theyyam: 'Theyyam', mohini: 'Mohiniyattam', kalari: 'Kalaripayattu', koodiyattam: 'Koodiyattam', chenda: 'Chenda melam', vallam: 'Vallam kali', pooram: 'Thrissur Pooram', pooramlamps: 'Temple festival lamps', house1: 'Mattancherry Palace', house2: 'Nalukettu house', house3: 'Vaikom Mahadeva Temple', dawn: 'Dawn on the backwaters', kasavu: 'Kasavu' };
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Photography credits</title>
+    <link rel="icon" href={`${B}favicon.svg`} type="image/svg+xml" />
+  </head>
+  <body data-tone="paper">
+    <main class="credits">
+      <h1>Photography credits</h1>
+      <ul>
+        {credits.map((c) => (
+          <li><strong>{names[c.name] || c.name}</strong>: <a href={c.page} target="_blank" rel="noopener">{c.file.replace(/\.[a-z]+$/i, '')}</a> by {c.artist}, {c.lic}, via Wikimedia Commons.</li>
+        ))}
+      </ul>
+      <p class="foot-note"><a href={B}>Back to the homepage</a></p>
+    </main>
+  </body>
+</html>
