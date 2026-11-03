@@ -219,3 +219,41 @@ Built as planned. Copy 2 (statement, Kochi photograph), adapt 5, new 3 (Who, the
 - **Next:** word under the pointer turns red.
 - **Measured:** compare-sheets 10,301 px (1.50x), 381 words (1.2x), 9 sections; the first run was 10,526 px and warned, so group row padding was cut. Probe: 283 elements move with scroll against ESR's 271, no section without motion; "under-scaled" 5 against 3 (Who, Marques, The group, Where next, footer; the names are built from single-letter spans and the sticky blocks are mostly empty by design; real sizes are 40 to 120px). detail-audit clean (6 files, no repeated text, /contact x3 the highest). media-quality: 0 upscaled. Impeccable: contrast flags are animation start states and the header over the film; one advisory (the dashed road reads as stripes: kept, it is the road). Phone 390: no horizontal scroll, no console errors.
 - **Not removed:** `evm/src/components/Sectors.astro` and `evm/public/img/tea-wide.webp` are unused; the delete was blocked by the safety check. The owner can delete them. The artifact does not include tea-wide.
+
+---
+
+# Plan v5: the spine, a drive through Kerala (2026-11-03, awaiting the owner's go)
+
+**Why:** SKILL.md section 11 now requires a spine and no filler. Honest self-review of version 12: Proof is three plain boxes on red; Who leads it, Marques and The group are each a label plus a list (the map is the only part with a subject idea); Where next is two links; Milestones is a pinned digit roller. The page has EVM's colours but no journey.
+
+## The spine: one road, from the first toddy shop to Trivandrum
+One continuous red road line runs down the whole page, and you travel it as you scroll. What you pass: the places that are EVM (Kothamangalam, Kochi, Munnar, Vembanad, Trivandrum). What moves: a car on the road line (rotating along its curves, easing at each stop) and the scenery, which is filmed drive footage behind the stops that are on the road. What is filmed or 3D: the film is the windscreen view (Coverr drive clips we already own: aerial road, mountain hairpin, forest road, night drive). The car itself: see options. Why it is EVM's own: a group that started with a toddy shop in Kothamangalam and became buses (1976), cinemas (1985), Munnar hotels (1988) and the state's Porsche, BMW and MINI dealer is one family of businesses that all sit on Kerala's roads; the road is its subject, not decoration, and the red is the logo red. Calm ESR type and restraint stay; the road is added at scale.
+
+## Each section as a place on the road
+| Stop | Place | Content (one moment) | Treatment | Change |
+| --- | --- | --- | --- | --- |
+| 1 Departure | the road | "Future is our Business", the film | Intro mark builds in red, film plays, the red road line starts at the bottom of the hero | keep, add line |
+| 2 The start | Kothamangalam, 1952 | the toddy-shop statement | statement text at the road's first bend; the first date marker | adapt, keep copy |
+| 3 The hoardings | Maradu, Kochi (head office) | four people | portraits as roadside hoardings that slide past as the car goes by; the active person is the one you are level with | rebuild Who (was a list) |
+| 4 The coast | Kochi | Chinese fishing nets photograph | full-bleed, the road runs along its bottom | keep |
+| 5 The showroom row | Kochi | eight brands | brand logos as the showroom signs on the road; roller stays for name, notes | keep, light change |
+| 6 The climb | Munnar and the high ranges | hotels and plantation | the mountain hairpin film plays full-bleed and scrubs with scroll, the road line climbs the hairpin; Hill View 1988 marker | new, merges part of The group and Milestones |
+| 7 The night stop | Kothamangalam, cinemas | EVM Cinemas, 1985, the Jawahar | dark stop, a lit marquee line of type, the road passes in the dark | new, merges Milestones 1985 |
+| 8 The map | all of Kerala | where the businesses sit | map with the car travelling between the lit places as the active row changes | keep, the car becomes the active marker |
+| 9 The milestones | the road | 2001 Honda, 2019 three marques | kilometre stones: green and white highway signs set with the dates, passing at speed (Kerala highway vocabulary) | rebuild Proof as the figures: No. 1, 20,000, 350+ on kilometre stones instead of three boxes |
+| 10 The end | Trivandrum | careers, contact, the giant mark | the road ends at the giant red EVM mark; contact on the mark's right | merges Where next into the footer |
+
+**Cut:** Where next (two links, filler) goes into the footer; the pinned Milestones digit roller goes (its dates become markers on the road); Proof's three boxes go (rebuilt as kilometre stones); The group's separate row list is merged into the map stop. Sections: 14 down to 10 stops. Length stays near 1.5x ESR.
+
+## The car (needs your choice)
+- **Recommended: filmed.** The windscreen is real footage; the car is a drawn red marker on the road line and the map (side silhouette of a 911, our own drawing). Low cost, sharp, no licence problem.
+- **Alternative: a 3D car** turning and driving along the road (baked frame sequence, as more-coffee did). Second because there is no CC0 car model reachable here; BMW/Porsche/MINI could supply official renders to an authorised dealer, which would be better than anything I make. If you can get one, I will build it.
+- **Risk:** scroll-scrubbed video needs an all-intra encode, which is heavy; I will scrub only the climb (a 6 s clip, about 4 MB) and play the rest normally.
+
+## Precedents and inspiration
+Our own: Garden's thread through the knots (a line you travel), more-coffee's frame sequence, our own Dieste line. Funnel (details.so free slice, `scroll-animations`, `storytelling`): no travel or road examples; candidates are Red Dot (reddottours.com, travel brand, pinned scroll) and Skydive (skydive.com, scroll animations), not yet studied. I will capture them before building and say how little they fit. If you have a road-journey site you like, send it.
+
+## Needs and cost
+Your choice of car; footage is the Coverr set we have (no cost). No generation spend. Phones: the road line stays, the scrub becomes a plain loop.
+
+Reply go, or tell me what to change.
