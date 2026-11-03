@@ -144,3 +144,11 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - Lesson: a rule needs an explicit off switch for the case it was not written for.
 - Promote to: SKILL.md section 11 (done).
 
+### 2026-11-03  EVM reads as a copy of ESR although the brief was inspiration, not copy
+- Owner's words: the design looks replicated, the process is hectic, and a simple video plus reference plus ideas used to give a better result.
+- Evidence: after the detail pass the audit is clean (7 distinct files across 10 sections, no repeated text, one navigation system, destinations linked at most 3 times), and a "Who leads it" people section was added. But the section order and look follow ESR closely: hero film, a 40 px statement, a full-bleed photograph, a brand roller, a black statement with numbered rows, new sections built from ESR's own patterns, and a giant wordmark footer. EVM's own identity appears as logos, a small red diamond and the footer mark. The owner's recorded brief was "inspiration, not copy".
+- Cause: rule 1 told every reference job to copy the language closely; the checks I built (side-by-side, motion match, section map, fingerprints switched off for reference jobs) all reward closeness to the reference; "inspiration" and "recreate" were not separated, and nothing measured the client's identity or distinctness. Building the skill while a job was running also made the process heavy for the owner (merges, pasted prompts, rules changing between rounds).
+- Fix: the mode now decides how close to copy; inspiration is the default for "love the design language"; at most half the sections may mirror a reference section; the client's identity at scale in at least two places; the plan marks copy, adapt or new; checklist item 24; similarity checks are a floor, not a goal.
+- Lesson: a metric you optimise becomes the target. When every check measures closeness to the reference, the result converges on a copy. Measure what the owner asked for.
+- Promote to: SKILL.md section 11, plan-template, CLAUDE.md, checklist 24 (done).
+
