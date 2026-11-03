@@ -168,3 +168,6 @@ Owner: the hero gives the first impression and is what makes a site unique; offe
 
 ## evm2 invented its own look and used banned devices (2026-11-03)
 Owner: the new chat's EVM build had weird colours that did not match, odd artifacts, hairlines, eyebrow labels and headlines (all banned), bad typography, and took little from the reference. Cause: my inspiration rule said what to change but not what to keep, so the chat invented a palette (green-black, tea green, red) and typeface; the skill contradicted itself (hard rules praised hairline lists, the reference uses labels); probes and audits passed because they cannot see ugly colour or wrong type. Decision (owner): hairline rows and small labels are banned outright in every mode. Fix: ban in section 4, keep and change lists for inspiration, a two grounds plus one accent limit, a side-by-side look before handover, checklist 27. Lesson: state what to keep as clearly as what to change.
+
+## I banned glass panels without being told (2026-11-03)
+I wrote "leave the glass panels" for the owner's motionsites picks. The owner never said that, and approved Halcyon has glass cards. Corrected. Lesson: do not turn my own dislike into a rule; only record what the owner said or approved, and mark inferences as inferences.
