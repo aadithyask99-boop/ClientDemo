@@ -137,3 +137,10 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - Lesson: variety and redundancy need their own check; when source material is short, say so and use fewer sections or fewer image slots instead of repeating the same photographs.
 - Promote to: checklist 23 (done).
 
+### 2026-11-03  Replicate-with-my-content jobs (no old site) were not clearly covered
+- Owner's question: if a reference is given and no old client site, and the owner mostly wants the reference replicated with their own content and a few colour changes, would the chat still go looking for other section designs?
+- Finding: the research funnel was written for new sections only, so it should not run when every block fits, but the text never said it could be skipped; the "curate, never paste" rule was written for content pulled from an old site and could trim the owner's own content; and an explicit colour instruction was not placed above the reference's and the client's colours.
+- Change: a path choice at the top of section 11 (replicate or extend), a short slot-map plan for replicate, "when not to run" in the research doc, the owner's explicit colour instructions first in colour.md, and a line in CLAUDE.md.
+- Lesson: a rule needs an explicit off switch for the case it was not written for.
+- Promote to: SKILL.md section 11 (done).
+

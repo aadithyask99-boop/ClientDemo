@@ -2,6 +2,9 @@
 
 Used in the plan step, for every new section the reference has no counterpart for. The aim is real, current ideas beyond the generic defaults (eyebrow label plus headline, boxed card grids, decorative lines, gradient glows), found without the owner handpicking each time. "Full crawl" here means a funnel: wide and cheap first, then deep on the few that matter.
 
+## When not to run it
+Do not run it on the replicate path (the owner wants the reference matched with their own content and every block fits a section the reference already has). Run it only for a section that has no counterpart in the reference, and only after the owner has chosen to add that section. When nothing is new, say "no new sections, so the research is not needed" in the plan and move on.
+
 ## The funnel
 1. **Wide (cheap).** For each new section choose up to 3 categories on details.so that match its content and mechanism family (for example `steps`, `pinned-scroll`, `stacked-scroll`, `scroll-animations`, `features`, `about`, `case-study`, `portfolio`) and run `node .claude/skills/design-craft/scripts/inspo-shortlist.mjs <category> ...`. It lists the free examples with their tags.
 2. **Reason (judgement, in writing).** Score each candidate from its name, tags and industry, and a look at its first screen, on six questions: does it fit this content? does it fit the reference's language (colour, type, restraint)? is it different from our own sites (`fingerprints.md`)? can it be built in Astro and GSAP at a good speed? does it work on a phone and with reduced motion? is it not one of the generic defaults? Keep the best 6 and say why the rest went.
