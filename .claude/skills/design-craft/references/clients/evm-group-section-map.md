@@ -44,3 +44,49 @@ All of it is kept in `evm/src/data/archive.ts` for the linked pages: `/about` (m
 - Stills: CC0 from Openverse (Wikimedia, the WordPress photo directory, rawpixel, StockSnap): Kochi fishing nets, Munnar tea terraces, a Kumarakom resort, cinema seats, a highway truck. The Porsche still is a frame from the Coverr clip.
 - Logos: Simple Icons (CC0 files; the marks belong to their owners and the client is an authorised dealer).
 - No generated images remain on the page.
+
+---
+
+# Plan v2 for the new sections (2026-11-03, awaiting the owner's go)
+
+Funnel run on details.so (free slice, human pace). Categories read: `timeline`, `text-showcase`, `pinned-scroll` (Milestones); `stats`, `social-proof`, `testimonial` (Proof); `cta`, `cursor-interaction`, `hover-animations` (Where next). Eight sites resolved to real URLs and seven captured and read in full-size strips: Eladio Dieste, Tengile MalaMala, Virugroup, Decimals, Red Dot, Gravelle du Parc (Spyker Cars rendered blank in the capture tool and could not be studied). Motion probed: Dieste 105 elements moving with scroll, Virugroup 77, MalaMala 94 (ESR 271). Kept six, dropped the rest: the others are SaaS or product sites (Rogo, Lovable, Littlebird), or colour-heavy and playful (Gravelle's stat tiles, Decimals' peach portraits), which break ESR's black and white.
+
+ESR itself is listed on details.so under "Social proof: List, Pinned scroll", i.e. its marques roller. So the roller is the reference's own answer to proof; the new sections sit beside it, not instead of it.
+
+## Milestones (1952, 1985, 2013, 2019)
+**Question the visitor asks:** how did this become so big?
+**Recommended: a line through time.** Pinned scene, as built (year at roller size rolling digit by digit, one line, one tile), plus a 1px vertical line down column two with a small diamond node that travels with the scroll and four tick marks, and the tile entering from alternating sides at slightly different sizes. Precedent in our sites: orra pinned chapters, more-coffee pinned statement cards (the swap), portfolio scrubbed scenes.
+**Alternative: giant years behind a photo collage** (MalaMala's long scroll, years set over staggered photographs). Second because it needs real archive photographs the client has not supplied, a long scroll for four dates, and a colour wash.
+**Risk:** the pin must unpin on phones (it does); the node must not become a decoration (it only marks progress).
+**Inspiration shortlist**
+1. **Eladio Dieste, https://www.eladiodieste.com/** (architecture, black). A vertical hairline down the middle with a diamond node; years sit on the line and brighten as the node passes; photographs of different sizes sit left and right of it in a loose collage; 1917 to 2000 in text. Mechanism borrowed: the line and node as progress, years on the line, photos entering alternately. Re-skin: ESR's grid (line at column two), 92px years, one 216px tile at a time, black and white. Probed: 105 elements move with scroll (about 39% of ESR's), 1 canvas, 1 video. Risk: its collage is dense; ours shows one image per date.
+2. **Tengile MalaMala, https://tengilemalamala.com/about** (safari hospitality, heritage). Our subject-adjacent example: a family and land history in a warm cream palette, with giant years (1900, 1927, 1970) that sit half behind archive photographs on a long staggered scroll. Mechanism borrowed: oversized years overlapped by photographs, which makes the years the picture. Re-skin: ESR black or white, no colour. Probed: 94 elements moving. Risk: the long scroll and the dependence on archive photos.
+3. **Spyker Cars Heritage, https://spykercars.com/heritage** (automotive, rooted in the client's subject). Listed under Timeline; the capture tool returned a blank page, so it is not studied. Needs a look in a real browser before it can be counted.
+**Borrow from:** Dieste (1). **Reject:** Daylight and Understory (already carded: coloured steps and cards).
+
+## Proof (one customer, three numbers)
+**Question the visitor asks:** can I trust them?
+**Recommended: figures on a photograph.** The customer's line stays as a 40px statement whose words light up. The three figures (No. 1 dealer 2012 to 13, 20,000 Nissans, 350+ Porsches) become three solid white squares set over a full-bleed photograph (the Munnar hills or the highway), each at a different scroll speed so they drift past each other, with the number counting up inside, set at 92px in black. The square is ESR's own tile shape (216px). Precedent in our sites: orra's counters (glass cards that count up), more-coffee's badges.
+**Alternative: three hairline rows with counters** (as built). Second because it is a flat list; it was the weakest section against ESR in motion.
+**Risk:** white squares over a photo can read as boxy cards; keep them square, flush, no shadow, one number each, three at most.
+**Inspiration shortlist**
+1. **Virugroup, https://www.virugroup.com/en/nosotros/** (a family food group with plantations, Peru and Spain; rooted in the client's subject: a family group that farms and trades). "50+ countries supplied", "10+ processing plants", "128+ ..." as white squares over an aerial photograph of pickers, large dark-green figures; plus a dated "through the years" list. Mechanism borrowed: figures as solid squares over full-bleed photography. Re-skin: ESR black on white, our photo. Probed: 77 elements moving; some sections static. Risk: its tiles are many and sit in uneven positions; we keep three.
+2. **Decimals, https://www.decimals.co/** (design recruiting; one customer at a time). Testimonials in a stacked scroll: each customer is a card that slides over the last with a cut-out portrait and one line. Mechanism borrowed: one voice at a time, stacking. Re-skin: no portraits (we have none), type only, black. Risk: peach colour and portrait cut-outs do not fit ESR; only the stacking is useful. Not recommended for this page; kept as the second idea for `/reviews`.
+3. **Red Dot, https://www.reddottours.com/** (luxury travel, Sri Lanka, Nepal, the Maldives; subject-adjacent): a review strip with "In your words" under a rating bar. Mechanism borrowed: the customer's words set as large type with the source rating beneath. Risk: its review block is small; use only as a typographic cue.
+**Borrow from:** Virugroup (1).
+
+## Where next (people, careers, contact)
+**Question the visitor asks:** where do I go from here?
+**Recommended: giant links with a photo that follows the pointer** (as built): three 92px links, the word under the pointer black and the others fading (ESR's roller logic), a tile that follows the pointer, a tap-to-show tile on touch. Precedent in our sites: halcyon's services list (the word lights up and a photo trails the pointer), djeska's rooms list.
+**Alternative: the footer photo grows.** A square photo sits beside the links and, as you scroll into the footer, grows to full-bleed behind the wordmark, so the page ends on an image. Second because it adds weight and a second full-bleed image after two already.
+**Risk:** hover has no equivalent on touch (handled); three links is thin, so each gets one line of what it leads to.
+**Inspiration shortlist**
+1. **Red Dot (above)**, "This way for ideas": a centred list of ways to travel (Culture and History, Wildlife and Wilderness, Honeymoons) switched by a tab, each a line of large serif type that opens a set of trips. Mechanism borrowed: a short list of large words as the whole call to action. Re-skin: ESR's grotesk, black and white. Cursor interaction is listed on its tag but not confirmed in the capture. Risk: our three links need a real destination each.
+2. **Gravelle du Parc, https://www.gravelleduparc.com/en/** (a gravel cycling event; media showcase with cursor interaction): a video in a frame that opens full width as you scroll, framed by oversized type. Mechanism borrowed: a media frame that expands with the scroll (the alternative above). Re-skin: our photograph, no frame decoration. Risk: its purple and green palette and sticker graphics are not ours; mechanism only. Libraries on it: GSAP, ScrollTrigger, Swiper, Framer.
+**Borrow from:** halcyon's pointer-trailing photo (our own), with Red Dot's "list of large words" framing.
+
+## What is not new
+Hero, statement, both photographs, marques roller, sectors rows and footer all have an ESR counterpart and stay as built.
+
+## Cards to write after the owner's picks
+`inspiration/dieste-line-timeline.md`, `inspiration/virugroup-stat-squares.md`, and a line each in `patterns.md`.
