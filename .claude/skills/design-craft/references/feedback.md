@@ -115,3 +115,18 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - **Impeccable said:** only the ESR-style pale inactive list (kept) and a one-word last line (fixed).
 - **Mistakes and real causes:** I treated "put ALL the content back" as "put every block on the homepage". The homepage is a hub: its job is to make people click through. Cause: I read the client's About page as content to place instead of material to understand.
 - **Lesson:** decide the homepage's word budget from the reference before choosing content, and give every block outside it a destination page.
+
+### 2026-11-03  Curated but plain: copied the look, not the motion (EVM Group vs ESR Bespoke)
+- Owner's words: it looks a bit plain, it does not have the smoothness or the interactions expected, some sections look plain and unfinished.
+- Evidence (measured): length 1.3x and 314 words against 319, so curation worked. But `motion-probe.mjs` shows 14 elements moving with scroll against the reference's 271 (5%), and 8 of 10 sections with no motion at all. Code: the reference uses about 54 `.to`, 22 `fromTo`, 20 timelines, 38 staggers, 3 scrub, 3 pin, SplitText and pointer handlers; the build has 4 `.to`, 1 `fromTo`, 1 timeline and no ScrollTrigger, scrub, pin, SplitText or pointer handler. The reference has 18 canvases and 3 videos; the build has none and 1. One wheel notch: reference 216 px after 60 ms and 396 after 360 ms; build 103 and 309 (a slower, floatier smooth scroll). Sections that read as unfinished: a small sentence in an empty white screen where the reference sets a large statement, a sectors list, a milestones list, one small quote, a careers one-liner.
+- Cause: the rules measured how the page looks (stills, length, words) and never how it moves; "study the reference's motion" had no check, so the chat did Lenis plus one intro. The curation rule was read as "make everything smaller", which left sections sparse with no focal element.
+- Fix: rule 5 in section 11 (motion spec; `motion-probe.mjs`: at least 70% of the reference's scroll motion, no section without motion, similar wheel response; no plain sections, every section gets a focal element at the reference's scale and one deliberate motion); checklist item 17; the probe is part of the definition of done for reference-led work.
+- Lesson: if a quality cannot be measured, it gets skipped. Curation reduces how much is shown, not how well each part is made.
+- Promote to: SKILL.md section 11 (done), checklist 17 (done).
+
+### 2026-11-03  Owner wants a plan before the build, for sections the reference does not cover
+- Owner's words: before the AI builds the sections that must be designed beyond the reference, it should say what it intends to build, so they know what to expect before tokens are wasted; describe the content and design flow for the parts not on the reference; base it on the client's current design, the reference design and the websites we already built (all unique), and use real thinking.
+- Change: one deliberate checkpoint, kept separate from the earlier rule against asking permission. Section 11, rule 0: present a section plan (`references/plan-template.md`) and wait for "go"; after that run to the end. Added `references/patterns.md` (our own mechanisms by content type) so new sections can borrow proven mechanisms, and five questions the chat must answer for each new section.
+- Lesson: the owner does not object to being asked about design direction, only to being asked for permission to do the process. Ask once, about the decision only the owner can judge, and ask it cheaply.
+- Promote to: SKILL.md section 11 rule 0 (done), checklist 18 (done).
+
