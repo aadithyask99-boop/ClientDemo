@@ -11,11 +11,10 @@ const $$ = <T extends HTMLElement = HTMLElement>(s: string, r: ParentNode = docu
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const fine = matchMedia('(pointer: fine)').matches;
 
-if (reduce) {
-  // Static, readable page: no pins, no smooth scroll, no ink.
-  document.documentElement.classList.remove('js');
-} else {
-  init();
+if (!reduce) {
+  // The js class is added only once this script runs, so a failed script leaves a readable page.
+  document.documentElement.classList.add('js');
+  try { init(); } catch (e) { document.documentElement.classList.remove('js'); console.error(e); }
 }
 
 /** Wrap every word in a masked span so it can rise into place. Keeps nested spans (the gold word). */
