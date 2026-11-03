@@ -19,10 +19,12 @@ const cr = (p: number[][]) => {
 };
 const outline = cr(pts);
 const places = Object.entries(g.places).map(([id, p]) => ({ id, ...p, xy: proj([p.lon, p.lat]) }));
+const xy = Object.fromEntries(places.map((p) => [p.id, p.xy]));
+const carPath = JSON.stringify(g.items.map((it) => xy[it.places[0]]));
 ---
 <section class="group" id="group" data-theme="dark" aria-label="The group across Kerala">
   <p class="label group__label" data-reveal>{g.label}</p>
-  <svg class="group__map" viewBox="0 0 270 480" role="img" aria-label="A drawn outline of Kerala with the group's businesses marked">
+  <svg class="group__map" data-car={carPath} viewBox="0 0 270 480" role="img" aria-label="A drawn outline of Kerala with the group's businesses marked">
     <path class="group__outline" d={outline} pathLength="1" />
     {places.map((p) => (
       <g class="group__node" data-place={p.id} transform={`translate(${p.xy[0].toFixed(1)} ${p.xy[1].toFixed(1)})`}>
@@ -31,6 +33,7 @@ const places = Object.entries(g.places).map(([id, p]) => ({ id, ...p, xy: proj([
         <text class="group__place" x={p.side === 'r' ? 14 : -14} y="4" text-anchor={p.side === 'r' ? 'start' : 'end'}>{p.name}</text>
       </g>
     ))}
+    <g class="group__car"><rect x="-4.5" y="-9" width="9" height="18" rx="3" fill="#fff" /><path d="M-2.6 -4 L2.6 -4 L2.1 -1 L-2.1 -1Z" fill="#000" /></g>
   </svg>
   <ol class="group__list">
     {g.items.map((it, i) => (

@@ -12,15 +12,15 @@ const p = site.proof;
     </blockquote>
     <p class="more" data-reveal><a href={`${base}${p.reviews.href}`}>{p.reviews.label}</a></p>
   </div>
-  <div class="proof__stage">
-    <ol class="squares">
-      {p.figures.map((f, i) => (
-        <li class={`square square--${i + 1}`} data-square>
-          <span class="square__n">{f.pre}<b data-count={f.n}>{f.n.toLocaleString('en-US')}</b>{f.suf}</span>
-          <span class="square__t">{f.t}</span>
-        </li>
-      ))}
-    </ol>
-    <p class="proof__foot label">{p.awardsLabel}<span class="more"><a href={`${base}${p.awardsLink.href}`}>{p.awardsLink.label}</a></span></p>
+  <div class="km">
+    <div class="km__pin">
+      <ol class="km__track">
+        {p.stones.map((st) => (
+          <li class="stone"><span class="stone__cap" aria-hidden="true"></span><span class="stone__n">{st.big}</span><span class="stone__t">{st.t}</span></li>
+        ))}
+      </ol>
+      <div class="km__road" aria-hidden="true"></div>
+    </div>
   </div>
+  <p class="proof__foot label">{p.awardsLabel}<span class="more"><a href={`${base}${p.awardsLink.href}`}>{p.awardsLink.label}</a></span></p>
 </section>

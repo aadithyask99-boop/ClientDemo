@@ -1,0 +1,13 @@
+---
+import { site } from '../data/site';
+const n = site.night;
+---
+<section class="night" id="night" data-theme="dark" aria-label="The cinema at night">
+  <div class="night__board" aria-hidden="true">
+    <i class="night__bulbs"></i>
+    <p class="night__sign">{n.sign}</p>
+    <i class="night__bulbs"></i>
+  </div>
+  <p class="night__year">{n.year}</p>
+  <p class="big night__text" data-lines>{n.text}</p>
+</section>

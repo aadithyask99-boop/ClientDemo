@@ -1,6 +1,7 @@
 ---
 import { site } from '../data/site';
 import Mark from './Mark.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const f = site.footer;
 ---
 <footer class="footer" id="contact" data-theme="light">
@@ -10,6 +11,9 @@ const f = site.footer;
     <div class="footer__biz">
       <p class="label label--mute">{f.contact.label}</p>
       <p class="label">{f.contact.lines.map((l) => <span>{l}</span>)}</p>
+      <ol class="footer__go">
+        {site.next.items.map((it) => <li><a href={`${base}${it.href}`}><span>{it.name}</span></a></li>)}
+      </ol>
     </div>
   </div>
   <p class="label footer__legal">{f.legal}</p>

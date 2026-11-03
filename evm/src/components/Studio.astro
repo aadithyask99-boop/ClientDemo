@@ -1,0 +1,12 @@
+---
+import { site } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const s = site.studio;
+---
+<section class="studio" id="studio" data-theme="light" aria-label="A Porsche in the studio" data-frames={s.frames}>
+  <div class="studio__pin">
+    <img class="studio__img" src={`${base}/seq/turn/0.webp`} alt={s.alt} width="2400" height="1600" loading="lazy" />
+    <canvas class="studio__cv" aria-hidden="true"></canvas>
+    <p class="big studio__text" data-lines>{s.text}</p>
+  </div>
+</section>

@@ -113,7 +113,7 @@ html.anim [data-lines]:not(.is-split), html.anim [data-words]:not(.is-split) { o
 html.anim [data-reveal] { opacity: 0; animation: showfail 0.01s 8s forwards; }
 
 /* 2 Statement */
-.statement { min-height: 80svh; padding: 92px var(--g) clamp(40px, 6svh, 70px); }
+.statement { min-height: 66svh; padding: 92px var(--g) clamp(40px, 6svh, 70px); }
 .statement .big { margin-top: 22svh; font-size: clamp(30px, 4.4vw, 76px); line-height: 1.02; }
 .more { display: flex; gap: 28px; margin-top: 28px; }
 .more a { font-size: 14px; font-weight: 400; letter-spacing: 0.02em; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: currentColor; }
@@ -145,7 +145,7 @@ html:not(.anim) .who__row { color: var(--ink); }
 html.anim .photo img { transform: scale(1.14); }
 
 /* 4 Marques roller: a long list, the row nearest the middle is in full colour; a square tile and caption stay in view */
-.roller { display: grid; grid-template-columns: 25.29fr 42.1fr 32.61fr; padding: 84px var(--g) clamp(100px, 16svh, 180px); grid-template-rows: auto 1fr; }
+.roller { display: grid; grid-template-columns: 25.29fr 42.1fr 32.61fr; padding: 84px var(--g) clamp(60px, 9svh, 100px); grid-template-rows: auto 1fr; }
 .roller__label { grid-column: 1 / 3; grid-row: 1; }
 .roller__list { grid-column: 1 / 3; grid-row: 2; margin-top: clamp(80px, 12svh, 130px); }
 .roller__list li { display: flex; align-items: center; gap: 0.3em; width: fit-content; font-size: clamp(48px, 6.4vw, 120px); font-weight: 500; line-height: 0.95; letter-spacing: -0.01em; color: var(--pale); cursor: pointer; transition: color 0.45s var(--ease); outline-offset: 4px; }
@@ -173,7 +173,7 @@ html.anim .group__outline { stroke-dasharray: 1; stroke-dashoffset: 1; }
 .group__node.is-on .group__ring { opacity: 1; transform: scale(1); }
 .group__node.is-on .group__place { opacity: 1; }
 .group__list { grid-column: 3; grid-row: 1 / 3; border-top: 1px solid var(--panel); }
-.group__row { display: flex; gap: 40px; align-items: baseline; padding: clamp(24px, 5.5svh, 56px) 0; border-bottom: 1px solid var(--panel); color: #878787; cursor: pointer; transition: color 0.45s var(--ease); outline-offset: 4px; }
+.group__row { display: flex; gap: 40px; align-items: baseline; padding: clamp(18px, 3.6svh, 40px) 0; border-bottom: 1px solid var(--panel); color: #878787; cursor: pointer; transition: color 0.45s var(--ease); outline-offset: 4px; }
 .group__row.is-active { color: var(--paper); }
 html:not(.anim) .group__row { color: var(--paper); }
 .group__n { flex: none; width: 16px; font-size: 14px; font-weight: 400; letter-spacing: 0.02em; }
@@ -212,19 +212,24 @@ html.anim .ms__line { display: block; position: absolute; left: calc(var(--c3) -
 /* 8 Proof: one customer, words that light up as you scroll, then three white squares drifting over a photograph */
 .proof { padding: 0; }
 .proof__top { padding: 92px var(--g) clamp(64px, 9svh, 100px); }
-.proof blockquote { margin-top: 16svh; }
+.proof blockquote { margin-top: 9svh; }
 .proof cite { display: block; margin-top: 24px; font-style: normal; color: rgba(255, 255, 255, 0.92); }
-.proof__stage { position: relative; height: min(100svh, 920px); overflow: hidden; }
-.squares { position: absolute; inset: 0; z-index: 1; }
-.square { position: absolute; width: clamp(220px, 22vw, 320px); aspect-ratio: 1; background: #fff; color: #000; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; will-change: transform; }
-.square--1 { left: var(--c2); top: 12%; }
-.square--2 { left: calc(var(--c3) - 40px); top: 34%; }
-.square--3 { left: var(--g); top: 58%; }
-.square__n { font-size: clamp(48px, 5.3vw, 76px); letter-spacing: -0.03em; font-weight: 500; line-height: 0.95; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-.square__n b { font-weight: 500; }
-.square__t { font-size: clamp(18px, 1.95vw, 28px); line-height: 1.12; font-weight: 500; letter-spacing: -0.005em; max-width: 12em; }
-.proof__foot { position: absolute; z-index: 1; left: var(--g); right: var(--g); bottom: 28px; display: flex; gap: 28px; align-items: baseline; color: #fff; }
+.proof__foot { position: relative; z-index: 1; display: flex; gap: 28px; align-items: baseline; padding: 40px var(--g) 28px; color: #fff; }
 .proof__foot .more { margin: 0; }
+
+/* 9 Kilometre stones: a row of white stones passes while the road moves under them */
+.km { position: relative; }
+html.anim .km { height: 200svh; }
+.km__pin { position: relative; display: block; overflow: hidden; padding-top: 6svh; }
+html.anim .km__pin { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding-top: 0; }
+.km__track { display: flex; align-items: flex-end; gap: clamp(60px, 9vw, 160px); padding: 0 var(--g) 0 var(--c2); width: max-content; will-change: transform; }
+.stone { position: relative; flex: none; width: clamp(240px, 22vw, 330px); height: min(58svh, 520px); display: flex; flex-direction: column; justify-content: flex-end; gap: 16px; padding: 0 26px 28px; background: #fff; color: #000; border-radius: 46% 46% 0 0 / 12% 12% 0 0; overflow: hidden; }
+.stone:nth-child(2n) { height: min(50svh, 450px); }
+.stone:nth-child(3n) { height: min(62svh, 560px); }
+.stone__cap { position: absolute; left: 0; right: 0; top: 0; height: 17%; background: #000; }
+.stone__n { font-size: clamp(48px, 5.3vw, 80px); font-weight: 500; line-height: 0.95; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.stone__t { font-size: clamp(17px, 1.6vw, 24px); line-height: 1.3; font-weight: 500; letter-spacing: -0.005em; }
+.km__road { height: 15svh; min-height: 90px; background: #000 repeating-linear-gradient(90deg, #fff 0 56px, transparent 56px 112px) center / auto 3px no-repeat; }
 
 /* 9 Where next: three links at roller size; the word under the pointer is black, the others fade; a tile follows the pointer */
 .next { padding: 84px var(--g) clamp(100px, 16svh, 160px); min-height: 70svh; }
@@ -236,12 +241,63 @@ html.anim .ms__line { display: block; position: absolute; left: calc(var(--c3) -
 .next__list:hover .next__name { color: var(--pale); }
 .next__list li > a:hover .next__name, .next__list li > a:focus-visible .next__name { color: var(--red); }
 
+/* Rail: the road down the left edge, with the car at your place on the page */
+.rail { --rail-glass: #000; position: fixed; left: calc(var(--g) / 2 - 1px); top: 0; bottom: 0; width: 2px; z-index: 22; pointer-events: none; color: var(--red); transition: opacity 0.6s var(--ease); }
+.rail[data-theme='dark'] { color: var(--red-on-dark); --rail-glass: #000; }
+.rail[data-theme='red'] { color: #fff; --rail-glass: var(--red); }
+.rail__line { position: absolute; inset: 0; background: repeating-linear-gradient(to bottom, currentColor 0 12px, transparent 12px 24px); opacity: 0.55; }
+.rail__car { position: absolute; left: 50%; width: 14px; height: 28px; margin-left: -7px; top: calc(14px + var(--rp, 0) * (100svh - 56px)); filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.25)); }
+html.anim:not(.ready) .rail { opacity: 0; }
+
+/* The hoarding: the portrait is a billboard on two posts */
+.who__tile { box-shadow: 0 0 0 8px #111; background: #1a1a1a; margin-bottom: 120px; overflow: visible; }
+.who__tile::before, .who__tile::after { content: ''; position: absolute; bottom: -128px; width: 8px; height: 120px; background: linear-gradient(#111, rgba(17, 17, 17, 0)); }
+.who__tile::before { left: 22%; } .who__tile::after { right: 22%; }
+.who__tile img { clip-path: inset(0); }
+
+/* The studio: pinned; the Porsche turns as you scroll */
+.studio { position: relative; background: #d9d9dc; }
+.studio__pin { position: relative; height: 80svh; overflow: hidden; }
+.studio__img, .studio__cv { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.studio__cv { display: none; }
+html.anim .studio { height: 170svh; }
+html.anim .studio__pin { position: sticky; top: 0; height: 100svh; }
+html.anim .studio__cv { display: block; }
+.studio__text { position: absolute; left: var(--g); top: 92px; z-index: 1; max-width: 14em; font-size: var(--big); color: #111; }
+
+/* The climb: the road to Munnar; the year at scale, the height counting up */
+.climb { position: relative; }
+.climb__pin { position: relative; height: 90svh; overflow: hidden; background: #000; }
+html.anim .climb { height: 190svh; }
+html.anim .climb__pin { position: sticky; top: 0; height: 100svh; }
+.climb__img, .climb__cv { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.climb__cv { display: none; }
+html.anim .climb__cv { display: block; }
+.climb__pin::after { content: ''; position: absolute; inset: 0; background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 0.5)); pointer-events: none; }
+.climb__year { position: absolute; z-index: 1; left: var(--g); bottom: 6svh; font-size: clamp(88px, 15vw, 280px); font-weight: 500; line-height: 0.9; letter-spacing: -0.04em; }
+.climb__text { position: absolute; z-index: 1; left: var(--c3); top: 92px; max-width: calc(100vw - var(--c3) - var(--g)); }
+.climb__alt { position: absolute; z-index: 1; right: var(--g); bottom: 6svh; font-size: clamp(28px, 3.4vw, 50px); font-weight: 500; letter-spacing: -0.015em; font-variant-numeric: tabular-nums; }
+.climb__alt b { font-weight: 500; }
+
+/* The night stop: a lit cinema sign slides past */
+.night { padding: 92px 0 clamp(50px, 8svh, 90px); overflow: hidden; }
+.night__board { margin-top: 6svh; }
+.night__bulbs { display: block; height: 22px; background: radial-gradient(circle, var(--red-on-dark) 0 5px, transparent 6px) 0 center / 44px 22px repeat-x; animation: chase 1.4s steps(2) infinite; }
+.night__sign { font-size: clamp(120px, 24vw, 460px); font-weight: 500; line-height: 1; letter-spacing: -0.04em; padding: 0.05em var(--g); white-space: nowrap; will-change: transform; }
+@keyframes chase { to { background-position: 22px center; } }
+.night__year { margin: 8svh var(--g) 0; font-size: 14px; font-weight: 400; letter-spacing: 0.02em; }
+.night__text { margin: 3svh var(--g) 0; max-width: 17em; font-size: clamp(30px, 4.4vw, 76px); }
+
 /* 10 Footer: details on the grid, then the EVM mark across the full width in red, cropped at the foot */
 .footer { position: relative; min-height: 100svh; padding: 84px var(--g) 0; display: flex; flex-direction: column; overflow: hidden; }
 .footer__top { display: grid; grid-template-columns: 25.29fr 42.1fr 32.61fr; }
 .footer__top .label:nth-child(2) { max-width: 12em; }
 .footer__biz { display: grid; gap: 8px; align-content: start; }
 .footer__biz .label span { display: block; }
+.footer__go { margin-top: 36px; display: grid; gap: 6px; }
+.footer__go a { display: block; width: fit-content; font-size: clamp(34px, 4.4vw, 76px); line-height: 1; letter-spacing: -0.02em; transition: color 0.4s var(--ease); }
+.footer__go:hover a { color: var(--pale); }
+.footer__go a:hover { color: var(--red); }
 .footer__legal { margin-top: auto; padding-top: 80px; padding-bottom: 28px; color: var(--mute); max-width: 70em; text-wrap: pretty; }
 .footer__markwrap { width: 100%; overflow: hidden; }
 .footer__mark { width: 100%; color: var(--red); }
@@ -285,11 +341,22 @@ html.anim .ms__line { display: block; position: absolute; left: calc(var(--c3) -
   .ms__sy { font-size: clamp(48px, 14vw, 72px); }
   .ms__pin { padding-bottom: 80px; }
   .proof blockquote { margin-top: 12svh; }
-  .proof__stage { height: auto; padding: 28px var(--g) 90px; }
-  .squares { position: relative; display: grid; gap: 14px; }
-  .square, .square--1, .square--2, .square--3 { position: relative; left: auto; top: auto; width: min(100%, 300px); }
-  .square--2 { justify-self: end; }
-  .proof__foot { position: absolute; left: var(--g); bottom: 24px; }
+  html.anim .km { height: auto; }
+  html.anim .km__pin { position: static; height: auto; display: block; }
+  .km__track { width: auto; display: grid; gap: 14px; padding: 28px var(--g) 0; }
+  .stone { width: min(100%, 320px); height: auto; border-radius: 40% 40% 0 0 / 8% 8% 0 0; padding-top: 80px; }
+  .stone:nth-child(n) { height: auto; }
+  .km__road { display: none; }
+  html.anim .studio, html.anim .climb { height: auto; }
+  html.anim .studio__pin, html.anim .climb__pin { position: relative; height: 70svh; }
+  html.anim .studio__cv, html.anim .climb__cv { display: none; }
+  html.anim .studio__pin { height: calc(66.7vw + 150px); }
+  .studio__img { top: auto; bottom: 0; height: 66.7vw; }
+  .studio__text { top: 76px; }
+  .climb__text { left: var(--g); top: 76px; }
+  .climb__year { font-size: 30vw; }
+  .who__tile { margin-bottom: 0; }
+  .night__sign { font-size: 34vw; }
   .next__list li { grid-template-columns: 1fr; row-gap: 4px; margin-bottom: 14px; }
   .next__list li > a, .next__line { grid-column: 1; }
   .footer__top { grid-template-columns: 1fr; row-gap: 14px; }

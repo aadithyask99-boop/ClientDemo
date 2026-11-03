@@ -1,0 +1,14 @@
+---
+import { site } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const c = site.climb;
+---
+<section class="climb" id="climb" data-theme="dark" aria-label="The road up to Munnar" data-frames={c.frames} data-top={c.height}>
+  <div class="climb__pin">
+    <img class="climb__img" src={`${base}/seq/climb/000.webp`} alt={c.alt} width="1600" height="900" loading="lazy" />
+    <canvas class="climb__cv" aria-hidden="true"></canvas>
+    <p class="climb__year">{c.year}</p>
+    <p class="big climb__text">{c.text}</p>
+    <p class="climb__alt" aria-label={`About ${c.height.toLocaleString('en-US')} metres above sea level`}><b data-alt>{c.height.toLocaleString('en-US')}</b> m</p>
+  </div>
+</section>

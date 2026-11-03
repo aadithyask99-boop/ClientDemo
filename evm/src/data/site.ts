@@ -37,6 +37,23 @@ export const site = {
       { name: 'Divya Paul', role: 'Director', img: 'person-divya.webp', alt: 'Divya Paul, a director' },
     ],
   },
+  studio: {
+    text: 'Porsche to Honda: eight marques on one road, and one family behind them.',
+    alt: 'A red Porsche 911 turning on a grey studio floor',
+    frames: 8,
+  },
+  climb: {
+    year: '1988',
+    text: 'Hill View opens in Munnar, the first hotel of the group.',
+    alt: 'A mountain road climbing through the hills',
+    frames: 72,
+    height: 1500,
+  },
+  night: {
+    sign: 'Jawahar',
+    year: '1985',
+    text: 'The Jawahar theatre in Kothamangalam becomes the first EVM Cinema.',
+  },
   photo: { img: 'photo-kochi.webp', alt: 'Chinese fishing nets on the shore at Kochi, Kerala', pos: '50% 60%' },
   marques: {
     label: 'Brands we represent',
@@ -69,7 +86,7 @@ export const site = {
       { name: 'Hotels and resorts', slug: 'hotels', note: 'Mountain Club in the Munnar tea gardens, and Le Leela on Vembanad Lake.', places: ['munnar', 'vembanad'] },
       { name: 'Plantation', slug: 'plantation', note: 'Hill produce, lemongrass and tea from the high ranges.', places: ['highrange'] },
       { name: 'Transportation', slug: 'transportation', note: 'The EVM bus service, and EVM Wheels self drive cars.', places: ['kothamangalam'] },
-      { name: 'Entertainment', slug: 'entertainment', note: 'EVM Cinemas, from the Jawahar in Kothamangalam to the Kavitha in Kochi.', places: ['kothamangalam', 'kochi'] },
+      { name: 'Entertainment', slug: 'entertainment', note: 'EVM Cinemas, from Kothamangalam to Kochi.', places: ['kothamangalam', 'kochi'] },
     ],
   },
   milestones: {
@@ -89,10 +106,12 @@ export const site = {
     reviews: { label: 'More customers', href: '/reviews' },
     awardsLabel: 'Awards',
     awardsLink: { label: 'More awards', href: '/recognition' },
-    figures: [
-      { n: 1, pre: 'No. ', suf: '', t: 'All India dealer, Excellent Performance Award 2012 to 2013' },
-      { n: 20000, pre: '', suf: '', t: 'Nissans: the first dealer in India to cross it' },
-      { n: 350, pre: '', suf: '+', t: 'Porsche cars delivered since inception' },
+    stones: [
+      { big: '2001', t: 'EVM Honda opens, the first dealership of the group.' },
+      { big: 'No. 1', t: 'All India dealer, Excellent Performance Award 2012 to 2013.' },
+      { big: '20,000', t: 'Nissans: the first dealer in India to cross it.' },
+      { big: '2019', t: 'MG, Skoda and MINI join within one year.' },
+      { big: '350+', t: 'Porsche cars delivered since inception.' },
     ],
   },
   next: {

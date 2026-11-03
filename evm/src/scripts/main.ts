@@ -11,11 +11,15 @@ const $$ = <T extends HTMLElement>(s: string, r: ParentNode = document) => [...r
 
 // ---------- Header, menu ----------
 const header = $('.header');
+const rail = $('.rail');
 const themeEls = $$('[data-theme]').filter((e) => e !== header);
 const syncTheme = () => {
   const hit = themeEls.find((e) => { const r = e.getBoundingClientRect(); return r.top <= 30 && r.bottom > 30; });
   header.dataset.theme = hit?.dataset.theme ?? 'dark';
   header.classList.toggle('is-scrolled', scrollY > innerHeight * 0.6);
+  rail.dataset.theme = header.dataset.theme;
+  const max = document.documentElement.scrollHeight - innerHeight;
+  rail.style.setProperty('--rp', (max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0).toFixed(4));
 };
 const menu = $('#menu');
 const menuBtn = $<HTMLButtonElement>('.header__menu');
@@ -60,7 +64,7 @@ const setWho = (i: number) => {
   whoActive = i;
   whoRows.forEach((r, k) => r.classList.toggle('is-active', k === i));
   whoImgs.forEach((im, k) => im.classList.toggle('is-active', k === i));
-  if (!reduce) gsap.fromTo(whoImgs[i], { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', duration: 0.7, ease: 'expo.out', overwrite: true });
+  if (!reduce) gsap.fromTo(whoImgs[i], { clipPath: 'inset(0 0 0 100%)', xPercent: 18 }, { clipPath: 'inset(0 0 0 0%)', xPercent: 0, duration: 0.9, ease: 'expo.out', overwrite: true });
 };
 whoRows.forEach((r, i) => {
   r.addEventListener('pointerenter', () => canHover && setWho(i));
@@ -72,12 +76,26 @@ whoRows.forEach((r, i) => {
 const gRows = $$('.group__row');
 const gNodes = $$('.group__node');
 let gActive = -1;
+const gCar = $('.group__car') as unknown as SVGGElement;
+const gPath: number[][] = JSON.parse($('.group__map').dataset.car ?? '[]');
+let gCarAt: number[] | null = null;
+let gCarAng: number | null = null;
+let gActiveFirst = true;
 const setGroup = (i: number) => {
   if (i === gActive) return;
   gActive = i;
   const on = (gRows[i].dataset.places ?? '').split(' ');
   gRows.forEach((r, k) => r.classList.toggle('is-active', k === i));
   gNodes.forEach((n) => n.classList.toggle('is-on', on.includes(n.getAttribute('data-place') ?? '')));
+  const to = gPath[i];
+  if (to) {
+    const from = gCarAt;
+    const ang = from && (from[0] !== to[0] || from[1] !== to[1]) ? (Math.atan2(to[0] - from[0], -(to[1] - from[1])) * 180) / Math.PI : (gCarAng ?? 180);
+    gCarAng = ang; gCarAt = to;
+    if (reduce || gActiveFirst) gsap.set(gCar, { x: to[0], y: to[1], rotation: ang, svgOrigin: '0 0' });
+    else gsap.to(gCar, { x: to[0], y: to[1], rotation: ang, svgOrigin: '0 0', duration: 1.2, ease: 'expo.inOut', overwrite: true });
+    gActiveFirst = false;
+  }
 };
 gRows.forEach((r, i) => {
   r.addEventListener('pointerenter', () => canHover && setGroup(i));
@@ -85,6 +103,36 @@ gRows.forEach((r, i) => {
   r.addEventListener('click', () => setGroup(i));
 });
 setGroup(0);
+
+// ---------- Frame sequences (the Porsche turning in the studio, the road climbing to Munnar), drawn on a canvas as you scroll ----------
+const base = (document.querySelector('img.studio__img') as HTMLImageElement).src.replace(/\/seq\/.*$/, '');
+const makeSeq = (sec: HTMLElement, urls: string[], blend: boolean) => {
+  const cv = $<HTMLCanvasElement>('canvas', sec);
+  const ctx = cv.getContext('2d')!;
+  const imgs = urls.map(() => new Image());
+  let loaded = false;
+  const load = () => { if (loaded) return; loaded = true; imgs.forEach((im, i) => { im.decoding = 'async'; im.src = urls[i]; im.onload = () => render(last); }); };
+  let last = 0;
+  const size = () => { const dpr = Math.min(devicePixelRatio || 1, 1.5); cv.width = Math.round(cv.clientWidth * dpr); cv.height = Math.round(cv.clientHeight * dpr); };
+  const draw = (im: HTMLImageElement, a: number) => {
+    if (!im.complete || !im.naturalWidth) return;
+    const s = Math.max(cv.width / im.naturalWidth, cv.height / im.naturalHeight);
+    const w = im.naturalWidth * s, h = im.naturalHeight * s;
+    ctx.globalAlpha = a; ctx.drawImage(im, (cv.width - w) / 2, (cv.height - h) / 2, w, h);
+  };
+  const render = (p: number) => {
+    last = p;
+    const f = Math.min(1, Math.max(0, p)) * (imgs.length - 1);
+    const i = Math.min(imgs.length - 1, Math.floor(f)), t = f - i;
+    ctx.globalAlpha = 1; ctx.clearRect(0, 0, cv.width, cv.height);
+    draw(imgs[i], 1);
+    const k = Math.min(1, Math.max(0, (t - 0.38) / 0.24)); // hold each angle, dissolve briefly between them
+    if (blend && k > 0 && imgs[i + 1]) draw(imgs[i + 1], k * k * (3 - 2 * k));
+    else if (!blend && t > 0.5 && imgs[i + 1]) draw(imgs[i + 1], 1);
+  };
+  size();
+  return { load, render, size };
+};
 
 // ---------- Hero film ----------
 const film = $('.hero__film');
@@ -242,11 +290,38 @@ if (reduce) {
       el.textContent = '0';
       gsap.to(o, { n: to, duration: 1.8, ease: 'expo.out', onUpdate: () => { el.textContent = Math.round(o.n).toLocaleString('en-US'); }, scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
     });
+    // The studio: the Porsche turns as you scroll through the pinned scene.
+    const studio = $('.studio');
+    const turn = makeSeq(studio, Array.from({ length: Number(studio.dataset.frames) }, (_, i) => `${base}/seq/turn/${i}.webp`), true);
+    turn.load();
+    ScrollTrigger.create({ trigger: studio, start: 'top top', end: 'bottom bottom', onUpdate: (self) => { if (wide()) turn.render(self.progress); } });
+    ScrollTrigger.create({ trigger: studio, start: 'top bottom', end: 'bottom top', onRefresh: () => { turn.size(); turn.render(0); } });
+    // The climb: the road to Munnar plays as you scroll; the height counts up with it.
+    const climb = $('.climb');
+    const cseq = makeSeq(climb, Array.from({ length: Number(climb.dataset.frames) }, (_, i) => `${base}/seq/climb/${String(i).padStart(3, '0')}.webp`), false);
+    const alt = $('[data-alt]');
+    const top = Number(climb.dataset.top);
+    ScrollTrigger.create({ trigger: climb, start: 'top bottom+=800', once: true, onEnter: () => cseq.load() });
+    ScrollTrigger.create({ trigger: climb, start: 'top bottom', end: 'bottom top', onRefresh: () => { cseq.size(); cseq.render(0); } });
+    ScrollTrigger.create({ trigger: climb, start: 'top top', end: 'bottom bottom', onUpdate: (self) => { if (!wide()) return; cseq.render(self.progress); alt.textContent = Math.round(self.progress * top).toLocaleString('en-US'); } });
+    gsap.fromTo('.climb__year, .climb__text', { yPercent: 40, opacity: 0 }, { yPercent: 0, opacity: 1, ease: 'none', stagger: 0.1, scrollTrigger: { trigger: climb, start: 'top 60%', end: 'top 10%', scrub: true } });
+    // The night stop: the sign slides past.
+    gsap.fromTo('.night__sign', { xPercent: 18 }, { xPercent: -18, ease: 'none', scrollTrigger: { trigger: '.night', start: 'top bottom', end: 'bottom top', scrub: true } });
+    // Kilometre stones: pinned; the row of stones passes as the road moves under them.
+    if (wide()) {
+      const kmEl = $('.km'), track = $('.km__track'), road = $('.km__road');
+      const travel = () => Math.max(0, track.scrollWidth - innerWidth + 2 * parseFloat(getComputedStyle(kmEl).paddingLeft || '0') + 80);
+      ScrollTrigger.create({ trigger: kmEl, start: 'top top', end: 'bottom bottom', invalidateOnRefresh: true, onUpdate: (self) => {
+        const x = -self.progress * travel();
+        track.style.transform = `translate3d(${x}px,0,0)`;
+        road.style.backgroundPositionX = `${x}px`;
+      } });
+    }
     // Hero: the headline, line and link lift away and the film drifts as you leave it.
     gsap.to('.hero__title, .hero__sub, .hero__cta', { yPercent: -18, opacity: 0, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: '70% top', scrub: true } });
     gsap.to('.hero__film', { yPercent: 10, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
     // Marques and next links: each name builds letter by letter as it rises into view.
-    [...$$('.roller__list li span'), ...$$('.next__list a span'), ...$$('.who__name'), ...$$('.group__name')].forEach((el) => {
+    [...$$('.roller__list li span'), ...$$('.footer__go a span'), ...$$('.who__name'), ...$$('.group__name')].forEach((el) => {
       const chars = splitChars(el);
       gsap.fromTo(chars, { yPercent: 70, opacity: 0 }, { yPercent: 0, opacity: 1, ease: 'none', stagger: 0.04, scrollTrigger: { trigger: el, start: 'top 96%', end: 'top 62%', scrub: true } });
     });
@@ -255,36 +330,9 @@ if (reduce) {
       gsap.fromTo(el, { yPercent: 40, opacity: 0.2 }, { yPercent: 0, opacity: 1, ease: 'none', scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 72%', scrub: true } });
     });
     gsap.fromTo('.footer__links a, .footer__top .label, .footer__biz > *, .footer__legal', { yPercent: 60, opacity: 0.1 }, { yPercent: 0, opacity: 1, ease: 'none', stagger: 0.06, scrollTrigger: { trigger: '.footer', start: 'top 85%', end: 'top 25%', scrub: true } });
-    // Proof: the photograph moves slowly; the three squares drift past each other at different speeds.
-    const stage = $('.proof__stage');
-    if (wide()) [['.square--1', 90], ['.square--2', -40], ['.square--3', 150]].forEach(([sel, d]) => {
-      gsap.fromTo(sel as string, { y: d as number }, { y: -(d as number), ease: 'none', scrollTrigger: { trigger: stage, start: 'top bottom', end: 'bottom top', scrub: true } });
-    });
     // Footer wordmark rises into its frame.
     gsap.fromTo('.footer__mark', { yPercent: 105 }, { yPercent: 7, duration: 1.5, ease: 'expo.out', scrollTrigger: { trigger: '.footer__markwrap', start: 'top 92%', once: true } });
   };
-
-  // Milestones: a pinned scene; the year rolls digit by digit, the line and tile swap.
-  const ms = $('.milestones');
-  const msStacks = $$('.ms__stack');
-  const msCaps = $$('.ms__caption span');
-  const msN = msCaps.length;
-  let msActive = 0;
-  const setMilestone = (i: number) => {
-    if (i === msActive) return;
-    const dir = i > msActive ? 1 : -1;
-    const prev = msActive;
-    msActive = i;
-    gsap.to(msStacks, { yPercent: -(100 / msN) * i, duration: 1.1, ease: 'expo.inOut', stagger: { each: 0.07, from: 'end' }, overwrite: true });
-    gsap.killTweensOf(msCaps);
-    msCaps.forEach((c, k) => { c.classList.toggle('is-active', k === i); if (k !== i && k !== prev) gsap.set(c, { opacity: 0, yPercent: 0 }); });
-    gsap.to(msCaps[prev], { yPercent: -60 * dir, opacity: 0, duration: 0.4, ease: 'power3.in' });
-    gsap.fromTo(msCaps[i], { yPercent: 60 * dir, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.9, ease: 'expo.out', delay: 0.3 });
-  };
-  ScrollTrigger.create({
-    trigger: ms, start: 'top top', end: 'bottom bottom',
-    onUpdate: (self) => { if (wide()) { ms.style.setProperty('--mp', self.progress.toFixed(4)); setMilestone(Math.min(msN - 1, Math.floor(self.progress * msN * 0.999))); } },
-  });
 
   const start = () => { build(); ScrollTrigger.refresh(); };
   (document as Document & { fonts?: FontFaceSet }).fonts?.ready.then(start) ?? start();
