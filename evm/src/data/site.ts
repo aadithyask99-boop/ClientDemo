@@ -24,8 +24,18 @@ export const site = {
   },
   statement: {
     label: 'EVM Group, since 1952',
-    text: 'In 1952, E.V. Mathai auctioned a toddy shop at fifteen and set out on his own. His family has grown the business ever since, and today it is led by E.M. Johny and Sabu Johny.',
-    links: [{ label: 'Our story', href: '/about' }, { label: 'Our people', href: '/people' }],
+    text: 'In 1952, E.V. Mathai auctioned a toddy shop at fifteen and set out on his own. His family has grown the business ever since.',
+    links: [{ label: 'Our story', href: '/about' }],
+  },
+  who: {
+    label: 'Who leads it',
+    link: { label: 'The wider team', href: '/people' },
+    items: [
+      { name: 'E.V. Mathai', role: 'Founder', img: 'person-mathai.webp', alt: 'E.V. Mathai, the founder' },
+      { name: 'E.M. Johny', role: 'Chairman', img: 'person-johny.webp', alt: 'E.M. Johny, the chairman' },
+      { name: 'Sabu Johny', role: 'Managing Director', img: 'person-sabu.webp', alt: 'Sabu Johny, the managing director' },
+      { name: 'Divya Paul', role: 'Director', img: 'person-divya.webp', alt: 'Divya Paul, a director' },
+    ],
   },
   photo: { img: 'photo-kochi.webp', alt: 'Chinese fishing nets on the shore at Kochi, Kerala', pos: '50% 60%' },
   marques: {
@@ -82,7 +92,6 @@ export const site = {
   next: {
     label: 'Where next',
     items: [
-      { name: 'Our people', line: 'The family and the leaders of each marque.', href: '/people' },
       { name: 'Careers', line: 'Join the group.', href: '/careers' },
       { name: 'Contact', line: 'Offices, phone and email.', href: '/contact' },
     ],

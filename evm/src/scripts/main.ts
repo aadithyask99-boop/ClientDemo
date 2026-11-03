@@ -54,6 +54,23 @@ rItems.forEach((li, i) => {
   li.addEventListener('click', () => setMarque(i));
 });
 
+// ---------- Who leads it: the row nearest the middle is black and its portrait shows; hover or focus picks one ----------
+const whoRows = $$('.who__row');
+const whoImgs = $$('.who__tile img');
+let whoActive = 0;
+const setWho = (i: number) => {
+  if (i === whoActive) return;
+  whoActive = i;
+  whoRows.forEach((r, k) => r.classList.toggle('is-active', k === i));
+  whoImgs.forEach((im, k) => im.classList.toggle('is-active', k === i));
+  if (!reduce) gsap.fromTo(whoImgs[i], { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', duration: 0.7, ease: 'expo.out', overwrite: true });
+};
+whoRows.forEach((r, i) => {
+  r.addEventListener('pointerenter', () => canHover && setWho(i));
+  r.addEventListener('focus', () => setWho(i));
+  r.addEventListener('click', () => setWho(i));
+});
+
 // ---------- Hero film ----------
 const film = $('.hero__film');
 const video = $<HTMLVideoElement>('.hero__video');
@@ -190,6 +207,10 @@ if (reduce) {
       gsap.fromTo(sec, { clipPath: 'inset(10% 7% 10% 7%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none', scrollTrigger: { trigger: sec, start: 'top 95%', end: 'top 25%', scrub: true } });
       gsap.fromTo(img, { scale: 1.16, yPercent: -5 }, { scale: 1, yPercent: 5, ease: 'none', scrollTrigger: { trigger: sec, start: 'top bottom', end: 'bottom top', scrub: true } });
     });
+    // Who leads it: the row crossing the middle of the screen becomes the active one (desktop widths).
+    whoRows.forEach((row, i) => {
+      ScrollTrigger.create({ trigger: row, start: 'top center', end: 'bottom center', onToggle: (self) => { if (self.isActive && wide()) setWho(i); } });
+    });
     // Marques: the row crossing the middle of the screen becomes the active one.
     rItems.forEach((li, i) => {
       ScrollTrigger.create({ trigger: li, start: 'top center', end: 'bottom center', onToggle: (self) => { if (self.isActive) setMarque(i); } });
@@ -205,12 +226,12 @@ if (reduce) {
     gsap.to('.hero__title, .hero__sub, .hero__cta', { yPercent: -18, opacity: 0, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: '70% top', scrub: true } });
     gsap.to('.hero__film', { yPercent: 10, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
     // Marques and next links: each name builds letter by letter as it rises into view.
-    [...$$('.roller__list li span'), ...$$('.next__list a span'), ...$$('.rows__name')].forEach((el) => {
+    [...$$('.roller__list li span'), ...$$('.next__list a span'), ...$$('.rows__name'), ...$$('.who__name')].forEach((el) => {
       const chars = splitChars(el);
       gsap.fromTo(chars, { yPercent: 70, opacity: 0 }, { yPercent: 0, opacity: 1, ease: 'none', stagger: 0.04, scrollTrigger: { trigger: el, start: 'top 96%', end: 'top 62%', scrub: true } });
     });
     // Rows, figures and footer details drift into place with the scroll.
-    $$('.rows__item').forEach((el) => {
+    $$('.rows__item, .who__row').forEach((el) => {
       gsap.fromTo(el, { yPercent: 40, opacity: 0.2 }, { yPercent: 0, opacity: 1, ease: 'none', scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 72%', scrub: true } });
     });
     gsap.fromTo('.footer__links a, .footer__top .label, .footer__biz > *, .footer__legal', { yPercent: 60, opacity: 0.1 }, { yPercent: 0, opacity: 1, ease: 'none', stagger: 0.06, scrollTrigger: { trigger: '.footer', start: 'top 85%', end: 'top 25%', scrub: true } });

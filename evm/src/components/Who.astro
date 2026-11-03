@@ -1,0 +1,21 @@
+---
+import { site } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const w = site.who;
+---
+<section class="who" id="who" data-theme="light" aria-label="Who leads it">
+  <p class="label who__label" data-reveal>{w.label}</p>
+  <div class="who__tile" aria-hidden="true">
+    {w.items.map((it, i) => <img class={i === 0 ? 'is-active' : ''} src={`${base}/img/${it.img}`} alt="" width="212" height="265" loading="lazy" />)}
+  </div>
+  <ol class="who__list">
+    {w.items.map((it, i) => (
+      <li class={`who__row ${i === 0 ? 'is-active' : ''}`} tabindex="0">
+        <span class="who__n">{String(i + 1).padStart(2, '0')}</span>
+        <span class="who__body"><span class="who__name">{it.name}</span><span class="who__role">{it.role}</span></span>
+        <img class="who__thumb" src={`${base}/img/${it.img}`} alt={it.alt} width="212" height="265" loading="lazy" />
+      </li>
+    ))}
+  </ol>
+  <p class="more who__more" data-reveal><a href={`${base}${w.link.href}`}>{w.link.label}</a></p>
+</section>
