@@ -1,0 +1,44 @@
+---
+import { site } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const g = site.group;
+// A simplified outline of Kerala (coast north to south, then the eastern border back north), drawn by hand from approximate points.
+const coast: [number, number][] = [[74.86,12.78],[74.93,12.55],[75.1,12.2],[75.25,11.98],[75.37,11.87],[75.55,11.7],[75.7,11.42],[75.78,11.25],[75.9,11.0],[75.95,10.78],[76.08,10.5],[76.2,10.2],[76.24,9.96],[76.3,9.7],[76.33,9.49],[76.45,9.15],[76.6,8.88],[76.8,8.65],[76.95,8.5],[77.05,8.3]];
+const border: [number, number][] = [[77.15,8.4],[77.18,8.7],[77.2,9.0],[77.25,9.35],[77.2,9.7],[77.25,10.0],[77.1,10.3],[76.95,10.55],[76.85,10.85],[76.7,11.15],[76.55,11.55],[76.2,11.8],[75.85,12.1],[75.6,12.35],[75.3,12.65],[74.95,12.8]];
+const proj = ([lon, lat]: [number, number]): [number, number] => [(lon - 74.8) * 98.3 + 12, (12.9 - lat) * 100 + 4];
+const pts = [...coast, ...border].map(proj);
+const cr = (p: number[][]) => {
+  let d = `M${p[0][0].toFixed(1)} ${p[0][1].toFixed(1)}`;
+  for (let i = 0; i < p.length - 1; i++) {
+    const p0 = p[i - 1] ?? p[i], p1 = p[i], p2 = p[i + 1], p3 = p[i + 2] ?? p2;
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += `C${c1[0].toFixed(1)} ${c1[1].toFixed(1)} ${c2[0].toFixed(1)} ${c2[1].toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+  }
+  return d + 'Z';
+};
+const outline = cr(pts);
+const places = Object.entries(g.places).map(([id, p]) => ({ id, ...p, xy: proj([p.lon, p.lat]) }));
+---
+<section class="group" id="group" data-theme="dark" aria-label="The group across Kerala">
+  <p class="label group__label" data-reveal>{g.label}</p>
+  <svg class="group__map" viewBox="0 0 270 480" role="img" aria-label="A drawn outline of Kerala with the group's businesses marked">
+    <path class="group__outline" d={outline} pathLength="1" />
+    {places.map((p) => (
+      <g class="group__node" data-place={p.id} transform={`translate(${p.xy[0].toFixed(1)} ${p.xy[1].toFixed(1)})`}>
+        <circle class="group__ring" r="9" />
+        <rect class="group__dot" x="-3.5" y="-3.5" width="7" height="7" />
+        <text class="group__place" x={p.side === 'r' ? 14 : -14} y="4" text-anchor={p.side === 'r' ? 'start' : 'end'}>{p.name}</text>
+      </g>
+    ))}
+  </svg>
+  <ol class="group__list">
+    {g.items.map((it, i) => (
+      <li class={`group__row ${i === 0 ? 'is-active' : ''}`} data-places={it.places.join(' ')} tabindex="0">
+        <span class="group__n">{String(i + 1).padStart(2, '0')}</span>
+        <span class="group__body"><a class="group__name" href={`${base}/sectors/${it.slug}`}>{it.name}</a><span class="group__note">{it.note}</span></span>
+      </li>
+    ))}
+  </ol>
+  <p class="more group__more" data-reveal><a href={`${base}${g.link.href}`}>{g.link.label}</a></p>
+</section>

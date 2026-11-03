@@ -37,16 +37,13 @@ mLinks.forEach((a) => a.addEventListener('click', () => setMenu(false)));
 
 // ---------- Marques roller: logic shared by scroll and pointer ----------
 const rItems = $$('.roller__list li');
-const rLogos = $$('.roller__tile .logo');
 const rNotes = $$('.roller__note span');
 let rActive = 0;
-const setMarque = (i: number, wipe = true) => {
+const setMarque = (i: number) => {
   if (i === rActive) return;
   rActive = i;
   rItems.forEach((n, k) => n.classList.toggle('is-active', k === i));
   rNotes.forEach((n, k) => n.classList.toggle('is-active', k === i));
-  rLogos.forEach((n, k) => n.classList.toggle('is-active', k === i));
-  if (wipe && !reduce) gsap.fromTo(rLogos[i], { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', duration: 0.7, ease: 'expo.out', overwrite: true });
 };
 rItems.forEach((li, i) => {
   li.addEventListener('pointerenter', () => canHover && setMarque(i));
@@ -70,6 +67,24 @@ whoRows.forEach((r, i) => {
   r.addEventListener('focus', () => setWho(i));
   r.addEventListener('click', () => setWho(i));
 });
+
+// ---------- The group on the map: the row nearest the middle lights its places on the outline of Kerala ----------
+const gRows = $$('.group__row');
+const gNodes = $$('.group__node');
+let gActive = -1;
+const setGroup = (i: number) => {
+  if (i === gActive) return;
+  gActive = i;
+  const on = (gRows[i].dataset.places ?? '').split(' ');
+  gRows.forEach((r, k) => r.classList.toggle('is-active', k === i));
+  gNodes.forEach((n) => n.classList.toggle('is-on', on.includes(n.getAttribute('data-place') ?? '')));
+};
+gRows.forEach((r, i) => {
+  r.addEventListener('pointerenter', () => canHover && setGroup(i));
+  r.addEventListener('focus', () => setGroup(i));
+  r.addEventListener('click', () => setGroup(i));
+});
+setGroup(0);
 
 // ---------- Hero film ----------
 const film = $('.hero__film');
@@ -211,6 +226,11 @@ if (reduce) {
     whoRows.forEach((row, i) => {
       ScrollTrigger.create({ trigger: row, start: 'top center', end: 'bottom center', onToggle: (self) => { if (self.isActive && wide()) setWho(i); } });
     });
+    // The group: the outline of Kerala draws as the section arrives; the row crossing the middle lights its places.
+    gsap.fromTo('.group__outline', { strokeDashoffset: 1 }, { strokeDashoffset: 0, ease: 'none', scrollTrigger: { trigger: '.group', start: 'top 85%', end: 'top 10%', scrub: true } });
+    gRows.forEach((row, i) => {
+      ScrollTrigger.create({ trigger: row, start: 'top center', end: 'bottom center', onToggle: (self) => { if (self.isActive && wide()) setGroup(i); } });
+    });
     // Marques: the row crossing the middle of the screen becomes the active one.
     rItems.forEach((li, i) => {
       ScrollTrigger.create({ trigger: li, start: 'top center', end: 'bottom center', onToggle: (self) => { if (self.isActive) setMarque(i); } });
@@ -226,23 +246,22 @@ if (reduce) {
     gsap.to('.hero__title, .hero__sub, .hero__cta', { yPercent: -18, opacity: 0, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: '70% top', scrub: true } });
     gsap.to('.hero__film', { yPercent: 10, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
     // Marques and next links: each name builds letter by letter as it rises into view.
-    [...$$('.roller__list li span'), ...$$('.next__list a span'), ...$$('.rows__name'), ...$$('.who__name')].forEach((el) => {
+    [...$$('.roller__list li span'), ...$$('.next__list a span'), ...$$('.who__name'), ...$$('.group__name')].forEach((el) => {
       const chars = splitChars(el);
       gsap.fromTo(chars, { yPercent: 70, opacity: 0 }, { yPercent: 0, opacity: 1, ease: 'none', stagger: 0.04, scrollTrigger: { trigger: el, start: 'top 96%', end: 'top 62%', scrub: true } });
     });
     // Rows, figures and footer details drift into place with the scroll.
-    $$('.rows__item, .who__row').forEach((el) => {
+    $$('.who__row, .group__row').forEach((el) => {
       gsap.fromTo(el, { yPercent: 40, opacity: 0.2 }, { yPercent: 0, opacity: 1, ease: 'none', scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 72%', scrub: true } });
     });
     gsap.fromTo('.footer__links a, .footer__top .label, .footer__biz > *, .footer__legal', { yPercent: 60, opacity: 0.1 }, { yPercent: 0, opacity: 1, ease: 'none', stagger: 0.06, scrollTrigger: { trigger: '.footer', start: 'top 85%', end: 'top 25%', scrub: true } });
     // Proof: the photograph moves slowly; the three squares drift past each other at different speeds.
     const stage = $('.proof__stage');
-    gsap.fromTo('.proof__bg', { yPercent: -6 }, { yPercent: 6, ease: 'none', scrollTrigger: { trigger: stage, start: 'top bottom', end: 'bottom top', scrub: true } });
     if (wide()) [['.square--1', 90], ['.square--2', -40], ['.square--3', 150]].forEach(([sel, d]) => {
       gsap.fromTo(sel as string, { y: d as number }, { y: -(d as number), ease: 'none', scrollTrigger: { trigger: stage, start: 'top bottom', end: 'bottom top', scrub: true } });
     });
     // Footer wordmark rises into its frame.
-    gsap.fromTo('.footer__mark', { yPercent: 105 }, { yPercent: 0, duration: 1.5, ease: 'expo.out', scrollTrigger: { trigger: '.footer__markwrap', start: 'top 92%', once: true } });
+    gsap.fromTo('.footer__mark', { yPercent: 105 }, { yPercent: 7, duration: 1.5, ease: 'expo.out', scrollTrigger: { trigger: '.footer__markwrap', start: 'top 92%', once: true } });
   };
 
   // Milestones: a pinned scene; the year rolls digit by digit, the line and tile swap.

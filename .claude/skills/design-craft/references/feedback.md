@@ -224,3 +224,6 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - Lesson: a metric you optimise becomes the target. When every check measures closeness to the reference, the result converges on a copy. Measure what the owner asked for.
 - Promote to: SKILL.md section 11, plan-template, CLAUDE.md, checklist 24 (done).
 
+
+## EVM round 10 (2026-11-03): "inspiration, not copy"
+The owner said the build copied ESR section for section. Lesson: in inspiration mode classify every section copy, adapt or new in the plan, keep copies to half or fewer, and make the client's identity big (here the red mark, a drawn map of Kerala and a red field), not a small accent. A mechanism the reference has (rows, tile, black section) can be re-expressed in the client's subject: logos in the rows instead of a tile, a map instead of services rows, red instead of black. The details.so free slice has no map category; say so rather than inventing precedents.

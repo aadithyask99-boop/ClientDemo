@@ -210,3 +210,12 @@ Stays: the statement text, who section, portraits, milestones, copy and counts, 
 Drawing the Kerala outline: no cost. A larger EVM logo file would help (I redrew it as SVG). No generation spend. Length stays about 1.45x ESR.
 
 Reply go, or tell me what to change.
+
+## Result of plan v4 (2026-11-03): inspiration build, artifact version 12
+Built as planned. Copy 2 (statement, Kochi photograph), adapt 5, new 3 (Who, the Kerala map, Milestones). EVM identity at scale: the red EVM mark across the full width in the intro and again in the footer (cropped at the foot); a red-line outline of Kerala about 78svh tall; a full red field behind the proof squares (white on `#d6111c` 5.31:1).
+- **Marques:** the tile is gone; each row carries the brand's own logo before its name, the active row's logo goes from pale to solid, and the note sits at 30px in the right column.
+- **The group:** replaces the Sectors rows. Outline drawn by hand from approximate coordinates (stylised, not survey-accurate); the active business lights its places (Automobile: Calicut, Kochi, Trivandrum; Hotels: Munnar, Vembanad; Plantation: the high ranges; Transportation: Kothamangalam; Entertainment: Kothamangalam, Kochi). Place choices are from the archive; the high-ranges and Vembanad dots are approximate. On phones the whole map shows with every place named.
+- **Milestones:** the line is a dashed road with the red fill and diamond travelling down it.
+- **Next:** word under the pointer turns red.
+- **Measured:** compare-sheets 10,301 px (1.50x), 381 words (1.2x), 9 sections; the first run was 10,526 px and warned, so group row padding was cut. Probe: 283 elements move with scroll against ESR's 271, no section without motion; "under-scaled" 5 against 3 (Who, Marques, The group, Where next, footer; the names are built from single-letter spans and the sticky blocks are mostly empty by design; real sizes are 40 to 120px). detail-audit clean (6 files, no repeated text, /contact x3 the highest). media-quality: 0 upscaled. Impeccable: contrast flags are animation start states and the header over the film; one advisory (the dashed road reads as stripes: kept, it is the road). Phone 390: no horizontal scroll, no console errors.
+- **Not removed:** `evm/src/components/Sectors.astro` and `evm/public/img/tea-wide.webp` are unused; the delete was blocked by the safety check. The owner can delete them. The artifact does not include tea-wide.

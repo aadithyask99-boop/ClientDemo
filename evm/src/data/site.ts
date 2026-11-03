@@ -52,17 +52,24 @@ export const site = {
       { name: 'MG', logo: 'mg', note: 'Through Coastline Garages.' },
     ],
   },
-  sectors: {
+  group: {
     label: 'The group',
-    text: 'Dealerships, hotels, plantations, buses and cinemas: one family of businesses, from showrooms to hill resorts.',
-    rowsLabel: 'Five businesses',
     link: { label: 'Every business', href: '/sectors' },
+    places: {
+      calicut: { name: 'Calicut', lon: 75.78, lat: 11.25, side: 'r' },
+      kochi: { name: 'Kochi', lon: 76.27, lat: 9.97, side: 'l' },
+      trivandrum: { name: 'Trivandrum', lon: 76.95, lat: 8.52, side: 'l' },
+      munnar: { name: 'Munnar', lon: 77.06, lat: 10.09, side: 'l' },
+      vembanad: { name: 'Vembanad Lake', lon: 76.4, lat: 9.6, side: 'r' },
+      highrange: { name: 'The high ranges', lon: 77.0, lat: 9.72, side: 'l' },
+      kothamangalam: { name: 'Kothamangalam', lon: 76.63, lat: 10.06, side: 'r' },
+    },
     items: [
-      { name: 'Automobile', slug: 'automobile' },
-      { name: 'Hotels and resorts', slug: 'hotels' },
-      { name: 'Plantation', slug: 'plantation' },
-      { name: 'Transportation', slug: 'transportation' },
-      { name: 'Entertainment', slug: 'entertainment' },
+      { name: 'Automobile', slug: 'automobile', note: 'Showrooms and workshops from Trivandrum to Calicut.', places: ['calicut', 'kochi', 'trivandrum'] },
+      { name: 'Hotels and resorts', slug: 'hotels', note: 'Mountain Club in the Munnar tea gardens, and Le Leela on Vembanad Lake.', places: ['munnar', 'vembanad'] },
+      { name: 'Plantation', slug: 'plantation', note: 'Hill produce, lemongrass and tea from the high ranges.', places: ['highrange'] },
+      { name: 'Transportation', slug: 'transportation', note: 'The EVM bus service, and EVM Wheels self drive cars.', places: ['kothamangalam'] },
+      { name: 'Entertainment', slug: 'entertainment', note: 'EVM Cinemas, from the Jawahar in Kothamangalam to the Kavitha in Kochi.', places: ['kothamangalam', 'kochi'] },
     ],
   },
   milestones: {
@@ -82,7 +89,6 @@ export const site = {
     reviews: { label: 'More customers', href: '/reviews' },
     awardsLabel: 'Awards',
     awardsLink: { label: 'More awards', href: '/recognition' },
-    stage: { img: 'tea-wide.webp', alt: 'Tea terraces and a mountain at Munnar, Kerala' },
     figures: [
       { n: 1, pre: 'No. ', suf: '', t: 'All India dealer, Excellent Performance Award 2012 to 2013' },
       { n: 20000, pre: '', suf: '', t: 'Nissans: the first dealer in India to cross it' },

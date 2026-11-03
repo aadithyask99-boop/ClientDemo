@@ -1,18 +1,17 @@
 ---
 import { site } from '../data/site';
 import Mark from './Mark.astro';
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const f = site.footer;
 ---
 <footer class="footer" id="contact" data-theme="light">
   <div class="footer__top">
     <p class="label">{site.tagOne}</p>
     <p class="label">{f.address}</p>
-  </div>
-  <div class="footer__markwrap"><Mark class="footer__mark" /></div>
-  <div class="footer__biz">
-    <p class="label label--mute">{f.contact.label}</p>
-    <p class="label">{f.contact.lines.map((l) => <span>{l}</span>)}</p>
+    <div class="footer__biz">
+      <p class="label label--mute">{f.contact.label}</p>
+      <p class="label">{f.contact.lines.map((l) => <span>{l}</span>)}</p>
+    </div>
   </div>
   <p class="label footer__legal">{f.legal}</p>
+  <div class="footer__markwrap"><Mark class="footer__mark" /></div>
 </footer>

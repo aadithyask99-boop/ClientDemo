@@ -6,13 +6,10 @@ const m = site.marques;
 <section class="roller marques" id="marques" data-theme="light" aria-label="Marques">
   <p class="label roller__label">{m.label}</p>
   <ol class="roller__list">
-    {m.items.map((it, i) => <li class={i === 0 ? 'is-active' : ''} tabindex="0"><span>{it.name}</span></li>)}
+    {m.items.map((it, i) => <li class={i === 0 ? 'is-active' : ''} tabindex="0"><img class="logo" src={`${base}/logos/${it.logo}.svg`} alt="" width="120" height="120" /><span>{it.name}</span></li>)}
   </ol>
   <div class="roller__side">
-    <div class="roller__tile">
-      {m.items.map((it, i) => <img class={`logo ${i === 0 ? 'is-active' : ''}`} src={`${base}/logos/${it.logo}.svg`} alt={`${it.name} logo`} width="120" height="120" />)}
-    </div>
-    <p class="label roller__note">
+    <p class="roller__note">
       {m.items.map((it, i) => <span class={i === 0 ? 'is-active' : ''}>{it.note}</span>)}
     </p>
     <p class="more"><a href={`${base}${m.link.href}`}>{m.link.label}</a></p>
