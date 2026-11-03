@@ -38,6 +38,8 @@ Use this when a section needs designing and the reference has no counterpart for
 **Testimonials**
 - A custom slider where the active card inverts: more-coffee. Verbatim quotes kept short: ileife.
 
+- Pinned steps where one object changes per stage on a continuous scene (a phone card, then a drawing, then a live chart): Daylight, see `inspiration/daylight-stacked-steps.md`. Sticky stacking cards: Understory, see `inspiration/understory-stacked-cards.md`.
+
 **People and team**
 - A ring of photographs that settles into a half circle beside the figures: orra (needs real, consistent photos).
 

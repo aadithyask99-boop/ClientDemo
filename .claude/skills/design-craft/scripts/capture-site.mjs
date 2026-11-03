@@ -37,6 +37,27 @@ async function settle(page) {
   await page.goto(url, { waitUntil: 'load', timeout: 60000 }).catch((e) => console.log('goto:', e.message.split('\n')[0]));
   await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
   await page.waitForTimeout(2500);
+  await dismissOverlays(page);
+}
+// Cookie banners and sign-up pop-ups cover the page in captures. Best effort: click a reject, close or accept button, then hide any large fixed overlay
+// that is left. Skipped with --keep-overlays. Used only on pages being studied, never to change a page.
+async function dismissOverlays(page) {
+  if (args.includes('--keep-overlays')) return;
+  for (const re of [/^(reject( all)?|decline( all)?|no,? thanks|not now|maybe later|close|dismiss|skip|got it|×|x)$/i, /^(accept( all)?|agree|allow( all)?|ok(ay)?|i agree)$/i]) {
+    const hit = await page.evaluate((src) => {
+      const r = new RegExp(src, 'i');
+      const el = [...document.querySelectorAll('button, a, [role="button"], [class*="close" i], div, span')].find((e) => { const t = (e.innerText || e.getAttribute('aria-label') || '').trim(); const b = e.getBoundingClientRect(); return r.test(t) && b.width > 0 && b.height > 0; });
+      if (!el) return false; el.click(); return true;
+    }, re.source).catch(() => false);
+    if (hit) { await page.waitForTimeout(900); break; }
+  }
+  await page.evaluate(() => {
+    for (const e of document.querySelectorAll('body *')) {
+      const cs = getComputedStyle(e); if (cs.position !== 'fixed') continue; const r = e.getBoundingClientRect();
+      const big = r.width * r.height > innerWidth * innerHeight * 0.18; const txt = (e.innerText || '').toLowerCase();
+      if (big && /cookie|consent|subscribe|newsletter|sign up|waitlist|privacy|your data/.test(txt)) e.style.display = 'none';
+    }
+  }).catch(() => {});
 }
 async function lazyScroll(page) { // reveals lazy images and scroll-triggered sections, then returns to the top
   await page.evaluate(async () => {

@@ -104,3 +104,11 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - Lesson: a visual defect that appears only when an animation has finished needs a check that looks at the finished state; and a required part of a plan must be checked for by name, not left to a template's wording.
 - Promote to: checklist 19 (done), SKILL.md rule 0 and plan-template (done).
 
+### 2026-11-03  Owner wants ideas beyond the generic defaults, without handpicking every time
+- Owner's words: the weak spot is generic designs (many lines, boxy layouts, gradients, eyebrow headlines); the chat should give ideas rather than the owner saying them; details.so is a curated middle layer over public sites; the chat should reason to pick the right examples and "do a full crawl".
+- Finding: details.so has an official MCP (paid) for its full library; its free pages show a small slice per category (less than 1% of 3,400+ examples) with a "Visit website" link to the real site.
+- Change: the inspiration funnel (`references/inspiration-research.md`): wide listing of free categories, reasoning with six written criteria, deep study of the top three on their own sites with our capture and motion tools, a shortlist in the plan, pattern cards for the owner's picks. `scripts/inspo-shortlist.mjs` (capped: 3 categories, 8 items, 2.5 s pace, free pages only). `capture-site.mjs` now dismisses most cookie banners and pop-ups. Pattern cards started for Daylight and Understory.
+- Tried on the EVM milestones: Daylight captured fully and is a strong candidate (one object per stage on a continuous pinned scene); Understory's stacking mechanism is useful but its coloured boxes are the generic card look; The Art of Documentary stayed covered by a late newsletter pop-up.
+- Lesson: "full crawl" should mean deep where it matters, not everything; reasoning needs written criteria; a still cannot judge motion.
+- Promote to: `inspiration-research.md` (done).
+
