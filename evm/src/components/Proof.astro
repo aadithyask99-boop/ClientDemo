@@ -4,18 +4,24 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const p = site.proof;
 ---
 <section class="proof" id="proof" data-theme="dark" aria-label="What people say">
-  <p class="label" data-reveal>{p.label}</p>
-  <blockquote>
-    <p class="big" data-words>{p.quote}</p>
-    <cite class="label" data-reveal>{p.who}</cite>
-  </blockquote>
-  <p class="more" data-reveal><a href={`${base}${p.reviews.href}`}>{p.reviews.label}</a></p>
-  <div class="proof__figures">
-    <p class="label" data-reveal>{p.awardsLabel}<br /><span class="more"><a href={`${base}${p.awardsLink.href}`}>{p.awardsLink.label}</a></span></p>
-    <ol class="figures">
-      {p.figures.map((f) => (
-        <li data-row><span class="figures__n">{f.pre}<b data-count={f.n}>{f.n.toLocaleString('en-US')}</b>{f.suf}</span><span class="figures__t">{f.t}</span></li>
+  <div class="proof__top">
+    <p class="label" data-reveal>{p.label}</p>
+    <blockquote>
+      <p class="big" data-words>{p.quote}</p>
+      <cite class="label" data-reveal>{p.who}</cite>
+    </blockquote>
+    <p class="more" data-reveal><a href={`${base}${p.reviews.href}`}>{p.reviews.label}</a></p>
+  </div>
+  <div class="proof__stage">
+    <img class="proof__bg" src={`${base}/img/${p.stage.img}`} alt={p.stage.alt} loading="lazy" />
+    <ol class="squares">
+      {p.figures.map((f, i) => (
+        <li class={`square square--${i + 1}`} data-square>
+          <span class="square__n">{f.pre}<b data-count={f.n}>{f.n.toLocaleString('en-US')}</b>{f.suf}</span>
+          <span class="square__t">{f.t}</span>
+        </li>
       ))}
     </ol>
+    <p class="proof__foot label">{p.awardsLabel}<span class="more"><a href={`${base}${p.awardsLink.href}`}>{p.awardsLink.label}</a></span></p>
   </div>
 </section>

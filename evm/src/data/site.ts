@@ -73,6 +73,7 @@ export const site = {
     reviews: { label: 'More reviews', href: '/reviews' },
     awardsLabel: 'Recognition',
     awardsLink: { label: 'All recognition', href: '/recognition' },
+    stage: { img: 'tea-wide.webp', alt: 'Tea terraces and a mountain at Munnar, Kerala' },
     figures: [
       { n: 1, pre: 'No. ', suf: '', t: 'All India dealer, Excellent Performance Award 2012 to 2013' },
       { n: 20000, pre: '', suf: '', t: 'Nissans: the first dealer in India to cross it' },
@@ -82,9 +83,9 @@ export const site = {
   next: {
     label: 'Where next',
     items: [
-      { name: 'Our people', href: '/people', img: 'photo-kochi.webp', alt: 'Kochi, Kerala' },
-      { name: 'Careers', href: '/careers', img: 'photo-tea.webp', alt: 'Tea terraces at Munnar' },
-      { name: 'Contact', href: '/contact', img: 'tile-resort.webp', alt: 'A resort on the backwaters' },
+      { name: 'Our people', line: 'The family and the leaders of each marque.', href: '/people', img: 'photo-kochi.webp', alt: 'Kochi, Kerala' },
+      { name: 'Careers', line: 'Join the group.', href: '/careers', img: 'photo-tea.webp', alt: 'Tea terraces at Munnar' },
+      { name: 'Contact', line: 'Offices, phone and email.', href: '/contact', img: 'tile-resort.webp', alt: 'A resort on the backwaters' },
     ],
   },
   footer: {

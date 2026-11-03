@@ -162,3 +162,9 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - Lesson: colour is part of the core idea and needs both guidance and a measurement; sources of components are not sources of direction.
 - Promote to: colour.md and checklist 20 (done).
 
+
+## EVM Group homepage, round six: plan v2, palette line, new sections (2026-11-03)
+- **Owner's words:** "The plan v2 for Milestones, Proof and Where next is approved: go", with a palette line before the build.
+- **What I did:** wrote the palette line first (ESR's black and white, EVM red as one small accent, contrast measured), then built the line and node for Milestones (Dieste), white squares over a photograph for Proof (Virugroup) and a line under each link for Where next. Probe, compare twice, Impeccable, checklist 19 and 20.
+- **Real defects found by the checks:** `--red` was undefined (I had deleted it when removing the red, so the new accent rendered transparent; the page looked fine without it, only a measurement of the node and fill showed it); a doubled hairline 17 px apart in Sectors (a section border plus the first item's border, found by the probe's new doubled-border check); the page crept to 1.5x the reference with the new stage (trimmed pins and stage height); the squares overlapped on a phone because the scroll drift also ran there.
+- **Lessons:** (1) when a design token is removed, grep for its uses before adding something that needs it; (2) the settled state matters: take screenshots after scrolling, and measure computed colours, not only how it looks; (3) any scroll-driven offset needs a phone rule, or items overlap when the layout stacks; (4) `palette.mjs` measures against its tinted ground, so recheck the accent on the page's real white and black.

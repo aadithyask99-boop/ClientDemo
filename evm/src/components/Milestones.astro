@@ -11,6 +11,7 @@ const digits = [0, 1, 2, 3];
     <ol class="ms__static">
       {m.items.map((it) => <li><span class="ms__sy">{it.y}</span><span class="ms__st">{it.t}</span></li>)}
     </ol>
+    <div class="ms__line" aria-hidden="true"><i class="ms__fill"></i>{m.items.map((_, i) => <b class="ms__tick" style={`top:${(i + 0.5) / n * 100}%`}></b>)}<u class="ms__node"></u></div>
     <div class="ms__year" aria-hidden="true">
       {digits.map((d) => (
         <span class="ms__digit"><span class="ms__stack">{m.items.map((it) => <span>{it.y[d]}</span>)}</span></span>

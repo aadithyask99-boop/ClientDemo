@@ -212,10 +212,16 @@ if (reduce) {
       gsap.fromTo(chars, { yPercent: 70, opacity: 0 }, { yPercent: 0, opacity: 1, ease: 'none', stagger: 0.04, scrollTrigger: { trigger: el, start: 'top 96%', end: 'top 62%', scrub: true } });
     });
     // Rows, figures and footer details drift into place with the scroll.
-    $$('.rows__item, .figures li').forEach((el) => {
+    $$('.rows__item').forEach((el) => {
       gsap.fromTo(el, { yPercent: 40, opacity: 0.2 }, { yPercent: 0, opacity: 1, ease: 'none', scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 72%', scrub: true } });
     });
     gsap.fromTo('.footer__links a, .footer__top .label, .footer__biz > *, .footer__legal', { yPercent: 60, opacity: 0.1 }, { yPercent: 0, opacity: 1, ease: 'none', stagger: 0.06, scrollTrigger: { trigger: '.footer', start: 'top 85%', end: 'top 25%', scrub: true } });
+    // Proof: the photograph moves slowly; the three squares drift past each other at different speeds.
+    const stage = $('.proof__stage');
+    gsap.fromTo('.proof__bg', { yPercent: -6 }, { yPercent: 6, ease: 'none', scrollTrigger: { trigger: stage, start: 'top bottom', end: 'bottom top', scrub: true } });
+    if (wide()) [['.square--1', 90], ['.square--2', -40], ['.square--3', 150]].forEach(([sel, d]) => {
+      gsap.fromTo(sel as string, { y: d as number }, { y: -(d as number), ease: 'none', scrollTrigger: { trigger: stage, start: 'top bottom', end: 'bottom top', scrub: true } });
+    });
     // Footer wordmark rises into its frame.
     gsap.fromTo('.footer__mark', { yPercent: 105 }, { yPercent: 0, duration: 1.5, ease: 'expo.out', scrollTrigger: { trigger: '.footer__markwrap', start: 'top 92%', once: true } });
   };
@@ -226,6 +232,7 @@ if (reduce) {
   const msCaps = $$('.ms__caption span');
   const msTiles = $$('.ms__tile > *');
   const msN = msCaps.length;
+  const msTile = $('.ms__tile');
   let msActive = 0;
   const setMilestone = (i: number) => {
     if (i === msActive) return;
@@ -241,10 +248,13 @@ if (reduce) {
     msTiles[i].classList.add('is-active');
     gsap.killTweensOf(msTiles);
     gsap.fromTo(msTiles[i], { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', duration: 0.8, ease: 'expo.out' });
+    // the tile frame enters from alternating sides at alternating sizes
+    gsap.killTweensOf(msTile);
+    gsap.fromTo(msTile, { x: 70 * dir * (i % 2 ? 1 : -1) }, { x: i % 2 ? 90 : 0, scale: i % 2 ? 0.74 : 1, transformOrigin: 'top left', duration: 1.1, ease: 'expo.out' });
   };
   ScrollTrigger.create({
     trigger: ms, start: 'top top', end: 'bottom bottom',
-    onUpdate: (self) => { if (wide()) setMilestone(Math.min(msN - 1, Math.floor(self.progress * msN * 0.999))); },
+    onUpdate: (self) => { if (wide()) { ms.style.setProperty('--mp', self.progress.toFixed(4)); setMilestone(Math.min(msN - 1, Math.floor(self.progress * msN * 0.999))); } },
   });
 
   // Pointer: sector rows already wipe their tile in CSS; the next links drag a tile after the pointer.
