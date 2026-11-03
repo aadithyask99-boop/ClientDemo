@@ -152,3 +152,5 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - Lesson: a metric you optimise becomes the target. When every check measures closeness to the reference, the result converges on a copy. Measure what the owner asked for.
 - Promote to: SKILL.md section 11, plan-template, CLAUDE.md, checklist 24 (done).
 
+## EVM passed every check and was still plain (2026-11-03)
+Owner: the proof section (three white boxes on red) had no character, layouts repeated, some sections were filler; details.so mechanisms (line and node, squares over a photo) were too small to give emotion. Cause: every check counts something (length, motion, text repeats, contrast); none judges plain versus alive, and the plan listed sections but never asked for one idea carrying the page. Fix: the plan must name the spine first (SKILL.md section 11), filler sections are cut or rebuilt, and the builder looks at each section and reports honestly. Lesson: borrowed mechanisms are parts, the spine is the design; counts never replace looking.
