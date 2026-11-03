@@ -1,0 +1,207 @@
+---
+import '@fontsource-variable/bricolage-grotesque';
+import '@fontsource-variable/hanken-grotesk';
+import '../styles/global.css';
+import { site } from '../data/site';
+import markRaw from '../../public/evm-mark.svg?raw';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const mark = markRaw.replace(/fill="[^"]*"/g, 'fill="currentColor"');
+const img = (n: string, ext = 'webp') => `${base}/img/${n}.${ext}`;
+const lines = site.milestones.items;
+const grp = site.group.items;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{site.title}</title>
+    <meta name="description" content={site.description} />
+    <meta name="theme-color" content="#07110f" />
+    <link rel="icon" href={`${base}/evm-mark.svg`} />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body data-tone="dark">
+    <header class="nav">
+      <a class="nav-mark" href="#top" aria-label="EVM Group, back to top" set:html={mark} />
+      <nav aria-label="Main">
+        {site.nav.map((n) => <a href={n.href}>{n.label}</a>)}
+      </nav>
+    </header>
+
+    <aside class="rail" aria-hidden="true">
+      <div class="rail-line"><i class="rail-fill"></i><b class="rail-lamp"></b></div>
+      <div class="rail-read"><span class="rail-km">000</span><small>KM</small><em class="rail-place">Maradu, Cochin</em></div>
+    </aside>
+
+    <main>
+      <!-- 1. HERO: the night drive -->
+      <section class="hero" id="top" data-tone="dark" data-km="0" data-place="Maradu, Cochin">
+        <div class="hero-track">
+          <div class="hero-stage">
+            <svg class="hero-static" viewBox="0 0 160 90" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+              <rect width="160" height="90" fill="#07110f" />
+              <path d="M0 52 Q30 40 60 50 T120 46 T160 50 V90 H0Z" fill="#0b1d18" />
+              <path d="M70 54 H90 L132 90 H28Z" fill="#101a18" />
+              <path d="M79.2 54 H80.8 L82 90 H78Z" fill="#d6111c" />
+            </svg>
+            <canvas class="hero-canvas" aria-hidden="true"></canvas>
+            <div class="hero-veil"></div>
+            <h1 class="hero-title">
+              {site.hero.lines.map((l) => <span class="line"><span>{l}</span></span>)}
+            </h1>
+            <p class="hero-sub">{site.hero.sub}</p>
+            <a class="hero-cue" href="#origin"><span>{site.hero.cue}</span><i></i></a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. ORIGIN: 1952, the lagoon -->
+      <section class="origin" id="origin" data-tone="dark" data-km="6" data-place="Vembanad Lake">
+        <div class="origin-track">
+          <div class="origin-stage">
+            <div class="origin-photo"><img src={img('photo-kochi')} alt="Chinese fishing nets on the Kochi shore" width="2048" height="1365" loading="lazy" /></div>
+            <div class="origin-copy">
+              <p class="origin-text" data-words>{site.origin.text}</p>
+              <a class="link" href={site.origin.link.href}>{site.origin.link.label}</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. MARQUES: mileposts in the city -->
+      <section class="marques" id="marques" data-tone="dark" data-km="14" data-place="Cochin showrooms">
+        <h2 class="marques-head">{site.marques.heading}</h2>
+        <ol class="marques-list">
+          {site.marques.items.map((m, i) => (
+            <li class="mq" data-logo={m.logo}>
+              <span class="mq-i">{String(i + 1).padStart(2, '0')}</span>
+              <span class="mq-n">{m.name}</span>
+              {m.note && <span class="mq-note">{m.note}</span>}
+            </li>
+          ))}
+        </ol>
+        <div class="mq-sign" aria-hidden="true">
+          {site.marques.items.map((m) => <img src={`${base}/logos/${m.logo}.svg`} alt="" data-for={m.logo} width="120" height="120" loading="lazy" />)}
+        </div>
+        <a class="link marques-link" href={site.marques.link.href}>{site.marques.link.label}</a>
+      </section>
+
+      <!-- 4. MILESTONES: the odometer of years -->
+      <section class="miles" id="story" data-tone="dark" data-km="52" data-place="Kothamangalam">
+        <div class="miles-track" data-n={lines.length}>
+          <div class="miles-stage">
+            <svg class="miles-ridge" viewBox="0 0 1440 360" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0 360V250Q180 190 340 240T700 200T1040 230T1440 160V360Z" fill="#0e271f" />
+              <path d="M0 360V300Q220 260 420 295T820 270T1180 290T1440 255V360Z" fill="#0a1d17" />
+            </svg>
+            <svg class="miles-road" viewBox="0 0 1000 600" aria-hidden="true">
+              <path class="base" d="M0 560 C 200 560 260 440 420 425 S 640 335 700 255 S 880 120 990 60" />
+              <path class="prog" d="M0 560 C 200 560 260 440 420 425 S 640 335 700 255 S 880 120 990 60" />
+              {lines.map(() => <circle class="node" r="9" />)}
+              <circle class="halo" r="26" /><circle class="car" r="8" />
+            </svg>
+            <div class="miles-years" aria-label="Milestone year">
+              {[0, 1, 2, 3].map(() => (
+                <span class="dig"><span class="dig-col">{[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((d) => <b>{d}</b>)}</span></span>
+              ))}
+            </div>
+            <div class="miles-lines">
+              {lines.map((l, i) => <p class="miles-line" data-year={l.year} data-i={i}>{l.text}</p>)}
+            </div>
+            <div class="miles-ticks" aria-hidden="true">
+              <i class="miles-fill"></i>
+              {lines.map((l, i) => <span class="miles-tick" data-i={i}>{l.year}</span>)}
+            </div>
+            <a class="link miles-link" href={site.milestones.link.href}>{site.milestones.link.label}</a>
+          </div>
+        </div>
+        <noscript><ul class="ns-list">{lines.map((l) => <li><b>{l.year}</b> {l.text}</li>)}</ul></noscript>
+      </section>
+
+      <!-- 5. THE GROUP: the climb to Munnar -->
+      <section class="group" id="group" data-tone="dark" data-km="128" data-place="Munnar">
+        <div class="group-track" data-n={grp.length}>
+          <div class="group-stage">
+            <div class="g-photo"><img src={img('tea-wide')} alt="Tea gardens above Munnar" width="2048" height="1430" loading="lazy" /></div>
+            <svg class="g-hills" viewBox="0 0 1440 520" preserveAspectRatio="none" aria-hidden="true">
+              <g class="gh gh3"><path d="M0 520V260Q200 180 420 250T860 210T1200 250T1440 190V520Z" fill="#17402a" /></g>
+              <g class="gh gh2"><path d="M0 520V330Q240 270 480 320T920 290T1440 320V520Z" fill="#12331f" /></g>
+              <g class="gh gh1"><path d="M0 520V400Q260 360 520 395T1000 380T1440 400V520Z" fill="#0d2616" /></g>
+            </svg>
+            <div class="g-sun" aria-hidden="true"></div>
+            <div class="g-names">
+              {grp.map((g, i) => (
+                <div class="g-item" data-i={i}>
+                  <span class="g-place">{g.place}</span>
+                  <h2 class="g-name"><span>{g.name}</span></h2>
+                  <p class="g-text">{g.text}</p>
+                </div>
+              ))}
+            </div>
+            <div class="g-steps" aria-hidden="true">{grp.map((_, i) => <i data-i={i}></i>)}</div>
+            <a class="link g-link" href={site.group.link.href}>{site.group.link.label}</a>
+          </div>
+        </div>
+        <noscript><ul class="ns-list">{grp.map((g) => <li><b>{g.name}</b> {g.text}</li>)}</ul></noscript>
+      </section>
+
+      <!-- 6. PEOPLE: paper -->
+      <section class="people" id="people" data-tone="light" data-km="132" data-place="Munnar">
+        <div class="people-wrap">
+          <h2 class="people-head">{site.people.heading}</h2>
+          <ul class="people-list">
+            {site.people.items.map((p, i) => (
+              <li class={`pp${i === 0 ? ' on' : ''}`} tabindex="0">
+                <span class="pp-n">{p.name}</span>
+                <span class="pp-r">{p.role}</span>
+                <span class="pp-img"><img src={img(p.img)} alt={p.name} width="212" height="265" loading="lazy" /></span>
+              </li>
+            ))}
+          </ul>
+          <a class="link people-link" href={site.people.link.href}>{site.people.link.label}</a>
+        </div>
+      </section>
+
+      <!-- 7. ODOMETER -->
+      <section class="odo" id="odometer" data-tone="dark" data-km="135" data-place="Munnar">
+        <h2 class="odo-head">{site.odometer.heading}</h2>
+        <ul class="odo-list">
+          {site.odometer.items.map((o) => (
+            <li class="od">
+              <span class="od-num" data-value={o.value} data-prefix={o.prefix} data-suffix={o.suffix}>{o.prefix}{o.value}{o.suffix}</span>
+              <span class="od-text">{o.text}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <!-- 8. ARRIVAL -->
+      <footer class="arrive" id="contact" data-tone="dark" data-km="0" data-place="Maradu, Cochin">
+        <blockquote class="arrive-quote">
+          <p>{site.arrival.quote}</p>
+          <cite>{site.arrival.by}</cite>
+        </blockquote>
+        <p class="arrive-line">{site.arrival.line}</p>
+        <div class="arrive-mark" aria-label={site.arrival.name}>
+          <span class="am-lamp am-l"></span><span class="am-lamp am-r"></span>
+          <div class="am-svg" set:html={mark} />
+        </div>
+        <div class="arrive-cols">
+          <p class="ac-tag">{site.arrival.tagline}</p>
+          <div>
+            <small>{site.arrival.office}</small>
+            <p>{site.arrival.place}</p>
+            <p><a href={`tel:${site.arrival.phone.replace(/\s/g, '')}`}>{site.arrival.phone}</a></p>
+            <p><a href={`mailto:${site.arrival.email}`}>{site.arrival.email}</a></p>
+          </div>
+          <div class="ac-links">{site.arrival.links.map((l) => <a href={l.href}>{l.label}</a>)}</div>
+        </div>
+        <p class="arrive-note">{site.arrival.note}</p>
+      </footer>
+    </main>
+    <script>
+      import '../scripts/main.ts';
+    </script>
+  </body>
+</html>

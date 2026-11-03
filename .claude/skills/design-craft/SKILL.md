@@ -141,6 +141,7 @@ Index of case studies:
 | ILE IFE (facials studio) | `ileife/` | Client mock | `references/ileife.md` |
 | DJ ESKA | `djeska/` | Recreate structure of a template | `references/djeska.md` |
 | Doves UK (funeral and repatriation) | `doves-uk/` | Recreate from client reference | `references/doves-uk.md` |
+| EVM Group v2 (Kerala group) | `evm2/` | Inspiration (confirmed) | `references/evm2.md` |
 | Owner's freelance portfolio | `portfolio/` | Original | `references/portfolio.md` |
 
 ## 8. The loop (learn, mistake, learn again)

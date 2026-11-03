@@ -157,3 +157,11 @@ Owner: the proof section (three white boxes on red) had no character, layouts re
 
 ## The hero is what makes a site unique (2026-11-03)
 Owner: the hero gives the first impression and is what makes a site unique; offer options (3D, interactive, WebGL, animated, video) instead of one default. Fix: `references/hero-options.md` and a plan step offering three hero options. Lesson: give the owner a choice at the highest-leverage point.
+
+## EVM Group v2 in a fresh folder (evm2): plan first, then one pass (2026-11-03)
+- Owner's brief: new Astro site `evm2/`, inspiration from esrbespoke.au, immersive and smooth, nothing boxy, plan first with three heroes and the one idea; then "go" with hero 1.
+- What worked: naming the spine before any section (a road through Kerala) and making it a live instrument (rail, headlamp, kilometre readout) so every section had a reason; a procedural WebGL hero; measuring ESR's page (6,670 px, 320 words) before building.
+- Mistakes: first pass was 22.7 viewports long (2.7x ESR): tracks were too generous, trimmed to 16. A CSS `transform` on an element gsap animates made the hero headline tween a silent no-op; found only by looking at a screenshot. A bash heredoc edit was blocked once by a safety check that misfired (no `rm` in it); redoing the edits with the Edit tool worked.
+- Blocked inputs: live site (expired certificate, then 503), Wayback (host blocked), Pixabay (key returned 401). Content came from the earlier build and is labelled as needing confirmation. The owner's pasted Pixabay key was not written to any file (no age private key in the session to encrypt it into `secrets/env.age`).
+- Impeccable: real findings fixed (leading, tracking, one contrast); hairline "cramped padding" and headlamp glows overridden because they are deliberate.
+- Lesson: when sources are blocked, say so early and proceed from what the repo already holds; do not chase workarounds that bypass the environment's rules.
