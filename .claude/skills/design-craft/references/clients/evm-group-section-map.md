@@ -165,3 +165,48 @@ A go, and ideally better portraits for the four people (Johny's 131 px photo is 
 Built as planned: placed straight after the statement on the same white ground; four numbered hairline rows in the right column (E.V. Mathai, E.M. Johny, Sabu Johny, Divya Paul), names at 40px, roles at 16px; one greyscale 4:5 portrait, drawn at 200 px, in the middle column that changes with the row nearest the screen centre (scroll) or under the pointer, wiping in from the bottom; names build letter by letter; rows drift in with the scroll; on phones each row carries a 76 x 95 px portrait and the tile is hidden; reduced motion shows all four names and the first portrait. The statement no longer names the leaders, Where next lost its "Our people" link (the section links "The wider team" to /people).
 **Portraits:** the client's own, from the old site: 212 x 269 px (three) and 131 x 166 px (E.M. Johny). Greyscale, one crop, lights levelled to the tile's grey so the white-background photo does not read as a box. `media-quality.mjs`: 0 upscaled (200 px drawn, 0.94 scale for the three; E.M. Johny's source is enlarged 1.6x in the file, which the tool cannot see, so his is soft: ask the client for a larger portrait).
 **Measured:** `detail-audit.mjs` clean (7 files in 10 sections: the four portraits, two photographs, the poster; nothing shared between sections; /contact is still the only destination linked three times). Probe: 272 elements move with scroll against 272, no section static, no doubled borders; "possibly under-scaled" 4 against 3: the new section is flagged because its names are built from single-letter spans, which the probe ignores (the real name size is 40px, measured). compare-sheets: 10,072 px (1.47x), 337 words, 9 sections, no warnings. Phone: 390 px wide, no horizontal scroll, no console errors.
+
+---
+
+# Plan v4: inspiration, not copy (2026-11-03, awaiting the owner's go)
+
+**Why:** the owner says the job is inspiration. The current build mirrors ESR section for section (6 of 10 sections copy) and shows almost nothing that is EVM's own. Mode: inspiration (`SKILL.md` section 11): at most half the sections may mirror an ESR section, and EVM's identity must show at scale in at least two places. No code until the owner says go.
+
+**Story:** a Kerala family business that started with one toddy shop in 1952 and now runs the roads, the hills and the screens of the state; felt in under a minute, with a reason to open each part.
+
+## Palette (changes: red moves from a small accent to a scale device)
+Ground #fff and #000 as in ESR; one accent, EVM red `#d6111c`, used at scale: a full red field, the mark, the route line. White on `#d6111c` is 5.31:1 (passes AA); black on red is not used; on black the lighter `#ef313b` (5.17:1) is used for thin lines only. Reason: the logo is red, the group is known for it, and ESR has no accent, so this is where EVM stops looking like ESR. Alternative: warm ivory ground instead of white, red kept as the accent; second because it moves the whole page away from ESR's austerity, which the owner loves.
+
+## Flow
+| # | Section | Shown | Relation | Where EVM's identity shows | Motion |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Intro and hero film | "Seven decades of one family business across Kerala." | **adapt** (ESR's intro order and film hero; the wordmark that builds in slices is the EVM mark, drawn big in red, which then shrinks into the header) | **identity 1: the EVM mark at scale, red** | slices rise, mark settles into the header, headline types on |
+| 2 | Statement | 1952 toddy-shop story | **copy** (ESR statement) | none needed | lines rise, words light up |
+| 3 | Who leads it | four people, one portrait | **new** (Revelatio list, built) | the founder first | row picks the portrait |
+| 4 | Photograph (Kochi) | place | **copy** (ESR photograph) | Kerala subject | inset opens |
+| 5 | Brands we represent | 8 brands | **adapt**: ESR's roller idea, but each row is the real brand logo at 92 px height with its one note, and the active row opens to show the note; no tile | the brands are the client's own | letters build, active row opens |
+| 6 | The group on the map | five businesses placed on a large drawn outline of Kerala | **new** | **identity 2: Kerala itself, drawn at 70vh in red line, businesses as nodes (cinemas Kothamangalam, hotel Munnar, showrooms Kochi and Trivandrum, plantation, buses)** | the outline draws as you scroll; nodes light in turn; a hover or scroll names the business |
+| 7 | Milestones | 1985, 1988, 2001, 2019 | **new** (Dieste line, built) | the red line becomes a road | pinned, digits roll |
+| 8 | Proof | one quote, three figures | **adapt**: ESR's black section, but a full-bleed EVM red field with white squares (Virugroup) instead of black | **identity 3: red field at scale** | words light up, counts |
+| 9 | Where next | Careers, Contact | **adapt** (links as giant words) | | letters build |
+| 10 | Footer | corporate office | **adapt**: giant EVM mark cropped across the bottom | the mark again | mark rises |
+
+Count: copy 2 (statement, photograph); adapt 5 (1, 5, 8, 9, 10); new 3 (3, 6, 7). That is 2 of 10 copy, against a limit of 5. Sectors rows (a copy of ESR's services rows) are replaced by section 6.
+
+## Section 6, the group on the map of Kerala (new)
+**Question:** where is this and how big? Visitors do not know the group is a whole state's worth of businesses.
+**Recommended:** a tall outline of Kerala (thin red line, the state's long coastal strip), five numbered nodes at real places, a list in the right column in ESR's numbered-row style that follows the active node, as the Who section follows its portrait. **Alternative:** the five businesses as numbered rows only (what is built now); second because it is ESR's own services layout and says nothing about place.
+**(a)** where, and what? **(b)** ESR's numbered rows plus one sticky visual (the tile). **(c)** garden's thread through knots; Dieste line in our own Milestones. **(d)** the rows alone. **(e)** I must draw the outline myself (no allowed source for a clean state outline; a simplified hand path reads as stylised, not survey-accurate) and the node positions are approximate.
+**Inspiration shortlist:** the details.so free slice has no map or location category (0 results), so there is little to borrow. Footer category resolved: Red Dot (reddottours.com, red-led travel brand, subject-adjacent), AutoRouter (autorouter.com, automotive-adjacent), Eladio Dieste (eladiodieste.com, already a card). I have not captured them yet; I will study their strips before building. Risk: none of them is a map, so this section is mostly our own design, and I will say so.
+
+## Sections 1, 5, 8, 10 (adapt): what changes vs ESR
+1: the mark, not a generic wordmark, builds in red; the headline stays ESR-style. 5: logo rows at height, no preview tile (EVM's content is logos, and the tile was ESR's device). 8: red field, not black. 10: a giant mark, in red on white.
+Precedents: more-coffee/orra giant wordmark footers; Virugroup squares card; Dieste line card.
+
+## Stays / cut
+Stays: the statement text, who section, portraits, milestones, copy and counts, hero film, photograph, nav (labels left, Contact and menu right). Removed: Sectors rows, second photograph (tea behind proof; the red field replaces it, so tea-wide.webp is dropped). Links unchanged.
+
+## Needs and cost
+Drawing the Kerala outline: no cost. A larger EVM logo file would help (I redrew it as SVG). No generation spend. Length stays about 1.45x ESR.
+
+Reply go, or tell me what to change.
