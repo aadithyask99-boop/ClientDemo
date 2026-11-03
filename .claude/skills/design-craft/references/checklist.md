@@ -33,3 +33,4 @@ When a review finds a defect that is not covered here, add it as a new numbered 
 27. **No hairlines or small labels, and the reference's look kept.** No hairline rows or rules and no small section labels anywhere; type feel, colour discipline and spacing are the reference's (inspiration), at most two grounds plus one accent; the screenshot side-by-side was done and answered honestly.
 28. **Easter eggs exist.** Two or three subject-rooted hidden moments, with touch equivalents, lazy-loaded, listed in the README (`references/easter-eggs.md`).
 29. **No gold.** No gold, champagne, brass or metallic yellow-brown anywhere (accent, text, lines, icons, imagery grade).
+30. **The reference was read, not remembered.** The plan opened with a capture-backed readout (palette, type, hero, rhythm, photography, motion) and a kept and changed list; the build still shares the reference's lightness or weight.

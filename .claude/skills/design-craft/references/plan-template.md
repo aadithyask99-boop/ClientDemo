@@ -41,3 +41,8 @@ Keep it short. No code, no long lists of options, no other questions.
 **Our story (new).** Recommended: a pinned section where the year is a small label and the line is set large, swapping as you scroll. (a) The visitor asks "how did this become so big?". (b) ESR's statement style with its small uppercase labels. (c) more-coffee pins its statement cards, and orra pins its chapters. (d) Alternative: all twenty dated entries as a list; second because that was the cluttered result. (e) Risk: a pin can feel stuck on phones, so it unpins there.
 **Sectors (new).** Recommended: ESR's numbered hairline rows with a hover preview, so the five businesses read as a set. (c) orra's hover-bar table, halcyon's trailing photo. (d) Alternative: five full-bleed panels; second because it repeats the marque roller's weight. (e) Risk: it must not repeat the roller's layout back to back, so a statement sits between.
 **Cut or linked:** mission, vision, letters, full history and directors go to their own pages and are linked from the footer.
+
+## Always start with (added after the Kerala test)
+1. **Reference readout** (from a capture, one paragraph): palette, type pair, hero type, section rhythm, photography, motion feel. Say if capture failed.
+2. **Kept from the reference / Changed for this client** (two short lists).
+3. **Plan checklist line:** no gold, no hairline rows or small labels, no row of equal cards, no filler, three hero options, two or three easter eggs.
