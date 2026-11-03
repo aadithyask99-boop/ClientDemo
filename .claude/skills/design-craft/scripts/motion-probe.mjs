@@ -9,6 +9,7 @@
 // A section with all three at 0 has no motion at all. Also reports canvases, videos and the smooth-scroll response to one wheel notch
 // (a faster first 60 ms means a snappier, more responsive feel). With --vs it runs the reference too and prints both side by side.
 // It also looks for doubled or misaligned hairlines once each section has settled (two horizontal border lines 2 to 30 px apart that overlap).
+// It also flags possibly under-scaled content (advisory, it can misread video heroes and animated tiles, so compare the build's count with the reference's): a card or tile whose text and media fill under a quarter of it, or a mostly empty section whose biggest text is small.
 // It measures the presence of motion, not its quality: still look at the real thing.
 import { createRequire } from 'node:module';
 import { execSync } from 'node:child_process';
@@ -87,7 +88,33 @@ async function probe(target) {
       const dy = Math.abs(lines[a][0] - lines[b][0]); const overlap = Math.min(lines[a][2], lines[b][2]) - Math.max(lines[a][1], lines[b][1]);
       if (dy >= 2 && dy <= 30 && overlap > 120) pairs.push(`${lines[a][0]} and ${lines[b][0]}`);
     }
-    sections.push({ section: s + 1, text: geo.name, height: Math.round(geo.h), scroll, hover: `${hoverHits}/${hover.length}`, pointer, doubled: pairs.length, doubledAt: pairs.slice(0, 3).join('; ') });
+    // under-scaled content: a mostly empty box (a card or tile whose text and media cover under 25% of it), or a mostly empty section whose biggest text is small
+    const sc = await page.evaluate((i) => {
+      const root = document.querySelector(`[data-mp="${i}"]`); const vh = innerHeight, vw = innerWidth; const rr = root.getBoundingClientRect();
+      const top = Math.max(0, rr.top), bot = Math.min(vh, rr.bottom); const area = vw * Math.max(1, bot - top);
+      const clip = (r, a) => { const x1 = Math.max(a ? a.x1 : 0, r.left), x2 = Math.min(a ? a.x2 : vw, r.right), y1 = Math.max(a ? a.y1 : top, r.top), y2 = Math.min(a ? a.y2 : bot, r.bottom); return x2 > x1 && y2 > y1 ? { x1, y1, x2, y2 } : null; };
+      const live = (el) => { const cs = getComputedStyle(el); return !(cs.visibility === 'hidden' || cs.display === 'none' || +cs.opacity < 0.05); };
+      const mediaTags = new Set(['IMG', 'VIDEO', 'CANVAS', 'PICTURE', 'svg', 'SVG']);
+      const contentRects = (scope, a) => { const out = []; let maxFont = 0, media = 0;
+        for (const el of scope.querySelectorAll('*')) { if (!live(el)) continue; const cs = getComputedStyle(el);
+          if (mediaTags.has(el.tagName)) { const c = clip(el.getBoundingClientRect(), a); if (c && c.x2 - c.x1 > 30 && c.y2 - c.y1 > 30) { out.push(c); if (!/svg/i.test(el.tagName)) media += (c.x2 - c.x1) * (c.y2 - c.y1); } continue; }
+          if (cs.backgroundImage && cs.backgroundImage !== 'none') { const c = clip(el.getBoundingClientRect(), a); if (c && c.x2 - c.x1 > 80) { out.push(c); media += (c.x2 - c.x1) * (c.y2 - c.y1); } }
+          for (const n of el.childNodes) if (n.nodeType === 3 && n.textContent.trim().length > 1) { const rg = document.createRange(); rg.selectNodeContents(n); for (const rc of rg.getClientRects()) { const c = clip(rc, a); if (c) { out.push(c); maxFont = Math.max(maxFont, parseFloat(cs.fontSize)); } } } }
+        return { out, maxFont, media }; };
+      const whole = contentRects(root, null);
+      const gx = 48, gy = 30, cells = new Uint8Array(gx * gy), cw = vw / gx, ch = (bot - top) / gy;
+      for (const c of whole.out) for (let y = Math.floor((c.y1 - top) / ch); y <= Math.floor((c.y2 - top - 0.01) / ch); y++) for (let x = Math.floor(c.x1 / cw); x <= Math.floor((c.x2 - 0.01) / cw); x++) if (x >= 0 && x < gx && y >= 0 && y < gy) cells[y * gx + x] = 1;
+      const covered = cells.reduce((a, b) => a + b, 0) / cells.length;
+      const notes = [];
+      if (covered < 0.25 && whole.maxFont < 48 && whole.media / area < 0.25) notes.push(`mostly empty (${Math.round((1 - covered) * 100)}%) and its biggest text is only ${Math.round(whole.maxFont)} px`);
+      for (const el of root.querySelectorAll('*')) { if (!live(el)) continue; const cs = getComputedStyle(el); const r = el.getBoundingClientRect(); if (r.width < 180 || r.height < 180 || r.width > vw * 0.9 || mediaTags.has(el.tagName)) continue;
+        const hasBg = cs.backgroundColor && !/rgba\(0, 0, 0, 0\)|transparent/.test(cs.backgroundColor); const hasBorder = parseFloat(cs.borderTopWidth) >= 1 && cs.borderTopStyle !== 'none'; if (!(hasBg || hasBorder)) continue;
+        const bc = clip(r, null); if (!bc) continue; const boxArea = (bc.x2 - bc.x1) * (bc.y2 - bc.y1); if (boxArea < 180 * 180 * 0.5) continue;
+        const inner = contentRects(el, bc); const used = inner.out.reduce((a, c) => a + (c.x2 - c.x1) * (c.y2 - c.y1), 0);
+        if (used / boxArea < 0.25 && inner.media / boxArea < 0.25) notes.push(`a ${Math.round(r.width)}x${Math.round(r.height)} box holds content over only ${Math.round((used / boxArea) * 100)}% of itself`); }
+      return { count: notes.length, notes: notes.slice(0, 3) };
+    }, s);
+    sections.push({ section: s + 1, scaleCount: sc.count, scaleNotes: sc.notes.join('; '), text: geo.name, height: Math.round(geo.h), scroll, hover: `${hoverHits}/${hover.length}`, pointer, doubled: pairs.length, doubledAt: pairs.slice(0, 3).join('; ') });
   }
   await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(800);
   const misc = await page.evaluate(() => ({ canvases: document.querySelectorAll('canvas').length, videos: document.querySelectorAll('video').length }));
@@ -98,14 +125,16 @@ async function probe(target) {
 }
 const show = (r) => {
   console.log(`\n${r.url}\n  page ${r.pageHeight}px, canvases ${r.canvases}, videos ${r.videos}, wheel notch scrollY every 60 ms: ${r.wheelScrollYEvery60ms.join(', ')}`);
-  console.log('  #  height  scroll  hover  pointer  doubled  starts with');
-  for (const s of r.sections) console.log(`  ${String(s.section).padEnd(2)} ${String(s.height).padStart(6)}  ${String(s.scroll).padStart(6)}  ${String(s.hover).padStart(5)}  ${String(s.pointer).padStart(7)}  ${String(s.doubled).padStart(7)}  ${s.text}`);
+  console.log('  #  height  scroll  hover  pointer  doubled  scale  starts with');
+  for (const s of r.sections) console.log(`  ${String(s.section).padEnd(2)} ${String(s.height).padStart(6)}  ${String(s.scroll).padStart(6)}  ${String(s.hover).padStart(5)}  ${String(s.pointer).padStart(7)}  ${String(s.doubled).padStart(7)}  ${String(s.scaleCount).padStart(5)}  ${s.text}`);
   const dead = r.sections.filter((s) => s.scroll === 0 && s.hover.startsWith('0/') && s.pointer === 0);
   const tot = r.sections.reduce((a, s) => a + s.scroll, 0);
   console.log(`  total elements moving with scroll: ${tot}; sections with NO motion at all: ${dead.length ? dead.map((s) => s.section).join(', ') : 'none'}`);
   const dbl = r.sections.filter((s) => s.doubled > 0);
   if (dbl.length) console.log(`  DOUBLED OR MISALIGNED BORDERS (two horizontal lines 2 to 30 px apart, once settled) in sections: ${dbl.map((s) => `${s.section} (page y ${s.doubledAt})`).join(', ')}. Look at them: one of the two lines should go.`);
-  return { tot, dead: dead.length, dbl: dbl.length };
+  const under = r.sections.filter((s) => s.scaleCount > 0);
+  if (under.length) console.log(`  POSSIBLY UNDER-SCALED (advisory; the reference may flag some too) in sections: ${under.map((s) => `${s.section} (${s.scaleNotes})`).join('; ')}. Enlarge the type and media to the reference's scale, tighten the section, or cut it.`);
+  return { tot, dead: dead.length, dbl: dbl.length, under: under.length };
 };
 const a = show(await probe(url));
 if (vs) {
@@ -114,4 +143,6 @@ if (vs) {
   if (b.tot && a.tot / b.tot < 0.7) console.log('WARNING: the build has under 70% of the reference\'s scroll motion. It will feel plainer than the reference.');
   if (a.dead) console.log('WARNING: some sections have no motion at all; they will read as unfinished.');
   if (a.dbl) console.log('WARNING: doubled or misaligned borders in the build; fix before delivering.');
+  console.log(`Possibly under-scaled sections: build ${a.under} vs reference ${b.under}.`);
+  if (a.under > b.under + 1) console.log('WARNING: the build has clearly more under-scaled sections than the reference; it will read as sparse. Look at the flagged sections and scale up their type and media.');
 }
