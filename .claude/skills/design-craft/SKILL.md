@@ -24,6 +24,7 @@ Everything is in this repository (ClientDemo). Nothing is stored outside it, so 
 | Spend ledger (every generation call, no secrets) | `.claude/skills/design-craft/spend-ledger.jsonl` |
 | Colour guidance and the palette and contrast tool | `.claude/skills/design-craft/references/colour.md`, `scripts/palette.mjs` |
 | Media quality rules and the checker for pixelated images and video | `.claude/skills/design-craft/references/media.md`, `scripts/media-quality.mjs` |
+| Repetition and redundancy audit (reused images, repeated text, navigation layers) | `.claude/skills/design-craft/scripts/detail-audit.mjs`, checklist item 23 |
 | Preview bundler for publishing a built site as an artifact | `.claude/skills/design-craft/scripts/bundle-preview.mjs` (output in `captures/<site>/preview/`) |
 | Impeccable (installed) | `.claude/skills/impeccable/` |
 | The approved sites | `<slug>/` at the repo root, each with its own `README.md` |
@@ -184,7 +185,7 @@ A job is **not finished and must not be handed over** until every line below is 
 
 1. **Built** in this repo as an Astro site (a new `<site>/` folder, or the existing one), following sections 3 and 4.
 2. **Impeccable run:** `.claude/skills/impeccable/scripts/impeccable detect <built page or live url>`, then `/impeccable critique` and `/impeccable audit` on what you built. Fix every real finding; record any you overrode and why (`impeccable ignores add-value ...` for approved choices).
-3. **Checklist run:** `references/checklist.md` on screenshots at 1440 and 390 wide (`scripts/capture-site.mjs` on the preview, or your own Playwright shots). Fix what fails. For reference-led work also run `scripts/motion-probe.mjs <build> --vs <reference>` and fix its warnings, and run `scripts/media-quality.mjs <build url>` and fix every upscaled or low-bitrate item.
+3. **Checklist run:** `references/checklist.md` on screenshots at 1440 and 390 wide (`scripts/capture-site.mjs` on the preview, or your own Playwright shots). Fix what fails. For reference-led work also run `scripts/motion-probe.mjs <build> --vs <reference>` and fix its warnings, and run `scripts/media-quality.mjs <build url>` and fix every upscaled or low-bitrate item, and run `scripts/detail-audit.mjs <build url>` and remove the repetition it finds (each photograph once, one fact in one place, one navigation system).
 4. **Published as an artifact**, so the owner can open it: run `node .claude/skills/design-craft/scripts/bundle-preview.mjs <site-folder> --title "<Name> homepage (concept)"`, then call the Artifact tool with `file_path` = the bundle's `page.html`, `root` = the bundle folder, `files` = the contents of `files.json` (first publish) or `files-update.json` (updates; it also removes stale files), and an `icon` word on the first publish. To update, publish again with the same `url`. The bundler needs to be checked on a local server first: serve the bundle folder and confirm no 404s and no console errors (a missing file shows as a broken page). Over 255 files or 64 MB, publish in parts to the same url.
 5. **Logged and committed:** a `feedback.md` entry, case-study or fingerprint updates, committed and pushed to the branch.
 
