@@ -230,3 +230,6 @@ The owner said the build copied ESR section for section. Lesson: in inspiration 
 
 ## EVM passed every check and was still plain (2026-11-03)
 Owner: the proof section (three white boxes on red) had no character, layouts repeated, some sections were filler; details.so mechanisms (line and node, squares over a photo) were too small to give emotion. Cause: every check counts something (length, motion, text repeats, contrast); none judges plain versus alive, and the plan listed sections but never asked for one idea carrying the page. Fix: the plan must name the spine first (SKILL.md section 11), filler sections are cut or rebuilt, and the builder looks at each section and reports honestly. Lesson: borrowed mechanisms are parts, the spine is the design; counts never replace looking.
+
+## EVM round 11 (2026-11-03): the spine
+The owner chose a drive through Kerala. Lessons: (1) a generated product shot with itself as the reference gives consistent multi-angle sets for about 2 cents each; crossfading 45 degree steps ghosts, so hold each angle and dissolve for a short window only. (2) Scroll-pinned scenes count in full toward the 1.5x length limit; plan their length in the plan, not after. (3) Kilometre stones, a lit cinema sign, a billboard and a climbing road film turn the client's own subject into the page; the three-boxes layout is gone.
