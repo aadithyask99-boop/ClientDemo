@@ -5,5 +5,5 @@ const { which = 'photo' } = Astro.props;
 const ph = which === 'two' ? site.photoTwo : site.photo;
 ---
 <section class="photo" data-theme="dark">
-  <img src={`${base}/img/${ph.img}`} alt={ph.alt} loading="lazy" />
+  <img src={`${base}/img/${ph.img}`} alt={ph.alt} style={`object-position:${ph.pos}`} loading="lazy" />
 </section>

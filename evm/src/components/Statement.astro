@@ -4,7 +4,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const s = site.statement;
 ---
 <section class="statement" id="statement" data-theme="light" aria-label="About EVM Group">
-  <p class="label">{s.label}</p>
-  <p class="big">{s.text}</p>
-  <p class="more">{s.links.map((l) => <a href={`${base}${l.href}`}>{l.label}</a>)}</p>
+  <p class="label" data-reveal>{s.label}</p>
+  <p class="big" data-lines>{s.text}</p>
+  <p class="more" data-reveal>{s.links.map((l) => <a href={`${base}${l.href}`}>{l.label}</a>)}</p>
 </section>

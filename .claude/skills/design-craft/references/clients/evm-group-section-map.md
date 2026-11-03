@@ -1,44 +1,46 @@
-# EVM homepage: design system, curated content and section map (section 11)
+# EVM homepage: design system, motion spec, plan and result (section 11)
 
-Reference: esrbespoke.au, measured on 2026-11-02 (intro at 5 fps, strips at 1440 and 390, computed styles). Content source: evmgroup.co.in (pages, public data endpoints, contact blocks in its script bundle), read to understand the client and held in `evm/src/data/archive.ts`. The homepage is a highlight reel: it shows one short moment per kind of content and links to the rest.
+Reference: esrbespoke.au, measured on 2026-11-02 and 2026-11-03 (intro at 5 fps, strips at 1440 and 390, computed styles, its page script). Content source: evmgroup.co.in (pages, public data endpoints, contact blocks in its script bundle), read to understand the client and kept in `evm/src/data/archive.ts`. The homepage is a highlight reel: one short moment per kind of content, links for the rest.
 
-## 1. ESR design system (what the homepage copies)
+## 1. ESR design system
 - **Colour:** #000, #fff, #191919 hairlines, #e6e6e6 inactive list text on white, #787776 muted labels. No accent.
 - **Grid:** 32px gutter at 1440; columns start at x=32, 380 (26%) and 960 (67%).
 - **Type:** weight 500 grotesk. Statement 40px/40px; roller names 92px; row text 20px/24px; headline about 62px. Labels 14px (sentence case here by the owner's rule; the reference uses uppercase).
 - **Image treatment:** edge-to-edge photographs about 735px tall; one 216px square tile for the active roller item; film graded dark; 2px corners only.
-- **Motion:** smooth scroll; intro with typed labels, a wordmark rising in slices, then the film; typed headline and links; the roller item nearest the middle turns from pale to full colour; tile swaps with a short fade.
-- **Section patterns:** P1 film hero; P2 label plus one 40px paragraph; P3 full-bleed photograph; P4 roller with sticky tile; P5 40px paragraph plus numbered rows in the right column; P7 footer on the grid with a black wordmark.
+- **Section patterns:** film hero; label plus one 40px paragraph; full-bleed photograph; roller with sticky tile; 40px paragraph plus numbered rows in the right column; footer on the grid with a black wordmark.
 
-## 2. Size targets (measured by `compare-sheets.py`)
-ESR: 6,870 px, 319 words, 7 sections. Limits: 10,305 px, 957 words, 10 sections. EVM build: **9,044 px (1.3x), 314 words (1.0x), 9 sections**, no warnings.
+## 2. ESR motion spec (from its script and recording)
+- **Smooth scroll:** Lenis-style, lerp 0.1. Wheel notch (scrollY after 60/120/180/240/300/360 ms): 216, 315, 361, 382, 392, 396. Build, with lerp 0.16: 171 to 202 first notch, then 272, 332, 368, 389, 399, about the same curve.
+- **Easings and durations:** `expo.out` and `power4.out` for entrances, `expo.inOut` and `power2/3.inOut` for transitions; 0.3 to 1.8 s.
+- **Counts in its page chunk:** about 41 `.to`, 20 `fromTo`, 20 timelines, 19 staggers, 3 pins (the left label or tile column is held at "top top" with `pinSpacing:false`), active-item triggers at "top center" to "bottom center", pointer handlers on rows, SplitText on the intro and headline. 18 canvases and 3 videos on the page (canvas purpose not identified).
+- **Probe numbers:** 271 elements moving with scroll (257 of them in the footer), sections with no motion: 4 of 8.
 
-## 3. Section map: one moment per kind of content
-| # | Content kind | Moment on the homepage | Reference counterpart or new | Pattern |
-| --- | --- | --- | --- | --- |
-| 1 | Brand | Intro, film, headline "Future is our Business" | counterpart | P1 |
-| 2 | Story and people | Two sentences: 1952 toddy shop, Porsche, BMW, MINI, led by E.M. Johny and Sabu Johny. Links: Our story, Our people | counterpart | P2 |
-| 3 | Brands (image) | Showroom photograph | counterpart | P3 |
-| 4 | Brands | Eight marques, one line each, tile follows. Link: All marques | counterpart | P4 |
-| 5 | Sectors | One line, then five sector names in numbered rows with a tile on hover. Link: All sectors | counterpart | P5, black |
-| 6 | Sectors (image) | Plantation photograph | counterpart | P3 (second use) |
-| 7 | History | Four dates (1952, 1985, 2013, 2019) at roller size, one line each. Link: Full history | new | static big list, caption column |
-| 8 | Testimonials, awards | One customer quote at statement size, three recognition rows. Links: More reviews, All recognition | new, from P5 | P5 (second use), black |
-| 9 | Careers | One line, links: Careers, Our people | new, from P2 | P2 (second use) |
-| 10 | Contact | Footer: corporate office only, black wordmark, menu | counterpart | P7 |
+## 3. The plan the owner approved ("proceed with your idea")
+Owner's changes: use free stock video and pictures, and show brand logos in the marques tile instead of car photos (the generated cars did not match the brands).
 
-No neighbouring sections share a layout; P2, P3 and P5 are each used twice, every other layout once.
+| # | Section | Shown | Source | Layout and focal element | Motion |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Intro and hero film | "Future is our Business" | ESR hero | Full-bleed film, 62px headline | Intro sequence, typed headline and nav |
+| 2 | Statement | 1952 story and family, 44 words | ESR statement | 40px, full width, 5 lines | Lines rise from a mask; every word lights up as you read |
+| 3 | Photograph (Kochi) | place | ESR photograph | Full-bleed 82vh | Inset opens and image settles, scrubbed |
+| 4 | Marques | 8 brands | ESR roller | 92px list, 216px tile with the brand's logo | Letters build as each name rises; tile wipes between logos |
+| 5 | Sectors | five sectors, a 30-word statement | ESR services | Black, numbered rows | Words light up, rows drift in with the scroll, tile wipes in on hover |
+| 6 | Photograph (Munnar) | hills | ESR photograph | Full-bleed | Same as 3 |
+| 7 | Milestones (new) | 1952, 1985, 2013, 2019 | new | Pinned: year at 13vw, tile, one line | Digits roll between dates, caption and tile swap |
+| 8 | Proof (new) | One quote, three numbers | new | Black: 40px quote, then three 92px figures | Quote words light up; figures drift in and count up |
+| 9 | Where next (new) | Our people, Careers, Contact | new | Three 92px links | Letters build; word under the pointer turns black, others fade, a tile follows the pointer |
+| 10 | Footer | Corporate office | ESR footer | Black wordmark | Details drift in; wordmark rises |
 
-## 4. Cut or moved, and where it lives
-Everything below is kept in `evm/src/data/archive.ts` and belongs on the linked page (links on the homepage point at these routes; the pages are not built yet).
-| Content | Where it goes |
-| --- | --- |
-| Mission and vision, Chairman's and MD's messages, 68 years and 12 lakh customers | `/about` |
-| Four directors and five top management, portraits | `/people` |
-| 23 history rows 1952 to 2019 | `/history` |
-| Five more marques (Isuzu, Datsun, BMW Motorrad, Indian, Ashok Leyland) and every marque's long description | `/marques` and `/marques/<name>` |
-| Sector descriptions: Mountain Club Munnar, Le Leela, EVM Plantation, EVM Super Transportation, EVM Wheels, EVM Cinemas | `/sectors` and `/sectors/<name>` |
-| Six achievement paragraphs and three awards | `/recognition` |
-| Ten more testimonials | `/reviews` |
-| Two more offices (EVM Wheels, EVM Honda Trivandrum), contact form, careers form with resume | `/contact`, `/careers` |
-Dropped for good: duplicate slides, the sector EUROREPAR (no content), test-filler brand text, the old site's typos.
+## 4. Result (measured)
+- `compare-sheets.py`: 10,071 px (1.47x), 350 words (1.1x), 9 sections, no warnings. Compared in two clean rounds.
+- `motion-probe.mjs`: 213 elements move with scroll against ESR's 271 (79%, target 70%); sections with no motion: none. Wheel notch curve matches within about 20 px.
+- Impeccable (defects only): the detector reads the page at the start of the animations, so it reports dim words, rows and footer labels as low contrast; after scrolling through, every one of them reaches full opacity (checked). Kept deliberately: ESR's pale inactive marques. Fixed: a milestone caption overlap during fast scrolling, an odometer clipping a neighbouring digit.
+
+## 5. Cut or linked (same as before)
+All of it is kept in `evm/src/data/archive.ts` for the linked pages: `/about` (mission, vision, messages, 68 years and 12 lakh customers), `/people`, `/history` (23 rows), `/marques` (+ `/marques/<name>`, five more brands and long descriptions), `/sectors` (+ detail), `/recognition`, `/reviews` (ten more testimonials), `/careers`, `/contact`.
+
+## 6. Source material
+- Film: Coverr stock (free licence): aerial roads, a mountain hairpin, pedals, a forest road, and two Porsche close-ups plus a white Porsche side shot. Hero is slimmed to 1440 wide and 1.8 MB.
+- Stills: CC0 from Openverse (Wikimedia, the WordPress photo directory, rawpixel, StockSnap): Kochi fishing nets, Munnar tea terraces, a Kumarakom resort, cinema seats, a highway truck. The Porsche still is a frame from the Coverr clip.
+- Logos: Simple Icons (CC0 files; the marks belong to their owners and the client is an authorised dealer).
+- No generated images remain on the page.

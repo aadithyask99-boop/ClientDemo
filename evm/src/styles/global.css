@@ -98,75 +98,120 @@ html.anim .intro.is-done { display: none; }
 .hero__cta::after { content: ' \2193'; }
 .hero__cta:hover { text-decoration: underline; text-underline-offset: 3px; }
 
+/* Text that is split into lines or words by the script. Hidden until split, with a failsafe. */
+html.anim [data-lines]:not(.is-split), html.anim [data-words]:not(.is-split) { opacity: 0; animation: showfail 0.01s 8s forwards; }
+.ln { display: block; overflow: hidden; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+.ln__in { display: block; will-change: transform; white-space: nowrap; }
+.w { display: inline-block; }
+html.anim [data-reveal] { opacity: 0; animation: showfail 0.01s 8s forwards; }
+
 /* 2 Statement */
-.statement { min-height: 100svh; padding: 92px var(--g) clamp(80px, 14svh, 160px); }
-.statement .big { margin-top: 36svh; }
+.statement { min-height: 86svh; padding: 92px var(--g) clamp(80px, 14svh, 160px); }
+.statement .big { margin-top: 26svh; }
 .more { display: flex; gap: 28px; margin-top: 28px; }
 .more a { font-size: 14px; font-weight: 400; letter-spacing: 0.02em; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: currentColor; }
 .more a::after { content: ' \2192'; display: inline-block; transition: transform 0.4s var(--ease); }
 .more a:hover::after { transform: translateX(4px); }
 
-/* 3 Photograph */
+/* 3 and 6 Photographs: edge to edge, 735px */
 .photo { height: min(82svh, 780px); overflow: hidden; background: #000; }
-.photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 62%; }
+.photo img { width: 100%; height: 100%; object-fit: cover; will-change: transform; }
+html.anim .photo img { transform: scale(1.14); }
 
-/* 4 and 9 Rollers: a long list, the row nearest the middle is full colour, a square tile and caption stay in view */
-.roller { display: grid; grid-template-columns: 25.29fr 42.1fr 32.61fr; padding: 28px var(--g) clamp(120px, 24svh, 260px); grid-template-rows: auto 1fr; }
+/* 4 Marques roller: a long list, the row nearest the middle is in full colour; a square tile and caption stay in view */
+.roller { display: grid; grid-template-columns: 25.29fr 42.1fr 32.61fr; padding: 28px var(--g) clamp(100px, 16svh, 180px); grid-template-rows: auto 1fr; }
 .roller__label { grid-column: 1 / 3; grid-row: 1; }
 .roller__list { grid-column: 1 / 3; grid-row: 2; margin-top: clamp(80px, 12svh, 130px); }
 .roller__list li { width: fit-content; font-size: clamp(48px, 6.4vw, 120px); font-weight: 500; line-height: 0.95; letter-spacing: -0.01em; color: var(--pale); cursor: pointer; transition: color 0.45s var(--ease); outline-offset: 4px; }
 .roller__list li.is-active { color: var(--ink); }
 .roller__side { grid-column: 3; grid-row: 2; position: sticky; top: 34svh; align-self: start; margin-top: clamp(80px, 12svh, 130px); width: min(100%, 300px); }
-.roller__tile { position: relative; width: clamp(120px, 15vw, 300px); aspect-ratio: 1; overflow: hidden; background: #f3f3f3; }
-.roller__tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.35s ease; }
-.roller__tile img.is-active { opacity: 1; }
-.roller__note { position: relative; margin-top: 16px; min-height: 9em; }
+.roller__tile { position: relative; width: clamp(120px, 15vw, 300px); aspect-ratio: 1; overflow: hidden; background: #000; }
+.logo { display: block; background-color: #fff; -webkit-mask: var(--m) center / contain no-repeat; mask: var(--m) center / contain no-repeat; }
+.roller__tile .logo { position: absolute; inset: 0; margin: auto; width: 46%; height: 46%; opacity: 0; }
+.roller__tile .logo.is-active { opacity: 1; }
+.roller__note { position: relative; margin-top: 16px; min-height: 4em; }
 .roller__note span { position: absolute; inset: 0 auto auto 0; opacity: 0; transition: opacity 0.35s ease; }
 .roller__note span.is-active { opacity: 1; }
-.roller__foot { margin-top: 12px; }
-.ini { position: absolute; inset: 0; display: grid; place-items: center; font-size: clamp(40px, 5vw, 80px); font-weight: 500; letter-spacing: -0.01em; opacity: 0; transition: opacity 0.35s ease; color: var(--paper); }
-.ini.is-active { opacity: 1; }
+.roller__side .more { margin-top: calc(4em + 24px); }
 
 /* 5 Sectors: statement, then numbered rows in the right column; a row shows its tile in the middle column */
-.sectors { padding: 92px var(--g) clamp(120px, 24svh, 240px); }
-.sectors .big { margin-top: 20svh; max-width: 24em; }
+.sectors { padding: 92px var(--g) clamp(100px, 14svh, 160px); }
+.sectors .big { margin-top: 20svh; max-width: 26em; }
 .sectors__row { display: grid; grid-template-columns: 25.29fr 42.1fr 32.61fr; margin-top: clamp(80px, 24svh, 240px); border-top: 1px solid var(--panel); padding-top: 22px; }
 .sectors__row > .label { grid-column: 1; }
 .sectors__row .more { margin-top: 10px; }
 .rows { grid-column: 3; margin-top: -45px; }
 .rows__item { position: relative; border-bottom: 1px solid var(--panel); }
 .rows__item:first-child { border-top: 1px solid var(--panel); }
-.rows__item > a, .rows--text .rows__item { display: flex; gap: 40px; align-items: baseline; padding: 20px 0; }
+.rows__item > a { display: flex; gap: 40px; align-items: baseline; padding: 20px 0; transition: transform 0.6s var(--ease); }
+.rows__item > a:hover { transform: translateX(10px); }
 .rows__n { font-size: 14px; font-weight: 400; letter-spacing: 0.02em; width: 16px; flex: none; }
 .rows__name { font-size: 20px; line-height: 24px; font-weight: 500; }
-.rows__tile { position: absolute; left: calc(var(--c2) - var(--c3)); top: 50%; width: clamp(120px, 15vw, 300px); aspect-ratio: 1; object-fit: cover; transform: translateY(-50%); opacity: 0; transition: opacity 0.35s ease; pointer-events: none; }
-.rows__item:hover .rows__tile, .rows__item > a:focus-visible .rows__tile { opacity: 1; }
+.rows__tilebox { position: absolute; left: calc(var(--c2) - var(--c3)); top: 50%; width: clamp(120px, 15vw, 300px); aspect-ratio: 1; transform: translateY(-50%); overflow: hidden; clip-path: inset(0 0 100% 0); transition: clip-path 0.7s var(--ease); pointer-events: none; }
+.rows__tile { width: 100%; height: 100%; object-fit: cover; }
+.rows__item:hover .rows__tilebox, .rows__item > a:focus-visible .rows__tilebox { clip-path: inset(0); }
 
-/* 9 Careers */
-.careers { min-height: 80svh; padding: 92px var(--g) clamp(100px, 18svh, 200px); }
-.careers .big { margin-top: 26svh; max-width: 22em; }
+/* 7 Milestones: a pinned scene. The year rolls digit by digit, one line and one tile swap beside it. */
+.milestones { padding: 0; }
+.ms__pin { padding: 28px var(--g); }
+.ms__year, .ms__side { display: none; }
+.ms__static { margin-top: clamp(80px, 12svh, 130px); }
+.ms__static li { display: grid; grid-template-columns: 25.29fr 42.1fr 32.61fr; align-items: baseline; padding: 8px 0; }
+.ms__sy { grid-column: 1 / 3; font-size: clamp(48px, 6.4vw, 120px); font-weight: 500; line-height: 0.95; letter-spacing: -0.01em; }
+.ms__st { grid-column: 3; font-size: 20px; line-height: 24px; font-weight: 500; }
+html.anim .milestones { height: calc(var(--n) * 36svh + 100svh); }
+html.anim .ms__pin { position: sticky; top: 0; height: 100svh; display: grid; grid-template-columns: 25.29fr 42.1fr 32.61fr; grid-template-rows: auto 1fr; }
+html.anim .ms__label { grid-column: 1; grid-row: 1; }
+html.anim .ms__static { display: none; }
+html.anim .ms__year { display: flex; grid-column: 1 / 3; grid-row: 2; align-self: center; font-size: clamp(88px, 13vw, 240px); font-weight: 500; line-height: 1.1; letter-spacing: -0.03em; height: 1.1em; overflow: hidden; font-variant-numeric: tabular-nums; }
+.ms__digit { display: block; height: 1.1em; overflow: hidden; }
+.ms__stack { display: flex; flex-direction: column; will-change: transform; }
+.ms__stack span { display: block; height: 1.1em; }
+html.anim .ms__side { display: block; grid-column: 3; grid-row: 2; align-self: center; width: min(100%, 300px); }
+.ms__tile { position: relative; width: clamp(120px, 15vw, 300px); aspect-ratio: 1; overflow: hidden; background: #000; }
+.ms__tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+.ms__tile img.is-active, .ms__logos.is-active { opacity: 1; }
+.ms__logos { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14%; opacity: 0; }
+.ms__logos .logo { width: 34%; height: 18%; }
+.ms__caption { position: relative; margin-top: 20px; min-height: 5em; font-size: 20px; line-height: 24px; font-weight: 500; }
+.ms__caption span { position: absolute; inset: 0 auto auto 0; opacity: 0; }
+.ms__caption span.is-active { opacity: 1; }
+.ms__side .more { margin-top: calc(5em + 20px); }
 
-/* 6 Milestones: four dates at roller size, one line each in the right column */
-.milestones { padding: 92px var(--g) clamp(120px, 22svh, 220px); }
-.milestones__list { margin-top: clamp(80px, 12svh, 130px); }
-.milestones__list li { display: grid; grid-template-columns: 25.29fr 42.1fr 32.61fr; align-items: baseline; padding: 8px 0; }
-.milestones__y { grid-column: 1 / 3; font-size: clamp(48px, 6.4vw, 120px); font-weight: 500; line-height: 0.95; letter-spacing: -0.01em; }
-.milestones__t { grid-column: 3; font-size: 20px; line-height: 24px; font-weight: 500; }
-.milestones__more { margin-left: calc(var(--c3) - var(--g)); margin-top: 48px; }
+/* 8 Proof: one customer, words that light up as you scroll, then three figures that count up */
+.proof { padding: 92px var(--g) clamp(100px, 14svh, 160px); }
+.proof blockquote { margin-top: 18svh; }
+.proof cite { display: block; margin-top: 24px; font-style: normal; color: #9b9b9a; }
+.proof__figures { display: grid; grid-template-columns: 25.29fr 42.1fr 32.61fr; margin-top: clamp(80px, 18svh, 180px); border-top: 1px solid var(--panel); padding-top: 22px; }
+.proof__figures > .label { grid-column: 1; }
+.proof__figures .more { margin-top: 10px; }
+.figures { grid-column: 2 / 4; margin-top: -45px; }
+.figures li { display: grid; grid-template-columns: 42.1fr 32.61fr; align-items: baseline; gap: 0; padding: 14px 0; border-bottom: 1px solid var(--panel); }
+.figures li:first-child { border-top: 1px solid var(--panel); }
+.figures__n { font-size: clamp(48px, 6.4vw, 120px); font-weight: 500; line-height: 0.95; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.figures__n b { font-weight: 500; }
+.figures__t { font-size: 20px; line-height: 24px; font-weight: 500; max-width: 18em; }
 
-/* 7 Proof: one customer at statement size, then three recognitions as rows */
-.proof { padding: 92px var(--g) clamp(120px, 24svh, 240px); }
-.proof blockquote { margin-top: 20svh; }
-.proof cite { display: block; margin-top: 24px; font-style: normal; }
+/* 9 Where next: three links at roller size; the word under the pointer is black, the others fade; a tile follows the pointer */
+.next { padding: 28px var(--g) clamp(100px, 16svh, 160px); min-height: 70svh; }
+.next__list { margin-top: clamp(80px, 14svh, 150px); }
+.next__list li { width: fit-content; }
+.next__list a { display: block; font-size: clamp(48px, 6.4vw, 120px); font-weight: 500; line-height: 1; letter-spacing: -0.01em; transition: color 0.4s var(--ease); min-height: 44px; }
+.next__list:hover a { color: var(--pale); }
+.next__list a:hover, .next__list a:focus-visible { color: var(--ink); }
+.next__tile { position: fixed; left: 0; top: 0; width: clamp(120px, 15vw, 300px); aspect-ratio: 1; overflow: hidden; pointer-events: none; opacity: 0; z-index: 5; background: #000; will-change: transform; }
+.next__tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.3s ease; }
+.next__tile img.is-active { opacity: 1; }
 
-/* 8 Footer */
+/* 10 Footer */
 .footer { position: relative; min-height: 100svh; padding: 28px var(--g) 28px; }
 .footer__top { display: grid; grid-template-columns: 25.29fr 42.1fr 32.61fr; }
 .footer__top .label:nth-child(2) { max-width: 12em; }
 .footer__links { display: grid; gap: 3px; }
 .footer__links a { width: fit-content; font-size: 14px; font-weight: 400; letter-spacing: 0.02em; }
 .footer__links a:hover { text-decoration: underline; text-underline-offset: 3px; }
-.footer__mark { width: min(32vw, 620px); margin-top: clamp(120px, 34svh, 340px); }
+.footer__markwrap { width: min(32vw, 620px); margin-top: clamp(120px, 34svh, 340px); overflow: hidden; }
+.footer__mark { width: 100%; }
 .footer__biz { position: absolute; left: var(--c3); top: 66%; display: grid; gap: 8px; }
 .footer__biz .label span { display: block; }
 .footer__legal { position: absolute; left: var(--g); right: var(--g); bottom: 28px; color: var(--mute); max-width: 70em; text-wrap: pretty; }
@@ -192,16 +237,26 @@ html.anim .intro.is-done { display: none; }
   .sectors__row { grid-template-columns: 1fr; row-gap: 20px; }
   .sectors__row > .label, .rows { grid-column: 1; }
   .rows { margin-top: 0; }
-  .rows__tile { display: none; }
-  .milestones__list li { grid-template-columns: 1fr; row-gap: 6px; padding: 14px 0; }
-  .milestones__y, .milestones__t { grid-column: 1; }
-  .milestones__y { font-size: clamp(48px, 14vw, 72px); }
-  .milestones__more { margin-left: 0; }
+  .rows__tilebox { display: none; }
+  html.anim .milestones { height: auto; }
+  html.anim .ms__pin { position: static; height: auto; display: block; }
+  html.anim .ms__static { display: block; }
+  html.anim .ms__year, html.anim .ms__side { display: none; }
+  .ms__static li { grid-template-columns: 1fr; row-gap: 6px; padding: 14px 0; }
+  .ms__sy, .ms__st { grid-column: 1; }
+  .ms__sy { font-size: clamp(48px, 14vw, 72px); }
+  .ms__pin { padding-bottom: 80px; }
   .proof blockquote { margin-top: 12svh; }
+  .proof__figures { grid-template-columns: 1fr; row-gap: 20px; }
+  .proof__figures > .label, .figures { grid-column: 1; }
+  .figures { margin-top: 0; }
+  .figures li { grid-template-columns: 1fr; row-gap: 6px; }
+  .figures__n { font-size: clamp(48px, 14vw, 72px); }
+  .next__tile { display: none; }
   .footer__top { grid-template-columns: 1fr; row-gap: 14px; }
   .footer { min-height: 0; display: flex; flex-direction: column; }
   .footer__biz { position: static; margin-top: 48px; }
   .footer__legal { position: static; margin-top: 40px; order: 4; }
-  .footer__mark { width: 100%; margin-top: 60px; order: 5; }
+  .footer__markwrap { width: 100%; margin-top: 60px; order: 5; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition-duration: 0.01ms !important; } }

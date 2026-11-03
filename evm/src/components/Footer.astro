@@ -12,7 +12,7 @@ const f = site.footer;
       {site.nav.map((n) => <a href={`${base}${n.href}`}>{n.label}</a>)}
     </nav>
   </div>
-  <Mark class="footer__mark" />
+  <div class="footer__markwrap"><Mark class="footer__mark" /></div>
   <div class="footer__biz">
     <p class="label label--mute">{f.contact.label}</p>
     <p class="label">{f.contact.lines.map((l) => <span>{l}</span>)}</p>

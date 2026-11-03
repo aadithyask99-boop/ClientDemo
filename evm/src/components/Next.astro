@@ -1,0 +1,14 @@
+---
+import { site } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const n = site.next;
+---
+<section class="next" id="next" data-theme="light" aria-label="Where next">
+  <p class="label" data-reveal>{n.label}</p>
+  <ol class="next__list">
+    {n.items.map((it) => <li data-row><a href={`${base}${it.href}`}><span>{it.name}</span></a></li>)}
+  </ol>
+  <div class="next__tile" aria-hidden="true">
+    {n.items.map((it) => <img src={`${base}/img/${it.img}`} alt="" loading="lazy" />)}
+  </div>
+</section>

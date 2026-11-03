@@ -10,7 +10,7 @@ const m = site.marques;
   </ol>
   <div class="roller__side">
     <div class="roller__tile">
-      {m.items.map((it, i) => <img class={i === 0 ? 'is-active' : ''} src={`${base}/img/${it.img}`} alt={it.alt} loading="lazy" />)}
+      {m.items.map((it, i) => <span class={`logo ${i === 0 ? 'is-active' : ''}`} style={`--m:url(${base}/logos/${it.logo}.svg)`} role="img" aria-label={`${it.name} logo`}></span>)}
     </div>
     <p class="label roller__note">
       {m.items.map((it, i) => <span class={i === 0 ? 'is-active' : ''}>{it.note}</span>)}

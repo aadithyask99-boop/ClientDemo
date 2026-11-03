@@ -4,17 +4,17 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const s = site.sectors;
 ---
 <section class="sectors" id="sectors" data-theme="dark" aria-label="Our sectors">
-  <p class="label">{s.label}</p>
-  <p class="big">{s.text}</p>
+  <p class="label" data-reveal>{s.label}</p>
+  <p class="big" data-lines>{s.text}</p>
   <div class="sectors__row">
-    <p class="label">{s.rowsLabel}<br /><span class="more"><a href={`${base}${s.link.href}`}>{s.link.label}</a></span></p>
+    <p class="label" data-reveal>{s.rowsLabel}<br /><span class="more"><a href={`${base}${s.link.href}`}>{s.link.label}</a></span></p>
     <ol class="rows">
       {s.items.map((it, i) => (
-        <li class="rows__item">
+        <li class="rows__item" data-row>
           <a href={`${base}/sectors/${it.slug}`}>
             <span class="rows__n">{String(i + 1).padStart(2, '0')}</span>
             <span class="rows__name">{it.name}</span>
-            <img class="rows__tile" src={`${base}/img/${it.img}`} alt={it.alt} loading="lazy" />
+            <span class="rows__tilebox"><img class="rows__tile" src={`${base}/img/${it.img}`} alt={it.alt} loading="lazy" /></span>
           </a>
         </li>
       ))}

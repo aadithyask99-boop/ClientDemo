@@ -2,11 +2,30 @@
 import { site } from '../data/site';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const m = site.milestones;
+const n = m.items.length;
+const digits = [0, 1, 2, 3];
 ---
-<section class="milestones" id="history" data-theme="light" aria-label="Milestones">
-  <p class="label">{m.label}</p>
-  <ol class="milestones__list">
-    {m.items.map((it) => <li><span class="milestones__y">{it.y}</span><span class="milestones__t">{it.t}</span></li>)}
-  </ol>
-  <p class="more milestones__more"><a href={`${base}${m.link.href}`}>{m.link.label}</a></p>
+<section class="milestones" id="history" data-theme="light" aria-label="Milestones" style={`--n:${n}`}>
+  <div class="ms__pin">
+    <p class="label ms__label">{m.label}</p>
+    <ol class="ms__static">
+      {m.items.map((it) => <li><span class="ms__sy">{it.y}</span><span class="ms__st">{it.t}</span></li>)}
+    </ol>
+    <div class="ms__year" aria-hidden="true">
+      {digits.map((d) => (
+        <span class="ms__digit"><span class="ms__stack">{m.items.map((it) => <span>{it.y[d]}</span>)}</span></span>
+      ))}
+    </div>
+    <div class="ms__side">
+      <div class="ms__tile">
+        {m.items.map((it, i) => it.img
+          ? <img class={i === 0 ? 'is-active' : ''} src={`${base}/img/${it.img}`} alt={it.alt} loading="lazy" />
+          : <span class={`ms__logos ${i === 0 ? 'is-active' : ''}`}>{it.logos!.map((l) => <i class="logo" style={`--m:url(${base}/logos/${l}.svg)`}></i>)}</span>)}
+      </div>
+      <p class="ms__caption" aria-live="polite">
+        {m.items.map((it, i) => <span class={i === 0 ? 'is-active' : ''}>{it.t}</span>)}
+      </p>
+      <p class="more"><a href={`${base}${m.link.href}`}>{m.link.label}</a></p>
+    </div>
+  </div>
 </section>
