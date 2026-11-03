@@ -120,3 +120,43 @@ Hero, statement, both photographs, marques roller, sectors rows and footer all h
 - **Text:** hero line "Seven decades of one family business across Kerala."; the statement tells the 1952 story and names the leaders, with no list of businesses; the sectors statement lists the businesses once ("Dealerships, hotels, plantations, buses and cinemas") and the five rows name them; Milestones no longer tells 1952 (now 1985, 1988, 2001, 2019) and the marque notes carry no dates that Milestones states.
 - **Navigation:** one system, a pair of labels at the top left and Contact plus the menu button at the top right, from the first screen; the plain text list is gone from the hero and the footer; the menu overlay lists all six destinations. Section labels no longer repeat nav words ("Brands we represent", "The group", "Five businesses", "Awards", "Where next"); links read "Every brand", "Every business", "The full timeline", "More awards", "More customers". No destination is linked more than three times (/contact: header button, menu, Where next). Section labels sit at least 84 px below the top edge (they were 28).
 **After:** detail-audit: 3 distinct files, no repeated text, no year or figure in three sections, one header layer, `/contact x3` the highest. Probe: 244 elements move with scroll against 272 (90%; the first run after the removals was 66%, so the sector names got the same letter-by-letter build as the brand names), no section static, no doubled borders, under-scaled 3 against 3. compare-sheets: 9,346 px (1.36x), 337 words, 8 sections.
+
+---
+
+# Plan v3: the people (2026-11-03, awaiting the owner's go)
+
+**Owner's request:** the founder and directors, with their pictures from the client's current site, somewhere on the homepage, designed, not generic. New section, so the plan comes first (rule 0).
+
+## The portraits we have (client's own, from `evmgroup.co.in/uploads//our-team/`)
+| Person | File | Size | Background |
+| --- | --- | --- | --- |
+| E.V. Mathai, Founder | WP24_hVOj... .png | 212 x 269 | deep navy, old portrait |
+| E.M. Johny, Chairman | 4tAxjq... .png | 131 x 166 | dark green |
+| Sabu Johny, Managing Director | HIvyWe... .png | 212 x 269 | dark grey |
+| Divya Paul, Director | oTuvXR... .png | 212 x 269 | white |
+Small web-size portraits on four different backgrounds. They are 1:1 at about 212 px wide and soft above that; E.M. Johny's is 131 px wide and would be enlarged 1.6x at 212. The design shows them small by design (the reference's own tile is 216 px), in greyscale at one shared crop so the four backgrounds read as one set. Replacing a file later is a one-file swap. Top management (five more people, larger 413 px photos) stays on `/people`.
+
+## Funnel (details.so free slice, category `team`, `about`, `list`)
+Resolved seven real sites and studied five in full-size strips (Telha Clarke blank in the capture tool, dropped): Revelatio, K95, Griflan, United Carriers; motion probed for Revelatio (416 elements move with scroll, a canvas) and K95 (415).
+- **Revelatio, https://revelatio.studio/about** (design studio, black and white): a hairline table, Name, Position, Location, with one large portrait at the left that follows the row. Mechanism borrowed: a list as the whole section, a single portrait for the active row. Re-skin: ESR's row type (20px/24px), 216 px tile, no table headers. Risk: its photos are large and studio quality; ours are small, so the tile stays small.
+- **K95, https://k95.it/en/studio** (Italian design studio, saturated blue): a sticky list of first names where the active name lights as you scroll and the large portrait changes. Mechanism borrowed: scroll picks the active person. Re-skin: ESR black and white, names in ESR's row style. Risk: needs big portraits and its giant "TEAM" headline and blue are not ours; mechanism only.
+- **United Carriers, https://unitedcarriers.com/about** (freight forwarding, subject-adjacent: transport, the client's own sector): "The people behind the promise": one featured leader's portrait and biography, the other leaders as faded ghost portraits beside him. Mechanism borrowed: one person in focus, the rest quiet. Risk: heavy blue and it reads as a corporate template if copied.
+- **Griflan, https://griflan.com/agency/** (creative studio): a name list where the hovered name lights up and shows the person's cut-out portrait. Mechanism borrowed: hover shows the face. Risk: red and cut-out illustration style, not ours.
+**Borrow from:** Revelatio (1) and K95 (2).
+
+## Recommended: "Who leads it", four rows and one portrait
+- **Placement:** straight after the statement, on the same white ground, as the second half of the About moment (the story, then who leads it). The statement stops naming the two leaders (a fact stated once), the "Our people" link moves here, and Where next drops its "Our people" link (it keeps Careers and Contact).
+- **Layout:** label "Who leads it" at the left; four numbered hairline rows in the right column (founder first), each name at 40px (the reference's statement size) with the role in 16px under it; a 216 x 270 portrait tile in the middle column, greyscale, that changes with the row nearest the centre of the screen or the row under the pointer. Same logic as the Marques roller but in the numbered-row style of Sectors, so it does not repeat the roller's layout.
+- **Motion:** names build letter by letter as they rise (as the brand names do); the tile wipes between portraits from the bottom (as the logos do); on touch the active row follows the scroll. Reduced motion: all four rows visible, first portrait shown.
+- **Precedent in our sites:** halcyon's services list (the word under the pointer lights, a photo follows), orra's hover-bar table, djeska's rooms list, and our own Marques roller. **Pattern:** `patterns.md`, "Lists, and choosing among many items".
+- **Why it fits:** the visitor's question is "who is behind this?". Four people is exactly one short list; one small portrait that changes is the right size for small photographs; the founder (E.V. Mathai, with a deep-navy portrait) sits first, which gives the family story a face.
+- **Risk:** the portraits are small; the greyscale and shared crop keep them calm, but E.M. Johny's will look soft; ask the client for better ones.
+
+## Alternative: a frieze
+Four portraits in one row at their native 212 px across the three columns, names beneath, each rising at a slightly different speed as you scroll, the founder first. Second because it is the standard team row and shows every softness of the photographs at once.
+
+## What changes elsewhere
+Statement: "...led today by E.M. Johny and Sabu Johny" goes (said here instead). Where next: three links become two. Length: about +800 px (to about 10,150 px, 1.48x the reference, inside the 1.5x limit; a pin will be shortened to stay inside). Words: +25.
+
+## Needs from the owner
+A go, and ideally better portraits for the four people (Johny's 131 px photo is the weakest). Cost: none.
