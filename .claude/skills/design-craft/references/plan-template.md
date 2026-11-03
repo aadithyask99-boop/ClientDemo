@@ -2,7 +2,10 @@
 
 On a reference-led job, after studying the reference and the client's current site and before building or spending anything, show the owner this plan and wait for "go". It exists so they know what to expect before tokens are spent. After the go, run to the end without further questions. If they change the plan, update it and proceed; do not ask again.
 
-## Read these first, and think before writing
+## Replicate path: a short plan
+If the owner wants the reference replicated with their own content and every content block has a counterpart in the reference, the plan is only: (1) the slot map: each reference section, the owner's content that goes in it, and what changes (colours, copy, images); (2) the palette line; (3) any content that fits no slot, with the options (a new section, fold it into a slot, leave it out or link it); (4) the sentence "no new sections, so the inspiration research is not needed". Do not run the funnel for sections that already exist in the reference. End with "Reply go, or tell me what to change."
+
+## Read these first, and think before writing (extend path)
 1. **The client's current site** (`captures/<client>/report.md`, the as-is audit): the brand cues worth keeping (logo, colour accents, tone, imagery) and what is weak.
 2. **The reference**: its design system, its section patterns and its motion spec.
 3. **Our own sites**: `patterns.md` (mechanisms by content type), `fingerprints.md` (so the result is not a sibling of an existing site) and the two or three closest case studies.
