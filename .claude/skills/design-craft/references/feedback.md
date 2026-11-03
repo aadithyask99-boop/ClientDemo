@@ -120,3 +120,11 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - Lesson: colour is part of the core idea and needs both guidance and a measurement; sources of components are not sources of direction.
 - Promote to: colour.md and checklist 20 (done).
 
+### 2026-11-03  Pixelated stock media and under-scaled content (EVM Group build)
+- Owner's words: lots of white space here and there; the open-licence images and the hero video look pixelated; make sure good quality ones are used when the media is not the client's own.
+- Evidence (measured): `media-quality.mjs` shows the hero film is 1440 x 810 enlarged to cover 1440 x 900 (scale 1.11, so upscaled) at about 750 kbps, 19 s in 1.7 MB (very low bitrate for a full-width clip); the full-bleed photographs are scale 0.7 to 0.8 (sharp on normal screens, soft on retina). White space overall matches the reference (56% empty against 58%), so the issue is content scale, not amount of space: the probe's advisory flags about 8 of the build's 10 sections as possibly under-scaled against 3 of the reference's 8 (it is noisy, so use it relatively). Examples: Milestones' right column (216 px tile, one 20 px caption), Proof's 300 px squares with a number and a 14 px caption, Where next's 14 px descriptions.
+- Cause: the checklist had no media-quality item, the chat's note says the free stock was 720p and it was re-compressed to 1.8 MB, and nothing measured whether small content sat in large empty areas. The best stock sites were also blocked in this environment (Pexels and Pixabay 403), which pushed it to the low tiers.
+- Fix: `references/media.md` (minimums, originals not previews, what to do if the best source is blocked, licences), `scripts/media-quality.mjs`, an advisory under-scale check in `motion-probe.mjs`, checklist items 21 and 22, and a rule in the reference protocol.
+- Lesson: sharpness is measurable (scale and bitrate); do not accept a low tier of a free source without saying so, and ask for the file or the domain allowance.
+- Promote to: media.md and checklist 21 and 22 (done).
+
