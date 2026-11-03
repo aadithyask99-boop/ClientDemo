@@ -13,7 +13,7 @@ For every section that has no counterpart in the reference, answer five question
 ## Format (about one page, plain words)
 1. **The story in one sentence:** what the visitor should feel and learn, in order.
 2. **The flow, as a table:** `#`, section, purpose, content shown (the one to three highlights), source (reference counterpart or new), layout and focal element, motion, assets (real, stock or generated).
-3. **Each new section, a short block:** the recommended design and one alternative, the answers to the five questions in a line or two, and the precedent from our sites.
+3. **Each new section, a short block (required):** the recommended design and one alternative, the answers to the five questions in a line or two, and the precedent from our own sites (named, from `patterns.md`). A plan whose new sections lack a precedent and an alternative is incomplete. Copy the blocks into the section map file as well, so they survive the chat.
 4. **What stays from the client's current design and what changes.**
 5. **Cut or linked out:** what is not on this page and where it will live.
 6. **What I need from you and what it will cost:** footage or photos needed; generation spend against the cap.
