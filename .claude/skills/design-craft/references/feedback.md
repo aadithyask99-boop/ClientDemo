@@ -154,3 +154,11 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - Lesson: "full crawl" should mean deep where it matters, not everything; reasoning needs written criteria; a still cannot judge motion.
 - Promote to: `inspiration-research.md` (done).
 
+### 2026-11-03  Colour pairing and three more inspiration sites
+- Owner's words: nice designs should still be based on the core idea; colour combinations matter (white with blue, white with burgundy look professional, contrast helps); the skill should understand contrasting colours and suggest accordingly. Also shared originkit.dev, daisyui.com and kexsio.com/animations as possible free inspiration with MCPs.
+- Finding on the sites: all three are component or effect libraries with MCPs, but not free in the way hoped (Originkit's free plan is about 3 copies a day and its paid plans are $79 and $99 a year; Kexsio's MCP needs an account and keys; daisyUI is free and open source but is a Tailwind library that our plain-CSS sites do not use). They are a toolbox for single effects at build time, not a source of design direction; details.so stays primary.
+- Change: `references/colour.md` (colour from the client's core idea and the reference's colour rules; roles; contrast; professional pairings; what to avoid; the job steps), `scripts/palette.mjs` (four candidate palettes from a brand colour with contrast checks and an optional HTML preview; `--classics` lists tried pairings), a palette line in the plan, checklist item 20.
+- Also: the EVM chat ran the inspiration funnel well on its own (nine categories read, eight real sites resolved, seven studied, a shortlist and alternative per new section, ideas rejected because they broke the reference's black and white). The "3 categories" limit is now per new section.
+- Lesson: colour is part of the core idea and needs both guidance and a measurement; sources of components are not sources of direction.
+- Promote to: colour.md and checklist 20 (done).
+

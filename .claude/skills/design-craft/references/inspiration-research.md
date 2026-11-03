@@ -10,7 +10,7 @@ Used in the plan step, for every new section the reference has no counterpart fo
 5. **Keep what is good.** The owner's picks become pattern cards in `references/inspiration/` and lines in `patterns.md`.
 
 ## Limits and manners
-- Free public pages only, at a human pace: at most 3 category pages and 8 resolved items per run, 2.5 s between page loads. No login, nothing under `/api/`, and never get around the paywall. The library beyond the free slice is reached through the official MCP (paid), not by crawling.
+- Free public pages only, at a human pace: at most 3 category pages and 8 resolved items per run, and the funnel is run once per new section (so about 3 runs for 3 new sections), 2.5 s between page loads. No login, nothing under `/api/`, and never get around the paywall. The library beyond the free slice is reached through the official MCP (paid), not by crawling.
 - The sites are public and commercial, not open source. Study them for ideas and mechanisms; never copy their code, images or words.
 - The capture tool dismisses most cookie banners and many pop-ups; one that appears late can still cover a site (the Art of Documentary newsletter pop-up did). Skip such a site or pick another example.
 - A still cannot show motion. Judge motion with the probe and, where possible, by watching the recording.
@@ -33,3 +33,11 @@ How to connect it for cloud chats: subscribe, then add a custom connector at cla
 When its tools are available in a session: use them for funnel step 1 instead of the free pages, then do steps 2 to 5 as before (reason in writing, study the top three on their own sites, shortlist, cards). Budget at most 5 searches per job and report the credits used in the handover. Judge it by whether the shortlists contain ideas the free slice would not have, not by how many results it returns.
 
 First test once connected: ask for "a pinned timeline of four dated moments, restrained and monochrome, automotive or hospitality" and see whether the results include links to the real sites that the capture tools can study.
+
+## Other sources (a toolbox for effects, not for direction)
+Checked 2026-11-03 from the public pages. These are component and effect libraries. They can supply a starting implementation for one specific effect (a text reveal, a cursor effect, a 3D tilt) once the design direction is already set; they are not where design direction should come from, and their look is the generic component-library look the owner wants to avoid. Check each one's licence and terms before taking code, take the mechanism, and re-skin it to the reference.
+- **daisyUI (daisyui.com):** a free, open-source Tailwind CSS component library with built-in themes. It has a documented MCP server for its docs and a separate "Blueprint" code-generator MCP (terms not checked). Our sites use plain CSS, not Tailwind, so it is of little use. Its theme list can serve as a colour reference at most.
+- **Kexsio (kexsio.com/animations):** a gallery of live-preview components (hero, footer, testimonials, 3D, text and cursor effects, backgrounds) with "copy the code or recreate it with the original AI prompt". Its MCP needs an account and MCP keys (kexsio.com/profile/keys); pricing and licence not seen.
+- **Originkit (originkit.dev):** an animated component library, mostly shader and ASCII backgrounds, interactive elements and effects. Not fully free: the free plan allows about 3 component copies and 5 credits a day, Pro is $79 a year and Ultimate $99 a year, and copies through its MCP count against the allowance. Licence not checked.
+- **When to use them:** at the build step, for one effect at a time, after the plan is approved; list what was taken in the handover. details.so stays the primary source of ideas, because it shows real sites and is tagged by hand.
+
