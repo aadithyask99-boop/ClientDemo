@@ -8,6 +8,7 @@
 //   pointer elements that move when the mouse moves across the section (parallax, magnetic, tilt)
 // A section with all three at 0 has no motion at all. Also reports canvases, videos and the smooth-scroll response to one wheel notch
 // (a faster first 60 ms means a snappier, more responsive feel). With --vs it runs the reference too and prints both side by side.
+// It also looks for doubled or misaligned hairlines once each section has settled (two horizontal border lines 2 to 30 px apart that overlap).
 // It measures the presence of motion, not its quality: still look at the real thing.
 import { createRequire } from 'node:module';
 import { execSync } from 'node:child_process';
@@ -67,7 +68,26 @@ async function probe(target) {
     for (const h of hover) { await page.mouse.move(5, 5); await page.waitForTimeout(150); const before = await look(h.i); await page.mouse.move(h.x, h.y); await page.waitForTimeout(500); const after = await look(h.i); if (before !== after) hoverHits++; }
     const ptBefore = await tuple(s); await page.mouse.move(300, 300); await page.waitForTimeout(150); await page.mouse.move(1100, 650, { steps: 12 }); await page.waitForTimeout(500);
     const ptAfter = await tuple(s); const pointer = Object.keys(ptAfter).filter((k) => ptAfter[k] !== ptBefore[k]).length;
-    sections.push({ section: s + 1, text: geo.name, height: Math.round(geo.h), scroll, hover: `${hoverHits}/${hover.length}`, pointer });
+    // settled-state hairlines: two horizontal lines a few pixels apart that overlap read as a doubled or misaligned border
+    await page.evaluate((y) => window.scrollTo(0, y), Math.round(Math.max(0, geo.top - 20))); await page.waitForTimeout(2500);
+    const lines = await page.evaluate((i) => {
+      const root = document.querySelector(`[data-mp="${i}"]`); const out = [];
+      const add = (y, x1, x2) => { if (x2 - x1 > 120) out.push([Math.round(y + scrollY), Math.round(x1), Math.round(x2)]); };
+      const vis = (w, st, c) => parseFloat(w) >= 1 && st !== 'none' && !/rgba\(.*,\s*0\)$/.test(c);
+      for (const el of [root, ...root.querySelectorAll('*')]) {
+        const r = el.getBoundingClientRect(); if (r.width < 120 || r.height < 1) continue; const cs = getComputedStyle(el);
+        if (vis(cs.borderTopWidth, cs.borderTopStyle, cs.borderTopColor)) add(r.top, r.left, r.right);
+        if (vis(cs.borderBottomWidth, cs.borderBottomStyle, cs.borderBottomColor)) add(r.bottom, r.left, r.right);
+        if (el.tagName === 'HR') add(r.top, r.left, r.right);
+      }
+      return out;
+    }, s);
+    const pairs = [];
+    for (let a = 0; a < lines.length; a++) for (let b = a + 1; b < lines.length; b++) {
+      const dy = Math.abs(lines[a][0] - lines[b][0]); const overlap = Math.min(lines[a][2], lines[b][2]) - Math.max(lines[a][1], lines[b][1]);
+      if (dy >= 2 && dy <= 30 && overlap > 120) pairs.push(`${lines[a][0]} and ${lines[b][0]}`);
+    }
+    sections.push({ section: s + 1, text: geo.name, height: Math.round(geo.h), scroll, hover: `${hoverHits}/${hover.length}`, pointer, doubled: pairs.length, doubledAt: pairs.slice(0, 3).join('; ') });
   }
   await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(800);
   const misc = await page.evaluate(() => ({ canvases: document.querySelectorAll('canvas').length, videos: document.querySelectorAll('video').length }));
@@ -78,12 +98,14 @@ async function probe(target) {
 }
 const show = (r) => {
   console.log(`\n${r.url}\n  page ${r.pageHeight}px, canvases ${r.canvases}, videos ${r.videos}, wheel notch scrollY every 60 ms: ${r.wheelScrollYEvery60ms.join(', ')}`);
-  console.log('  #  height  scroll  hover  pointer  starts with');
-  for (const s of r.sections) console.log(`  ${String(s.section).padEnd(2)} ${String(s.height).padStart(6)}  ${String(s.scroll).padStart(6)}  ${String(s.hover).padStart(5)}  ${String(s.pointer).padStart(7)}  ${s.text}`);
+  console.log('  #  height  scroll  hover  pointer  doubled  starts with');
+  for (const s of r.sections) console.log(`  ${String(s.section).padEnd(2)} ${String(s.height).padStart(6)}  ${String(s.scroll).padStart(6)}  ${String(s.hover).padStart(5)}  ${String(s.pointer).padStart(7)}  ${String(s.doubled).padStart(7)}  ${s.text}`);
   const dead = r.sections.filter((s) => s.scroll === 0 && s.hover.startsWith('0/') && s.pointer === 0);
   const tot = r.sections.reduce((a, s) => a + s.scroll, 0);
   console.log(`  total elements moving with scroll: ${tot}; sections with NO motion at all: ${dead.length ? dead.map((s) => s.section).join(', ') : 'none'}`);
-  return { tot, dead: dead.length };
+  const dbl = r.sections.filter((s) => s.doubled > 0);
+  if (dbl.length) console.log(`  DOUBLED OR MISALIGNED BORDERS (two horizontal lines 2 to 30 px apart, once settled) in sections: ${dbl.map((s) => `${s.section} (page y ${s.doubledAt})`).join(', ')}. Look at them: one of the two lines should go.`);
+  return { tot, dead: dead.length, dbl: dbl.length };
 };
 const a = show(await probe(url));
 if (vs) {
@@ -91,4 +113,5 @@ if (vs) {
   console.log(`\nBuild moves with scroll ${a.tot} vs reference ${b.tot} (${b.tot ? Math.round((a.tot / b.tot) * 100) : '-'}%). Build sections with no motion: ${a.dead}.`);
   if (b.tot && a.tot / b.tot < 0.7) console.log('WARNING: the build has under 70% of the reference\'s scroll motion. It will feel plainer than the reference.');
   if (a.dead) console.log('WARNING: some sections have no motion at all; they will read as unfinished.');
+  if (a.dbl) console.log('WARNING: doubled or misaligned borders in the build; fix before delivering.');
 }
