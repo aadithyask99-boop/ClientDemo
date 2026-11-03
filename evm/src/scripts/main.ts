@@ -151,7 +151,6 @@ if (reduce) {
   const lines = $$('.hero__title .line').map(typer);
   const sub = typer($('.hero__sub'));
   const cta = typer($('.hero__cta'));
-  const links = $$('.header__links a').map(typer);
   const tl = gsap.timeline({ delay: 0.3 });
   tl.add(t1(0.55), 0.3);
   tl.fromTo(slices, { yPercent: 100, x: () => gsap.utils.random(-50, 50) }, { yPercent: 0, x: 0, duration: 0.75, ease: 'power4.out', stagger: 0.07 }, 0.9);
@@ -161,7 +160,6 @@ if (reduce) {
   tl.to(intro, { backgroundColor: 'rgba(0,0,0,0)', duration: 0.9, ease: 'power2.inOut' }, 3.2);
   tl.add(playFilm, 3.2);
   tl.add(() => { intro.classList.add('is-done'); doc.classList.add('ready'); lenis!.start(); syncTheme(); }, 4.2);
-  links.forEach((t, i) => tl.add(t(0.35), 4.3 + i * 0.12));
   tl.add(lines[0](0.7), 4.35);
   tl.add(lines[1](0.8), 4.8);
   tl.add(sub(1.1), 4.7);
@@ -207,7 +205,7 @@ if (reduce) {
     gsap.to('.hero__title, .hero__sub, .hero__cta', { yPercent: -18, opacity: 0, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: '70% top', scrub: true } });
     gsap.to('.hero__film', { yPercent: 10, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
     // Marques and next links: each name builds letter by letter as it rises into view.
-    [...$$('.roller__list li span'), ...$$('.next__list a span')].forEach((el) => {
+    [...$$('.roller__list li span'), ...$$('.next__list a span'), ...$$('.rows__name')].forEach((el) => {
       const chars = splitChars(el);
       gsap.fromTo(chars, { yPercent: 70, opacity: 0 }, { yPercent: 0, opacity: 1, ease: 'none', stagger: 0.04, scrollTrigger: { trigger: el, start: 'top 96%', end: 'top 62%', scrub: true } });
     });
@@ -230,9 +228,7 @@ if (reduce) {
   const ms = $('.milestones');
   const msStacks = $$('.ms__stack');
   const msCaps = $$('.ms__caption span');
-  const msTiles = $$('.ms__tile > *');
   const msN = msCaps.length;
-  const msTile = $('.ms__tile');
   let msActive = 0;
   const setMilestone = (i: number) => {
     if (i === msActive) return;
@@ -244,34 +240,11 @@ if (reduce) {
     msCaps.forEach((c, k) => { c.classList.toggle('is-active', k === i); if (k !== i && k !== prev) gsap.set(c, { opacity: 0, yPercent: 0 }); });
     gsap.to(msCaps[prev], { yPercent: -60 * dir, opacity: 0, duration: 0.4, ease: 'power3.in' });
     gsap.fromTo(msCaps[i], { yPercent: 60 * dir, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.9, ease: 'expo.out', delay: 0.3 });
-    msTiles.forEach((t, k) => { if (k !== i) t.classList.remove('is-active'); });
-    msTiles[i].classList.add('is-active');
-    gsap.killTweensOf(msTiles);
-    gsap.fromTo(msTiles[i], { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', duration: 0.8, ease: 'expo.out' });
-    // the tile frame enters from alternating sides at alternating sizes
-    gsap.killTweensOf(msTile);
-    gsap.fromTo(msTile, { x: 70 * dir * (i % 2 ? 1 : -1) }, { x: i % 2 ? 90 : 0, scale: i % 2 ? 0.74 : 1, transformOrigin: 'top left', duration: 1.1, ease: 'expo.out' });
   };
   ScrollTrigger.create({
     trigger: ms, start: 'top top', end: 'bottom bottom',
     onUpdate: (self) => { if (wide()) { ms.style.setProperty('--mp', self.progress.toFixed(4)); setMilestone(Math.min(msN - 1, Math.floor(self.progress * msN * 0.999))); } },
   });
-
-  // Pointer: sector rows already wipe their tile in CSS; the next links drag a tile after the pointer.
-  if (canHover) {
-    const tile = $('.next__tile');
-    const imgs = $$('img', tile);
-    const lis = $$('.next__list li');
-    const qx = gsap.quickTo(tile, 'x', { duration: 0.6, ease: 'power3.out' });
-    const qy = gsap.quickTo(tile, 'y', { duration: 0.6, ease: 'power3.out' });
-    const list = $('.next__list');
-    list.addEventListener('pointermove', (e) => { qx(e.clientX + 24); qy(e.clientY - 120); });
-    lis.forEach((li, i) => {
-      li.addEventListener('pointerenter', () => { imgs.forEach((im, k) => im.classList.toggle('is-active', k === i)); gsap.to(tile, { opacity: 1, scale: 1, duration: 0.5, ease: 'expo.out' }); });
-    });
-    list.addEventListener('pointerleave', () => gsap.to(tile, { opacity: 0, scale: 0.9, duration: 0.4, ease: 'power2.out' }));
-    gsap.set(tile, { scale: 0.9 });
-  }
 
   const start = () => { build(); ScrollTrigger.refresh(); };
   (document as Document & { fonts?: FontFaceSet }).fonts?.ready.then(start) ?? start();

@@ -8,9 +8,6 @@ const f = site.footer;
   <div class="footer__top">
     <p class="label">{site.tagOne}</p>
     <p class="label">{f.address}</p>
-    <nav class="footer__links" aria-label="Footer">
-      {site.nav.map((n) => <a href={`${base}${n.href}`}>{n.label}</a>)}
-    </nav>
   </div>
   <div class="footer__markwrap"><Mark class="footer__mark" /></div>
   <div class="footer__biz">

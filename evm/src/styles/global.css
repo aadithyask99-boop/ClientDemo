@@ -54,7 +54,7 @@ ul, ol { list-style: none; }
 .header__links a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .header__end { position: absolute; top: 20px; right: var(--g); display: flex; gap: 3px; }
 .header__contact, .header__menu { position: relative; height: 28px; border: 0; border-radius: 2px; background: transparent; color: inherit; font: inherit; cursor: pointer; transition: background 0.4s var(--ease), color 0.4s var(--ease), opacity 0.4s var(--ease); }
-.header__contact { display: grid; place-items: center; padding: 0 10px; font-size: 14px; font-weight: 400; letter-spacing: 0.02em; opacity: 0; pointer-events: none; }
+.header__contact { display: grid; place-items: center; padding: 0 10px; font-size: 14px; font-weight: 400; letter-spacing: 0.02em; }
 .header__menu { width: 28px; display: grid; place-content: center; gap: 5px; }
 .header__contact::after, .header__menu::after { content: ''; position: absolute; inset: -8px -3px; }
 .header__menu span { display: block; width: 14px; height: 1px; background: currentColor; transition: transform 0.5s var(--ease); }
@@ -124,7 +124,7 @@ html.anim [data-reveal] { opacity: 0; animation: showfail 0.01s 8s forwards; }
 html.anim .photo img { transform: scale(1.14); }
 
 /* 4 Marques roller: a long list, the row nearest the middle is in full colour; a square tile and caption stay in view */
-.roller { display: grid; grid-template-columns: 25.29fr 42.1fr 32.61fr; padding: 28px var(--g) clamp(100px, 16svh, 180px); grid-template-rows: auto 1fr; }
+.roller { display: grid; grid-template-columns: 25.29fr 42.1fr 32.61fr; padding: 84px var(--g) clamp(100px, 16svh, 180px); grid-template-rows: auto 1fr; }
 .roller__label { grid-column: 1 / 3; grid-row: 1; }
 .roller__list { grid-column: 1 / 3; grid-row: 2; margin-top: clamp(80px, 12svh, 130px); }
 .roller__list li { width: fit-content; font-size: clamp(48px, 6.4vw, 120px); font-weight: 500; line-height: 0.95; letter-spacing: -0.01em; color: var(--pale); cursor: pointer; transition: color 0.45s var(--ease); outline-offset: 4px; }
@@ -152,14 +152,11 @@ html.anim .photo img { transform: scale(1.14); }
 .rows__item > a:hover { transform: translateX(10px); }
 .rows__n { font-size: 14px; font-weight: 400; letter-spacing: 0.02em; width: 16px; flex: none; }
 .rows__name { font-size: 20px; line-height: 24px; font-weight: 500; }
-.rows__tilebox { position: absolute; left: calc(var(--c2) - var(--c3)); top: 50%; width: clamp(120px, 15vw, 300px); aspect-ratio: 1; transform: translateY(-50%); overflow: hidden; clip-path: inset(0 0 100% 0); transition: clip-path 0.7s var(--ease); pointer-events: none; }
-.rows__tile { width: 100%; height: 100%; object-fit: cover; }
-.rows__item:hover .rows__tilebox, .rows__item > a:focus-visible .rows__tilebox { clip-path: inset(0); }
 
 /* 7 Milestones: a pinned scene. The year rolls digit by digit, one line and one tile swap beside it. */
 .milestones { padding: 0; }
-.ms__pin { padding: 28px var(--g); }
-.ms__year, .ms__side, .ms__line { display: none; }
+.ms__pin { padding: 84px var(--g) 28px; }
+.ms__year, .ms__side, 
 .ms__static { margin-top: clamp(80px, 12svh, 130px); }
 .ms__static li { display: grid; grid-template-columns: 25.29fr 42.1fr 32.61fr; align-items: baseline; padding: 8px 0; }
 .ms__sy { grid-column: 1 / 3; font-size: clamp(48px, 6.4vw, 120px); font-weight: 500; line-height: 0.95; letter-spacing: -0.01em; }
@@ -172,21 +169,16 @@ html.anim .ms__year { display: flex; grid-column: 1 / 3; grid-row: 2; align-self
 .ms__digit { display: block; height: 1.1em; overflow: hidden; }
 .ms__stack { display: flex; flex-direction: column; will-change: transform; }
 .ms__stack span { display: block; height: 1.1em; }
-html.anim .ms__side { display: block; grid-column: 3; grid-row: 2; align-self: center; width: min(100%, 440px); }
+html.anim .ms__side { display: block; grid-column: 3; grid-row: 2; align-self: center; width: min(100%, 448px); }
 html.anim .ms__line { display: block; position: absolute; left: calc(var(--c3) - 36px); top: 70px; bottom: 36px; width: 1px; background: rgba(0, 0, 0, 0.16); }
 .ms__fill { position: absolute; inset: 0; background: var(--red); transform-origin: top; transform: scaleY(var(--mp, 0)); }
 .ms__tick { position: absolute; left: -4px; width: 9px; height: 1px; background: rgba(0, 0, 0, 0.5); }
 .ms__node { position: absolute; left: -3px; width: 7px; height: 7px; background: var(--red); transform: translateY(-50%) rotate(45deg); top: calc(var(--mp, 0) * 100%); }
 
-.ms__tile { position: relative; width: clamp(200px, 29vw, 420px); aspect-ratio: 1; overflow: hidden; background: #000; will-change: transform; }
-.ms__tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
-.ms__tile img.is-active, .ms__logos.is-active { opacity: 1; }
-.ms__logos { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14%; opacity: 0; }
-.ms__logos .logo { width: 42%; height: 22%; }
-.ms__caption { position: relative; margin-top: 24px; min-height: 4.6em; font-size: clamp(22px, 2.5vw, 36px); line-height: 1.08; letter-spacing: -0.01em; font-weight: 500; max-width: 14em; }
+.ms__caption { --cap: clamp(28px, 3.4vw, 50px); position: relative; margin-top: 0; font-size: var(--cap); min-height: calc(var(--cap) * 4.5); line-height: 1.06; letter-spacing: -0.015em; font-weight: 500; max-width: 11em; }
 .ms__caption span { position: absolute; inset: 0 auto auto 0; opacity: 0; }
 .ms__caption span.is-active { opacity: 1; }
-.ms__side .more { margin-top: calc(4.6em + 24px); }
+.ms__side .more { margin-top: 28px; }
 
 /* 8 Proof: one customer, words that light up as you scroll, then three white squares drifting over a photograph */
 .proof { padding: 0; }
@@ -208,21 +200,17 @@ html.anim .ms__line { display: block; position: absolute; left: calc(var(--c3) -
 .proof__foot .more { margin: 0; }
 
 /* 9 Where next: three links at roller size; the word under the pointer is black, the others fade; a tile follows the pointer */
-.next { padding: 28px var(--g) clamp(100px, 16svh, 160px); min-height: 70svh; }
+.next { padding: 84px var(--g) clamp(100px, 16svh, 160px); min-height: 70svh; }
 .next__list { margin-top: clamp(80px, 14svh, 150px); }
 .next__list li { display: grid; grid-template-columns: 67.39fr 32.61fr; align-items: baseline; }
 .next__list li > a { grid-column: 1; width: fit-content; }
 .next__name { display: block; font-size: clamp(48px, 6.4vw, 120px); font-weight: 500; line-height: 1; letter-spacing: -0.01em; transition: color 0.4s var(--ease); min-height: 44px; }
 .next__line { grid-column: 2; color: #2c2c2e; font-size: clamp(18px, 1.7vw, 26px); line-height: 1.15; font-weight: 500; letter-spacing: -0.005em; max-width: 14em; }
-.next__thumb { display: none; }
 .next__list:hover .next__name { color: var(--pale); }
 .next__list li > a:hover .next__name, .next__list li > a:focus-visible .next__name { color: var(--ink); }
-.next__tile { position: fixed; left: 0; top: 0; width: clamp(120px, 15vw, 300px); aspect-ratio: 1; overflow: hidden; pointer-events: none; opacity: 0; z-index: 5; background: #000; will-change: transform; }
-.next__tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.3s ease; }
-.next__tile img.is-active { opacity: 1; }
 
 /* 10 Footer */
-.footer { position: relative; min-height: 100svh; padding: 28px var(--g) 28px; }
+.footer { position: relative; min-height: 100svh; padding: 84px var(--g) 28px; }
 .footer__top { display: grid; grid-template-columns: 25.29fr 42.1fr 32.61fr; }
 .footer__top .label:nth-child(2) { max-width: 12em; }
 .footer__links { display: grid; gap: 3px; }
@@ -271,11 +259,8 @@ html.anim .ms__line { display: block; position: absolute; left: calc(var(--c3) -
   .square, .square--1, .square--2, .square--3 { position: relative; left: auto; top: auto; width: min(100%, 300px); }
   .square--2 { justify-self: end; }
   .proof__foot { position: absolute; left: var(--g); bottom: 24px; }
-  .next__list li { grid-template-columns: 1fr 64px; row-gap: 4px; }
-  .next__list li > a { grid-column: 1; }
-  .next__line { grid-column: 1; }
-  .next__thumb { display: block; grid-column: 2; grid-row: 1 / 3; width: 64px; height: 64px; object-fit: cover; align-self: center; }
-  .next__tile { display: none; }
+  .next__list li { grid-template-columns: 1fr; row-gap: 4px; margin-bottom: 14px; }
+  .next__list li > a, .next__line { grid-column: 1; }
   .footer__top { grid-template-columns: 1fr; row-gap: 14px; }
   .footer { min-height: 0; display: flex; flex-direction: column; }
   .footer__biz { position: static; margin-top: 48px; }

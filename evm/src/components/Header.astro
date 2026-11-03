@@ -7,9 +7,6 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   <a class="header__markwrap" href="#top" aria-label="EVM Group, top"><Mark class="header__mark" /></a>
   <p class="header__tag header__tag--1">{site.tagOne}</p>
   <p class="header__tag header__tag--2">{site.tagTwo}</p>
-  <nav class="header__links" aria-label="Main">
-    {site.nav.slice(0, 4).map((n) => <a href={`${base}${n.href}`} data-type>{n.label}</a>)}
-  </nav>
   <div class="header__end">
     <a class="header__contact" href={`${base}/contact`}>Contact</a>
     <button class="header__menu" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span></span><span></span></button>

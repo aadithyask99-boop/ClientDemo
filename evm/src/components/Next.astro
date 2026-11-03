@@ -10,11 +10,7 @@ const n = site.next;
       <li data-row>
         <a href={`${base}${it.href}`}><span class="next__name">{it.name}</span></a>
         <p class="next__line label">{it.line}</p>
-        <img class="next__thumb" src={`${base}/img/${it.img}`} alt="" loading="lazy" />
       </li>
     ))}
   </ol>
-  <div class="next__tile" aria-hidden="true">
-    {n.items.map((it) => <img src={`${base}/img/${it.img}`} alt="" loading="lazy" />)}
-  </div>
 </section>

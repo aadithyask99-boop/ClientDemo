@@ -194,3 +194,10 @@ This is the memory of the loop. Read it before any job; add an entry after every
 - Lesson: variety and redundancy need their own check; when source material is short, say so and use fewer sections or fewer image slots instead of repeating the same photographs.
 - Promote to: checklist 23 (done).
 
+
+## EVM Group homepage, round eight: detail pass, say it once (2026-11-03)
+- **Owner's words:** each photograph once (tea terraces in five of nine sections), each thing said once (the hero line, the statement and the sectors statement list the same businesses; 1952 told twice), one navigation system (text list and menu button both over the hero), no destination linked more than three times, no label on the top edge.
+- **Cause:** I had fed every new section from the same small pool of photographs and facts, and added a second navigation layer (list, menu, footer list, "see all" links) without ever reading the page as a visitor does. `detail-audit.mjs` reports all of it in one run.
+- **What I did:** from 8 files in 10 sections to 3 files, each once; text moments set larger instead of filled with repeated tiles; one header (labels left, Contact and menu right); labels rewritten so none repeats a nav word; the footer list and "Contact" in the menu kept as the only other places a destination appears; labels moved 84 px below the top edge.
+- **Real defects found on the way:** the Milestones caption (now the focal text) ran to four lines and touched its link (min-height was sized for three); removing tiles and the second photograph cut scroll motion from 90% to 66% of the reference, below the 70% target (restored by building the sector names letter by letter, not by bringing the repeated images back).
+- **Lessons:** (1) every new section needs its own content: if a section has no photograph of its own, make it type, not a repeat; (2) after removing elements, rerun the motion probe, because decorative tiles were carrying real scroll motion; (3) a navigation word used as a label or link text ("All sectors", "Full history") reads as a second navbar.

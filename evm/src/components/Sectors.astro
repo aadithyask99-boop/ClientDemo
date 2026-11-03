@@ -14,7 +14,6 @@ const s = site.sectors;
           <a href={`${base}/sectors/${it.slug}`}>
             <span class="rows__n">{String(i + 1).padStart(2, '0')}</span>
             <span class="rows__name">{it.name}</span>
-            <span class="rows__tilebox"><img class="rows__tile" src={`${base}/img/${it.img}`} alt={it.alt} loading="lazy" /></span>
           </a>
         </li>
       ))}
