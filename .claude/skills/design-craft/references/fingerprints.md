@@ -24,3 +24,6 @@ One row per approved site. Before building a new site, read this table and requi
 - **Dark section after a light hero with a colour-changing sky or tone:** Halcyon, ILE IFE, Orra.
 
 If the next brief points at one of these, ask whether the owner wants it or whether another device would serve the client better.
+
+## Accent log (add one row per site so the next site picks a different accent)
+Garden: gold thread (history; gold is now banned). DJ ESKA: gold (history). EVM and evm2: red `#d6111c`. Kerala: gold (history). Add new sites here with their loud accent.
