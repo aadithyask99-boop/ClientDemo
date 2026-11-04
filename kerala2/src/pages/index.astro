@@ -27,10 +27,6 @@ const img = (n: string) => `${base}img/${n}.webp`;
       <a class="pill" href={site.officialUrl}>Plan your trip</a>
     </header>
 
-    <div class="altitude" id="altitude" aria-hidden="true">
-      <span class="alt-num" id="alt-num">2,695</span><span class="alt-unit">m</span>
-    </div>
-
     <main>
       <!-- 1 HERO -->
       <section class="hero" id="hero" data-tone="dark">
@@ -77,7 +73,6 @@ const img = (n: string) => `${base}img/${n}.webp`;
               {site.stations.map((s, i) => (
                 <div class="st-text" data-i={i}>
                   <p>{s.line}</p>
-                  <p class="st-who">{s.who}</p>
                 </div>
               ))}
             </div>
@@ -88,7 +83,6 @@ const img = (n: string) => `${base}img/${n}.webp`;
             <li class="st-card">
               <img src={img(s.img)} alt={s.alt_text} loading="lazy" width="2400" height="1600" style={`object-position:${s.pos}`} />
               <h2>{s.place}</h2>
-              <p class="st-card-alt">{s.alt < 0 ? '−' + Math.abs(s.alt) : s.alt} m</p>
               <p>{s.line}</p>
             </li>
           ))}
@@ -104,9 +98,9 @@ const img = (n: string) => `${base}img/${n}.webp`;
           <div class="se-scrim"></div>
           <canvas class="fx" id="fx" aria-hidden="true"></canvas>
           <h2 class="se-title">When to come</h2>
-          <div class="wheel" id="wheel">
+          <div class="se-names">
             {site.seasons.map((s, i) => (
-              <span class="wheel-name" data-i={i}>{s.name}</span>
+              <span class="se-name" data-i={i}>{s.name}</span>
             ))}
           </div>
           <div class="se-copy">
@@ -132,12 +126,13 @@ const img = (n: string) => `${base}img/${n}.webp`;
 
       <!-- 5 THE SEA -->
       <section class="sea" id="sea" data-tone="dark">
-        <figure class="planner-bg" id="planner-bg"><img src={img(site.planner.img)} alt={site.planner.alt_text} loading="lazy" width="2880" height="1804" /></figure>
+        <figure class="planner-bg" id="planner-bg">
+          <img src={img(site.planner.img)} alt={site.planner.alt_text} loading="lazy" width="2880" height="1804" />
+          <span class="mist mist-a" aria-hidden="true"></span>
+          <span class="mist mist-b" aria-hidden="true"></span>
+        </figure>
         <div class="planner" id="planner">
           <h2 class="planner-title">{site.planner.title}</h2>
-          <ol class="route" id="route">
-            {site.stations.map((s) => <li>{s.place}</li>)}
-          </ol>
           <p class="planner-help">{site.planner.help}</p>
           <a class="btn" href={site.planner.ctaHref}>{site.planner.cta}</a>
         </div>

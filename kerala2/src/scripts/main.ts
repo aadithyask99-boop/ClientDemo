@@ -20,26 +20,15 @@ if (!reduced) {
   gsap.ticker.lagSmoothing(0);
 }
 
-/* ---------- altitude readout ---------- */
-const altNum = $('#alt-num');
-const fmt = (v: number) => {
-  const r = Math.round(v);
-  return (r < 0 ? '−' : '') + Math.abs(r).toLocaleString('en-US');
-};
-const alt = { v: 2695 };
-const setAlt = () => { altNum.textContent = fmt(alt.v); };
-
-/* ---------- tone (header and numeral follow what is under them) ---------- */
+/* ---------- tone (header follows what is under it) ---------- */
 const topEl = $('#top');
-const altEl = $('#altitude');
 const toneAt = (x: number, y: number) => {
-  const el = document.elementsFromPoint(x, y).find((e) => !e.closest('.top, .altitude, .egg-layer'));
+  const el = document.elementsFromPoint(x, y).find((e) => !e.closest('.top, .egg-layer'));
   const t = el?.closest('[data-tone]') as HTMLElement | null;
   return t?.dataset.tone === 'light' ? 'light' : 'dark';
 };
 const updateTone = () => {
   topEl.dataset.on = toneAt(innerWidth / 2, 40);
-  altEl.dataset.on = toneAt(70, innerHeight - 50);
 };
 
 let lastY = 0, tick = 0;
@@ -49,7 +38,7 @@ gsap.ticker.add(() => {
   if (Math.abs(y - lastY) > 4) { topEl.classList.toggle('hide', y > lastY && y > 240); lastY = y; }
   topEl.classList.toggle('solid', y > 120);
 });
-updateTone(); setAlt();
+updateTone();
 
 /* ---------- hero: headline and fog ---------- */
 if (!reduced) {
@@ -177,70 +166,40 @@ if (pinned) {
     .fromTo('#statement-note', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, ease: 'none' }, '>-0.1');
 } else {
   gsap.from('.sw', { opacity: 0, y: 40, stagger: 0.2, duration: 1, ease: 'power2.out', scrollTrigger: { trigger: '#statement', start: 'top 70%' } });
-  gsap.to(alt, { v: 1600, ease: 'none', onUpdate: setAlt, scrollTrigger: { trigger: '#hero', start: 'top top', endTrigger: '#descent', end: 'top 60%', scrub: true } });
 }
 
 /* ---------- the descent ---------- */
-const alts = site.stations.map((s) => s.alt);
-let descentST: ScrollTrigger | null = null;
-let lastAlt = 99999;
-gsap.ticker.add(() => {
-  if (descentST) {
-    const y = scrollY;
-    if (y < descentST.start) alt.v = 2695 + (1600 - 2695) * Math.min(1, Math.max(0, y / descentST.start));
-    else if (y > descentST.end) alt.v = 0;
-  }
-  if (dialOn) { const t = site.seasons[dialIndex].short; if (altNum.textContent !== t) altNum.textContent = t; lastAlt = 99999; return; }
-  const r = Math.round(alt.v);
-  if (r !== lastAlt) { lastAlt = r; setAlt(); }
-});
 if (pinned) {
   const imgs = $$('.st-img'), names = $$('.st-name-in'), texts = $$('.st-text');
   gsap.set(imgs, { clipPath: (i) => (i === 0 ? 'inset(0% 0% 0% 0%)' : 'inset(101% 0% 0% 0%)') });
-  gsap.set(names, { yPercent: 112 });
-  gsap.set(texts, { opacity: 0, y: 24 });
-  gsap.set('#frame', { scale: 0.94 });
+  gsap.set(names.slice(1), { yPercent: 112 });
+  gsap.set(texts.slice(1), { opacity: 0, y: 24 });
   const tl = gsap.timeline({
     defaults: { ease: 'none' },
     scrollTrigger: { trigger: '#descent', start: 'top top', end: '+=420%', scrub: 0.8, pin: '#descent-pin', anticipatePin: 1 },
   });
-  tl.to('#frame', { scale: 1, duration: 0.8, ease: 'power1.out' }, 0)
-    .to(names[0], { yPercent: 0, duration: 0.6, ease: 'power2.out' }, 0.25)
-    .to(texts[0], { opacity: 1, y: 0, duration: 0.5 }, 0.5);
   for (let i = 1; i < site.stations.length; i++) {
-    const s = 0.8 + (i - 1) * 1.5 + 1.0;
+    const s = (i - 1) * 1.6 + 0.9;
     tl.to(names[i - 1], { yPercent: -112, duration: 0.35, ease: 'power2.in' }, s)
       .to(texts[i - 1], { opacity: 0, y: -18, duration: 0.3 }, s)
       .to(imgs[i], { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.5, ease: 'power1.inOut' }, s)
       .fromTo(imgs[i].querySelector('img'), { scale: 1.12 }, { scale: 1, duration: 0.5 }, s)
       .to(names[i], { yPercent: 0, duration: 0.45, ease: 'power2.out' }, s + 0.25)
-      .to(texts[i], { opacity: 1, y: 0, duration: 0.3 }, s + 0.2)
-      .to(alt, { v: alts[i], duration: 0.5, onUpdate: setAlt }, s);
+      .to(texts[i], { opacity: 1, y: 0, duration: 0.3 }, s + 0.2);
   }
   tl.to({}, { duration: 0.5 }, '>'); // a last dwell
-  descentST = tl.scrollTrigger as ScrollTrigger;
-} else {
-  $$('.st-card').forEach((card, i) => {
-    ScrollTrigger.create({
-      trigger: card, start: 'top 55%', end: 'bottom 45%',
-      onToggle: (self) => { if (self.isActive) gsap.to(alt, { v: alts[i], duration: 0.9, ease: 'power2.out', onUpdate: setAlt }); },
-    });
-  });
 }
 
 /* ---------- when to come ---------- */
 const seasons = site.seasons;
 let fxMode = 'rain';
 if (pinned) {
-  const A = 46;
-  const wheel = $('#wheel');
-  const nameEls = $$('.wheel-name');
-  nameEls.forEach((el, i) => { el.style.transform = `rotate(${i * A}deg)`; });
+  const nameEls = $$('.se-name');
   const sImgs = $$('.se-img'), sTexts = $$('.se-text');
   gsap.set(sImgs.slice(1), { opacity: 0 });
   gsap.set(sTexts, { opacity: 0, y: 16 });
   gsap.set(sTexts[0], { opacity: 1, y: 0 });
-  nameEls[0].classList.add('on');
+  gsap.set(nameEls, { opacity: (i) => (i === 0 ? 1 : 0) });
   const total = seasons.length;
   const tl = gsap.timeline({
     defaults: { ease: 'none' },
@@ -249,38 +208,17 @@ if (pinned) {
   tl.to({}, { duration: 0.9 });
   for (let i = 1; i < total; i++) {
     const s = 0.9 + (i - 1) * 1.5;
-    tl.to(wheel, { rotation: -i * A, duration: 0.6, ease: 'power2.inOut' }, s)
-      .to(sImgs[i - 1], { opacity: 0, duration: 0.6 }, s)
+    tl.to(sImgs[i - 1], { opacity: 0, duration: 0.6 }, s)
       .to(sImgs[i], { opacity: 1, duration: 0.6 }, s)
+      .to(nameEls[i - 1], { opacity: 0, duration: 0.3 }, s)
+      .to(nameEls[i], { opacity: 1, duration: 0.4 }, s + 0.25)
       .to(sTexts[i - 1], { opacity: 0, y: -14, duration: 0.25 }, s)
       .to(sTexts[i], { opacity: 1, y: 0, duration: 0.35 }, s + 0.3)
-      .call(() => { nameEls.forEach((n, k) => n.classList.toggle('on', k === i)); fxMode = seasons[i].fx; dialIndex = i; }, undefined, s + 0.3)
-      .call(() => { nameEls.forEach((n, k) => n.classList.toggle('on', k === i - 1)); fxMode = seasons[i - 1].fx; dialIndex = i - 1; }, undefined, s + 0.29);
+      .call(() => { fxMode = seasons[i].fx; }, undefined, s + 0.3)
+      .call(() => { fxMode = seasons[i - 1].fx; }, undefined, s + 0.29);
     tl.to({}, { duration: 0.9 }, s + 0.6);
   }
-  // wheel starts centred
-  gsap.set(wheel, { rotation: 0 });
 }
-
-const hide = { seasons: false, foot: false, phoneStack: false };
-let dialOn = false, dialIndex = 0;
-const altUnit = document.querySelector('.alt-unit') as HTMLElement;
-const applySpine = () => {
-  gsap.to('#altitude', { autoAlpha: hide.foot || hide.phoneStack ? 0 : 1, duration: 0.4, overwrite: 'auto' });
-  dialOn = hide.seasons && pinned;
-  altUnit.style.display = dialOn ? 'none' : '';
-};
-if (phone) ScrollTrigger.create({ trigger: '#hero', start: 'bottom 45%', onEnter: () => { hide.phoneStack = true; applySpine(); }, onLeaveBack: () => { hide.phoneStack = false; applySpine(); } });
-ScrollTrigger.create({ trigger: '#seasons', start: 'top 55%', end: 'bottom 45%', onToggle: (self) => { hide.seasons = self.isActive; applySpine(); } });
-ScrollTrigger.create({ trigger: '.foot', start: 'top 96%', onEnter: () => { hide.foot = true; applySpine(); }, onLeaveBack: () => { hide.foot = false; applySpine(); } });
-if (!pinned) {
-  ScrollTrigger.create({
-    trigger: '#sea', start: 'top 70%',
-    onEnter: () => gsap.to(alt, { v: 0, duration: 1.2, ease: 'power2.out', onUpdate: setAlt }),
-    onLeaveBack: () => gsap.to(alt, { v: -2, duration: 0.6, onUpdate: setAlt }),
-  });
-}
-
 
 /* weather canvas, drawn only while the section is on screen */
 function initFx() {
@@ -324,7 +262,7 @@ initFx();
 
 /* sea section entrance */
 if (!reduced) {
-  gsap.from(['.planner-title', '#route li', '.planner-help', '.btn'], {
+  gsap.from(['.planner-title', '.planner-help', '.btn'], {
     y: 46, opacity: 0, duration: 1.1, ease: 'power3.out', stagger: 0.07,
     scrollTrigger: { trigger: '#planner', start: 'top 78%' },
   });
@@ -333,6 +271,11 @@ if (!reduced) {
 /* ---------- the sea: plan your fall (a photograph that drifts slowly) ---------- */
 if (!reduced) {
   gsap.fromTo('#planner-bg img', { scale: 1.02 }, { scale: 1.14, ease: 'none', scrollTrigger: { trigger: '#sea', start: 'top bottom', end: 'bottom top', scrub: true } });
+}
+
+if (!reduced) {
+  const seaEl = $('#sea');
+  new IntersectionObserver((es) => { seaEl.classList.toggle('live', es[0].isIntersecting); }, { threshold: 0 }).observe($('#planner-bg'));
 }
 
 /* water filling the word */
@@ -363,11 +306,12 @@ addEventListener('keydown', async (e) => {
   if (buf === 'onam') { (await loadEggs()).pookalam(innerWidth / 2, innerHeight / 2); buf = ''; }
 });
 {
+  const heroTitle = $('#hero-title');
   let timer = 0;
-  altEl.addEventListener('pointerdown', () => {
+  heroTitle.addEventListener('pointerdown', () => {
     timer = window.setTimeout(async () => { (await loadEggs()).pookalam(innerWidth / 2, innerHeight / 2); }, 650);
   });
-  ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => altEl.addEventListener(ev, () => clearTimeout(timer)));
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => heroTitle.addEventListener(ev, () => clearTimeout(timer)));
 }
 $('#sea-word').addEventListener('click', async () => (await loadEggs()).boat($('#sea-word')));
 if (!reduced) {
