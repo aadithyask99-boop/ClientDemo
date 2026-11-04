@@ -13,6 +13,9 @@ Concept for keralatourism.org, not the official site. Mode: **inspiration** of r
 **Kept:** light serif plus neutral grotesk at one light weight; warm paper ground; light/dark alternation; airy spacing; one dominant element per screen; documentary photography with people in it; centred statement and huge centred list; calm slow motion; a framed photo that grows to full bleed.
 **Changed:** the subject (a descent from cloud to sea); the hero (touchable mist, not a film); the ink (deep backwater green-black replaces cocoa, a change, not a keep); the accent (loud vermilion replaces dusty rose); the sections (the Descent and the weather list are new); the footer (the sea fills the word); no italics (owner's rule), so Red Dot's italic word becomes one vermilion word, used on only two headlines (hero "Own" and the statement), never on every heading.
 
+## Audience and purpose (from the owner)
+The page promotes Kerala tourism and showcases Kerala's rich **heritage and culture to foreign visitors**. So the copy is written for someone who has never been: plain English, no assumed knowledge, each cultural name explained in a few words (Theyyam, Onam, Pooram, vallam). The Descent stations carry culture as well as scenery: tea and spice trade (Munnar, Periyar), the temple and elephant festival country (Athirappilly and Thrissur Pooram), the backwater rice and boat-race culture (Kuttanad, Onam), the coast of Chinese nets and Kathakali (Kochi, Varkala). The weather dial is where festivals and Theyyam live.
+
 ## Tagline
 **God's Own Country** is the message of the whole page: the hero headline, repeated once at the sea footer as the closing line. The descent is the proof of it: each station shows why.
 
