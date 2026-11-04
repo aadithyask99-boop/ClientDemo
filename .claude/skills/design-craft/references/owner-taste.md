@@ -52,3 +52,8 @@ So a hero should be a scene or a living subject rooted in the client's subject, 
 ## Colour (owner's own observation)
 Two quiet colours and one loud accent make a design memorable and show where to click; a palette without a contrasting accent blends together or is easy to scroll past. It is a principle about proportion and role (the accent is a highlight over things), not a colour map, and the reference's own palette can lead; the library is only a menu. Details in `colour.md`.
 
+## Kerala 2 reaction (owner, 2026-11-04): atmosphere good, gadgets bad
+- **Loved:** the "When to come" section (full-bleed seasonal photographs with their own weather: rain, petals, sparks; big type), the hero (touchable mist) and the statement below it, the footer with the big KERALA word, the colour combination (deep green, paper, vermilion).
+- **Disliked, "gimmicky" and "low quality", "should look professional":** the Descent section's small orange dot riding an altitude profile; the "Plan your fall" strip you pull to change the days, its colour and the little drop or flower on the strip. Also text that is too small or faint to read.
+- **Why (my reading):** the loved sections are scenes where the photograph and mood are the content and the effect belongs to the photograph. The disliked ones are added widgets and diagrams, thin vector bits over photography, built to illustrate the idea literally. Interaction must live inside the imagery, not in toys.
+

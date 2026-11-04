@@ -24,6 +24,9 @@ For each part answer plainly:
 ## If you are given a build (URL and screenshots)
 Look at full-resolution screenshots at 1440 and 390, section by section, next to the reference's. For each section say: keep, rebuild or cut, with the reason in the owner's terms (character, plain, repeated, off-palette, wrong type, banned device, artifact). Check colours and type for coherence and clashes. Check that the reference's feel (type, colour discipline, spacing) is visible. Never praise a section just because it passes a probe.
 
+## The gimmick test (always run it)
+Flag as gimmicky any added widget or diagram: a dot or drop riding a chart or line, an altitude or profile graph, a slider or strip you pull, a counter or readout that exists only to illustrate the idea, small vector icons over photography, progress toys, and any literal icon of the spine. Also flag small, faint or low-contrast text (body copy under 16px on desktop, captions on busy photos). The owner finds these cheap next to real photography and wants a professional studio result. Prefer atmosphere inside the imagery (weather, light, fog, particles, camera, type) over widgets. Say what to replace each gimmick with: usually a full-bleed scene, or cut it.
+
 ## Output (short)
 - **Verdict:** ship, fix first, or rethink.
 - **Hard passes found** (list, with where).
