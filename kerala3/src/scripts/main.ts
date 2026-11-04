@@ -325,6 +325,7 @@ if (pinned && !reduced) {
   tl.fromTo(title, { x: () => innerWidth * 0.04 }, { x: () => -(title.scrollWidth - innerWidth * 0.82), ease: 'none', duration: 1 }, 0);
   const speeds = [-40, -75, -30, -95, -55, -80];
   $$('.d').forEach((d, i) => tl.fromTo(d, { y: 120 + i * 20, rotation: i % 2 ? 3 : -3 }, { y: () => speeds[i] * 5, rotation: 0, ease: 'none', duration: 1 }, 0));
+  tl.fromTo('.canopy', { x: '3%', scale: 1.04 }, { x: '-4%', scale: 1.1, ease: 'none', duration: 1 }, 0);
   tl.fromTo('.tree.tl', { x: -80 }, { x: 60, ease: 'none', duration: 1 }, 0);
   tl.fromTo('.tree.tr', { x: 80 }, { x: -60, ease: 'none', duration: 1 }, 0);
   tl.fromTo('.fern', { y: 80 }, { y: -30, ease: 'none', duration: 1 }, 0);

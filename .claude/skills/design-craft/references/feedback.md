@@ -225,3 +225,6 @@ After the Kerala 2 review the owner restated the original plan: give a reference
 - Probe: wheel-notch curve matches Red Dot (136, 218, 265 against 132, 223, 282); 101 elements move with scroll, no section without motion; the reference read as 0 elements again, so the motion inventory from the recording is the standard.
 - Not verified: a real phone, a screen reader, the three heroes on touch.
 - Spend: $0.252 of the $2 cap (foliage). Photographs: Unsplash, credits on /credits/.
+
+## Kerala 3: brown ground dulled the heart section (2026-11-04)
+Owner: the heart-of-Kerala section had potential but the brown background took away the beauty of the greens; asked for suggestions before any change. I offered four (deep green ground, canopy photograph backdrop, misty light from behind the trees, a light section) and recommended the canopy plate over a deep green ground; owner approved. Result: a Seedream canopy plate ($0.018, one of two tries) at 62% over `#0f2418` with a soft scrim, slow parallax, headline shadow; the foliage and green "people" now glow. Lesson: a dark ground that is a hue away from the foliage (brown beside green) dulls both; set a dark section's ground in the family of its imagery. Do not run `pkill -f` in this shell (it killed the session shell, exit 144).
