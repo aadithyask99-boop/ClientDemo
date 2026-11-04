@@ -39,3 +39,12 @@ Colours carry different meanings by industry and culture (white, red and gold es
 4. Check it on the real page (Impeccable's contrast findings and `checklist.md` item 20).
 
 **Owner's rule: no gold.** Never propose gold, champagne, brass or metallic yellow-brown, and never use "black and gold" or "cream and gold" as a luxury default. Choose another hue from the client's logo or subject.
+
+## Two quiet colours and one loud (owner's observation, 2026-11-04)
+The owner noticed that memorable palettes are **two quiet colours plus one loud accent**, and that the accent is what makes a page feel intentional and tells the visitor where to look. Their examples: raspberry pink and mellow white, with a little pastel turquoise so you know where to click; deep maroon and tomato red with one touch of neon yellow; azure navy and snowy white with coral red; raspberry, crimson and deep red (which does not stand out) with a touch of baby yellow; sky blue and white with hot pink so the important things come forward; cobalt black and lavender violet (easy to scroll past) with tropical lime.
+- The two quiet colours carry the ground and the type. They may be near neighbours.
+- The loud accent is **saturated, contrasting and used sparingly**: the main action, one key word, the interactive state, a small moment per screen. It is not a tint of the quiet colours and not a second ground.
+- If a palette "blends together" or is "easy to scroll past", the cure is a contrasting accent, not more colours.
+- Choose the accent for what it does (where to click, what matters), then check contrast with `scripts/palette.mjs`.
+- Standing rules still apply: no gold, champagne or brass; neon, baby yellow, lime, coral, turquoise and hot pink are fine. When the reference has no accent (ESR), inspiration mode still adds exactly one, taken from the client's logo or subject.
+
