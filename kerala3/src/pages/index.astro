@@ -146,12 +146,20 @@ const ordered = ['January','February','March','April','May','June','July','Augus
       <!-- 5 DARK: THE HEART -->
       <section class="heart" id="heart" data-tone="dark">
         <div class="heart-pin">
-          <img class="canopy" src={img('canopy')} alt="" aria-hidden="true" loading="lazy" />
+          <div class="canopy-track" aria-hidden="true">
+            <img src={img('canopy')} alt="" loading="lazy" /><img src={img('canopy-b')} alt="" loading="lazy" />
+          </div>
+          <canvas class="heart-mist" id="heart-mist" aria-hidden="true"></canvas>
           <img class="tree tl" src={leaf('leaf-tree-left')} alt="" aria-hidden="true" />
           <img class="tree tr" src={leaf('leaf-tree-right')} alt="" aria-hidden="true" />
           <div class="drift" aria-hidden="true">
-            {site.heart.drift.map((d, i) => <img class={`d d${i}`} src={img(d)} alt="" loading="lazy" />)}
+            {[0, 1, 2].map((l) => (
+              <div class={`dl dl${l}`}>
+                {site.heart.drift.filter((d) => d.l === l).map((d) => <img src={img(d.img)} alt="" loading="lazy" style={`left:${d.x}vw;top:${d.y}%;width:${d.w}vw`} />)}
+              </div>
+            ))}
           </div>
+          <img class="vine" src={leaf('leaf-vine')} alt="" aria-hidden="true" />
           <h2 class="heart-title" id="heart-title">{site.heart.pre} <i>{site.heart.accent}</i></h2>
           <div class="heart-text">
             <p>{site.heart.text}</p>

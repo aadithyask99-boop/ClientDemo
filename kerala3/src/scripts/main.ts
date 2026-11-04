@@ -323,9 +323,12 @@ if (pinned && !reduced) {
   const title = $('#heart-title');
   const tl = gsap.timeline({ scrollTrigger: { trigger: '.heart-pin', start: 'top top', end: () => `+=${innerHeight * 1.8}`, pin: true, scrub: 0.6, invalidateOnRefresh: true } });
   tl.fromTo(title, { x: () => innerWidth * 0.04 }, { x: () => -(title.scrollWidth - innerWidth * 0.82), ease: 'none', duration: 1 }, 0);
-  const speeds = [-40, -75, -30, -95, -55, -80];
-  $$('.d').forEach((d, i) => tl.fromTo(d, { y: 120 + i * 20, rotation: i % 2 ? 3 : -3 }, { y: () => speeds[i] * 5, rotation: 0, ease: 'none', duration: 1 }, 0));
-  tl.fromTo('.canopy', { x: '3%', scale: 1.04 }, { x: '-4%', scale: 1.1, ease: 'none', duration: 1 }, 0);
+  weather($('#heart-mist') as HTMLCanvasElement, () => 'mist', onScreen($('.heart-pin')));
+  const dist = [155, 235, 330];
+  $$('.dl').forEach((el, l) => tl.fromTo(el, { x: 0 }, { x: () => -innerWidth * (dist[l] / 100), ease: 'none', duration: 1 }, 0));
+  $$('.dl img').forEach((im, i) => tl.fromTo(im, { yPercent: 8 + (i % 3) * 5, rotation: i % 2 ? 2.5 : -2.5 }, { yPercent: -10 - (i % 3) * 6, rotation: i % 2 ? -1.5 : 1.5, ease: 'none', duration: 1 }, 0));
+  tl.fromTo('.canopy-track', { x: 0 }, { x: () => -innerWidth * 1.45, ease: 'none', duration: 1 }, 0);
+  tl.fromTo('.vine', { y: -30, rotation: -1.5 }, { y: 30, rotation: 1.5, ease: 'none', duration: 1 }, 0);
   tl.fromTo('.tree.tl', { x: -80 }, { x: 60, ease: 'none', duration: 1 }, 0);
   tl.fromTo('.tree.tr', { x: 80 }, { x: -60, ease: 'none', duration: 1 }, 0);
   tl.fromTo('.fern', { y: 80 }, { y: -30, ease: 'none', duration: 1 }, 0);
