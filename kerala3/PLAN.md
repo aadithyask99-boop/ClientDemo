@@ -13,37 +13,36 @@ Concept for keralatourism.org, not the official site. **Mode: replicate-and-exte
 - The coloured bars at the top and bottom edge of the owner's recording are the screen recorder, not the site.
 
 ## Kept from Red Dot / Changed for Kerala
-**Kept:** type feel (light serif with one italic word, plain grotesk), paper/dark alternation, the page order, the pinned destination fan, the By Trip Type / By Month list, the grow-to-full-bleed frame, the sideways headline over dark with drifting photos, the centred carousel, the journal, the footer structure, the header and mega menu, all slow motion.
+**Kept:** type feel (light serif with one italic word, plain grotesk), paper/dark alternation, the page order, the pinned destination fan, the By Month list, the grow-to-full-bleed frame, the sideways headline over dark with drifting photos, the centred carousel, the footer structure, the header and mega menu, all slow motion.
 **Changed:** the subject (Kerala), the words, the photography, **the CTA colour from brown to Kerala green** (taken from the logo at keralatourism.org), the rose panel, one new section (water), the footer's closing word.
 **Decision for you (italic):** Red Dot's signature is one italic word in the big serif headlines. I found no recorded rule against italics from you, only the skill's default. Pick: (a) keep one italic word per big headline, as Red Dot does (recommended, you asked for a replicate), or (b) set that word upright in the Kerala green highlight.
 
 ## Palette (two quiet colours plus one loud accent)
-1. **Recommended, Red Dot with Kerala green:** paper `#f4f3ef`, cocoa `#2c2623`, **Kerala green** CTA `#12803a` (white text 5.0:1) and `#2fc25f` as the lit highlight on dark (6.4:1 on cocoa). Reviews panel in a soft sage `#cfdcc4` in place of the dusty rose. Closest to Red Dot with your one change.
+1. **Recommended, Red Dot with Kerala green:** paper `#f4f3ef`, cocoa `#2c2623`, **Kerala green** CTA `#12803a` (white text 5.0:1) and `#2fc25f` as the lit highlight on dark (6.4:1 on cocoa). Closest to Red Dot with your one change.
 2. **Forest night:** paper, forest-black `#14281d`, green `#3fcf6e` on dark (7.7:1) and `#12803a` on paper. Greener, heavier.
-(Orange as a spark is dropped: small orange on green markers were a hard pass in Kerala 2.) No gold, champagne or brass. Reviews panel colour is no longer needed (section cut).
+(Orange as a spark is dropped: small orange on green markers were a hard pass in Kerala 2.) No gold, champagne or brass.
 
-## Three hero options (honest about assets: I have stills only today, no film)
-1. **Three seasons (recommended, Red Dot's three-moment cycle done with stills).** Three full-bleed photographs cycle with a slow push-in and a crossfade, one per season: monsoon rain on tea hills (June), Onam on the backwater (August), December mist over Munnar. The headline "God's Own *Country*" sits bottom-left with one line under it. Each season has its own weather drawn over the photo (rain streaks, drifting mist), and large real foliage cut-outs (palm, banana leaf) frame the edges and drift with the cursor. This opens the year spine. If you have film clips of your own, drop them in and the cycle plays film instead.
-2. **Touchable mist, reworked.** Kerala 2's hero (you called it good) with rain and the foliage frame added so it is not a repeat. Photograph only.
-3. **Rain through the leaf (scroll-scrubbed, layered).** A banana-leaf and palm frame in three depth layers; scrolling pushes the camera through the leaves into a rain-lit backwater photograph, the headline resolving out of the green. Interactive with the cursor. Risk: the cut-outs must be large and clean, or it reads cheap; I will test cut quality first and fall back to option 1.
+## Three hero options (stills only today; no film is assumed anywhere)
+1. **Three seasons (recommended; Red Dot's three-moment cycle with stills).** Three full-bleed photographs crossfade with a slow push-in: monsoon on tea hills (June), Onam on the backwater (August), December mist over Munnar. The headline "God's Own *Country*" bottom-left, one line under it. Weather comes from the photographs plus soft drifting particles (mist, rain haze), not drawn streaks. Large, clean, photographic palm and banana-leaf cut-outs frame the edges; if they cannot be cut cleanly they are dropped.
+2. **Rain on the glass.** You look at a rainy backwater through a misted window; the cursor or a finger wipes the glass clear and the sharp photograph shows through; the rain runs it misty again slowly. A different idea from Kerala 2's fog (glass and water drops, a view, not a hillside). Photo only. Precedent: Solar Fog and Grid Runner (loved: the cursor changes the scene). Risk: the glass must be a real-looking blur of the photograph, tested first.
+3. **Through the leaves (scroll-scrubbed).** Three depth layers of real leaf cut-outs; scrolling carries the camera through them into a backwater photograph, the headline resolving out of the green. Risk: needs large clean cut-outs; falls back to option 1.
 
 ## Spine: one year in God's Own Country
-The page moves through the seasons as you scroll, so the year is the structure and not a section. The hero cycles monsoon, Onam, December mist. The destination fan's backdrop shifts weather as it steps. The months scene is the year spelled out. The dark section carries the post-monsoon night and festival lamps; the footer ends in the cool of December on the sea. The year shows only as weather, light and festivals inside photographs, never as a widget or a counter. Red Dot's order is kept; the year is the atmosphere over it.
+Every section from the hero down has a season job, shown only as weather, light and festival inside photographs, never as a widget or counter: hero (three seasons), fan (each destination shown in its best months, in the photograph's weather), months scene (the year spelled out), dark section (October to November, the lamps and the stay after the rains), water (the monsoon's gift: why it is green), stories (Onam, Theyyam season, Kathakali season), trips (each journey named with its best months), stays (monsoon-green and December-cool stays), footer (the cool of December on the sea). Red Dot's order is kept; the year is the atmosphere over it.
 
-## The flow (Red Dot's order, 11 sections, a little shorter than its 14)
+## The flow (Red Dot's order with the water scene moved after the dark section, 10 sections, shorter than its 14)
 | # | Section | Kerala content | Relation | Focal element | Motion |
 |---|---|---|---|---|---|
 | 1 | Hero, three seasons | God's Own *Country*; "Where the mountains meet the sea." | copy | stills cycle, headline bottom-left, foliage frame | push-in, rain and mist per season, lines rise, header goes paper-solid after |
 | 2 | Statement + two photos | "A green strip between the Western Ghats and the Arabian Sea: 44 rivers, spice forests, a festival every month." Button "Why Kerala" | copy | two overlapping photographs | line reveal, photo parallax |
-| 3 | Pinned destination fan | Munnar, Thekkady, Wayanad, Athirappilly, Alappuzha, Kochi, Varkala | copy, new content | huge uppercase name over a tilted photo stack, numbered tab row | pinned, steps by scroll, stack tilts, backdrop crossfades with the season |
-| 4 | **Kerala by month (centrepiece)** | twelve months set huge; each wipes in a full-bleed photograph with that month's weather and festival, and a few lines: what to expect | adapt of Red Dot's By Month list, **your key ask**, the "When to come" you loved | giant month names, one photograph filling the screen at a time | scrubbed: names step, photo wipes, weather per month (rain, petals, mist, sun). The By Experience switch is cut (a widget); experiences are in sections 7 and 8 |
-| 5 | **Water (new, replaces the frame-grows moment)** | a framed waterfall photograph grows to full bleed; "Forty-four rivers run west." | adapt Red Dot's growing frame | the falls, mist drifting | scrub scale, line reveal, push-in |
-| 6 | Dark: "The heart of Kerala is its *people*" | houseboat, homestay, tea estate; "Be our guest" paragraph and button | copy | headline wider than screen sliding sideways, photos drifting | horizontal scrub, parallax |
+| 3 | Pinned destination fan | Munnar, Thekkady, Wayanad, Athirappilly, Alappuzha, Kochi, Varkala, each with its best months | copy, new content | huge uppercase name over a tilted photo stack; the tab row is large (18 px and up, full contrast), not a small label | pinned, steps by scroll, stack tilts, backdrop changes with the place's weather |
+| 4 | **Kerala by month (centrepiece)** | twelve months set huge, grouped in six two-month photographs (Jun and Jul rain; Aug and Sep Onam; Oct and Nov lamps and Theyyam; Dec and Jan mist; Feb and Mar harvest and beach; Apr and May heat and mango), each wiping in full bleed with its weather, and a few lines per month: what to expect | adapt of Red Dot's By Month list, **your key ask**, the "When to come" you loved | giant month names, one photograph filling the screen at a time | scrubbed: names step, photo wipes, weather per month (rain, petals, mist, sun). The By Experience switch is cut (a widget); experiences are in sections 7 and 8 |
+| 5 | Dark: "The heart of Kerala is its *people*" | houseboat, homestay, tea estate, in October and November; "Be our guest" paragraph and button | copy | headline wider than screen sliding sideways, photos drifting | horizontal scrub, parallax |
+| 6 | **Water (new, replaces the frame-grows moment)** | a framed waterfall photograph grows to full bleed; "Forty-four rivers run west." | adapt Red Dot's growing frame | the falls, mist drifting | scrub scale, line reveal, push-in |
 | 7 | Get inspired | "Swap the guidebook for a good story": Theyyam, Kathakali, the kasavu weaver | copy, culture | three tall photographs | blur-to-clear heading, photos rise at different speeds |
-| 8 | Trips | six journeys, e.g. "Hills and Spice, 8 days" | copy, adapted as a mosaic of different sizes | photo tiles, titles 24 px and up | hover reveal |
-| 9 | Featured stays | houseboat, heritage home, tea bungalow | copy | centred carousel | drag, centre scales |
-| 10 | Get up close | "Kerala away from the well-trodden path" | copy | three-photo strip | strip parallax |
-| 11 | CTA and footer | "Choose your adventure"; newsletter; links; huge KERALA word | copy + extend | KERALA in green | word fills; boat egg |
+| 8 | Trips | six journeys with their best months, e.g. "Hills and Spice, December to February" | copy, adapted as a mosaic of different sizes | photo tiles, titles 24 px and up | hover reveal |
+| 9 | Stays and away from the well-trodden path (merged) | houseboat, heritage home, tea bungalow; the quieter places (Kuttanad, Kumarakom, Wayanad) | copy, merged from two | centred carousel of large photographs, then one wide photograph and a line | drag, centre scales, push-in |
+| 10 | CTA and footer | "Choose your adventure"; newsletter; links; huge KERALA word | copy + extend | KERALA in green | word fills; boat egg |
 
 Cut from Red Dot's 14: the reviews panel (invented quote, near-empty), the journal (rows without strong photography; linked from the footer) and the weaver frame (folded into section 7). Body and caption text at least 16 px.
 
@@ -59,7 +58,7 @@ Previews looked at (titles from the gallery, mechanisms from your own ratings, n
 4. Idle for 20 seconds: a kingfisher lands at the edge (kept from Kerala 2).
 
 ## Greenery, plants, rivers and waterfalls
-Used as real photographs and cut-out foliage framing layers (hero, dark section edges, footer), not as drawn icons or line art: the Kerala 2 review called small vector devices over photography gimmicky. Water lives in section 6 and in the backwater and falls photographs.
+Used as real photographs and cut-out foliage framing layers (hero, dark section edges, footer), not as drawn icons or line art: the Kerala 2 review called small vector devices over photography gimmicky. Water lives in section 6 (after the dark section, so the two full-bleed photograph scenes are not back to back) and in the backwater and falls photographs.
 
 ## Plan checklist line
 No gold; no hairline rows or small labels (Red Dot's hairline rows are replaced by spacing); no row of equal cards (the trips grid is a mosaic of different sizes); no filler; three hero options; three easter eggs plus one.
@@ -68,8 +67,8 @@ No gold; no hairline rows or small labels (Red Dot's hairline rows are replaced 
 About, history, the full destination guides, booking, the full festival calendar: linked to keralatourism.org, not placed here.
 
 ## What I need and what it costs
-- **Photographs:** about 25 at 3000 px or wider. Kerala 2 held 10 from Unsplash (credits kept); I need the Unsplash access key again (it was not stored) or I use Wikimedia Commons, which worked in Kerala. Pixabay answers 400 even with the injected proxy key. No generation spend planned.
-- **Video:** the hero film and waterfall need clips. I will look for openly licensed Kerala footage on Wikimedia Commons; if none passes by eye, hero option 2 (touchable mist) is the fallback and I will tell you.
+- **Photographs:** about 30 distinct at 3000 px or wider (3 hero, 7 fan, 6 seasonal for twelve months, and the rest). Months share a photograph in pairs so the count stays real. Kerala 2 held 10 from Unsplash (credits kept); I need the Unsplash access key again (it was not stored) or I use Wikimedia Commons, which worked in Kerala. Pixabay answers 400 even with the injected proxy key. No generation spend planned.
+- **Video:** none planned. If you have your own film clips, tell me and the hero can play them; the plan does not depend on them.
 - Anything invented (the visitor line, trip names and nights, figures) is labelled illustrative and listed in the README; figures to be confirmed by the client.
 
 Reply go (and pick a hero and palette), or tell me what to change.
