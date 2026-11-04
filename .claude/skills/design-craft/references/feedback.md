@@ -190,3 +190,6 @@ Owner: the Kerala build did not look at the Red Dot reference well. Findings: Re
 
 ## A new chat cannot inherit judgement, so we split the critic out (2026-11-03)
 Owner: the key is that a new chat must be able to think critically like this one. A document cannot transfer reasoning, and a builder reviews its own work too kindly. Fix: `references/owner-taste.md` (evidence-based likes, hard passes, unknowns) and an `owner-critic` agent that reviews the plan and the build as the owner would; the skill requires both reviews. Limit: the critic is only as good as the taste file; update it with every owner reaction.
+
+## Calibration revised my glass assumption (2026-11-04)
+I had assumed glass UI was in the owner's taste. In the calibration the owner said no to Facet Glass and Lumora (abstract glass and light shapes with no subject) and loved scenes and living objects (glacier, painterly island, tree, valley, ship, sun). Glass is fine only as a small piece inside a real scene.

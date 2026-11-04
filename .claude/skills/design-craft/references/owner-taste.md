@@ -25,3 +25,13 @@ Serif versus grotesk, dark versus light (approved sites go both ways), which acc
 
 ## How the owner judges
 In one look at a finished page: does it have character, does any section feel plain or repeated, are the colours and type coherent, did it actually use the reference, do the banned devices appear. Counts and audits do not matter to them; feeling does.
+
+## Calibration on motionsites.ai previews (owner's own reactions, 2026-11-04)
+24 public previews, rated love, fine or no. Names are the gallery's titles.
+- **Love:** Frostbound (a glacier film), Pirate Ship (an illustrated ship on drawn waves), yondering (a painterly Greek island), Glass Tree (a living tree object), Flower Valley (a valley scene, loved twice), Sun Timeline (a sun on a timeline). Maybe: Spider Web, Grid Runner.
+- **Fine:** Mars Trips, Tana Elephant, Places Organizer (an app mock-up), Robot Jellyfish, Orbit Sphere, Stridr, Halo Prism, Video Ribbon, Halftone FAQ.
+- **No:** Facet Glass and Lumora (abstract glass and light shapes with no subject).
+- Not rated: Solar Fog, Pink Rider (the owner's "I love" on sheet 3 was lost; ask again).
+
+**Reading (inferred, confirm as more reactions come):** the owner loves a hero that feels like a **real place or a living subject** (a coast, a glacier, a tree, a valley, a ship, a sun), often painterly or natural. Abstract glass, blobs and light shapes with no subject get a no, even though glass inside a real scene is fine. App and product mock-ups, planets and plain type-led heroes are only fine. So a hero should be a scene or a living object rooted in the client's subject, never an abstract shape.
+
