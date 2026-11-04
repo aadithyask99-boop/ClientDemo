@@ -1,0 +1,258 @@
+---
+import '@fontsource-variable/newsreader';
+import '@fontsource-variable/albert-sans';
+import '../styles/global.css';
+import { site } from '../data/site';
+import credits from '../../credits.json';
+const base = import.meta.env.BASE_URL;
+const img = (n: string) => `${base}img/${n}.webp`;
+const leaf = (n: string) => `${base}img/leaf/${n}.webp`;
+const alt = (n: string) => (credits as any[]).find((c) => c.name === n)?.alt ?? '';
+const monthsFlat = site.seasons.flatMap((s) => s.months);
+const ordered = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{site.title}</title>
+    <meta name="description" content={site.description} />
+    <meta name="theme-color" content="#f4f3ef" />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <script is:inline>
+      (function(){var d=document.documentElement;
+      if(innerWidth>820&&!matchMedia("(prefers-reduced-motion: reduce)").matches)d.classList.add("pin");
+      var m=(location.hash.match(/hero=([123])/)||[])[1]||"1";d.dataset.hero=m;})();
+    </script>
+    <link rel="preload" as="image" href={img('hero-monsoon')} />
+  </head>
+  <body>
+    <header class="top" id="top" data-on="dark">
+      <nav class="top-nav" aria-label="Main">
+        {site.nav.map((n, i) => <a href={n.href} class={i === 0 ? 'has-mega' : ''}>{n.label}</a>)}
+      </nav>
+      <a class="brand" href={base} aria-label="Kerala Tourism, home">KERALA</a>
+      <div class="top-right">
+        <a class="pill" href={site.officialUrl}>Plan your trip</a>
+      </div>
+      <div class="mega" id="mega" aria-hidden="true">
+        {site.mega.map((c) => (
+          <div class="mega-col"><h3>{c.title}</h3>{c.links.map((l) => <a href="#places">{l}</a>)}</div>
+        ))}
+      </div>
+    </header>
+
+    <main>
+      <!-- 1 HERO: three options, chosen with the review switch (#hero=1|2|3) -->
+      <section class="hero" id="hero" data-tone="dark">
+        <div class="stage s1" aria-hidden="false">
+          {site.hero.seasons.map((s, i) => (
+            <img class={`season ${i === 0 ? 'on' : ''}`} src={img(s.img)} alt={i === 0 ? alt(s.img) : ''} data-weather={s.weather} fetchpriority={i === 0 ? 'high' : 'low'} />
+          ))}
+          <canvas class="weather" id="weather" aria-hidden="true"></canvas>
+          <div class="fol fol1" aria-hidden="true">
+            <img class="f" data-depth="0.5" src={leaf('leaf-palm-top')} alt="" style="left:-4%;top:-6%;width:56%" />
+            <img class="f" data-depth="0.7" src={leaf('leaf-palm-right')} alt="" style="right:-5%;top:-4%;width:32%" />
+            <img class="f" data-depth="1" src={leaf('leaf-banana-a')} alt="" style="left:-4%;bottom:-12%;width:34%" />
+            <img class="f" data-depth="1.3" src={leaf('leaf-fern')} alt="" style="right:6%;bottom:-8%;width:42%" />
+          </div>
+        </div>
+        <div class="stage s2" aria-hidden="true">
+          <img class="glass-sharp" src={img('glass-backwater')} alt="" />
+          <canvas class="glass" id="glass"></canvas>
+        </div>
+        <div class="stage s3" aria-hidden="true">
+          <img class="leaf-photo" src={img('glass-backwater')} alt="" />
+          <div class="layers">
+            <img class="L" data-z="0.35" src={leaf('leaf-tree-left')} alt="" style="left:-6%;top:-4%;height:112%" />
+            <img class="L" data-z="0.35" src={leaf('leaf-tree-right')} alt="" style="right:-6%;top:-4%;height:112%" />
+            <img class="L" data-z="0.7" src={leaf('leaf-vine')} alt="" style="left:10%;top:-8%;width:80%" />
+            <img class="L" data-z="1" src={leaf('leaf-banana-b')} alt="" style="left:-10%;bottom:-18%;width:70%" />
+            <img class="L" data-z="1.3" src={leaf('leaf-rain')} alt="" style="right:-8%;bottom:-16%;width:60%" />
+          </div>
+        </div>
+        <div class="hero-copy">
+          <h1 class="hero-title" id="hero-title">
+            <span class="line"><span class="line-in">{site.hero.pre}</span></span>
+            <span class="line"><span class="line-in"><i>{site.hero.accent}</i></span></span>
+          </h1>
+          <p class="hero-sub">{site.hero.sub}</p>
+        </div>
+        <p class="scroll-cue">Scroll to discover</p>
+        <p class="season-tag" id="season-tag" aria-live="off">{site.hero.seasons[0].label}</p>
+      </section>
+
+      <!-- 2 STATEMENT -->
+      <section class="statement" id="statement" data-tone="light">
+        <div class="st-text">
+          <p class="st-copy" data-split>{site.statement.text}</p>
+          <a class="btn" href={site.statement.href}>{site.statement.cta}</a>
+        </div>
+        <div class="st-photos">
+          <img class="st-a" src={img('statement-a')} alt={alt('statement-a')} loading="lazy" />
+          <img class="st-b" src={img('statement-b')} alt={alt('statement-b')} loading="lazy" />
+        </div>
+      </section>
+
+      <!-- 3 PINNED DESTINATION FAN -->
+      <section class="fan" id="places" data-tone="dark">
+        <div class="fan-pin">
+          <div class="fan-bg" aria-hidden="true">
+            {site.places.map((p, i) => <img class={i === 0 ? 'on' : ''} src={img(p.img)} alt="" loading="lazy" />)}
+          </div>
+          <div class="fan-cards">
+            {site.places.map((p, i) => (
+              <article class="place" data-i={i}>
+                <img src={img(p.img)} alt={alt(p.img)} loading="lazy" />
+                <div class="place-text">
+                  <h3>{p.name}</h3>
+                  <p>{p.line} {p.months}.</p>
+                </div>
+              </article>
+            ))}
+          </div>
+          <div class="fan-names" aria-hidden="true">
+            {site.places.map((p, i) => <span class={i === 0 ? 'on' : ''}>{p.name}</span>)}
+          </div>
+          <p class="fan-sub" id="fan-sub" aria-hidden="true">{site.places[0].line} {site.places[0].months}.</p>
+          <nav class="fan-tabs" aria-label="Destinations">
+            {site.places.map((p, i) => <button type="button" data-i={i} class={i === 0 ? 'on' : ''}><b>{String(i + 1).padStart(2, '0')}</b> {p.name}</button>)}
+          </nav>
+        </div>
+      </section>
+
+      <!-- 4 KERALA BY MONTH -->
+      <section class="months" id="months" data-tone="dark">
+        <div class="m-pin">
+          <h2 class="sr">Kerala by month</h2>
+          {site.seasons.map((s, si) => (
+            <article class={`m-season ${si === 0 ? 'on' : ''}`} data-weather={s.weather} data-si={si}>
+              <img class="m-photo" src={img(s.img)} alt={alt(s.img)} loading="lazy" />
+              <div class="m-copy">
+                {s.months.map((m, mi) => (
+                  <div class={`m-month ${si === 0 && mi === 0 ? 'on' : ''}`} data-m={si * 2 + mi}>
+                    <h3>{m}</h3>
+                    <p>{site.monthLines[m]}</p>
+                  </div>
+                ))}
+              </div>
+            </article>
+          ))}
+          <canvas class="m-weather" id="m-weather" aria-hidden="true"></canvas>
+          <ol class="m-index" aria-hidden="true">
+            {monthsFlat.map((m, i) => <li data-m={i}>{m}</li>)}
+          </ol>
+        </div>
+      </section>
+
+      <!-- 5 DARK: THE HEART -->
+      <section class="heart" id="heart" data-tone="dark">
+        <div class="heart-pin">
+          <img class="tree tl" src={leaf('leaf-tree-left')} alt="" aria-hidden="true" />
+          <img class="tree tr" src={leaf('leaf-tree-right')} alt="" aria-hidden="true" />
+          <div class="drift" aria-hidden="true">
+            {site.heart.drift.map((d, i) => <img class={`d d${i}`} src={img(d)} alt="" loading="lazy" />)}
+          </div>
+          <h2 class="heart-title" id="heart-title">{site.heart.pre} <i>{site.heart.accent}</i></h2>
+          <div class="heart-text">
+            <p>{site.heart.text}</p>
+            <a class="btn light" href={site.officialUrl}>{site.heart.cta}</a>
+          </div>
+          <img class="fern" src={leaf('leaf-fern')} alt="" aria-hidden="true" />
+        </div>
+      </section>
+
+      <!-- 6 WATER -->
+      <section class="water" id="water" data-tone="dark">
+        <div class="water-pin">
+          <div class="water-frame">
+            <img src={img(site.water.img)} alt={alt(site.water.img)} loading="lazy" />
+            <canvas class="mist" id="mist" aria-hidden="true"></canvas>
+          </div>
+          <div class="water-copy">
+            <h2>{site.water.line}</h2>
+            <p>{site.water.sub}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7 STORIES -->
+      <section class="stories" id="stories" data-tone="light">
+        <h2 class="stories-title" data-split>{site.stories.pre} <i>{site.stories.accent}</i></h2>
+        <p class="stories-text" data-fade>{site.stories.text}</p>
+        <div class="stories-row">
+          {site.stories.items.map((s, i) => (
+            <figure class={`story s${i}`}>
+              <img src={img(s.img)} alt={alt(s.img)} loading="lazy" />
+              <figcaption><b>{s.title}</b> {s.line}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      <!-- 8 TRIPS -->
+      <section class="trips" id="trips" data-tone="light">
+        <h2 class="trips-title" data-split>{site.trips.title}</h2>
+        <div class="mosaic">
+          {site.trips.items.map((t, i) => (
+            <a class={`tile t${i}`} href={site.officialUrl}>
+              <img src={img(t.img)} alt={alt(t.img)} loading="lazy" />
+              <span class="tile-text"><b>{t.name}</b><i>{t.nights}, best from {t.months}</i><u>More info</u></span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <!-- 9 STAYS AND AWAY FROM THE PATH -->
+      <section class="stays" id="stays" data-tone="light">
+        <h2 class="stays-title" data-split>{site.stays.title}</h2>
+        <div class="car" id="car">
+          {site.stays.items.map((s, i) => (
+            <figure class={`slide ${i === 1 ? 'c' : ''}`} data-i={i}>
+              <img src={img(s.img)} alt={alt(s.img)} loading="lazy" />
+              <figcaption><b>{s.name}</b> {s.place}</figcaption>
+            </figure>
+          ))}
+        </div>
+        <div class="away">
+          <img src={img(site.stays.away.img)} alt={alt(site.stays.away.img)} loading="lazy" />
+          <div class="away-copy">
+            <h3>{site.stays.away.title}</h3>
+            <p>{site.stays.away.text}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 CTA AND FOOTER -->
+      <section class="cta" id="cta" data-tone="light">
+        <img class="cta-sea" src={img('footer-sea')} alt={alt('footer-sea')} loading="lazy" />
+        <div class="cta-copy">
+          <h2 data-split>{site.cta.title} <i>{site.cta.accent}</i></h2>
+          <p>{site.cta.text}</p>
+          <a class="btn" href={site.officialUrl}>{site.cta.button}</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot" id="foot" data-tone="dark">
+      <img class="tree tl" src={leaf('leaf-tree-left')} alt="" aria-hidden="true" />
+      <img class="tree tr" src={leaf('leaf-tree-right')} alt="" aria-hidden="true" />
+      <form class="news" onsubmit="return false">
+        <label for="mail">{site.footer.news}</label>
+        <input id="mail" type="email" placeholder="Email address" />
+      </form>
+      <div class="cols">
+        {site.footer.cols.map((c) => <div><h3>{c.h}</h3>{c.l.map((l) => <a href={site.officialUrl}>{l}</a>)}</div>)}
+      </div>
+      <button class="bigword" id="bigword" type="button" aria-label="Kerala">{site.footer.word}</button>
+      <p class="fine">A concept homepage, not the official site. <a href={`${base}credits/`}>Photo credits</a>. Figures and dates are illustrative and must be confirmed by Kerala Tourism.</p>
+    </footer>
+
+    <nav class="review" aria-label="Hero options (review only)">
+      <a href="#hero=1" data-h="1">Hero 1</a><a href="#hero=2" data-h="2">Hero 2</a><a href="#hero=3" data-h="3">Hero 3</a>
+    </nav>
+    <div class="egg-layer" id="egg-layer" aria-hidden="true"></div>
+    <script>import '../scripts/main.ts';</script>
+  </body>
+</html>
