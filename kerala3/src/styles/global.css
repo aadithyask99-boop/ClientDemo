@@ -103,7 +103,7 @@ html[data-hero='1'] .review [data-h='1'], html[data-hero='2'] .review [data-h='2
 .pin .fan-names span.on { opacity: 1; }
 .pin .fan-sub { position: absolute; left: 0; right: 0; bottom: 17vh; z-index: 5; text-align: center; font-family: var(--serif); font-weight: 300; font-size: clamp(20px, 1.9vw, 28px); color: #fff; }
 .pin .fan-tabs { position: absolute; left: 0; right: 0; bottom: 3.2vh; z-index: 6; display: flex; justify-content: center; gap: clamp(14px, 2.6vw, 44px); padding: 0 20px; }
-.pin .fan-tabs button { font-family: var(--serif); font-weight: 300; font-size: 18px; letter-spacing: 0.04em; color: #fff; opacity: 0.55; padding: 8px 4px; transition: opacity 0.3s; }
+.pin .fan-tabs button { font-family: var(--serif); font-weight: 300; font-size: 18px; letter-spacing: 0.04em; color: #fff; opacity: 0.72; padding: 8px 4px; transition: opacity 0.3s; }
 .pin .fan-tabs button b { font-family: var(--sans); font-weight: 500; font-size: 16px; margin-right: 6px; }
 .pin .fan-tabs button.on, .pin .fan-tabs button:hover { opacity: 1; }
 
@@ -138,13 +138,13 @@ html[data-hero='1'] .review [data-h='1'], html[data-hero='2'] .review [data-h='2
 .drift, .tree, .fern { display: none; }
 .pin .heart { padding: 0; }
 .pin .heart-pin { position: relative; height: 100svh; overflow: hidden; }
-.pin .heart-title { position: absolute; left: 0; top: 36%; white-space: nowrap; font-size: clamp(110px, 17vw, 300px); transform: translateY(-50%); will-change: transform; z-index: 2; }
-.pin .heart-text { position: absolute; right: 9vw; bottom: 11vh; z-index: 3; max-width: 430px; margin: 0; }
-.pin .drift { display: block; position: absolute; inset: 0; z-index: 1; }
+.pin .heart-title { position: absolute; left: 0; top: 36%; white-space: nowrap; font-size: clamp(110px, 17vw, 300px); transform: translateY(-50%); will-change: transform; z-index: 3; }
+.pin .heart-text { position: absolute; right: 9vw; bottom: 11vh; z-index: 5; max-width: 430px; margin: 0; }
+.pin .drift { display: block; position: absolute; inset: 0; z-index: 2; }
 .pin .d { position: absolute; width: clamp(110px, 12vw, 220px); aspect-ratio: 4/5; object-fit: cover; will-change: transform; }
 .pin .d0 { left: 8%; top: 62%; } .pin .d1 { left: 24%; top: 12%; width: clamp(90px, 9vw, 170px); } .pin .d2 { left: 40%; top: 66%; width: clamp(100px, 10vw, 190px); } .pin .d3 { left: 58%; top: 8%; width: clamp(130px, 14vw, 260px); } .pin .d4 { left: 76%; top: 58%; width: clamp(90px, 8vw, 150px); } .pin .d5 { left: 88%; top: 14%; width: clamp(100px, 10vw, 180px); }
-.pin .tree { display: block; position: absolute; top: -4%; height: 112%; width: auto; max-width: none; z-index: 4; pointer-events: none; opacity: 0.95; }
-.pin .tree.tl { left: -4%; } .pin .tree.tr { right: -4%; }
+.pin .tree { display: block; position: absolute; top: -4%; height: 112%; width: auto; max-width: 30vw; object-fit: cover; object-position: left center; z-index: 1; pointer-events: none; opacity: 0.95; }
+.pin .tree.tl { left: -4%; } .pin .tree.tr { right: -4%; object-position: right center; }
 .pin .fern { display: block; position: absolute; left: 22%; bottom: -10%; width: 46%; z-index: 4; pointer-events: none; max-width: none; }
 
 /* ---------- water ---------- */
@@ -215,8 +215,8 @@ html[data-hero='1'] .review [data-h='1'], html[data-hero='2'] .review [data-h='2
 .cta .btn { color: #fff; }
 .foot { position: relative; background: var(--deep); color: var(--paper); padding: 14vh clamp(20px, 5vw, 80px) 5vh; overflow: hidden; }
 .foot > * { position: relative; z-index: 2; }
-.foot .tree { display: block; position: absolute; z-index: 1; top: -6%; height: 100%; width: auto; max-width: none; opacity: 0.55; pointer-events: none; }
-.foot .tree.tl { left: -9%; } .foot .tree.tr { right: -9%; }
+.foot .tree { display: block; position: absolute; z-index: 1; top: -6%; height: 100%; width: auto; max-width: 24vw; object-fit: cover; opacity: 0.6; pointer-events: none; }
+.foot .tree.tl { left: -2%; object-position: left center; } .foot .tree.tr { right: -2%; object-position: right center; }
 .news { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; margin-bottom: 10vh; }
 .news label { font-family: var(--serif); font-weight: 300; font-size: clamp(28px, 3vw, 44px); color: var(--paper); }
 .news input { height: 54px; padding: 0 22px; border-radius: 999px; border: 1.5px solid rgba(244, 243, 239, 0.5); background: transparent; color: var(--paper); font: inherit; font-size: 17px; }
@@ -225,7 +225,7 @@ html[data-hero='1'] .review [data-h='1'], html[data-hero='2'] .review [data-h='2
 .cols h3 { color: var(--paper); font-size: 24px; margin-bottom: 12px; }
 .cols a { display: block; padding: 4px 0; font-size: 17px; color: rgba(244, 243, 239, 0.85); }
 .cols a:hover { color: var(--lit); }
-.bigword { display: block; width: 100%; font-family: var(--serif); font-weight: 300; font-size: 25.5vw; line-height: 0.82; letter-spacing: -0.02em; color: var(--lit); text-align: center; overflow: hidden; padding-bottom: 0.06em; }
+.bigword { display: block; width: 100%; font-family: var(--serif); font-weight: 300; font-size: 20vw; line-height: 0.86; white-space: nowrap; letter-spacing: -0.02em; color: var(--lit); text-align: center; overflow: hidden; padding-bottom: 0.06em; }
 .bigword .ch { display: inline-block; }
 .fine { margin-top: 3vh; font-size: 15px; color: rgba(244, 243, 239, 0.75); }
 .fine a { text-decoration: underline; }

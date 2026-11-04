@@ -54,7 +54,7 @@ const ordered = ['January','February','March','April','May','June','July','Augus
           <div class="fol fol1" aria-hidden="true">
             <img class="f" data-depth="0.5" src={leaf('leaf-palm-top')} alt="" style="left:-4%;top:-6%;width:56%" />
             <img class="f" data-depth="0.7" src={leaf('leaf-palm-right')} alt="" style="right:-5%;top:-4%;width:32%" />
-            <img class="f" data-depth="1" src={leaf('leaf-banana-a')} alt="" style="left:-4%;bottom:-12%;width:34%" />
+            <img class="f" data-depth="1" src={leaf('leaf-banana-a')} alt="" style="left:-6%;bottom:-20%;width:26%" />
             <img class="f" data-depth="1.3" src={leaf('leaf-fern')} alt="" style="right:6%;bottom:-8%;width:42%" />
           </div>
         </div>
@@ -98,6 +98,7 @@ const ordered = ['January','February','March','April','May','June','July','Augus
       <!-- 3 PINNED DESTINATION FAN -->
       <section class="fan" id="places" data-tone="dark">
         <div class="fan-pin">
+          <h2 class="sr">Destinations</h2>
           <div class="fan-bg" aria-hidden="true">
             {site.places.map((p, i) => <img class={i === 0 ? 'on' : ''} src={img(p.img)} alt="" loading="lazy" />)}
           </div>

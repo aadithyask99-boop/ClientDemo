@@ -208,7 +208,7 @@ function initGlass() {
   let lp: { x: number; y: number } | null = null;
   c.addEventListener('pointermove', (e) => {
     const b = c.getBoundingClientRect(); const x = e.clientX - b.left, y = e.clientY - b.top;
-    if (lp) { const n = Math.ceil(Math.hypot(x - lp.x, y - lp.y) / 14); for (let i = 1; i <= n; i++) add(lp.x + ((x - lp.x) * i) / n, lp.y + ((y - lp.y) * i) / n, 70); } else add(x, y, 70);
+    if (lp) { const n = Math.ceil(Math.hypot(x - lp.x, y - lp.y) / 14); for (let i = 1; i <= n; i++) add(lp.x + ((x - lp.x) * i) / n, lp.y + ((y - lp.y) * i) / n, 115, 7000); } else add(x, y, 115, 7000);
     lp = { x, y };
   });
   c.addEventListener('pointerleave', () => (lp = null));
@@ -256,7 +256,7 @@ if (!reduced) {
 const places = $$('.place');
 if (pinned && !reduced) {
   const n = places.length, bgs = $$('.fan-bg img'), names = $$('.fan-names span'), tabs = $$('.fan-tabs button'), sub = $('#fan-sub');
-  const dist = () => innerHeight * 0.8 * (n - 1);
+  const dist = () => innerHeight * 0.6 * (n - 1);
   const st = ScrollTrigger.create({ trigger: '.fan-pin', start: 'top top', end: () => `+=${dist()}`, pin: true, scrub: true, invalidateOnRefresh: true });
   let cur = 0, act = -1;
   const layout = (p: number) => {
@@ -286,7 +286,7 @@ const seasonsEl = $$('.m-season');
 if (pinned && !reduced) {
   const monthsEls = $$('.m-month'), idx = $$('.m-index li');
   const steps = monthsEls.length;
-  const stM = ScrollTrigger.create({ trigger: '.m-pin', start: 'top top', end: () => `+=${innerHeight * 0.62 * steps}`, pin: true, scrub: true, invalidateOnRefresh: true });
+  const stM = ScrollTrigger.create({ trigger: '.m-pin', start: 'top top', end: () => `+=${innerHeight * 0.48 * steps}`, pin: true, scrub: true, invalidateOnRefresh: true });
   let cs = -1, cm = -1;
   const kindFor = (si: number): Kind => site.seasons[si].weather as Kind;
   let kindNow: Kind = 'rain';
@@ -324,7 +324,7 @@ if (pinned && !reduced) {
 /* ---------- HEART (pinned, headline slides sideways) ---------- */
 if (pinned && !reduced) {
   const title = $('#heart-title');
-  const tl = gsap.timeline({ scrollTrigger: { trigger: '.heart-pin', start: 'top top', end: () => `+=${innerHeight * 2.4}`, pin: true, scrub: 0.6, invalidateOnRefresh: true } });
+  const tl = gsap.timeline({ scrollTrigger: { trigger: '.heart-pin', start: 'top top', end: () => `+=${innerHeight * 1.8}`, pin: true, scrub: 0.6, invalidateOnRefresh: true } });
   tl.fromTo(title, { x: () => innerWidth * 0.04 }, { x: () => -(title.scrollWidth - innerWidth * 0.82), ease: 'none', duration: 1 }, 0);
   const speeds = [-40, -75, -30, -95, -55, -80];
   $$('.d').forEach((d, i) => tl.fromTo(d, { y: 120 + i * 20, rotation: i % 2 ? 3 : -3 }, { y: () => speeds[i] * 5, rotation: 0, ease: 'none', duration: 1 }, 0));
@@ -337,7 +337,7 @@ if (pinned && !reduced) {
 /* ---------- WATER (frame grows to full bleed) ---------- */
 if (pinned && !reduced) {
   weather($('#mist') as HTMLCanvasElement, () => 'mist', onScreen($('.water-pin')));
-  const tl = gsap.timeline({ scrollTrigger: { trigger: '.water-pin', start: 'top top', end: () => `+=${innerHeight * 1.6}`, pin: true, scrub: 0.6, invalidateOnRefresh: true } });
+  const tl = gsap.timeline({ scrollTrigger: { trigger: '.water-pin', start: 'top top', end: () => `+=${innerHeight * 1.2}`, pin: true, scrub: 0.6, invalidateOnRefresh: true } });
   tl.fromTo('.water-frame', { clipPath: 'inset(15vh 14vw 15vh 14vw)' }, { clipPath: 'inset(0vh 0vw 0vh 0vw)', ease: 'none', duration: 0.6 }, 0);
   tl.fromTo('.water-frame img', { scale: 1.2 }, { scale: 1, ease: 'none', duration: 1 }, 0);
   tl.fromTo('.water-copy h2', { opacity: 0, y: 70 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.35 }, 0.4);

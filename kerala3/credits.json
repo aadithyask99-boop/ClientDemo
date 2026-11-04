@@ -182,5 +182,45 @@
   "src_px": "5328x4000",
   "out_px": "3200x2402",
   "alt": "Boatman silhouetted at dawn poling a boat among coconut palms"
+ },
+ {
+  "name": "month-onam",
+  "by": "Joydeep Sensarma",
+  "page": "https://unsplash.com/photos/a-decorated-cake-with-a-face-on-it-b1_FWmsuXWA",
+  "src_px": "6016x3384",
+  "out_px": "2880x1620",
+  "alt": "A pookalam flower carpet in the form of a Kathakali face, made for Onam"
+ },
+ {
+  "name": "story-theyyam",
+  "by": "Manyu Varma",
+  "page": "https://unsplash.com/photos/male-game-character-ef3A5EDR7Jk",
+  "src_px": "6000x4000",
+  "out_px": "2880x1920",
+  "alt": "A Theyyam performer dancing in a storm of fire sparks"
+ },
+ {
+  "name": "trip-wildlife",
+  "by": "Nazreen Banu",
+  "page": "https://unsplash.com/photos/people-standing-near-gray-elephant-dqeh4DTOFN4",
+  "src_px": "6000x4000",
+  "out_px": "2880x1920",
+  "alt": "A mahout beside a temple elephant under a shelter among coconut palms"
+ },
+ {
+  "name": "fan-munnar",
+  "by": "Nandan Menon",
+  "page": "https://unsplash.com/photos/a-lush-green-hillside-covered-in-lots-of-trees-kcTZPcv4VcM",
+  "src_px": "4608x2880",
+  "out_px": "3200x2000",
+  "alt": "Tea terraces and a hill village in mist, Munnar"
+ },
+ {
+  "name": "statement-a",
+  "by": "Manoa Angelo",
+  "page": "https://unsplash.com/photos/people-walking-by-munnar-tea-plantation-QcTIMyLWor0",
+  "src_px": "7728x5152",
+  "out_px": "2880x1920",
+  "alt": "Tea pickers at work on a hillside tea plantation near Munnar"
  }
 ]
