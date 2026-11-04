@@ -50,5 +50,5 @@ So a hero should be a scene or a living subject rooted in the client's subject, 
 **Updated reading:** a first screen that has one strong, specific subject and mood, shown at scale, wins, whether realistic, painterly, illustrated or 3D. Quality of execution and a clear subject matter more than the technique. Abstract shapes alone (Facet Glass) did not win.
 
 ## Colour (owner's own observation)
-Two quiet colours and one loud accent make a design memorable and show where to click; a palette without a contrasting accent blends together or is easy to scroll past. Details and examples in `colour.md`.
+Two quiet colours and one loud accent make a design memorable and show where to click; a palette without a contrasting accent blends together or is easy to scroll past. It is a principle about proportion and role (the accent is a highlight over things), not a colour map, and the reference's own palette can lead; the library is only a menu. Details in `colour.md`.
 
