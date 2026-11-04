@@ -38,3 +38,14 @@ In one look at a finished page: does it have character, does any section feel pl
 3. Abstract glass, blobs and light shapes with no subject get a no. Glass inside a real scene is fine.
 4. App mock-ups, planets, product-spec pages and plain type-led heroes are only fine.
 So a hero should be a scene or a living subject rooted in the client's subject, and something in it should respond to the visitor.
+
+### Second calibration round (owner, 2026-11-04, items 25 to 40)
+- **Love:** Mountain Retreat (a lodge in autumn fog), Halvøy Nordic Cabin (an illustrated snowy cabin), Wander Far (a fjord with a red cabin), Sentinel Cybersecurity (monochrome halftone), Internet Alchemist (a purple cloud with floating photos), Dream Garden (a cyclist among dark flowers), Space Voyage (a savannah at dusk), Petalyx, Lumora (at item 37), Particle Brain, Phoenix ignis (a 3D octopus on a catalogue page), Plush Sky Den (a plush pink balloon).
+- **Fine:** Smarter Growth (a dark page with three coloured cards), Intelligent Systems (a SaaS dashboard).
+- **No:** Place Saver (the app mock-up; the same one was rated fine as Places Organizer, so app mock-ups sit between fine and no).
+- Not rated: Remote Dev Collective (purple glow and three glass cards).
+
+**Inconsistencies to respect (the signal is partly about the moment shown):** Lumora was a no at item 12 and a love at item 37, which show different frames of the same preview, and the owner was told 37 was a repeat. Place Saver and Places Organizer got fine and no. So a rating reflects the frame and the execution more than a category; never treat a tag or a style (3D, glass, abstract) as banned or required on one reaction. The firm signals stay: loves are scenes, places and living or tactile subjects with a point of view (a lodge in fog, a fjord, a savannah, a cyclist among flowers, a plush balloon); the cursor changing the scene is loved; app mock-ups and product-spec pages are fine at best; SaaS-style coloured card rows are only fine.
+
+**Updated reading:** a first screen that has one strong, specific subject and mood, shown at scale, wins, whether realistic, painterly, illustrated or 3D. Quality of execution and a clear subject matter more than the technique. Abstract shapes alone (Facet Glass) did not win.
+
