@@ -58,7 +58,10 @@ It is shown as big things, not margin text: a **large altitude numeral** (48 px+
 3. **Kingfisher:** after about 20 seconds idle a kingfisher lands on the painted river body; click it and it dives and the river ripples.
 Triggers are listed in the README.
 
-## Photo supply (the biggest risk, decided now)
+## Photo supply update
+The owner's Unsplash key works: a Kerala search returns 148 landscape photographs, many 4000 to 6000 px wide (houseboats on Alappuzha, boats at sunset). So photography is now the recommended route, with Wikimedia Commons for culture subjects Unsplash lacks (Theyyam, Kathakali). The key is used only from a local environment variable during sourcing and is never committed; photographer credits go on a `/credits/` page. The painted fallback remains only if the culture and people photographs fail by eye.
+
+## Photo supply (the biggest risk, earlier note, kept for the record)
 About 9 photographs are needed (hero, 5 stations with people in them where possible, 4 weather stops, minus overlap). Wikimedia Commons rate-limited me and Pixabay's API answered 400 during the plan. **Rule: no mixed page, and you choose now (see the end).** After your go I source gently and judge a contact sheet by eye. If the set passes (wide enough, soft-lit, people in focus, one warm-muted grade applied in the build), the page is photographic. If it fails, the **whole page switches to the painted style of hero option 2**, never half and half. Your choice of hero tells me which way to lean: option 1 is photographic, option 2 is painted throughout.
 
 ## Type
