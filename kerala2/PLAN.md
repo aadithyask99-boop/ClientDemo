@@ -23,13 +23,13 @@ It is shown as big things, not margin text: a **large altitude numeral** (48 px+
 ## Palette (two quiet colours plus one loud accent)
 1. **Recommended, paper, backwater, vermilion:** paper `#f3f1ea`, backwater green-black `#14302a` (12.5:1 on paper), vermilion `#ee5a36` laid over things (the one word, the drop, the active list item, the button, petals); on the dark green 5.0:1; on paper only for large type, `#d03712` (4.6:1) for small.
 2. **The reference lifted:** paper `#f4f3ef`, cocoa `#2c2623`, hibiscus `#d94f7a` (4.0:1 on cocoa, large type only). Softest, closest to Red Dot.
-(The lime option is dropped: it was unrelated to Kerala.) No gold, champagne or brass.
+(The lime option is dropped; the critic also said two palettes is enough.) No gold, champagne or brass.
 **Dark sections (like the reference's 40%):** the Descent (green-black), the weather list (green-black), the sea footer (deeper green). Hero and statement are light-toned (fog and paper); the people section is paper.
 
 ## Three hero options
 1. **Touchable mist (recommended, interactive).** Full-bleed tea hills at dawn under fog; the cursor or a finger wipes it away, it drifts back; headline "God's Own Country" bottom-left; altitude numeral at 2,695 m. One canvas fog mask over a sharp large photograph, started after first paint; a thinned-fog still for no-JS and reduced motion. **Photo risk, stated plainly:** I have not yet found the exact photograph (Wikimedia Commons rate-limited me during the plan, and Pixabay's API answered 400). The hero needs a 3000 px or wider, soft-lit Munnar or Wayanad hills photo; if none passes by eye, the fallback is a painted hills scene I draw in layered SVG (you love illustrated heroes), same fog mechanic. You would see which one I used in the handover. Precedent: Solar Fog, Mountain Retreat (loved).
 2. **Painted coast with a living light (interactive, needs no photographs).** An illustrated Kerala coast at dusk (palms, a chinese fishing net, a boat) drawn in layered SVG in the page palette; the cursor is a lantern that lights the boat and the water, and the boat drifts toward it. Loved precedents: Halvøy cabin, Pirate Ship, Solar Fog. Risk: the drawing has to be good; I would build and look at it before showing you.
-3. **A drop you steer (interactive object).** The hero is one large water drop on the paper ground that follows the cursor with real inertia, stretches as it falls and, when you scroll, falls into the page and becomes the descent marker. Needs no photographs. Risk: it is more abstract than a place, which the owner's ratings treat cautiously, so it is the third option.
+3. **Monsoon backwater at dawn (painted, interactive).** A painted backwater with a houseboat and palms under falling rain; the cursor parts the rain and the water lights up around it, the boat rocks. Needs no photographs, and has a subject (the owner's ratings favour places over abstract shapes). Risk: same as option 2, the drawing has to be good.
 
 ## The flow (about 12 to 13 screens tall; Red Dot is about 21)
 | # | Section | Content | Relation to Red Dot | Layout, focal element | Motion |
@@ -42,7 +42,7 @@ It is shown as big things, not margin text: a **large altitude numeral** (48 px+
 
 **Mirror count (honest, now fixed):** 5 sections. Hero (adapt), statement (copy) and footer (adapt) have a Red Dot counterpart: 3 of 5. The Descent and the weather dial are new. The people moments the reference is known for live **inside the Descent stations** (a tea-picker, a spice guide, a paddy farmer, a houseboat boatman, a fisher), so the page keeps the reference's warmth without a second framed-photo section. That removes the repeated device the critic named.
 
-**What the fall gives the visitor at 0 m:** **Plan your fall**, one control, not three boxes: a draggable handle for the length of the trip (2 to 14 days). As you drag, a route draws itself down the cross-section and stations light up in order with a number of days each, then a link to keralatourism.org's planner. The day counts are suggested and illustrative, labelled as such on the page, and the client confirms them. It does what Red Dot's button does not: it shows the shape of the trip before asking for an email.
+**What the fall gives the visitor at 0 m:** **Plan your fall**, one control, not three boxes: the painted river itself, which you pull longer or shorter with a drag (2 to 14 days) like a rope. As you pull, a route draws itself down the cross-section and stations light up in order with a number of days each, then a link to keralatourism.org's planner. The day counts are suggested and illustrative, labelled as such on the page, and the client confirms them. It does what Red Dot's button does not: it shows the shape of the trip before asking for an email.
 
 ## New sections: design, alternative, precedent
 - **The Descent.** Alternative: a horizontal pinned journey; second because a fall is vertical. Precedent: Orra's pinned chapters, the Garden's thread. Risk: a pin that feels stuck, so each station is a short fixed distance, and phones unpin.
@@ -56,7 +56,7 @@ It is shown as big things, not margin text: a **large altitude numeral** (48 px+
 Triggers are listed in the README.
 
 ## Photo supply (the biggest risk, decided now)
-About 9 photographs are needed (hero, 5 stations with people in them where possible, 4 weather stops, minus overlap). Wikimedia Commons rate-limited me and Pixabay's API answered 400 during the plan. **Rule: no mixed page.** After your go I source gently and judge a contact sheet by eye. If the set passes (wide enough, soft-lit, people in focus, one warm-muted grade applied in the build), the page is photographic. If it fails, the **whole page switches to the painted style of hero option 2**, never half and half. Your choice of hero tells me which way to lean: option 1 is photographic, option 2 is painted throughout.
+About 9 photographs are needed (hero, 5 stations with people in them where possible, 4 weather stops, minus overlap). Wikimedia Commons rate-limited me and Pixabay's API answered 400 during the plan. **Rule: no mixed page, and you choose now (see the end).** After your go I source gently and judge a contact sheet by eye. If the set passes (wide enough, soft-lit, people in focus, one warm-muted grade applied in the build), the page is photographic. If it fails, the **whole page switches to the painted style of hero option 2**, never half and half. Your choice of hero tells me which way to lean: option 1 is photographic, option 2 is painted throughout.
 
 ## Type
 Newsreader (light) and Albert Sans, both free and self-hosted, as stand-ins for Red Dot's licensed fonts. One light weight rule, no italics, no hairlines, no small labels.
@@ -65,4 +65,13 @@ Newsreader (light) and Albert Sans, both free and self-hosted, as stand-ins for 
 No gold, no hairline rows or small labels, no row of equal cards, no filler section, three hero options, three easter eggs. Impeccable, checklist, motion probe vs Red Dot, media check, detail audit, owner-critic and a side-by-side with Red Dot run before handover.
 
 ## What I need from you
-Your go, with your picks: hero (1, 2 or 3; I recommend 1) and palette (1 or 2; I recommend 1). One thing to know: the page is about 12 screens tall, shorter than Red Dot (about 21), because it is a highlight reel.
+Your go, with your picks: hero (1, 2 or 3; I recommend 1), palette (1 or 2; I recommend 1), and **photographs or painted** (I recommend photographs with the whole-page painted fallback). One thing to know: the page is about 12 screens tall, shorter than Red Dot (about 21), because it is a highlight reel.
+
+## Drawing rules (from the critic)
+The river body and the fog are flat shapes with real edges and soft grain, not gradients; the fog is a canvas mask, not a gradient overlay. The altitude numeral is big (48 px+), not a label.
+
+## If the photographs fail and the page is painted
+The tea-picker becomes a painted figure in the same flat-shape style as the scene (a person bent among rows, a basket, a sari), never a diagram. If you would rather not risk that, choose photographic now and I will tell you in the handover which stations lack a good person photograph.
+
+## Critic status
+Three rounds run. Round 3 verdict was "fix first"; the remaining open points are the photo supply (it cannot be resolved until I source images after your go) and the Descent carrying five stations (each gets its own pinned photograph and moment, I will check it by eye in the build). Everything else the critic named is fixed above.
