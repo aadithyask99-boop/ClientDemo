@@ -8,7 +8,8 @@
 // Each palette: ground, quiet (the second quiet colour), ink (text) and accent (the one loud colour). Checks: ink on ground (body text 4.5:1),
 // the accent against the ground (4.5:1 means it is safe as small text; lower means use it as a fill or large type only) and the best text colour
 // on the accent (4.5:1) so a button label reads. No gold or brass.
-// The client's logo is a hint, not a rule: if it clashes or is weak, the palette wins and the logo appears in plain white or ink.
+// Roles (ground, quiet, ink) are a starting suggestion, not a map: the quiet colours can swap or mix, as background or foreground, on any element.
+// The loud accent is a highlight laid over things. The client's logo is a hint, not a rule: if it clashes or is weak, the palette wins and the logo appears in plain white or ink.
 // Add a palette to scripts/palettes.json when the owner likes a new pairing, with moods and subjects; then run this to see the contrast.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
