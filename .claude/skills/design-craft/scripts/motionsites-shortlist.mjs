@@ -1,7 +1,7 @@
 // Targeted lookup on motionsites.ai for hero and section ideas: lists the public preview cards under a tag and captures frames of their preview videos.
 //
 //   node motionsites-shortlist.mjs list <Tag> [<Tag> ...]                      e.g. list Travel 3d
-//   node motionsites-shortlist.mjs shots <Tag> <count> --out <dir> [--find <text>]   frames from the first <count> previews (1 s and 4 s in)
+//   node motionsites-shortlist.mjs shots <Tag> <count> --out <dir> [--find <text>] [--skip <n>]   frames from <count> previews (1 s and 4 s in), after skipping the first <n>
 //
 // Tags are the gallery's own filter buttons (Travel, 3d, Interactive, Landing Page, Hero, Portfolio, Agency, Creative, Wellness ...).
 // Choose tags from the client's subject, never crawl everything. It reads only what the public gallery shows (title, tag, the preview video);
@@ -19,8 +19,9 @@ function loadPlaywright() {
 const { chromium } = loadPlaywright();
 const [mode, ...rest] = process.argv.slice(2);
 const outI = rest.indexOf('--out'); const out = outI >= 0 ? rest[outI + 1] : null;
+const skipI = rest.indexOf('--skip'); const skip = skipI >= 0 ? Number(rest[skipI + 1]) : 0;
 const findI = rest.indexOf('--find'); const find = findI >= 0 ? rest[findI + 1].toLowerCase() : null;
-const pos = rest.filter((a, i) => !a.startsWith('--') && rest[i - 1] !== '--out' && rest[i - 1] !== '--find');
+const pos = rest.filter((a, i) => !a.startsWith('--') && rest[i - 1] !== '--out' && rest[i - 1] !== '--find' && rest[i - 1] !== '--skip');
 if (!['list', 'shots'].includes(mode) || !pos.length) { console.error('usage: list <Tag>... | shots <Tag> <count> --out <dir>'); process.exit(1); }
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));
 const browser = await chromium.launch();
@@ -46,7 +47,7 @@ if (mode === 'list') {
   mkdirSync(out, { recursive: true });
   await openTag(tag);
   let cards = await cardsOf(); if (find) cards = cards.filter((c) => c.text.toLowerCase().includes(find));
-  cards = cards.slice(0, count);
+  cards = cards.slice(skip, skip + count);
   for (const c of cards) {
     const vid = page.locator('video').nth(c.i);
     await vid.scrollIntoViewIfNeeded().catch(() => {}); await pause(1200);
