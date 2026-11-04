@@ -14,6 +14,10 @@ The owner: the hero is what makes a site feel unique; interactivity, immersion a
 | **Pointer or scroll world** | The hero reacts to the cursor or scroll as a small world (thread, rope, parallax layers) | garden (rope), portfolio (physics cards) | Layers of art | Many layers get noisy; keep it calm |
 | **Full-bleed film with a moment** | Film plus one added interactive moment (cursor follows, word reveals, mark builds) | EVM (film plus builds) | Stock or generated film | Most common, so it needs the extra moment |
 
+
+## Owner favourite: the scroll-scrubbed hero
+The owner loves a hero where **scrolling plays the scene**: a car drives along a road, an object turns or assembles, a camera flies through a place, and the page only moves on when the visitor scrolls. Precedents: More Coffee (a 200-frame scroll sequence and a 23-frame hero turn), Atlas Nav (camera moves on as you scroll), the Garden's scroll-driven first dance. Make it with one of: (a) a frame sequence drawn to a canvas and stepped by GSAP ScrollTrigger (best control, smooth both ways; export 100 to 200 frames as webp, load progressively); (b) a short video whose currentTime is scrubbed by scroll (encode with a keyframe on every frame or the scrub stutters); (c) a three.js object or camera driven by scroll progress (best for a car or product, needs a model). Generate or film the source (a clip from `gen-media.mjs`, a render, or a stock clip), pin the hero while it plays, and give phones the same scene with native scrolling and a lighter frame count. The first frame must be a good still hero for anyone who has not scrolled yet. Count it as an interactive option.
+
 ## How to offer them
 - In the plan, before the section list, give **three** hero options rooted in the client's subject, each with: what the visitor sees in the first five seconds, the technique, what it needs, one risk, and which of our sites did something like it. Recommend one and say why.
 - At least one option must be interactive or 3D, and at most one may be a plain film.

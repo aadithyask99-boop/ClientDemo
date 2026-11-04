@@ -10,6 +10,7 @@ A very interactive, immersive, smooth, responsive website. Nothing generic, no b
 - **Film or generated cinematic backgrounds** with very little UI over them; glass UI is fine when it is a few pieces that belong to the scene and carry real information (Halcyon, Lauberhorn Ridge).
 - **Real 3D or rendered objects with character** (the tub, glass, keycaps), not stock photos.
 - **Physical, smooth motion and surprises:** smooth scroll, pixel or blur reveals, a rope or thread that behaves, a cursor with character, easter eggs (the portfolio, the Garden).
+- **A scroll-scrubbed hero:** scrolling plays the scene (a car moving, an object turning, a camera flying through a place); stated by the owner as a favourite. See hero-options.md.
 - **A strong idea rooted in the client's subject** carrying the page.
 - *(inferred)* Pinned stories with emotion (painting a face in four steps), image-wipe lists, full-bleed night or place photography, giant footer marks.
 
