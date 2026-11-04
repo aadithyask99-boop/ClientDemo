@@ -1,0 +1,182 @@
+---
+import '@fontsource-variable/newsreader';
+import '@fontsource-variable/albert-sans';
+import '../styles/global.css';
+import { site } from '../data/site';
+const base = import.meta.env.BASE_URL;
+const img = (n: string) => `${base}img/${n}.webp`;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{site.title}</title>
+    <meta name="description" content={site.description} />
+    <meta name="theme-color" content="#14302a" />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <script is:inline>if(innerWidth>820&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("pin")</script>
+    <link rel="preload" as="image" href={img('hero')} />
+  </head>
+  <body data-tone="dark">
+    <header class="top" id="top" data-tone="dark">
+      <nav class="top-nav" aria-label="Main">
+        {site.nav.map((n) => <a href={n.href}>{n.label}</a>)}
+      </nav>
+      <a class="brand" href={base} aria-label="Kerala Tourism, home">KERALA</a>
+      <a class="pill" href={site.officialUrl}>Plan your trip</a>
+    </header>
+
+    <div class="river" id="river" aria-hidden="true">
+      <svg viewBox="0 0 100 1000" preserveAspectRatio="none"><path id="river-path" d=""></path></svg>
+      <span class="drop" id="drop"></span>
+    </div>
+
+    <div class="altitude" id="altitude" aria-hidden="true">
+      <span class="alt-num" id="alt-num">2,695</span><span class="alt-unit">m</span>
+    </div>
+
+    <main>
+      <!-- 1 HERO -->
+      <section class="hero" id="hero" data-tone="dark">
+        <img class="hero-img" src={img('hero')} alt="Misty tea hills and a hill village in Munnar, Kerala" width="3000" height="1875" fetchpriority="high" />
+        <canvas class="fog" id="fog" aria-hidden="true"></canvas>
+        <div class="hero-copy">
+          <h1 class="hero-title" id="hero-title">
+            <span class="line"><span class="line-in">{site.hero.pre} <em class="hot">{site.hero.accent}</em></span></span>
+            <span class="line"><span class="line-in">{site.hero.post}</span></span>
+          </h1>
+          <p class="hero-sub">{site.hero.sub}</p>
+        </div>
+        <a class="scroll-cue" href="#statement" aria-label="Scroll to begin the descent"><span class="cue-ring"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 4v15M6 13l6 6 6-6"/></svg></span></a>
+      </section>
+
+      <!-- 2 STATEMENT -->
+      <section class="statement" id="statement" data-tone="light">
+        <div class="statement-pin">
+          <h2 class="statement-words" id="statement-words">
+            {site.statement.words.map((w, i) => (
+              <span class="sw" data-i={i}>{i === 2 ? <>One long <em class="hot">fall.</em></> : w}</span>
+            ))}
+          </h2>
+          <p class="statement-note" id="statement-note">{site.statement.note}</p>
+        </div>
+      </section>
+
+      <!-- 3 DESCENT -->
+      <section class="descent" id="descent" data-tone="dark">
+        <div class="descent-pin" id="descent-pin">
+          <div class="frame" id="frame">
+            {site.stations.map((s, i) => (
+              <figure class="st-img" data-i={i}>
+                <img src={img(s.img)} alt={s.alt_text} loading={i === 0 ? 'eager' : 'lazy'} width="2400" height="1600" style={`object-position:${s.pos}`} />
+              </figure>
+            ))}
+            <div class="frame-scrim"></div>
+            <div class="st-names">
+              {site.stations.map((s, i) => (
+                <h2 class="st-name" data-i={i}><span class="st-name-in">{s.place}</span></h2>
+              ))}
+            </div>
+            <div class="st-texts">
+              {site.stations.map((s, i) => (
+                <div class="st-text" data-i={i}>
+                  <p>{s.line}</p>
+                  <p class="st-who">{s.who}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div class="profile" id="profile" aria-hidden="true">
+            <svg viewBox="0 0 1000 200" preserveAspectRatio="none">
+              <path class="profile-land" d="M0 200 L0 186 L70 182 L180 176 L300 160 L420 128 L520 96 L640 66 L760 34 L880 14 L1000 6 L1000 200 Z" />
+              <path class="profile-sea" d="M0 200 L0 184 L112 184 L112 200 Z" />
+            </svg>
+            <span class="profile-drop" id="profile-drop"></span>
+          </div>
+        </div>
+        <ol class="st-stack">
+          {site.stations.map((s, i) => (
+            <li class="st-card">
+              <img src={img(s.img)} alt={s.alt_text} loading="lazy" width="2400" height="1600" style={`object-position:${s.pos}`} />
+              <h2>{s.place}</h2>
+              <p class="st-card-alt">{s.alt < 0 ? '−' + Math.abs(s.alt) : s.alt} m</p>
+              <p>{s.line}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <!-- 4 WHEN TO COME -->
+      <section class="seasons" id="seasons" data-tone="dark">
+        <div class="seasons-pin" id="seasons-pin">
+          {site.seasons.map((s, i) => (
+            <figure class="se-img" data-i={i}><img src={img(s.img)} alt={s.alt_text} loading="lazy" width="2400" height="1600" style={`object-position:${s.pos}`} /></figure>
+          ))}
+          <div class="se-scrim"></div>
+          <canvas class="fx" id="fx" aria-hidden="true"></canvas>
+          <h2 class="se-title">When to come</h2>
+          <div class="wheel" id="wheel">
+            {site.seasons.map((s, i) => (
+              <span class="wheel-name" data-i={i}>{s.name}</span>
+            ))}
+          </div>
+          <div class="se-copy">
+            {site.seasons.map((s, i) => (
+              <div class="se-text" data-i={i}>
+                <p class="se-months">{s.months}</p>
+                <p>{s.line}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <ul class="se-stack">
+          {site.seasons.map((s) => (
+            <li class="se-card">
+              <img src={img(s.img)} alt={s.alt_text} loading="lazy" width="2400" height="1600" style={`object-position:${s.pos}`} />
+              <h3>{s.name}</h3>
+              <p class="se-months">{s.months}</p>
+              <p>{s.line}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <!-- 5 THE SEA -->
+      <section class="sea" id="sea" data-tone="dark">
+        <figure class="planner-bg" id="planner-bg"><img src={img(site.planner.img)} alt={site.planner.alt_text} loading="lazy" width="2880" height="1804" /></figure>
+        <div class="planner" id="planner">
+          <h2 class="planner-title">{site.planner.title}</h2>
+          <p class="planner-help">{site.planner.help}</p>
+          <div class="pull">
+            <svg class="pull-river" id="pull-river" viewBox="0 0 1000 300" preserveAspectRatio="none" aria-hidden="true"><path id="pull-path" d=""></path></svg>
+            <span class="pull-drop" id="pull-drop" aria-hidden="true"></span>
+            <input type="range" min="2" max="14" value="7" step="1" id="pull-range" aria-label="Trip length in days" />
+          </div>
+          <p class="pull-days"><span id="pull-days">7</span> days</p>
+          <ol class="route" id="route">
+            {site.stations.map((s) => <li data-id={s.id}>{s.place}</li>)}
+          </ol>
+          <a class="btn" href={site.planner.ctaHref}>{site.planner.cta}</a>
+        </div>
+        <div class="sea-word" id="sea-word" aria-hidden="true">
+          <svg viewBox="0 0 1600 440" id="sea-svg" preserveAspectRatio="xMidYMid meet">
+            <defs><clipPath id="word-clip"><text x="800" y="380" text-anchor="middle" textLength="1520" lengthAdjust="spacingAndGlyphs" class="word-text">KERALA</text></clipPath></defs>
+            <text x="800" y="380" text-anchor="middle" textLength="1520" lengthAdjust="spacingAndGlyphs" class="word-outline">KERALA</text>
+            <g clip-path="url(#word-clip)"><path id="water" class="water" d=""></path></g>
+          </svg>
+        </div>
+        <p class="sea-close">{site.footer.closing}</p>
+        <footer class="foot">
+          <nav aria-label="Footer">{site.footer.links.map((l) => <a href={l.href.startsWith('http') ? l.href : base + l.href}>{l.label}</a>)}</nav>
+          <p>{site.footer.note}</p>
+        </footer>
+      </section>
+    </main>
+
+    <div class="egg-layer" id="egg-layer" aria-hidden="true"></div>
+    <script>
+      import '../scripts/main.ts';
+    </script>
+  </body>
+</html>
