@@ -29,34 +29,11 @@ const fmt = (v: number) => {
 const alt = { v: 2695 };
 const setAlt = () => { altNum.textContent = fmt(alt.v); };
 
-/* ---------- river and drop (the spine) ---------- */
-const river = $('#river');
-const drop = $('#drop');
-const riverPath = $('#river-path') as unknown as SVGPathElement;
-const frac = (y: number) => 0.15 + 0.85 * (y / 1000);
-{
-  let d = 'M100 0 ';
-  const left: string[] = [];
-  for (let y = 0; y <= 1000; y += 20) left.push(`L${(100 - frac(y) * 100 + 4 * Math.sin(y / 55)).toFixed(1)} ${y}`);
-  d += left.join(' ') + ' L100 1000 Z';
-  riverPath.setAttribute('d', d);
-}
-let maxScroll = document.documentElement.scrollHeight - innerHeight;
-const placeRiver = () => {
-  const max = maxScroll;
-  const p = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
-  const w = phone ? 12 + p * 18 : 24 + p * innerWidth * 0.04;
-  river.style.width = w + 'px';
-  const y = p * (innerHeight - 40) + 6;
-  const x = (w * frac((y / innerHeight) * 1000)) / 2 - 6;
-  drop.style.transform = `translate(${-x}px, ${y}px) rotate(-45deg)`;
-};
-
 /* ---------- tone (header and numeral follow what is under them) ---------- */
 const topEl = $('#top');
 const altEl = $('#altitude');
 const toneAt = (x: number, y: number) => {
-  const el = document.elementsFromPoint(x, y).find((e) => !e.closest('.top, .altitude, .river, .egg-layer'));
+  const el = document.elementsFromPoint(x, y).find((e) => !e.closest('.top, .altitude, .egg-layer'));
   const t = el?.closest('[data-tone]') as HTMLElement | null;
   return t?.dataset.tone === 'light' ? 'light' : 'dark';
 };
@@ -68,14 +45,11 @@ const updateTone = () => {
 let lastY = 0, tick = 0;
 gsap.ticker.add(() => {
   const y = scrollY;
-  placeRiver();
   if (++tick % 5 === 0) updateTone();
   if (Math.abs(y - lastY) > 4) { topEl.classList.toggle('hide', y > lastY && y > 240); lastY = y; }
   topEl.classList.toggle('solid', y > 120);
 });
-ScrollTrigger.addEventListener('refresh', () => { maxScroll = document.documentElement.scrollHeight - innerHeight; });
-addEventListener('resize', () => { maxScroll = document.documentElement.scrollHeight - innerHeight; });
-placeRiver(); updateTone(); setAlt();
+updateTone(); setAlt();
 
 /* ---------- hero: headline and fog ---------- */
 if (!reduced) {
@@ -220,27 +194,12 @@ gsap.ticker.add(() => {
   const r = Math.round(alt.v);
   if (r !== lastAlt) { lastAlt = r; setAlt(); }
 });
-const profPts = [[0, 186], [70, 182], [180, 176], [300, 160], [420, 128], [520, 96], [640, 66], [760, 34], [880, 14], [1000, 6]];
-const profY = (x: number) => {
-  for (let i = 1; i < profPts.length; i++) if (x <= profPts[i][0]) {
-    const [x0, y0] = profPts[i - 1], [x1, y1] = profPts[i];
-    return y0 + ((y1 - y0) * (x - x0)) / (x1 - x0);
-  }
-  return 6;
-};
-const stationX = [820, 640, 430, 190, 60];
-const stationY = stationX.map((x, i) => (i === 3 ? 183 : profY(x) - 2));
-
 if (pinned) {
   const imgs = $$('.st-img'), names = $$('.st-name-in'), texts = $$('.st-text');
-  const pd = $('#profile-drop');
-  const pos = { x: stationX[0], y: stationY[0] };
-  const placeDrop = () => { pd.style.left = pos.x / 10 + '%'; pd.style.top = (pos.y / 200) * 100 + '%'; };
-  placeDrop();
   gsap.set(imgs, { clipPath: (i) => (i === 0 ? 'inset(0% 0% 0% 0%)' : 'inset(101% 0% 0% 0%)') });
   gsap.set(names, { yPercent: 112 });
   gsap.set(texts, { opacity: 0, y: 24 });
-  gsap.set('#frame', { scale: 0.7 });
+  gsap.set('#frame', { scale: 0.94 });
   const tl = gsap.timeline({
     defaults: { ease: 'none' },
     scrollTrigger: { trigger: '#descent', start: 'top top', end: '+=420%', scrub: 0.8, pin: '#descent-pin', anticipatePin: 1 },
@@ -255,9 +214,8 @@ if (pinned) {
       .to(imgs[i], { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.5, ease: 'power1.inOut' }, s)
       .fromTo(imgs[i].querySelector('img'), { scale: 1.12 }, { scale: 1, duration: 0.5 }, s)
       .to(names[i], { yPercent: 0, duration: 0.45, ease: 'power2.out' }, s + 0.25)
-      .to(texts[i], { opacity: 1, y: 0, duration: 0.4 }, s + 0.3)
-      .to(alt, { v: alts[i], duration: 0.5, onUpdate: setAlt }, s)
-      .to(pos, { x: stationX[i], y: stationY[i], duration: 0.5, onUpdate: placeDrop }, s);
+      .to(texts[i], { opacity: 1, y: 0, duration: 0.3 }, s + 0.2)
+      .to(alt, { v: alts[i], duration: 0.5, onUpdate: setAlt }, s);
   }
   tl.to({}, { duration: 0.5 }, '>'); // a last dwell
   descentST = tl.scrollTrigger as ScrollTrigger;
@@ -311,7 +269,6 @@ const applySpine = () => {
   gsap.to('#altitude', { autoAlpha: hide.foot || hide.phoneStack ? 0 : 1, duration: 0.4, overwrite: 'auto' });
   dialOn = hide.seasons && pinned;
   altUnit.style.display = dialOn ? 'none' : '';
-  gsap.to('#river', { autoAlpha: hide.seasons ? 0 : 1, duration: 0.5, overwrite: 'auto' });
 };
 if (phone) ScrollTrigger.create({ trigger: '#hero', start: 'bottom 45%', onEnter: () => { hide.phoneStack = true; applySpine(); }, onLeaveBack: () => { hide.phoneStack = false; applySpine(); } });
 ScrollTrigger.create({ trigger: '#seasons', start: 'top 55%', end: 'bottom 45%', onToggle: (self) => { hide.seasons = self.isActive; applySpine(); } });
@@ -367,45 +324,16 @@ initFx();
 
 /* sea section entrance */
 if (!reduced) {
-  gsap.from(['.planner-title', '.planner-help', '.pull', '.pull-days', '#route li', '.btn'], {
+  gsap.from(['.planner-title', '#route li', '.planner-help', '.btn'], {
     y: 46, opacity: 0, duration: 1.1, ease: 'power3.out', stagger: 0.07,
     scrollTrigger: { trigger: '#planner', start: 'top 78%' },
   });
   gsap.from('.sea-close', { y: 40, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: '.sea-close', start: 'top 92%' } });
 }
-/* ---------- the sea: plan your fall ---------- */
-(function planner() {
-  const range = $('#pull-range') as unknown as HTMLInputElement;
-  const pullPath = $('#pull-path') as unknown as SVGPathElement;
-  const pdrop = $('#pull-drop');
-  const daysEl = $('#pull-days');
-  const items = $$('#route li');
-  const state = { x: 0 };
-  const draw = () => {
-    const X = state.x;
-    const top: string[] = [], bot: string[] = [];
-    for (let x = 0; x <= X; x += 20) {
-      const c = 150 + 26 * Math.sin(x / 90), t = 14 + (x / 1000) * 70;
-      top.push(`${x} ${(c - t).toFixed(1)}`); bot.unshift(`${x} ${(c + t).toFixed(1)}`);
-    }
-    pullPath.setAttribute('d', `M${top.join(' L')} L${bot.join(' L')} Z`);
-    const cx = 150 + 26 * Math.sin(X / 90);
-    pdrop.style.left = X / 10 + '%'; pdrop.style.top = (cx / 300) * 100 + '%';
-    const bgImg = document.querySelector('#planner-bg img') as HTMLElement | null;
-    if (bgImg) bgImg.style.transform = `scale(${(1.04 + (X / 1000) * 0.16).toFixed(3)}) translateX(${(-X / 1000 * 2.5).toFixed(2)}%)`;
-  };
-  const apply = (animate: boolean) => {
-    const days = +range.value;
-    daysEl.textContent = String(days);
-    const route = site.planner.routes.find((r) => days <= r.upTo) || site.planner.routes[site.planner.routes.length - 1];
-    items.forEach((li) => li.classList.toggle('on', route.ids.includes(li.dataset.id!)));
-    const target = 90 + ((days - 2) / 12) * 880;
-    if (animate && !reduced) gsap.to(state, { x: target, duration: 0.5, ease: 'power3.out', onUpdate: draw });
-    else { state.x = target; draw(); }
-  };
-  range.addEventListener('input', () => apply(true));
-  apply(false);
-})();
+/* ---------- the sea: plan your fall (a photograph that drifts slowly) ---------- */
+if (!reduced) {
+  gsap.fromTo('#planner-bg img', { scale: 1.02 }, { scale: 1.14, ease: 'none', scrollTrigger: { trigger: '#sea', start: 'top bottom', end: 'bottom top', scrub: true } });
+}
 
 /* water filling the word */
 (function seaWord() {
@@ -448,7 +376,7 @@ if (!reduced) {
     clearTimeout(idle);
     idle = window.setTimeout(async () => {
       if (document.hidden) return;
-      (await loadEggs()).kingfisher(drop);
+      (await loadEggs()).kingfisher();
     }, 20000);
   };
   ['pointermove', 'scroll', 'keydown', 'touchstart'].forEach((ev) => addEventListener(ev, arm, { passive: true }));

@@ -27,11 +27,6 @@ const img = (n: string) => `${base}img/${n}.webp`;
       <a class="pill" href={site.officialUrl}>Plan your trip</a>
     </header>
 
-    <div class="river" id="river" aria-hidden="true">
-      <svg viewBox="0 0 100 1000" preserveAspectRatio="none"><path id="river-path" d=""></path></svg>
-      <span class="drop" id="drop"></span>
-    </div>
-
     <div class="altitude" id="altitude" aria-hidden="true">
       <span class="alt-num" id="alt-num">2,695</span><span class="alt-unit">m</span>
     </div>
@@ -87,13 +82,6 @@ const img = (n: string) => `${base}img/${n}.webp`;
               ))}
             </div>
           </div>
-          <div class="profile" id="profile" aria-hidden="true">
-            <svg viewBox="0 0 1000 200" preserveAspectRatio="none">
-              <path class="profile-land" d="M0 200 L0 186 L70 182 L180 176 L300 160 L420 128 L520 96 L640 66 L760 34 L880 14 L1000 6 L1000 200 Z" />
-              <path class="profile-sea" d="M0 200 L0 184 L112 184 L112 200 Z" />
-            </svg>
-            <span class="profile-drop" id="profile-drop"></span>
-          </div>
         </div>
         <ol class="st-stack">
           {site.stations.map((s, i) => (
@@ -147,16 +135,10 @@ const img = (n: string) => `${base}img/${n}.webp`;
         <figure class="planner-bg" id="planner-bg"><img src={img(site.planner.img)} alt={site.planner.alt_text} loading="lazy" width="2880" height="1804" /></figure>
         <div class="planner" id="planner">
           <h2 class="planner-title">{site.planner.title}</h2>
-          <p class="planner-help">{site.planner.help}</p>
-          <div class="pull">
-            <svg class="pull-river" id="pull-river" viewBox="0 0 1000 300" preserveAspectRatio="none" aria-hidden="true"><path id="pull-path" d=""></path></svg>
-            <span class="pull-drop" id="pull-drop" aria-hidden="true"></span>
-            <input type="range" min="2" max="14" value="7" step="1" id="pull-range" aria-label="Trip length in days" />
-          </div>
-          <p class="pull-days"><span id="pull-days">7</span> days</p>
           <ol class="route" id="route">
-            {site.stations.map((s) => <li data-id={s.id}>{s.place}</li>)}
+            {site.stations.map((s) => <li>{s.place}</li>)}
           </ol>
+          <p class="planner-help">{site.planner.help}</p>
           <a class="btn" href={site.planner.ctaHref}>{site.planner.cta}</a>
         </div>
         <div class="sea-word" id="sea-word" aria-hidden="true">

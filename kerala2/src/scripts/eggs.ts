@@ -59,12 +59,11 @@ export function boat(anchor: HTMLElement) {
   svg.querySelectorAll('.oar').forEach((o, i) => gsap.to(o, { rotation: 10, transformOrigin: '50% 40px', duration: 0.28, yoyo: true, repeat: 18, delay: i * 0.02, ease: 'sine.inOut', svgOrigin: undefined }));
 }
 
-/** Kingfisher: perches on the river after a quiet spell; click it and it dives. */
+/** Kingfisher: perches at the right edge after a quiet spell; click it and it dives. */
 let bird: HTMLElement | null = null;
-export function kingfisher(drop: HTMLElement) {
+export function kingfisher() {
   if (bird) return;
-  const r = drop.getBoundingClientRect();
-  const x = Math.max(20, r.left - 56), y = Math.max(90, r.top - 34);
+  const x = Math.max(20, innerWidth - 120), y = Math.max(90, innerHeight * 0.62);
   bird = document.createElement('button');
   bird.setAttribute('aria-label', 'A kingfisher. Click to watch it dive.');
   bird.style.cssText = `position:absolute;left:${x}px;top:${y}px;width:52px;height:44px;padding:0;border:0;background:none;cursor:pointer;pointer-events:auto`;

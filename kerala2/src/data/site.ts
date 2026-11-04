@@ -61,7 +61,7 @@ export const site = {
       id: 'sea',
       alt: 0,
       place: 'The sea',
-      img: 'sea', pos: '50% 32%',
+      img: 'sea', pos: '50% 22%',
       alt_text: 'A fisherman hauling a net from a small boat at sea',
       line: 'Fishermen, Chinese fishing nets in Kochi and red cliffs at Varkala. The fall ends here.',
       who: 'A fisherman, Kerala coast',
@@ -109,16 +109,9 @@ export const site = {
     title: 'Plan your fall',
     img: 'dawn',
     alt_text: 'A houseboat on still backwater at sunrise between palms',
-    help: 'Pull the river longer or shorter. Day counts are suggestions only.',
+    help: 'Five stops from the hills to the sea. The official planner builds the days for you.',
     cta: 'Open the trip planner',
     ctaHref: 'https://www.keralatourism.org/',
-    // stations lit by trip length (illustrative)
-    routes: [
-      { upTo: 3, ids: ['kuttanad', 'sea'] },
-      { upTo: 5, ids: ['munnar', 'kuttanad', 'sea'] },
-      { upTo: 8, ids: ['munnar', 'thekkady', 'kuttanad', 'sea'] },
-      { upTo: 14, ids: ['munnar', 'thekkady', 'athirappilly', 'kuttanad', 'sea'] },
-    ],
   },
   footer: {
     closing: "God's Own Country",
