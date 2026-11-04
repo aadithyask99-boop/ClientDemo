@@ -57,3 +57,6 @@ Two quiet colours and one loud accent make a design memorable and show where to 
 - **Disliked, "gimmicky" and "low quality", "should look professional":** the Descent section's small orange dot riding an altitude profile; the "Plan your fall" strip you pull to change the days, its colour and the little drop or flower on the strip. Also text that is too small or faint to read.
 - **Why (my reading):** the loved sections are scenes where the photograph and mood are the content and the effect belongs to the photograph. The disliked ones are added widgets and diagrams, thin vector bits over photography, built to illustrate the idea literally. Interaction must live inside the imagery, not in toys.
 
+### Emphasis from the owner on the same review (2026-11-04)
+The owner "really didn't like" the orange dot, and called the green line-drawn stuff and the orange dot with green on the right edge "quite bad", with the orange-on-green combination in those small devices "quite bad" too. Treat every small vermilion dot, drop or marker riding on a drawn line as a hard pass. After removal (rounds 1 and 2) the page's palette itself (paper, deep green, vermilion laid over content) stays.
+
