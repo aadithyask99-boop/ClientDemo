@@ -46,3 +46,6 @@ Keep it short. No code, no long lists of options, no other questions.
 1. **Reference readout** (from a capture, one paragraph): palette, type pair, hero type, section rhythm, photography, motion feel. Say if capture failed.
 2. **Kept from the reference / Changed for this client** (two short lists).
 3. **Plan checklist line:** no gold, no hairline rows or small labels, no row of equal cards, no filler, three hero options, two or three easter eggs.
+
+## Palette options
+Three palettes from `scripts/palette-library.mjs` (two quiet colours plus one loud accent), each with the swatch sheet, what the accent does, and the contrast result. Recommend one.
