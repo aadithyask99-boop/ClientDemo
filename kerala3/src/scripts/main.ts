@@ -160,7 +160,6 @@ if (!reduced) {
 
 if (hero === '1') {
   const seasons = $$<HTMLImageElement>('.season');
-  const tag = $('#season-tag');
   let si = 0;
   const kindNow = () => site.hero.seasons[si].weather as Kind;
   weather($('#weather') as HTMLCanvasElement, kindNow, heroVisible);
@@ -170,7 +169,6 @@ if (hero === '1') {
       seasons[si].classList.remove('on');
       si = (si + 1) % seasons.length;
       seasons[si].classList.add('on');
-      gsap.fromTo(tag, { opacity: 0, y: 8 }, { opacity: 0.9, y: 0, duration: 1.2, onStart: () => (tag.textContent = site.hero.seasons[si].label) });
     }, 6800);
     gsap.to('.s1 .season', { yPercent: 8, ease: 'none', scrollTrigger: { trigger: heroEl, start: 'top top', end: 'bottom top', scrub: true } });
   }
@@ -195,8 +193,8 @@ function initGlass() {
     const iw = sharp.naturalWidth || 1600, ih = sharp.naturalHeight || 900;
     const sc = Math.max(c.width / iw, c.height / ih), dw = iw * sc, dh = ih * sc;
     // blur by shrinking and enlarging, works in every browser
-    const tiny = document.createElement('canvas'); tiny.width = Math.max(8, Math.round(c.width / 28)); tiny.height = Math.max(8, Math.round(c.height / 28));
-    tiny.getContext('2d')!.drawImage(sharp, (tiny.width - dw / 28) / 2, (tiny.height - dh / 28) / 2, dw / 28, dh / 28);
+    const tiny = document.createElement('canvas'); tiny.width = Math.max(8, Math.round(c.width / 16)); tiny.height = Math.max(8, Math.round(c.height / 16));
+    tiny.getContext('2d')!.drawImage(sharp, (tiny.width - dw / 16) / 2, (tiny.height - dh / 16) / 2, dw / 16, dh / 16);
     bctx.imageSmoothingQuality = 'high'; bctx.drawImage(tiny, 0, 0, c.width, c.height);
     bctx.fillStyle = 'rgba(214,226,220,.22)'; bctx.fillRect(0, 0, c.width, c.height);
   };
@@ -216,7 +214,7 @@ function initGlass() {
   const runs: { x: number; y: number; v: number }[] = [];
   setInterval(() => { if (document.hidden || runs.length > 9) return; runs.push({ x: Math.random() * w, y: -10, v: 70 + Math.random() * 110 }); }, 700);
   // opening: wipe a window in the middle so the first view shows the place
-  setTimeout(() => { for (let i = 0; i < 26; i++) add(w * 0.35 + i * (w * 0.012), h * 0.52 + Math.sin(i / 3) * 40, 150, 6500); }, 900);
+  setTimeout(() => { for (let i = 0; i < 34; i++) add(w * 0.28 + i * (w * 0.016), h * 0.5 + Math.sin(i / 3) * 50, 190, 7500); }, 900);
   let last = performance.now();
   gsap.ticker.add(() => {
     if (!heroVisible() || !blur.width) return;
@@ -307,7 +305,6 @@ if (pinned && !reduced) {
     idx.forEach((li, i) => li.classList.toggle('on', i === m));
   });
   idx.forEach((li, i) => li.addEventListener('click', () => scrollToY(stM.start + ((stM.end - stM.start) * (i + 0.5)) / steps)));
-  idx[0].classList.add('on');
   // egg: hold on the monsoon photograph for two seconds
   let hold = 0;
   const mp = $('.m-pin');

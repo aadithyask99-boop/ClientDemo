@@ -68,7 +68,7 @@ export const site = {
     accent: 'people',
     text: 'From heritage homes with carved verandas to houseboats and tea-estate bungalows, our stays are run by families who have lived here for generations. Come as a guest, leave as a friend.',
     cta: 'Discover your stay',
-    drift: ['drift-tea', 'drift-spice', 'drift-chai', 'drift-elephant', 'drift-lamp', 'stay-homestay'],
+    drift: ['drift-tea', 'drift-spice', 'drift-chai', 'drift-lamp', 'stay-homestay'],
   },
   stories: {
     pre: 'Swap the guidebook for a',
@@ -97,9 +97,9 @@ export const site = {
     items: [
       { img: 'carousel-1', name: 'Heritage home', place: 'Fort Kochi' },
       { img: 'carousel-2', name: 'Houseboat', place: 'Alappuzha' },
-      { img: 'carousel-3', name: 'Tea bungalow', place: 'Munnar' },
+      { img: 'stay-tea', name: 'Tea estate stay', place: 'Munnar' },
     ],
-    away: { title: 'Away from the well-trodden path', text: 'Kuttanad, where rice grows below the sea. Kumarakom at dawn. Wayanad, when nobody else is there.', img: 'path-kuttanad' },
+    away: { title: 'Away from the well-trodden path', text: 'Kuttanad, where rice grows below the sea. Kumarakom at dawn. Wayanad, when nobody else is there.', img: 'path-quiet' },
   },
   cta: { title: 'Choose your', accent: 'adventure', text: 'Tell us when you can come and what you care about. The official planner takes it from there.', button: "Let's get planning" },
   footer: {
