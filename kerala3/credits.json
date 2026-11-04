@@ -120,14 +120,6 @@
   "alt": "Bright sunlit Kerala coast with a green headland and surf"
  },
  {
-  "name": "footer-sea",
-  "by": "Firosnv. Photography",
-  "page": "https://unsplash.com/photos/body-of-water-2H3OUTarBtc",
-  "src_px": "4608x3072",
-  "out_px": "3200x2133",
-  "alt": "Calm dusk water with a single Chinese fishing net silhouetted, Kochi"
- },
- {
   "name": "trip-coast",
   "by": "Snehal Krishna",
   "page": "https://unsplash.com/photos/2-men-riding-on-boat-during-daytime-RFRi-pvRGrU",
@@ -192,14 +184,6 @@
   "alt": "Tea terraces and a hill village in mist, Munnar"
  },
  {
-  "name": "statement-a",
-  "by": "Manoa Angelo",
-  "page": "https://unsplash.com/photos/people-walking-by-munnar-tea-plantation-QcTIMyLWor0",
-  "src_px": "7728x5152",
-  "out_px": "2880x1920",
-  "alt": "Tea pickers at work on a hillside tea plantation near Munnar"
- },
- {
   "name": "fan-wayanad",
   "by": "Nakkeeran Raveendran",
   "page": "https://unsplash.com/photos/a-forest-of-trees-in-front-of-a-mountain-ONy6TFSW4y4",
@@ -222,22 +206,6 @@
   "src_px": "4160x6240",
   "out_px": "2000x3000",
   "alt": "A tea picker in a conical hat among bright tea bushes"
- },
- {
-  "name": "drift-chai",
-  "by": "Tirth Patel",
-  "page": "https://unsplash.com/photos/glass-of-masala-chai-on-wood-c9nTmIvehyM",
-  "src_px": "3000x4000",
-  "out_px": "2000x2667",
-  "alt": "A glass of masala chai on a teal wooden bench"
- },
- {
-  "name": "drift-lamp",
-  "by": "Anjana Nair",
-  "page": "https://unsplash.com/photos/a-table-topped-with-lots-of-lit-candles-LKElNdPKeVo",
-  "src_px": "4160x6240",
-  "out_px": "2000x3000",
-  "alt": "Brass oil lamps lit at dusk"
  },
  {
   "name": "story-kathakali",
@@ -304,22 +272,6 @@
   "alt": "Three women in white and gold kasavu sarees beside a laterite wall"
  },
  {
-  "name": "statement-b",
-  "by": "Varun Nambiar",
-  "page": "https://unsplash.com/photos/brown-wooden-boat-on-body-of-water-near-palm-trees-during-daytime-CTZWQHyUaqM",
-  "src_px": "6000x3759",
-  "out_px": "2880x1804",
-  "alt": "A wooden boat on calm backwater among palm trees at dawn"
- },
- {
-  "name": "h-basket",
-  "by": "Filipp Romanovski",
-  "page": "https://unsplash.com/photos/a-person-holding-a-green-leaf-in-a-wicker-basket-75tPXubHDkg",
-  "src_px": "4000x5997",
-  "out_px": "1400x2099",
-  "alt": "A hand placing a fresh tea leaf into a woven basket"
- },
- {
   "name": "h-picker",
   "by": "Rohit Sharma",
   "page": "https://unsplash.com/photos/a-man-in-a-pink-hat-picking-tea-leaves-G8qu9-5bfm8",
@@ -342,14 +294,6 @@
   "src_px": "3024x4032",
   "out_px": "1400x1867",
   "alt": "A hand holding a glass of chai on a misty road"
- },
- {
-  "name": "h-torch",
-  "by": "Sleeba Thomas",
-  "page": "https://unsplash.com/photos/a-group-of-people-standing-around-a-fire-pit-ezCM5emkTW0",
-  "src_px": "2369x4212",
-  "out_px": "1400x2489",
-  "alt": "Performers with fire torches at a night ritual"
  },
  {
   "name": "h-theyyam",
@@ -384,59 +328,27 @@
   "alt": "A Kathakali performer in costume under strings of lights"
  },
  {
-  "name": "h-yellow-face",
-  "by": "Gurth Bramall",
-  "page": "https://unsplash.com/photos/performer-with-elaborate-traditional-indian-makeup-and-gold-jewelry-fQxQ0qlZCfk",
-  "src_px": "4000x6000",
-  "out_px": "1400x2100",
-  "alt": "A performer with yellow face paint and expressive hands"
+  "name": "footer-sea",
+  "by": "Firosnv. Photography",
+  "page": "https://unsplash.com/photos/body-of-water-2H3OUTarBtc",
+  "src_px": "4608x3072",
+  "out_px": "3200x2133",
+  "alt": "Calm dusk water with a single Chinese fishing net silhouetted, Kochi"
  },
  {
-  "name": "h-mask",
-  "by": "Akhil Ramesh",
-  "page": "https://unsplash.com/photos/man-wearing-costume-WhtzmIKQJyI",
-  "src_px": "4000x6000",
-  "out_px": "1400x2100",
-  "alt": "A Kathakali performer in dark costume and crown"
+  "name": "statement-a",
+  "by": "Manoa Angelo",
+  "page": "https://unsplash.com/photos/people-walking-by-munnar-tea-plantation-QcTIMyLWor0",
+  "src_px": "7728x5152",
+  "out_px": "2880x1920",
+  "alt": "Tea pickers at work on a hillside tea plantation near Munnar"
  },
  {
-  "name": "h-green-face",
-  "by": "Gowtham AGM",
-  "page": "https://unsplash.com/photos/performer-in-elaborate-costume-and-makeup-holds-a-dagger-Uz20DunByNA",
-  "src_px": "3000x4500",
-  "out_px": "1400x2100",
-  "alt": "A performer in a bright festival costume and mask"
- },
- {
-  "name": "h-lamp-woman",
-  "by": "vivek",
-  "page": "https://unsplash.com/photos/a-woman-in-a-sari-holding-a-tray-with-candles-on-it-RFQRV73_KHs",
-  "src_px": "5152x7724",
-  "out_px": "1400x2099",
-  "alt": "A woman holding a lit oil lamp at night"
- },
- {
-  "name": "h-red-face",
-  "by": "Adhitya Sibikumar",
-  "page": "https://unsplash.com/photos/a-colorful-kathakali-mask-and-wooden-elephant-sculpture-8QjgbkHwo8o",
-  "src_px": "3834x5753",
-  "out_px": "1400x2101",
-  "alt": "A Kathakali performer with a red painted face"
- },
- {
-  "name": "h-ritual",
-  "by": "Ajin K S",
-  "page": "https://unsplash.com/photos/a-group-of-men-standing-around-each-other-4wev6H3JxGc",
-  "src_px": "6658x4439",
-  "out_px": "2000x1333",
-  "alt": "Men in a temple ritual by lamplight"
- },
- {
-  "name": "h-street",
-  "by": "ABHIRAM PH",
-  "page": "https://unsplash.com/photos/narrow-street-with-old-buildings-and-shops-zIHEY2GPOdQ",
-  "src_px": "6192x4128",
-  "out_px": "2000x1333",
-  "alt": "Heritage houses on a Fort Kochi street"
+  "name": "statement-b",
+  "by": "Varun Nambiar",
+  "page": "https://unsplash.com/photos/brown-wooden-boat-on-body-of-water-near-palm-trees-during-daytime-CTZWQHyUaqM",
+  "src_px": "6000x3759",
+  "out_px": "2880x1804",
+  "alt": "A wooden boat on calm backwater among palm trees at dawn"
  }
 ]

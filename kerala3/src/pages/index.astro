@@ -144,14 +144,8 @@ const ordered = ['January','February','March','April','May','June','July','Augus
       </section>
 
       <!-- 5 DARK: THE HEART -->
-      <section class="heart" id="heart" data-tone="dark">
+      <section class="heart" id="heart" data-tone="light">
         <div class="heart-pin">
-          <div class="canopy-track" aria-hidden="true">
-            <img src={img('canopy')} alt="" loading="lazy" /><img src={img('canopy-b')} alt="" loading="lazy" />
-          </div>
-          <canvas class="heart-mist" id="heart-mist" aria-hidden="true"></canvas>
-          <img class="tree tl" src={leaf('leaf-tree-left')} alt="" aria-hidden="true" />
-          <img class="tree tr" src={leaf('leaf-tree-right')} alt="" aria-hidden="true" />
           <div class="drift" aria-hidden="true">
             {[0, 1, 2].map((l) => (
               <div class={`dl dl${l}`}>
@@ -159,13 +153,14 @@ const ordered = ['January','February','March','April','May','June','July','Augus
               </div>
             ))}
           </div>
-          <img class="vine" src={leaf('leaf-vine')} alt="" aria-hidden="true" />
           <h2 class="heart-title" id="heart-title">{site.heart.pre} <i>{site.heart.accent}</i></h2>
           <div class="heart-text">
             <p>{site.heart.text}</p>
-            <a class="btn light" href={site.officialUrl}>{site.heart.cta}</a>
+            <a class="btn" href={site.officialUrl}>{site.heart.cta}</a>
           </div>
-          <img class="fern" src={leaf('leaf-fern')} alt="" aria-hidden="true" />
+          <img class="hf fa" src={leaf('leaf-banana-a')} alt="" aria-hidden="true" />
+          <img class="hf fb" src={leaf('leaf-palm-top')} alt="" aria-hidden="true" />
+          <img class="hf fc" src={leaf('leaf-fern')} alt="" aria-hidden="true" />
         </div>
       </section>
 
