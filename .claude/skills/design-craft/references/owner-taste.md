@@ -25,3 +25,16 @@ Serif versus grotesk, dark versus light (approved sites go both ways), which acc
 
 ## How the owner judges
 In one look at a finished page: does it have character, does any section feel plain or repeated, are the colours and type coherent, did it actually use the reference, do the banned devices appear. Counts and audits do not matter to them; feeling does.
+
+## Calibration on motionsites.ai previews (owner's own reactions, 2026-11-04)
+24 public previews, rated love, fine or no. Names are the gallery's titles.
+- **Love (10 of 22 distinct):** Frostbound (a glacier film), Pirate Ship (an illustrated ship on drawn waves), yondering (a painterly Greek island), Glass Tree (a living tree object), Flower Valley (a dark floral valley with big type, loved twice), Sun Timeline (a sun on a timeline), Spider Web, Solar Fog (a lit house at dusk in fog where the cursor changes the scene), Grid Runner (a masked character hero you draw to reveal), Pink Rider (a portrait with huge type behind it and cursor dots).
+- **Fine:** Mars Trips, Tana Elephant, Places Organizer (an app mock-up), Robot Jellyfish, Orbit Sphere (a painted night city, rated fine twice), Stridr, Halo Prism, Video Ribbon, Halftone FAQ.
+- **No:** Facet Glass and Lumora (abstract glass and light shapes with no subject).
+
+**Reading (inferred, to be corrected by the owner):**
+1. The owner loves a hero that feels like a **real place or a living subject** (a coast, a glacier, a tree, a valley, a ship, a sun, a house at dusk), often painterly or natural, with a point of view.
+2. They also love heroes where the **cursor or scroll changes the scene** (fog that clears, a mask you draw to reveal, dots that follow the cursor over a portrait, type behind a person). Interaction that transforms the first screen scores higher than a beautiful static film.
+3. Abstract glass, blobs and light shapes with no subject get a no. Glass inside a real scene is fine.
+4. App mock-ups, planets, product-spec pages and plain type-led heroes are only fine.
+So a hero should be a scene or a living subject rooted in the client's subject, and something in it should respond to the visitor.
