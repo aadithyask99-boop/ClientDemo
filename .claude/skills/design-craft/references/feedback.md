@@ -193,3 +193,4 @@ Owner: the key is that a new chat must be able to think critically like this one
 
 ## Calibration revised my glass assumption (2026-11-04)
 I had assumed glass UI was in the owner's taste. In the calibration the owner said no to Facet Glass and Lumora (abstract glass and light shapes with no subject) and loved scenes and living objects (glacier, painterly island, tree, valley, ship, sun). Glass is fine only as a small piece inside a real scene.
+Correction after sheet 3: the owner also loved Solar Fog, Grid Runner, Pink Rider and Flower Valley (heroes the cursor changes or reveals), so interaction that transforms the first screen is a strong like.
