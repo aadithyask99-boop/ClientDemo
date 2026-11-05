@@ -25,14 +25,16 @@ export const site = {
       { img: 'hero-mist', label: 'December, mist', weather: 'mist' },
     ],
   },
-  // Hero 4: a film of places. Each scene takes public/video/scene-N.mp4 when it exists, otherwise the photograph.
+  // Hero 4 replicates the owner's reference (Costa Serenade): a film of places. Each scene plays public/video/scene-N.mp4 when it exists,
+  // otherwise its photograph. Title lines, tone (the ink colour that reads on that footage), and either a small paragraph or a tagline.
   scenes: [
-    { img: 'hero-onam', title: "GOD'S OWN COUNTRY", ml: 'ദൈവത്തിന്റെ സ്വന്തം നാട്', line: 'Where the mountains meet the sea.' },
-    { img: 'fan-alappuzha', title: 'ALAPPUZHA', ml: 'ആലപ്പുഴ', line: 'Slow water and long mornings.' },
-    { img: 'fan-munnar', title: 'MUNNAR', ml: 'മൂന്നാർ', line: 'Tea hills above the clouds.' },
-    { img: 'fan-athirappilly', title: 'ATHIRAPPILLY', ml: 'അതിരപ്പിള്ളി', line: 'The falls at full strength.' },
-    { img: 'fan-varkala', title: 'VARKALA', ml: 'വർക്കല', line: 'Red cliffs above the sea.' },
-    { img: 'fan-kochi', title: 'KOCHI', ml: 'കൊച്ചി', line: 'Old nets and older harbours.' },
+    { img: 'hero-mist', tone: 'dark', title: ["GOD'S OWN", 'COUNTRY'], ml: ['ദൈവത്തിന്റെ', 'സ്വന്തം നാട്'],
+      p: 'We row the backwaters before the first houseboat wakes. Four crossings, still green water, ourselves, and nobody out here until the fishing canoes come off the Kuttanad shore.' },
+    { img: 'fan-alappuzha', tone: 'dark', title: ['ENTER THE', 'BACKWATERS'], line: 'FOUR HOURS ON THE WATER. FROM FIRST LIGHT TO LAST LAMP.' },
+    { img: 'fan-munnar', tone: 'dark', title: ['ABOVE THE', 'CLOUDS'], line: 'TEA HILLS, MIST AND A MORNING THAT STARTS AT FIVE.' },
+    { img: 'fan-athirappilly', tone: 'light', title: ['FOLLOW THE', 'RIVER DOWN'], line: 'FORTY-FOUR RIVERS RUN WEST. THIS IS WHERE ONE FALLS.' },
+    { img: 'fan-varkala', tone: 'dark', title: ['CLIFF', 'AND SEA'], line: 'RED CLIFFS, A QUIET BEACH, THE LAST LIGHT OF THE DAY.' },
+    { img: 'fan-kochi', tone: 'dark', title: ['WHERE THE NETS', 'STILL FALL'], line: 'OLD HARBOURS, SPICE LANES AND THE EVENING TIDE.' },
   ],
   statement: {
     text: 'A green strip between the Western Ghats and the Arabian Sea, with 44 rivers, spice forests and a festival in every month. Come for the landscape, stay for the people.',

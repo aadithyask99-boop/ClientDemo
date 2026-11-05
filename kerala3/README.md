@@ -11,7 +11,7 @@ A concept homepage for Kerala Tourism (keralatourism.org). Not the official site
 1. **Three seasons:** stills cycle monsoon, Onam, December mist, with soft rain or mist and cut-out foliage that drifts with the cursor.
 2. **Rain on the glass:** a misted window over a backwater; the cursor wipes it clear, rain runs trails, it clouds over again.
 3. **Through the leaves:** layered foliage; scrolling carries the camera through into the backwater.
-4. **A film of places** (from the owner's Costa Serenade reference): six scenes, each with its place name that scrambles into Malayalam letters and back, a slanted slice wipe between scenes, an opening zoom-blur that clears, and a word-by-word tagline. Each scene plays `public/video/scene-N.mp4` when that file exists and otherwise shows its photograph, so footage can be dropped in without code. Malayalam words need a native check.
+4. **A film of places, replicating the owner's Costa Serenade reference:** bold dark grotesk title top-left that starts large and settles; a small second-script row under it (Malayalam, in place of katakana) that fades out; a top bar with a live local-time block, four nav links and a small call to action; a small paragraph, (c)2026 and SCROLL DOWN; an opening zoom-blur that clears; between cuts only single letters glitch (to Malayalam letters); at each cut a slanted slice carries the next place in, the title scrambles into the next one and a tagline reveals word by word. Each scene plays `public/video/scene-N.mp4` when that file exists, otherwise its photograph. Malayalam words need a native check.
 The review pill and the unused heroes are removed once the owner chooses.
 
 ## Easter eggs

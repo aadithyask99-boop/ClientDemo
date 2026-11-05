@@ -176,66 +176,71 @@ if (hero === '1') {
 
 if (hero === '4') initScenes();
 function initScenes() {
-  const data = site.scenes;
+  const data = site.scenes as any[];
   const layers = $$('.scn');
-  const titleEl = $('#h4-title'), lineEl = $('#h4-line'), zoom = $('.zoomblur');
+  const cs = $('#cs'), head = $('.cs-head'), titleEl = $('#h4-title'), mlEl = $('#cs-ml'), pEl = $('#cs-p'), lineEl = $('#h4-line'), zoom = $('.zoomblur');
   const segmenter = new Intl.Segmenter('ml', { granularity: 'grapheme' });
   const graphemes = (t: string) => Array.from(segmenter.segment(t), (x) => x.segment);
   const ML = Array.from('കഖഗഘചജടഠഡതദധനപഫബഭമയരലവശഷസഹളഴറ');
-  const LAT = Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
   const rnd = (a: string[]) => a[Math.floor(Math.random() * a.length)];
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
   const visible = onScreen(heroEl);
-  const whenVisible = async () => { while (!visible() || document.hidden) await sleep(400); };
-  const setLine = (t: string) => { lineEl.innerHTML = t.split(' ').map((w) => `<span class="w">${w}</span>`).join(' '); };
-  const revealLine = () => { $$('.w', lineEl).forEach((w, i) => setTimeout(() => w.classList.add('on'), 250 + i * 160)); };
-  const paint = (chars: string[]) => {
-    let html = '', word = '';
-    for (const c of chars) {
-      if (c === ' ') { html += `<span class="wd">${word}</span> `; word = ''; }
-      else word += `<span class="g">${c}</span>`;
-    }
-    titleEl.innerHTML = html + `<span class="wd">${word}</span>`;
-  };
-  let current = graphemes(data[0].title);
-  paint(current);
-  setLine(data[0].line);
-  if (reduced) { revealLine(); return; }
+  const whenVisible = async () => { while (!visible() || document.hidden) await sleep(300); };
 
-  // resolve into a new text from a scramble, letter by letter
-  const scramble = (to: string, ml: boolean, dur = 950) => new Promise<void>((done) => {
-    const target = graphemes(to);
-    const start = performance.now();
-    const at = target.map((_, i) => (i / target.length) * dur * 0.75 + Math.random() * dur * 0.25);
-    titleEl.classList.toggle('ml', ml);
-    const id = setInterval(() => {
-      const t = performance.now() - start;
-      const out = target.map((c, i) => (c === ' ' ? ' ' : t >= at[i] ? c : rnd(Math.random() < 0.5 ? ML : LAT)));
-      paint(out);
-      if (t >= dur) { clearInterval(id); paint(target); current = target; done(); }
-    }, 45);
-  });
-  // now and then one letter flips to a Malayalam letter for a blink
+  // live local time, as in the reference
+  const clock = $('#cs-time');
+  const tick = () => { clock.textContent = '[ ' + new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true }).format(new Date()) + ' ]'; };
+  tick(); setInterval(tick, 20000);
+
+  // the title is two lines of single letters, so single letters can glitch
+  const paint = (lines: string[][]) => { titleEl.innerHTML = lines.map((ln) => `<span class="ln">${ln.map((c) => `<span class="g">${c === ' ' ? '&nbsp;' : c}</span>`).join('')}</span>`).join(''); };
+  let current = data[0].title.map((t: string) => graphemes(t));
+  paint(current);
+  const setLine = (t: string) => { lineEl.innerHTML = t.split(' ').map((w) => `<span class="w">${w}</span>`).join(' '); };
+  const revealLine = () => { $$('.w', lineEl).forEach((w, i) => setTimeout(() => w.classList.add('on'), 200 + i * 130)); };
+  const setTone = (t: string) => { cs.dataset.tone = t; };
+  setTone(data[0].tone);
+  lineEl.style.opacity = '0';
+  if (reduced) return;
+
+  // between cuts only single letters glitch: one letter flips to a Malayalam letter for a blink
   setInterval(() => {
     if (!visible() || titleEl.dataset.busy) return;
-    const i = Math.floor(Math.random() * current.length);
-    if (current[i] === ' ' || titleEl.classList.contains('ml')) return;
-    const spans = $$('.g', titleEl);
-    if (!spans[i]) return;
-    const keep = spans[i].textContent;
-    spans[i].textContent = rnd(ML);
-    setTimeout(() => { if (spans[i]) spans[i].textContent = keep; }, 110);
-  }, 900);
+    const spans = $$('.g', titleEl).filter((s) => s.textContent && s.textContent.trim() && s.textContent !== ' ');
+    if (!spans.length) return;
+    const n = Math.random() < 0.3 ? 2 : 1;
+    for (let k = 0; k < n; k++) {
+      const el = spans[Math.floor(Math.random() * spans.length)];
+      const keep = el.textContent;
+      el.textContent = rnd(ML);
+      setTimeout(() => { el.textContent = keep; }, 90 + Math.random() * 90);
+    }
+  }, 620);
+
+  // at a cut the whole title scrambles and resolves into the next one
+  const scramble = (to: string[], dur = 700) => new Promise<void>((done) => {
+    const target = to.map((t) => graphemes(t));
+    const flat = target.flat().length;
+    const start = performance.now();
+    const at = target.map((ln, li) => ln.map((_, i) => ((li * 0.5 * target[0].length + i) / flat) * dur * 0.7 + Math.random() * dur * 0.3));
+    titleEl.dataset.busy = '1';
+    const id = setInterval(() => {
+      const t = performance.now() - start;
+      paint(target.map((ln, li) => ln.map((c, i) => (c === ' ' ? ' ' : t >= at[li][i] ? c : rnd(Math.random() < 0.55 ? ML : Array.from('ABCDEFGHIKLNORSTUY'))))));
+      if (t >= dur) { clearInterval(id); paint(target); current = target; delete titleEl.dataset.busy; done(); }
+    }, 42);
+  });
 
   const vids = layers.map((l) => l.querySelector('video') as HTMLVideoElement | null);
-  const play = (i: number) => { vids.forEach((v, k) => { if (!v) return; if (k === i) v.play().catch(() => {}); else if (k !== i) v.pause(); }); };
+  const play = (i: number) => { vids.forEach((v, k) => { if (!v) return; if (k === i) v.play().catch(() => {}); else v.pause(); }); };
   play(0);
 
-  // opening: the rush through the blossoms becomes a clear view; the title starts large and settles
-  gsap.fromTo(zoom, { opacity: 1, scale: 1.12 }, { opacity: 0, scale: 1, duration: 2.8, ease: 'power2.out' });
-  gsap.fromTo(layers[0].firstElementChild, { scale: 1.22 }, { scale: 1, duration: 3.2, ease: 'power2.out' });
-  gsap.fromTo(titleEl, { scale: 1.45 }, { scale: 1, duration: 2.6, ease: 'power3.inOut', delay: 0.3 });
-  revealLine();
+  // opening: a rush of zoom-blur clears to the view; the title starts large and settles smaller; the second-script row goes
+  gsap.fromTo(zoom, { opacity: 1, scale: 1.1 }, { opacity: 0, scale: 1, duration: 3, ease: 'power2.out' });
+  gsap.fromTo(layers[0].firstElementChild, { scale: 1.25 }, { scale: 1, duration: 3.4, ease: 'power2.out' });
+  gsap.fromTo(head, { scale: 1.38 }, { scale: 1, duration: 2.7, ease: 'power3.inOut', delay: 0.15 });
+  gsap.to(mlEl, { opacity: 0, duration: 0.8, delay: 2.2 });
+  gsap.fromTo(pEl, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 1.2, delay: 1.4 });
 
   const wipe = (from: number, to: number) => new Promise<void>((done) => {
     const next = layers[to];
@@ -251,24 +256,21 @@ function initScenes() {
 
   (async () => {
     let i = 0;
-    await sleep(2600);
+    await sleep(5400);
     for (;;) {
-      await whenVisible();
-      await scramble(data[i].ml, true);       // the place in Malayalam
-      await sleep(2300);
       await whenVisible();
       const n = (i + 1) % data.length;
       play(n);
-      const w = wipe(i, n);                    // the slanted slice carries the next place in
-      lineEl.querySelectorAll('.w').forEach((x) => x.classList.remove('on'));
-      await sleep(250);
-      titleEl.dataset.busy = '1';
-      await scramble(data[n].title, false, 1000);
-      delete titleEl.dataset.busy;
-      setLine(data[n].line); revealLine();
+      gsap.to(pEl, { opacity: 0, duration: 0.4 });
+      gsap.to(lineEl, { opacity: 0, duration: 0.3 });
+      const w = wipe(i, n);
+      await sleep(260);
+      setTone(data[n].tone);
+      await scramble(data[n].title, 700);
+      setLine(data[n].line || ''); lineEl.style.opacity = '1'; revealLine();
       await w;
       i = n;
-      await sleep(2300);
+      await sleep(4800);
     }
   })();
 }
