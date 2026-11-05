@@ -180,30 +180,20 @@ const ordered = ['January','February','March','April','May','June','July','Augus
       <!-- 5 DARK: THE HEART -->
       <section class="heart" id="heart" data-tone="light">
         <div class="heart-pin">
-          <div class="drift" aria-hidden="true">
-            {[0, 1, 2].map((l) => (
-              <div class={`dl dl${l}`}>
-                {site.heart.drift.filter((d) => d.l === l).map((d) => <img src={img(d.img)} alt="" loading="lazy" style={`left:${d.x}vw;top:${d.y}%;width:${d.w}vw`} />)}
-              </div>
-            ))}
-          </div>
+          <div class="heart-film"><video data-src={`${base}video/heart.mp4`} poster={img('heart-poster')} muted playsinline preload="none" aria-label="A helmsman steering a backwater boat"></video></div>
           <h2 class="heart-title" id="heart-title">{site.heart.pre} <i>{site.heart.accent}</i></h2>
           <div class="heart-text">
             <p>{site.heart.text}</p>
             <a class="btn" href={site.officialUrl}>{site.heart.cta}</a>
           </div>
-          <img class="hf fa" src={leaf('leaf-banana-a')} alt="" aria-hidden="true" />
-          <img class="hf fb" src={leaf('leaf-palm-top')} alt="" aria-hidden="true" />
-          <img class="hf fc" src={leaf('leaf-fern')} alt="" aria-hidden="true" />
         </div>
       </section>
 
       <!-- 6 WATER -->
-      <section class="water" id="water" data-tone="dark">
+      <section class="water" id="water" data-tone="light">
         <div class="water-pin">
           <div class="water-frame">
-            <img src={img(site.water.img)} alt={alt(site.water.img)} loading="lazy" />
-            <canvas class="mist" id="mist" aria-hidden="true"></canvas>
+            <video data-src={`${base}video/water.mp4`} poster={img('water-poster')} muted playsinline preload="none" aria-label="Athirappilly waterfall in the monsoon"></video>
           </div>
           <div class="water-copy">
             <h2>{site.water.line}</h2>
@@ -216,10 +206,11 @@ const ordered = ['January','February','March','April','May','June','July','Augus
       <section class="stories" id="stories" data-tone="light">
         <h2 class="stories-title" data-split>{site.stories.pre} <i>{site.stories.accent}</i></h2>
         <p class="stories-text" data-fade>{site.stories.text}</p>
-        <div class="stories-row">
+        <div class="rail-ctl"><button type="button" class="rail-btn" data-rail="stories" data-dir="-1" aria-label="Previous story">&larr;</button><button type="button" class="rail-btn" data-rail="stories" data-dir="1" aria-label="Next story">&rarr;</button></div>
+        <div class="stories-row rail" id="stories-row" tabindex="0" aria-label="Stories">
           {site.stories.items.map((s, i) => (
             <figure class={`story s${i}`}>
-              <div class="story-img"><img src={img(s.img)} alt={alt(s.img)} loading="lazy" /></div>
+              <div class="story-img"><video data-src={`${base}video/story-${i + 1}.mp4`} poster={img(`story-${i + 1}-poster`)} muted loop playsinline preload="none" aria-label={s.title}></video></div>
               <figcaption><b>{s.title}</b> {s.line}</figcaption>
             </figure>
           ))}
@@ -242,14 +233,16 @@ const ordered = ['January','February','March','April','May','June','July','Augus
       <!-- 9 STAYS AND AWAY FROM THE PATH -->
       <section class="stays" id="stays" data-tone="light">
         <h2 class="stays-title" data-split>{site.stays.title}</h2>
-        <div class="car" id="car">
+        <div class="rail-ctl rail-ctl--stays"><span class="rail-count" id="stays-count">01 / 0{site.stays.items.length}</span><button type="button" class="rail-btn" data-rail="stays" data-dir="-1" aria-label="Previous stay">&larr;</button><button type="button" class="rail-btn" data-rail="stays" data-dir="1" aria-label="Next stay">&rarr;</button></div>
+        <div class="car rail" id="car" tabindex="0" aria-label="Stays">
           {site.stays.items.map((s, i) => (
-            <figure class={`slide ${i === 1 ? 'c' : ''}`} data-i={i}>
-              <img src={img(s.img)} alt={alt(s.img)} loading="lazy" />
-              <figcaption><b>{s.name}</b> {s.place}</figcaption>
+            <figure class="slide" data-i={i}>
+              <div class="slide-img"><img src={img(s.img)} alt={alt(s.img)} loading="lazy" draggable="false" /></div>
+              <figcaption><b>{s.name}</b> <span>{s.place}</span></figcaption>
             </figure>
           ))}
         </div>
+        <div class="rail-bar" aria-hidden="true"><i id="stays-bar"></i></div>
         <div class="away">
           <img src={img(site.stays.away.img)} alt={alt(site.stays.away.img)} loading="lazy" />
           <div class="away-copy">
@@ -270,9 +263,7 @@ const ordered = ['January','February','March','April','May','June','July','Augus
       </section>
     </main>
 
-    <footer class="foot" id="foot" data-tone="dark">
-      <img class="tree tl" src={leaf('leaf-bamboo')} alt="" aria-hidden="true" />
-      <img class="tree tr" src={leaf('leaf-areca')} alt="" aria-hidden="true" />
+    <footer class="foot" id="foot" data-tone="light">
       <form class="news" onsubmit="return false">
         <label for="mail">{site.footer.news}</label>
         <input id="mail" type="email" placeholder="Email address" />
@@ -281,6 +272,7 @@ const ordered = ['January','February','March','April','May','June','July','Augus
         {site.footer.cols.map((c) => <div><h3>{c.h}</h3>{c.l.map((l) => <a href={site.officialUrl}>{l}</a>)}</div>)}
       </div>
       <button class="bigword" id="bigword" type="button" aria-label="Keralam">{site.footer.word}</button>
+      <div class="foot-film"><video data-src={`${base}video/foot.mp4`} poster={img('foot-poster')} muted playsinline preload="none" aria-label="A houseboat gliding across the backwaters"></video></div>
       <p class="fine">A concept homepage, not the official site. <a href={`${base}credits/`}>Photo credits</a>. Figures and dates are illustrative and must be confirmed by Kerala Tourism.</p>
     </footer>
 

@@ -681,32 +681,24 @@ if (pinned && !reduced) {
   const title = $('#heart-title');
   const tl = gsap.timeline({ scrollTrigger: { trigger: '.heart-pin', start: 'top top', end: () => `+=${innerHeight * 1.8}`, pin: true, scrub: 0.6, invalidateOnRefresh: true } });
   tl.fromTo(title, { x: () => innerWidth * 0.04 }, { x: () => -(title.scrollWidth - innerWidth * 0.82), ease: 'none', duration: 1 }, 0);
-  const dist = [155, 235, 330];
-  $$('.dl').forEach((el, l) => tl.fromTo(el, { x: 0 }, { x: () => -innerWidth * (dist[l] / 100), ease: 'none', duration: 1 }, 0));
-  $$('.dl img').forEach((im, i) => tl.fromTo(im, { yPercent: 8 + (i % 3) * 5, rotation: i % 2 ? 2.5 : -2.5 }, { yPercent: -10 - (i % 3) * 6, rotation: i % 2 ? -1.5 : 1.5, ease: 'none', duration: 1 }, 0));
-  tl.fromTo('.fa', { x: -60, y: 40 }, { x: 40, y: -20, ease: 'none', duration: 1 }, 0);
-  tl.fromTo('.fb', { x: 60, y: -20 }, { x: -50, y: 30, ease: 'none', duration: 1 }, 0);
-  tl.fromTo('.fc', { y: 70 }, { y: -20, ease: 'none', duration: 1 }, 0);
+  tl.fromTo('.heart-film', { yPercent: 14 }, { yPercent: -10, ease: 'none', duration: 1 }, 0);
   tl.fromTo('.heart-text', { opacity: 0, y: 60 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.3 }, 0.55);
 }
 
 /* ---------- WATER (frame grows to full bleed) ---------- */
 if (pinned && !reduced) {
-  weather($('#mist') as HTMLCanvasElement, () => 'mist', onScreen($('.water-pin')));
   const tl = gsap.timeline({ scrollTrigger: { trigger: '.water-pin', start: 'top top', end: () => `+=${innerHeight * 1.2}`, pin: true, scrub: 0.6, invalidateOnRefresh: true } });
-  tl.fromTo('.water-frame', { clipPath: 'inset(15vh 14vw 15vh 14vw)' }, { clipPath: 'inset(0vh 0vw 0vh 0vw)', ease: 'none', duration: 0.6 }, 0);
-  tl.fromTo('.water-frame img', { scale: 1.2 }, { scale: 1, ease: 'none', duration: 1 }, 0);
+  tl.fromTo('.water-frame', { clipPath: 'inset(14vh 33vw 22vh 33vw)' }, { clipPath: 'inset(7vh 5vw 26vh 5vw)', ease: 'none', duration: 0.6 }, 0);
+  tl.fromTo('.water-frame video', { scale: 1.25 }, { scale: 1, ease: 'none', duration: 1 }, 0);
   tl.fromTo('.water-copy h2', { opacity: 0, y: 70 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.35 }, 0.4);
   tl.fromTo('.water-copy p', { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.3 }, 0.6);
 } else if (!reduced) {
-  gsap.from('.water-frame img', { scale: 1.15, ease: 'none', scrollTrigger: { trigger: '.water-frame', start: 'top bottom', end: 'bottom top', scrub: true } });
 }
 
 /* ---------- STORIES, TRIPS, STAYS ---------- */
 if (!reduced) {
   $$('.story').forEach((f, i) => {
-    gsap.from(f, { opacity: 0, y: 90, duration: 1.4, ease: 'power3.out', scrollTrigger: { trigger: f, start: 'top 90%' } });
-    gsap.fromTo($('img', f), { yPercent: -6, scale: 1.12 }, { yPercent: 6, scale: 1.12, ease: 'none', scrollTrigger: { trigger: f, start: 'top bottom', end: 'bottom top', scrub: true } });
+    gsap.from(f, { opacity: 0, y: 90, duration: 1.4, ease: 'power3.out', scrollTrigger: { trigger: f, start: 'top 95%' } });
     void i;
   });
   gsap.from('.tile', { opacity: 0, y: 70, duration: 1.2, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: '.mosaic', start: 'top 82%' } });
@@ -715,20 +707,43 @@ if (!reduced) {
   gsap.fromTo('.cta-sea', { scale: 1.2 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '#cta', start: 'top bottom', end: 'bottom top', scrub: true } });
   gsap.from('.cta-copy p, .cta-copy .btn', { opacity: 0, y: 30, duration: 1, stagger: 0.12, scrollTrigger: { trigger: '.cta-copy', start: 'top 75%' } });
 }
-// centred carousel: the nearest slide to the middle grows
-const car = $('#car'); const slides = $$('.slide');
-if (car) {
-  const upd = () => {
-    const cx = car.getBoundingClientRect().left + car.clientWidth / 2;
-    slides.forEach((s) => { const r = s.getBoundingClientRect(); const d = Math.min(1, Math.abs(r.left + r.width / 2 - cx) / (r.width * 1.1)); s.style.setProperty('--s', String(1 - d * 0.2)); s.style.setProperty('--o', String(1 - d * 0.35)); });
+// rails: stories and stays scroll sideways by drag, swipe, keys and the arrow buttons
+const rails: Record<string, HTMLElement> = { stories: $('#stories-row'), stays: $('#car') };
+Object.entries(rails).forEach(([name, el]) => {
+  if (!el) return;
+  const btns = $$(`.rail-btn[data-rail="${name}"]`);
+  const step = () => { const c = el.firstElementChild as HTMLElement; return c ? c.getBoundingClientRect().width + parseFloat(getComputedStyle(el).columnGap || '20') : 300; };
+  const sync = () => {
+    const max = el.scrollWidth - el.clientWidth;
+    btns.forEach((b) => ((b as HTMLButtonElement).disabled = (b.dataset.dir === '-1' && el.scrollLeft < 4) || (b.dataset.dir === '1' && el.scrollLeft > max - 4)));
+    if (name === 'stays') {
+      const n = el.children.length, i = Math.min(n - 1, Math.round(el.scrollLeft / step()));
+      const c = $('#stays-count'); if (c) c.textContent = `0${i + 1} / 0${n}`;
+      const bar = $('#stays-bar'); if (bar) bar.style.width = `${100 / n + (max > 0 ? (el.scrollLeft / max) * (100 - 100 / n) : 0)}%`;
+    }
   };
-  car.addEventListener('scroll', upd, { passive: true }); addEventListener('resize', upd);
-  requestAnimationFrame(() => { car.scrollLeft = (car.scrollWidth - car.clientWidth) / 2; upd(); });
-  // drag to scroll with a mouse
-  let down = false, sx = 0, sl = 0;
-  car.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') return; down = true; sx = e.clientX; sl = car.scrollLeft; car.style.scrollSnapType = 'none'; });
-  addEventListener('pointerup', () => { if (!down) return; down = false; car.style.scrollSnapType = ''; });
-  addEventListener('pointermove', (e) => { if (down) car.scrollLeft = sl - (e.clientX - sx); });
+  btns.forEach((b) => b.addEventListener('click', () => el.scrollBy({ left: Number(b.dataset.dir) * step(), behavior: 'smooth' })));
+  el.addEventListener('scroll', sync, { passive: true }); addEventListener('resize', sync); sync();
+  el.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') el.scrollBy({ left: step(), behavior: 'smooth' }); if (e.key === 'ArrowLeft') el.scrollBy({ left: -step(), behavior: 'smooth' }); });
+  // drag with a mouse (touch already scrolls natively)
+  let down = false, moved = 0, sx = 0, sl = 0;
+  el.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') return; down = true; moved = 0; sx = e.clientX; sl = el.scrollLeft; });
+  addEventListener('pointermove', (e) => { if (!down) return; const dx = e.clientX - sx; moved = Math.max(moved, Math.abs(dx)); if (moved > 4) el.classList.add('drag'); el.scrollLeft = sl - dx; });
+  addEventListener('pointerup', () => { if (!down) return; down = false; el.classList.remove('drag'); });
+});
+
+// films load when they are close and play only while on screen
+{
+  const vids = $$('.heart-film video, .water-frame video, .story-img video, .foot-film video') as HTMLVideoElement[];
+  const small = innerWidth <= 820;
+  const io = new IntersectionObserver((es) => es.forEach((en) => {
+    const v = en.target as HTMLVideoElement;
+    if (en.isIntersecting) {
+      if (!v.src && v.dataset.src && !(small && v.closest('.water-frame, .foot-film'))) { v.src = v.dataset.src; v.load(); }
+      if (v.src && !reduced) v.play().catch(() => {});
+    } else v.pause();
+  }), { rootMargin: '200px 0px', threshold: 0.01 });
+  vids.forEach((v) => io.observe(v));
 }
 
 /* ---------- FOOTER word, and easter eggs ---------- */
