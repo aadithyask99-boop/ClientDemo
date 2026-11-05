@@ -70,10 +70,51 @@ export const site = {
     July: 'Deep monsoon. Rivers run high, beaches are empty and everything is green. Slow days and long treatments.',
     August: 'The rains ease. Onam, the harvest festival, begins in late August or September, with flower carpets and feasts.',
     September: 'Onam: pookalam flower carpets, a banana-leaf feast called sadya, and snake-boat races on the backwaters.',
-    October: 'A last lighter rain, then clear air. The Theyyam season begins in the north, with fire and costume at village shrines.',
-    November: 'The season opens. Cool evenings, clear skies, Theyyam in full swing and houseboats at their best.',
+    October: 'A last lighter rain, then clear air. The Theyyam season begins in the north, with fire and costume at village shrines, and the festival nights start to light up.',
+    November: 'The season opens. Beemapally Uroos begins on 11 November, Kalpathi Ratholsavam on 14 November and Guruvayur Ekadasi falls on 21 November, with Theyyam in full swing and cool, clear evenings.',
     December: 'Cool, dry and misty in the hills. The beaches fill, and Christmas is celebrated across the state.',
   } as Record<string, string>,
+  wall: {
+    title: 'Five more places to lose a day',
+    items: [
+      { img: 'wall-bekal', name: 'BEKAL', months: 'Best from October to March', line: 'A laterite fort above the northern sea.' },
+      { img: 'wall-kumarakom', name: 'KUMARAKOM', months: 'Best from November to February', line: 'Houseboats on the lake at Vembanad.' },
+      { img: 'wall-thattekkad', name: 'THATTEKKAD', months: 'Best from November to March', line: 'The bird sanctuary, hornbills in the canopy.' },
+      { img: 'wall-kovalam', name: 'KOVALAM', months: 'Best from November to March', line: 'A lighthouse on a green headland.' },
+      { img: 'wall-kavvayi', name: 'KAVVAYI', months: 'Best from October to March', line: 'Still backwaters and a wall of palms.' },
+    ],
+  },
+  brochure: {
+    title: 'The guide to Wayanad, open on your table',
+    text: 'Paddy fields, misty hills and old forest. The official e-brochure is a free download.',
+    button: 'Download the Wayanad guide',
+    pages: [
+      { img: 'fan-wayanad', name: 'WAYANAD', line: 'Paddy fields, misty hills and old forest.' },
+      { img: 'hero-monsoon', name: 'MUNNAR', line: 'Tea terraces above the clouds.' },
+      { img: 'glass-backwater', name: 'BACKWATERS', line: 'Dawn on the water, before the village wakes.' },
+    ],
+  },
+  films: {
+    title: 'Five films from Keralam',
+    // Placeholder footage: the hero and story clips, to be replaced with dedicated films.
+    items: [
+      { title: 'The night the god walks', src: 'scene-1', poster: 'scene-1-poster' },
+      { title: 'Snake boats on the Punnamada', src: 'scene-2', poster: 'scene-2-poster' },
+      { title: 'Eight hours to a face', src: 'story-1', poster: 'story-1-poster' },
+      { title: 'Before the clouds come down', src: 'scene-3', poster: 'scene-3-poster' },
+      { title: 'Nets at dusk', src: 'scene-6', poster: 'scene-6-poster' },
+    ],
+    button: 'More films on keralatourism.org',
+  },
+  house: {
+    title: 'Everything you need, in one lit house',
+    items: [
+      { name: 'Where to stay', line: 'Yathri Nivas and eco lodges, with online reservation.', x: 20, y: 61 },
+      { name: 'Find a tour operator', line: 'Approved operators, and Travel Care if anything goes wrong.', x: 39, y: 60 },
+      { name: 'Tourist information centres', line: 'Ask at any of the centres, in every district.', x: 58, y: 60 },
+      { name: 'Tour guides', line: 'A licensed guide for the hours you cannot plan.', x: 77, y: 61 },
+    ],
+  },
   water: { line: 'Forty-four rivers run west.', sub: 'They are why Keralam is green, and why it moves by boat.' },
   heart: {
     pre: 'The heart of Keralam is its',
@@ -97,7 +138,7 @@ export const site = {
   stories: {
     pre: 'Swap the guidebook for a',
     accent: 'good story',
-    text: 'Keralam is best understood through the people who live it. A Kathakali actor spends hours painting a face. A helmsman has steered the same lake for thirty years. A fisherman lowers his net as the light goes. Spend an evening with them and you will understand the place.',
+    text: 'Keralam is best understood through the people who live it: the temples and Theyyam of the north, the forts of Malabar, the Ayurveda houses where a treatment takes days. A Kathakali actor spends hours painting a face. A helmsman has steered the same lake for thirty years. A fisherman lowers his net as the light goes. Spend an evening with them and you will understand the place.',
     items: [
       { title: 'Kathakali', line: 'Eight hours of face painting, one night of story' },
       { title: 'The evening walk', line: 'A lake at sundown, and the whole village out to see it' },
@@ -128,7 +169,7 @@ export const site = {
       { img: 'carousel-2', name: 'Houseboat', place: 'Alappuzha', text: 'A private houseboat with a cook and a crew. Drift through the canals from first light to the last lamp, and sleep on the water.' },
       { img: 'stay-tea', name: 'Tea estate stay', place: 'Munnar', text: 'A planter\'s bungalow among the tea terraces, cool at night, with walks through the estate before the mist lifts.' },
       { img: 'stay-homestay', name: 'Temple-pond homestay', place: 'Central Keralam', text: 'A tiled-roof family home beside a temple pond. Home cooking, a quiet village and the sound of evening drums.' },
-      { img: 'carousel-3', name: 'Misty hill lodge', place: 'High Range', text: 'A white lodge on a ridge above the tea. Stay for the clear mornings, when the whole valley sits below the clouds.' },
+      { img: 'hero-mist', name: 'Misty hill lodge', place: 'High Range', text: 'A white lodge on a ridge above the tea. Stay for the clear mornings, when the whole valley sits below the clouds.' },
     ],
     away: { title: 'Away from the well-trodden path', text: 'Kuttanad, where rice grows below the sea. Kumarakom at dawn. Wayanad, when nobody else is there.', img: 'path-quiet' },
   },

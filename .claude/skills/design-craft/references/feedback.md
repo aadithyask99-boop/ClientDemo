@@ -287,3 +287,9 @@ I told the owner they had rejected the paper leaflet as a fake device and wrote 
 
 ## I invented a section-count cap (2026-11-05)
 I turned the owner's "looks cluttered, find a fine balance" (EVM) into "the page is about the size of the reference" and then told the kerala3 chat to cut a section to stay near Red Dot's 14. The owner never said that; sections come from the reference and other websites and can always be improved. Reversed to a balance check with no cap. Guard (third time: glass panels, the paper leaflet, the section cap): before I write any rule or instruction for a chat, I must quote the owner's own words behind it in the commit message or the feedback entry, and label anything else "my suggestion" and leave the choice to the owner.
+
+## kerala3: four additions from keralatourism.org (2026-11-05)
+- Owner said repeated sections are a no-go; I audited each proposed section against existing mechanisms and cut or reshaped four of five before building. A pinned scroll-stepped scene (my "Four welcomes") repeated the fan and months; a full-bleed photo with huge type repeated Water; an object that grows to full bleed repeated Water.
+- Built: places wall (scroll drift, depth blur), brochure that opens like pages, framed film with colour spill, lit house (hospitality). Festival dates went into the November step of the months scene; wellness, Malabar and temples into the stories text.
+- Lesson: motionsites and the live capture first, designs in the message, critic three rounds. Wikimedia Commons search results often show signs and roads, so look at every candidate before using it (Bekal and Thattekkad first picks were a road and a signboard).
+- Placeholders: films reuse hero clips; the dusk lane photograph does not exist on Commons, so the lit house is the temple-pond homestay graded to dusk; the Wayanad spread is a tea road with a church.

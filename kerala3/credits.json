@@ -462,5 +462,53 @@
   "src_px": "video",
   "out_px": "1920x1080",
   "alt": ""
+ },
+ {
+  "name": "wall-bekal",
+  "by": "Ajeeshkumar4u (Wikimedia Commons, CC BY-SA 4.0)",
+  "page": "https://commons.wikimedia.org/wiki/File:Bekal_fort12.jpg",
+  "src_px": "5616x3744",
+  "out_px": "2400x1600",
+  "alt": "Bekal Fort, a laterite fort rising above its gardens on the Kasaragod coast"
+ },
+ {
+  "name": "wall-thattekkad",
+  "by": "Drashokk (Wikimedia Commons, CC BY-SA 4.0)",
+  "page": "https://commons.wikimedia.org/wiki/File:Malabar_Grey_Hornbill_at_Thattekad.jpg",
+  "src_px": "3936x2624",
+  "out_px": "2400x1600",
+  "alt": "A Malabar grey hornbill on a branch at Thattekkad"
+ },
+ {
+  "name": "wall-kovalam",
+  "by": "Amitbalani (Wikimedia Commons, CC0)",
+  "page": "https://commons.wikimedia.org/wiki/File:Lighthouse_at_Kovalam_Beach,_Thiruvananthapuram.jpg",
+  "src_px": "4000x3000",
+  "out_px": "3840x2880",
+  "alt": "The red and white lighthouse above Kovalam beach"
+ },
+ {
+  "name": "wall-kavvayi",
+  "by": "Manojk (Wikimedia Commons, CC BY-SA 4.0)",
+  "page": "https://commons.wikimedia.org/wiki/File:Kavvayi_Backwaters,_Payyannur_30.jpg",
+  "src_px": "4080x3072",
+  "out_px": "3840x2891",
+  "alt": "Coconut palms reflected in the still water of Kavvayi backwaters"
+ },
+ {
+  "name": "wall-kumarakom",
+  "by": "Vis M (Wikimedia Commons, CC BY-SA 4.0)",
+  "page": "https://commons.wikimedia.org/wiki/File:A_houseboat_in_Kumarakom.jpg",
+  "src_px": "9280x6944",
+  "out_px": "3840x2873",
+  "alt": "A houseboat among palms on the Kumarakom backwaters"
+ },
+ {
+  "name": "brochure-spread",
+  "by": "Athulvis (Wikimedia Commons, CC BY-SA 4.0)",
+  "page": "https://commons.wikimedia.org/wiki/File:Achoor_Tea_Estate_Wayanad_05.jpg",
+  "src_px": "4000x3000",
+  "out_px": "2400x1800",
+  "alt": "A road through tea terraces in Wayanad with a white church tower"
  }
 ]

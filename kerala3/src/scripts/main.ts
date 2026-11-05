@@ -749,6 +749,102 @@ if (car && slides.length) {
   vids.forEach((v) => io.observe(v));
 }
 
+
+/* ---------- PLACES WALL: scroll drifts the layers; the nearest to the centre sharpens ---------- */
+{
+  const items = $$('.wi');
+  const nameEl = $('#wall-name'), subEl = $('#wall-sub');
+  if (items.length && pinned && !reduced) {
+    const speeds = [0.1, -0.22, 0.26, -0.34, 0.2];
+    const stage = $('#wall-stage');
+    let cur = -1;
+    gsap.ticker.add(() => {
+      const r = stage.getBoundingClientRect();
+      if (r.bottom < -200 || r.top > innerHeight + 200) return;
+      const prog = -r.top; // px scrolled through the stage
+      let best = 0, bd = 1e9;
+      items.forEach((it, i) => {
+        const y = -prog * speeds[i] * 0.9;
+        const b = it.getBoundingClientRect();
+        const cy = b.top + b.height / 2 - y * 0 , d = Math.abs(cy - innerHeight / 2) + Math.abs(b.left + b.width / 2 - innerWidth / 2) * 0.35;
+        if (d < bd) { bd = d; best = i; }
+        const k = clamp(d / (innerHeight * 0.9), 0, 1);
+        gsap.set(it, { y, filter: `blur(${(k * 7).toFixed(1)}px) brightness(${(1 - k * 0.45).toFixed(2)})`, scale: 1.04 - k * 0.06 });
+      });
+      if (best !== cur) {
+        cur = best; const d = items[best].dataset;
+        gsap.to([nameEl, subEl], { opacity: 0, y: 12, duration: 0.25, onComplete: () => { nameEl.textContent = d.name || ''; subEl.textContent = `${d.line} ${d.months}.`; gsap.to([nameEl, subEl], { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }); } });
+      }
+    });
+  }
+}
+
+/* ---------- BROCHURE: the cover opens like pages; two more guides slide over the spread ---------- */
+if (pinned && !reduced) {
+  const tl = gsap.timeline({ scrollTrigger: { trigger: '.bro-pin', start: 'top top', end: () => `+=${innerHeight * 2.2}`, pin: true, scrub: 0.6, invalidateOnRefresh: true } });
+  tl.fromTo('.bro-name', { opacity: 1 }, { opacity: 0, ease: 'none', duration: 0.12 }, 0);
+  tl.fromTo('.bc.l', { rotationY: 0 }, { rotationY: -118, ease: 'power2.inOut', duration: 0.42 }, 0.05);
+  tl.fromTo('.bc.r', { rotationY: 0 }, { rotationY: 118, ease: 'power2.inOut', duration: 0.42 }, 0.05);
+  tl.fromTo('.bro-spread img', { scale: 1.1 }, { scale: 1, ease: 'none', duration: 0.5 }, 0.05);
+  tl.fromTo('.bro-caption', { opacity: 0, y: 24 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.12 }, 0.4);
+  tl.fromTo('.bp0', { xPercent: 105 }, { xPercent: 0, ease: 'power2.inOut', duration: 0.2 }, 0.62);
+  tl.fromTo('.bp1', { xPercent: 105 }, { xPercent: 0, ease: 'power2.inOut', duration: 0.2 }, 0.84);
+  tl.fromTo('.bro-foot', { opacity: 0.3 }, { opacity: 1, ease: 'none', duration: 0.1 }, 0.9);
+} else if (!reduced) {
+  $$('.bro-spread, .bro-page').forEach((f) => gsap.from(f, { opacity: 0, y: 60, duration: 1.2, ease: 'power3.out', scrollTrigger: { trigger: f, start: 'top 88%' } }));
+}
+
+/* ---------- FILMS: five films in turn; the colours spill onto the page; tap for the next ---------- */
+{
+  const frame = $('#films-frame'); const vids = $$<HTMLVideoElement>('video', frame);
+  const glow = $('#films-glow') as HTMLCanvasElement; const gctx = glow.getContext('2d');
+  const titleEl = $('#films-title'); const sec = $('#films');
+  if (frame && vids.length) {
+    let cur = 0, visible = false;
+    const load = (v: HTMLVideoElement) => { if (!v.src && v.dataset.src) { v.src = v.dataset.src; v.load(); } };
+    const show = (i: number) => {
+      vids[cur].pause(); vids[cur].classList.remove('on');
+      cur = (i + vids.length) % vids.length;
+      const v = vids[cur]; load(v); v.currentTime = 0; v.classList.add('on');
+      if (visible && !reduced) v.play().catch(() => {});
+      gsap.fromTo(titleEl, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' });
+      titleEl.textContent = v.dataset.title || '';
+      load(vids[(cur + 1) % vids.length]);
+    };
+    vids.forEach((v, i) => v.addEventListener('ended', () => { if (i === cur) show(cur + 1); }));
+    frame.addEventListener('click', () => show(cur + 1));
+    frame.addEventListener('keydown', (e) => { if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') { e.preventDefault(); show(cur + 1); } });
+    new IntersectionObserver((es) => { visible = es[0].isIntersecting; const v = vids[cur]; if (visible) { load(v); if (!reduced) v.play().catch(() => {}); } else v.pause(); }, { rootMargin: '150px 0px', threshold: 0.15 }).observe(sec);
+    // the colours of the film, drawn small and blurred by CSS behind the page
+    gsap.ticker.add(() => { if (!visible || !gctx) return; const v = vids[cur]; if (v.readyState >= 2) { try { gctx.drawImage(v, 0, 0, 64, 36); } catch {} } });
+    if (!reduced) {
+      gsap.from(frame, { clipPath: 'inset(8% 8% 8% 8%)', opacity: 0.4, duration: 1.4, ease: 'power3.out', scrollTrigger: { trigger: frame, start: 'top 85%' } });
+    }
+  }
+}
+
+/* ---------- THE LIT HOUSE: a dusk that deepens by itself; doorways answer the pointer or a tap ---------- */
+{
+  const stage = $('#house-stage'); const glows = $$('.glow'); const nm = $('#house-name'), ln = $('#house-line'), copy = $('#house-copy');
+  if (stage && glows.length) {
+    let cur = 0, hover = false, vis = false;
+    const set = (i: number) => {
+      cur = i; glows.forEach((g, k) => g.classList.toggle('on', k === i));
+      const d = site.house.items[i];
+      gsap.fromTo(copy, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' });
+      nm.textContent = d.name; ln.textContent = d.line;
+    };
+    set(0);
+    glows.forEach((g, i) => {
+      g.addEventListener('pointerenter', () => { hover = true; stage.classList.add('hot'); if (i !== cur) set(i); });
+      g.addEventListener('pointerleave', () => { hover = false; stage.classList.remove('hot'); });
+      g.addEventListener('click', () => set(i));
+    });
+    new IntersectionObserver((es) => (vis = es[0].isIntersecting), { threshold: 0.3 }).observe(stage);
+    if (!reduced) setInterval(() => { if (vis && !hover) set((cur + 1) % glows.length); }, 5200);
+  }
+}
+
 /* ---------- FOOTER word, and easter eggs ---------- */
 const word = $('#bigword');
 {

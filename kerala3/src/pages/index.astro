@@ -261,6 +261,70 @@ const ordered = ['January','February','March','April','May','June','July','Augus
         </div>
       </section>
 
+      <!-- 9b PLACES WALL -->
+      <section class="wall" id="wall" data-tone="dark">
+        <h2 class="sr">{site.wall.title}</h2>
+        <div class="wall-stage" id="wall-stage">
+          {site.wall.items.map((w, i) => (
+            <a class={`wi wi${i}`} href={site.officialUrl} data-i={i} data-name={w.name} data-months={w.months} data-line={w.line}>
+              <img src={img(w.img)} alt={alt(w.img)} loading="lazy" />
+            </a>
+          ))}
+          <div class="wall-label" id="wall-label" aria-live="polite">
+            <b id="wall-name">{site.wall.items[0].name}</b>
+            <span id="wall-sub">{site.wall.items[0].line} {site.wall.items[0].months}.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9c BROCHURE -->
+      <section class="bro" id="brochure" data-tone="light">
+        <div class="bro-pin">
+          <h2 class="bro-title" id="bro-title">{site.brochure.title}</h2>
+          <div class="bro-book" id="bro-book">
+            <div class="bro-spread"><img src={img('brochure-spread')} alt={alt('brochure-spread')} loading="lazy" /><p class="bro-caption">{site.brochure.pages[0].line}</p></div>
+            {site.brochure.pages.slice(1).map((pg, i) => (
+              <figure class={`bro-page bp${i}`}><img src={img(pg.img)} alt={alt(pg.img)} loading="lazy" /><figcaption><b>{pg.name}</b> {pg.line}</figcaption></figure>
+            ))}
+            <div class="bro-cover" id="bro-cover" style={`--cv:url(${img(site.brochure.pages[0].img)})`}>
+              <div class="bc l"></div><div class="bc r"></div>
+              <h3 class="bro-name">{site.brochure.pages[0].name}</h3>
+            </div>
+          </div>
+          <div class="bro-foot"><p>{site.brochure.text}</p><a class="pill" href={site.officialUrl}>{site.brochure.button}</a></div>
+        </div>
+      </section>
+
+      <!-- 9d FILMS -->
+      <section class="films" id="films" data-tone="dark">
+        <canvas class="films-glow" id="films-glow" width="64" height="36" aria-hidden="true"></canvas>
+        <h2 class="sr">{site.films.title}</h2>
+        <div class="films-frame" id="films-frame" role="button" tabindex="0" aria-label="Playing: tap for the next film">
+          {site.films.items.map((f, i) => (
+            <video class={i === 0 ? 'on' : ''} data-src={`${base}video/${f.src}.mp4`} poster={img(f.poster)} muted playsinline preload="none" data-title={f.title}></video>
+          ))}
+        </div>
+        <p class="films-title" id="films-title" aria-live="polite">{site.films.items[0].title}</p>
+        <a class="pill" href={site.officialUrl}>{site.films.button}</a>
+      </section>
+
+      <!-- 9e HOSPITALITY: THE LIT HOUSE -->
+      <section class="house" id="house" data-tone="dark">
+        <h2 class="sr">{site.house.title}</h2>
+        <div class="house-stage" id="house-stage">
+          <img class="house-photo" src={img('stay-homestay')} alt="A tiled-roof Kerala family home beside a temple pond at dusk" loading="lazy" />
+          <div class="house-dusk" aria-hidden="true"></div>
+          {site.house.items.map((h, i) => (
+            <button type="button" class="glow" data-i={i} style={`left:${h.x}%;top:${h.y}%`} aria-label={h.name}></button>
+          ))}
+          <div class="house-copy" id="house-copy" aria-live="polite">
+            <h3 id="house-name">{site.house.items[0].name}</h3>
+            <p id="house-line">{site.house.items[0].line}</p>
+            <a class="pill" href={site.officialUrl}>Open the official page</a>
+          </div>
+        </div>
+      </section>
+
       <!-- 10 CTA AND FOOTER -->
       <section class="cta" id="cta" data-tone="light">
         <img class="cta-sea" src={img('footer-sea')} alt={alt('footer-sea')} loading="lazy" />
