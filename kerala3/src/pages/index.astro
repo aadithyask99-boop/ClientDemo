@@ -79,12 +79,14 @@ const ordered = ['January','February','March','April','May','June','July','Augus
           {site.scenes.map((sc, k) => (
             <div class={`scn ${k === 0 ? 'on' : ''}`} data-i={k}>
               <img src={img(sc.img)} alt="" fetchpriority={k === 0 ? 'high' : 'low'} />
-              {existsSync(`public/video/scene-${k + 1}.mp4`) && <video muted playsinline loop preload="none" data-src={`${base}video/scene-${k + 1}.mp4`}></video>}
+              {existsSync(`public/video/scene-${k + 1}.mp4`) && <video muted playsinline preload="none" data-src={`${base}video/scene-${k + 1}.mp4`}></video>}
             </div>
           ))}
           <img class="zoomblur" src={img('hero-mist-zoom')} alt="" />
         </div>
         <div class="cs" id="cs" data-tone="dark" data-audio={`${base}audio/`}>
+          <div class="cs-vig" id="cs-vig"></div>
+          <h2 class="cs-endtitle" id="cs-endtitle" aria-hidden="true"></h2>
           <div class="cs-head">
             <h1 class="cs-title" id="h4-title" aria-label="God's Own Country">{site.scenes[0].title.map((t) => <span class="ln">{t}</span>)}</h1>
             <div class="cs-ml" id="cs-ml" aria-hidden="true"><span>{site.scenes[0].ml![0]}</span><i></i><span>{site.scenes[0].ml![1]}</span></div>

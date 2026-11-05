@@ -401,7 +401,7 @@
  },
  {
   "name": "audio-voice",
-  "by": "Voiceover, ambient sound and music generated with ElevenLabs (voice: Brian; to be replaced by the owner's chosen voice)",
+  "by": "Ambient sound and music generated with ElevenLabs",
   "page": "https://elevenlabs.io/",
   "src_px": "audio",
   "out_px": "",

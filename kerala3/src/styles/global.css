@@ -339,3 +339,22 @@ html[data-hero='4'] .cs-p { font-size: 15px; }
 .cs-sound.hint { animation: breathe 2.4s ease-in-out infinite; }
 @keyframes breathe { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 .cs-end-logo { width: min(30vw, 480px); }
+
+/* hero 4 v5: sizes from the reference, colour that follows the footage, centred ending */
+html[data-hero='4'] .cs-title { font-size: 5.6vw; }
+html[data-hero='4'] .cs-title, html[data-hero='4'] .cs-ml { color: var(--ink-title, #fff); text-shadow: 0 0 24px var(--sh-title, transparent); }
+html[data-hero='4'] .cs-meta, html[data-hero='4'] .cs-nav, html[data-hero='4'] .cs-cta { color: var(--ink-bar, #fff); text-shadow: 0 0 14px var(--sh-bar, transparent); font-weight: 500; font-size: 12.5px; }
+html[data-hero='4'] .cs-p, html[data-hero='4'] .cs-line, html[data-hero='4'] .cs-c, html[data-hero='4'] .cs-sound, html[data-hero='4'] .cs-scroll { color: var(--ink-low, #fff); text-shadow: 0 0 16px var(--sh-low, transparent); }
+html[data-hero='4'] .cs-c, html[data-hero='4'] .cs-sound, html[data-hero='4'] .cs-scroll { font-weight: 500; font-size: 12.5px; }
+html[data-hero='4'] .cs-p { font-size: 14px; font-weight: 400; width: 22vw; }
+html[data-hero='4'] .cs-line { font-size: 2.5vw; width: 34vw; line-height: 1.04; letter-spacing: -0.015em; }
+html[data-hero='4'] .cs-line .w { color: color-mix(in srgb, var(--ink-low, #fff) 30%, transparent); }
+html[data-hero='4'] .cs-line .w.on { color: var(--ink-low, #fff); }
+html[data-hero='4'] .cs-title, html[data-hero='4'] .cs-ml, html[data-hero='4'] .cs-meta, html[data-hero='4'] .cs-nav, html[data-hero='4'] .cs-cta, html[data-hero='4'] .cs-p, html[data-hero='4'] .cs-c, html[data-hero='4'] .cs-sound, html[data-hero='4'] .cs-scroll { transition: color 0.35s ease, text-shadow 0.35s ease; }
+.cs-vig { position: absolute; inset: 0; opacity: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(5, 8, 6, 0.55) 0%, rgba(5, 8, 6, 0.4) 55%, rgba(5, 8, 6, 0.55) 100%); }
+.cs-endtitle { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); margin: 0; width: 90vw; text-align: center; opacity: 0; color: #fff; font-family: 'Inter Tight Variable', 'Noto Sans Malayalam Variable', system-ui, sans-serif; font-weight: 700; font-size: 5vw; line-height: 1; letter-spacing: -0.03em; text-transform: uppercase; text-shadow: 0 0 30px rgba(0, 0, 0, 0.4); pointer-events: none; }
+.cs-endtitle .ln { display: block; white-space: nowrap; }
+.cs-endtitle .g { display: inline-block; }
+.cs-end { background: transparent; }
+.cs-end-logo { width: min(24vw, 400px); }
+@media (max-width: 820px) { html[data-hero='4'] .cs-line { font-size: 6vw; width: 90vw; } html[data-hero='4'] .cs-p { width: 84vw; } .cs-endtitle { font-size: 9vw; } }

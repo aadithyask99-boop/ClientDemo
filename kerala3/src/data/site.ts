@@ -27,14 +27,15 @@ export const site = {
   },
   // Hero 4 replicates the owner's reference (Costa Serenade) and plays like a tourism film: hook (Theyyam in fire), wonder (Munnar dawn),
   // calm (backwaters), intimacy (Kochi's fishermen), release (the coast). Each scene plays public/video/scene-N.mp4 over its poster image.
+  // rate: playback speed (the short clips play slowed so none ever loops); hold: seconds a place stays once its cut has finished.
   scenes: [
-    { img: 'scene-1-poster', title: ["GOD'S OWN", 'COUNTRY'], ml: ['ദൈവത്തിന്റെ', 'സ്വന്തം നാട്'],
+    { img: 'scene-1-poster', rate: 0.85, hold: 6.0, title: ["GOD'S OWN", 'COUNTRY'], ml: ['ദൈവത്തിന്റെ', 'സ്വന്തം നാട്'],
       p: 'Where gods dance in fire. In Kerala a Theyyam dancer becomes a deity for one night, and the whole village comes to watch.' },
-    { img: 'scene-2-poster', title: ['ABOVE THE', 'CLOUDS'], line: 'THE MORNING STARTS AT FIVE, AND IT IS WORTH IT.' },
-    { img: 'scene-3-poster', title: ['ENTER THE', 'BACKWATERS'], line: 'FOUR HOURS ON THE WATER. FROM FIRST LIGHT TO LAST LAMP.' },
-    { img: 'scene-4-poster', title: ['RICE BELOW', 'THE SEA'], line: 'KUTTANAD FARMS BELOW THE WATERLINE, AND NOBODY THINKS IT STRANGE.' },
-    { img: 'scene-5-poster', title: ['WHERE THE NETS', 'STILL FALL'], line: 'COME FOR THE PLACES. STAY FOR THE PEOPLE.' },
-    { img: 'scene-6-poster', title: ['AND THEN', 'THE SEA'], line: 'START ANYWHERE. THE COAST WILL FIND YOU.' },
+    { img: 'scene-2-poster', rate: 1, hold: 6.0, title: ['ABOVE THE', 'CLOUDS'], line: 'THE MORNING STARTS AT FIVE. IT IS WORTH IT.' },
+    { img: 'scene-3-poster', rate: 1, hold: 6.0, title: ['ENTER THE', 'BACKWATERS'], line: 'FOUR HOURS AFLOAT. FIRST LIGHT TO LAST LAMP.' },
+    { img: 'scene-4-poster', rate: 0.55, hold: 5.4, title: ['RICE BELOW', 'THE SEA'], line: 'FARMS BELOW THE SEA. NOBODY THINKS IT STRANGE.' },
+    { img: 'scene-5-poster', rate: 0.75, hold: 4.4, title: ['WHERE THE NETS', 'STILL FALL'], line: 'COME FOR THE PLACES. STAY FOR THE PEOPLE.' },
+    { img: 'scene-6-poster', rate: 0.5, hold: 6.0, title: ['AND THEN', 'THE SEA'], line: 'START ANYWHERE. THE COAST WILL FIND YOU.' },
   ],
   statement: {
     text: 'A green strip between the Western Ghats and the Arabian Sea, with 44 rivers, spice forests and a festival in every month. Come for the landscape, stay for the people.',

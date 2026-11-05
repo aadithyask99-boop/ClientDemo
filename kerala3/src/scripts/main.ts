@@ -176,13 +176,12 @@ if (hero === '1') {
 
 if (hero === '4') initScenes();
 function initScenes() {
-  const base = import.meta.env.BASE_URL;
   const data = site.scenes as any[];
   const n = data.length;
   const layers = $$('.scn');
   const stage = $('.s4');
   const cs = $('#cs'), head = $('.cs-head'), titleEl = $('#h4-title'), mlEl = $('#cs-ml'), pEl = $('#cs-p'), lineEl = $('#h4-line'), zoom = $('.zoomblur');
-  const endEl = $('#cs-end'), soundBtn = $('#cs-sound');
+  const endEl = $('#cs-end'), endTitle = $('#cs-endtitle'), vig = $('#cs-vig'), soundBtn = $('#cs-sound');
   const bar = $$('.cs-meta, .cs-nav, .cs-cta, .cs-sound, .cs-c, .cs-scroll', cs);
   const segmenter = new Intl.Segmenter('ml', { granularity: 'grapheme' });
   const graphemes = (t: string) => Array.from(segmenter.segment(t), (x) => x.segment);
@@ -194,92 +193,103 @@ function initScenes() {
   const whenVisible = async () => { while (!visible() || document.hidden) await sleep(300); };
   const phone = innerWidth <= 820;
   const dbg = location.search.includes('debug');
+  const WIPE = 1.9;
 
   // live local time, as in the reference
   const clock = $('#cs-time');
   const tick = () => { clock.textContent = '[ ' + new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true }).format(new Date()) + ' ]'; };
   tick(); setInterval(tick, 20000);
 
-  // ---- the title: two lines of single-letter spans, changed in place; its size fits so it never reaches the top bar
-  const fit = (lines: string[]) => {
+  // ---- the title: two lines of single-letter spans, changed in place. Sizes follow the reference
+  //      (the first title settles at about 31% of the width, the later titles are a little smaller).
+  const fit = (lines: string[], el: HTMLElement, base: string, cap: number) => {
     const p = document.createElement('div');
-    p.className = 'cs-title'; p.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;left:-9999px;top:0';
+    p.className = el.className; p.style.cssText = `position:absolute;visibility:hidden;white-space:nowrap;left:-9999px;top:0;font-size:${base}`;
     lines.forEach((l) => { const s = document.createElement('span'); s.style.display = 'inline-block'; s.textContent = l; p.appendChild(s); p.appendChild(document.createElement('br')); });
     cs.appendChild(p);
     const w = Math.max(...Array.from(p.querySelectorAll('span')).map((s) => s.getBoundingClientRect().width));
     p.remove();
-    return Math.min(1, (innerWidth * 0.43) / w);
+    return Math.min(1, (innerWidth * cap) / w);
   };
-  const applyFit = (lines: string[]) => { titleEl.style.fontSize = `calc(8.6vw * ${fit(lines).toFixed(3)})`; };
-  const build = (lines: string[][]) => { titleEl.innerHTML = lines.map((ln) => `<span class="ln">${ln.map((c) => `<span class="g">${c === ' ' ? '&nbsp;' : c}</span>`).join('')}</span>`).join(''); };
+  const applyFit = (lines: string[], idx: number) => { const f = idx === 0 ? 1 : 0.78; const k = fit(lines, titleEl, `${5.6 * f}vw`, idx === 0 ? 0.31 : 0.27); titleEl.style.fontSize = `calc(5.6vw * ${(f * k).toFixed(3)})`; };
+  const build = (el: HTMLElement, lines: string[][]) => { el.innerHTML = lines.map((ln) => `<span class="ln">${ln.map((c) => `<span class="g">${c === ' ' ? '&nbsp;' : c}</span>`).join('')}</span>`).join(''); };
   const glyphs = () => $$('.g', titleEl);
   const setLine = (t: string) => { lineEl.innerHTML = t.split(' ').map((w) => `<span class="w">${w}</span>`).join(' '); };
   const revealLine = () => { $$('.w', lineEl).forEach((w, i) => setTimeout(() => w.classList.add('on'), 250 + i * 170)); };
-  applyFit(data[0].title);
+  applyFit(data[0].title, 0);
   let target = data[0].title.map((t: string) => graphemes(t));
-  build(target);
+  build(titleEl, target);
   lineEl.style.opacity = '0';
 
-  // ---- text that adapts: every element is checked against the picture behind it (contrast of white and of dark ink
-  //      against every sampled pixel), takes the better one, and gets a soft halo in the opposite tone when it still struggles
+  // ---- colour that follows the footage. Three groups of text (title, top bar, bottom row) each look at the picture right behind them:
+  //      light picture, dark ink; dark picture, light ink; the ink also takes a quiet tint of the picture's own hue.
   const PW = 112, PH = Math.max(40, Math.round(112 * innerHeight / innerWidth));
   const probe = document.createElement('canvas'); probe.width = PW; probe.height = PH;
   const pctx = probe.getContext('2d', { willReadFrequently: true })!;
   const lin = new Float32Array(256).map((_, i) => { const s = i / 255; return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4); });
-  const inkEls = $$('.cs-title, .cs-ml, .cs-meta, .cs-nav, .cs-cta, .cs-sound, .cs-p, .cs-line, .cs-c, .cs-scroll', cs);
-  const big = new Set(['cs-title', 'cs-line', 'cs-ml']);
-  const was = new Map<HTMLElement, boolean>(); // true: dark ink
+  const groups: Record<string, string[]> = { title: ['.cs-title', '.cs-ml'], bar: ['.cs-meta', '.cs-nav', '.cs-cta'], low: ['.cs-p', '.cs-line', '.cs-c', '.cs-sound', '.cs-scroll'] };
+  const wasDark: Record<string, boolean | undefined> = {};
+  const smooth: Record<string, { L: number; dark: boolean; since: number }> = {};
+  let fastUntil = 0;
   const vids = layers.map((l) => l.querySelector('video') as HTMLVideoElement | null);
-  const topMedia = () => {
-    const lay = layers.find((l) => l.classList.contains('next')) || layers.find((l) => l.classList.contains('on')) || layers[0];
-    const v = lay.querySelector('video') as HTMLVideoElement | null;
-    return v && v.readyState >= 2 && v.classList.contains('live') ? v : (lay.querySelector('img') as HTMLImageElement);
+  const mediaOf = (lay: HTMLElement) => { const v = lay.querySelector('video') as HTMLVideoElement | null; return v && v.readyState >= 2 && v.classList.contains('live') ? v : (lay.querySelector('img') as HTMLImageElement); };
+  const drawCover = (m: any) => { const mw = m.videoWidth || m.naturalWidth, mh = m.videoHeight || m.naturalHeight; if (!mw) return false; const s = Math.max(PW / mw, PH / mh); try { pctx.drawImage(m, (PW - mw * s) / 2, (PH - mh * s) / 2, mw * s, mh * s); } catch { return false; } return true; };
+  const tintOf = (r: number, g: number, b: number, dark: boolean) => {
+    r /= 255; g /= 255; b /= 255;
+    const mx = Math.max(r, g, b), mn = Math.min(r, g, b); let h = 0, s = 0; const l = (mx + mn) / 2;
+    if (mx !== mn) { const d = mx - mn; s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn); h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; }
+    if (h > 38 && h < 68) s *= 0.3; // no gold or brass: warm yellows are pulled back to near neutral
+    s = Math.min(s, 0.6) * 0.5;
+    return `hsl(${Math.round(h)} ${Math.round(s * 100)}% ${dark ? 9 : 96}%)`;
   };
   const sample = () => {
-    const m = topMedia() as any;
-    const mw = m.videoWidth || m.naturalWidth, mh = m.videoHeight || m.naturalHeight;
-    if (!mw) return;
-    const s = Math.max(PW / mw, PH / mh);
-    try { pctx.drawImage(m, (PW - mw * s) / 2, (PH - mh * s) / 2, mw * s, mh * s); } catch { return; }
+    const nextLay = layers.find((l) => l.classList.contains('next'));
+    const onLay = layers.find((l) => l.classList.contains('on')) || layers[0];
+    if (!drawCover(mediaOf(onLay))) return;
+    if (nextLay) { // during a cut: the incoming picture is painted only where the slanted panel already is
+      const x = +gsap.getProperty(nextLay, 'x'), sk = (+gsap.getProperty(nextLay, 'skewX')) * Math.PI / 180;
+      const edge = (y: number) => ((innerWidth + x + Math.tan(sk) * (y - innerHeight / 2)) / innerWidth) * PW;
+      pctx.save(); pctx.beginPath(); pctx.moveTo(0, 0); pctx.lineTo(edge(0), 0); pctx.lineTo(edge(innerHeight), PH); pctx.lineTo(0, PH); pctx.closePath(); pctx.clip();
+      drawCover(mediaOf(nextLay)); pctx.restore();
+    }
     const d = pctx.getImageData(0, 0, PW, PH).data;
-    inkEls.forEach((el) => {
-      if (getComputedStyle(el).display === 'none') return;
-      const r = el.getBoundingClientRect();
-      if (r.width < 2 || r.height < 2) return;
-      const x0 = Math.max(0, Math.floor((r.left / innerWidth) * PW)), x1 = Math.min(PW, Math.ceil((r.right / innerWidth) * PW));
-      const y0 = Math.max(0, Math.floor((r.top / innerHeight) * PH)), y1 = Math.min(PH, Math.ceil((r.bottom / innerHeight) * PH));
-      if (x1 <= x0 || y1 <= y0) return;
-      const need = Array.from(el.classList).some((c) => big.has(c)) ? 3 : 4.5;
-      let pw = 0, pd = 0, cnt = 0, sumL = 0;
-      for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
-        const k = (y * PW + x) * 4;
-        const L = 0.2126 * lin[d[k]] + 0.7152 * lin[d[k + 1]] + 0.0722 * lin[d[k + 2]];
-        if (1.05 / (L + 0.05) >= need) pw++;
-        if ((L + 0.05) / 0.058 >= need) pd++;
-        sumL += L; cnt++;
-      }
-      const fw = pw / cnt, fd = pd / cnt, meanL = sumL / cnt;
-      const prev = was.get(el);
-      // white is the cinematic default; dark ink only where the picture is genuinely light and dark clears almost every pixel
-      let dark = prev ? (fd >= 0.9 && fd > fw) : (meanL > 0.42 && fd >= 0.9 && fd > fw + 0.2);
-      was.set(el, dark);
-      const fail = 1 - (dark ? fd : fw);
-      el.style.setProperty('--ink', dark ? '#17110d' : '#ffffff');
-      const isBig = Array.from(el.classList).some((c) => big.has(c));
-      el.style.setProperty('--shade', (dark ? 'rgba(255,255,255,' : 'rgba(0,0,0,') + (isBig ? Math.min(0.78, 0.2 + fail * 0.7) : Math.min(0.85, 0.5 + fail * 0.35)).toFixed(2) + ')');
-      el.style.setProperty('--sb', Math.round(14 + fail * 30) + 'px');
-    });
+    for (const g in groups) {
+      const els = groups[g].map((s) => $(s, cs)).filter((e) => e && getComputedStyle(e).display !== 'none');
+      let L0 = 1e9, T0 = 1e9, R0 = -1, B0 = -1;
+      els.forEach((e) => { const r = e.getBoundingClientRect(); if (r.width < 2) return; L0 = Math.min(L0, r.left); T0 = Math.min(T0, r.top); R0 = Math.max(R0, r.right); B0 = Math.max(B0, r.bottom); });
+      if (R0 < 0) continue;
+      const x0 = Math.max(0, Math.floor((L0 / innerWidth) * PW)), x1 = Math.min(PW, Math.ceil((R0 / innerWidth) * PW));
+      const y0 = Math.max(0, Math.floor((T0 / innerHeight) * PH)), y1 = Math.min(PH, Math.ceil((B0 / innerHeight) * PH));
+      if (x1 <= x0 || y1 <= y0) continue;
+      let sr = 0, sg = 0, sb = 0, sl = 0, sl2 = 0, cnt = 0;
+      for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) { const k = (y * PW + x) * 4; const L = 0.2126 * lin[d[k]] + 0.7152 * lin[d[k + 1]] + 0.0722 * lin[d[k + 2]]; sr += d[k]; sg += d[k + 1]; sb += d[k + 2]; sl += L; sl2 += L * L; cnt++; }
+      const Lm = sl / cnt, sd = Math.sqrt(Math.max(0, sl2 / cnt - Lm * Lm));
+      // the brightness is smoothed over about half a second, and the ink only changes after it has stayed on the other side of a
+      // wide band for a moment: pulses of fire or flickering foliage do not make the text flicker
+      const now = performance.now();
+      const st = (smooth[g] = smooth[g] || { L: Lm, dark: Lm > 0.22, since: 0 });
+      const fast = now < fastUntil; // around a cut the picture changes at once, so the ink follows at once
+      st.L = fast ? Lm : st.L * 0.72 + Lm * 0.28;
+      if (fast) st.since = 0;
+      const busy = sd > 0.24 && st.L < 0.5; // very mixed picture: stay with light ink
+      if (!st.dark && st.L > 0.3 && !busy && now - st.since > 700) { st.dark = true; st.since = now; }
+      else if (st.dark && (st.L < 0.15 || busy) && now - st.since > 700) { st.dark = false; st.since = now; }
+      const dark = st.dark;
+      wasDark[g] = dark;
+      cs.style.setProperty('--ink-' + g, tintOf(sr / cnt, sg / cnt, sb / cnt, dark));
+      cs.style.setProperty('--sh-' + g, sd > 0.18 ? (dark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)') : 'transparent');
+    }
   };
-  sample(); setInterval(() => { if (visible()) sample(); }, 260);
+  sample(); setInterval(() => { if (visible()) sample(); }, 120);
   if (reduced) { document.documentElement.classList.remove('intro'); pEl.style.opacity = '1'; soundBtn.style.display = 'none'; return; }
 
-  // ---- sound: ambient beds per scene, music, a swell on each cut, a voice line per scene. Everything is driven by the scene engine.
+  // ---- sound: ambient beds per scene, music, a swell on each cut. Everything is driven by the scene engine.
   const sound = (() => {
     let ctx: AudioContext | null = null;
-    let master: GainNode, bedBus: GainNode, musicBus: GainNode, voiceBus: GainNode, analyser: AnalyserNode;
+    let master: GainNode, bedBus: GainNode, musicBus: GainNode, analyser: AnalyserNode;
     const cache: Record<string, Promise<AudioBuffer>> = {};
-    let want = false, running = false, curBed: { stop: (f: number) => void } | null = null, musicStarted = false, voiceSrc: AudioBufferSourceNode | null = null;
-    let scene = 0, bedScene = -1, missed: { i: number; at: number } | null = null;
+    let want = false, running = false, curBed: { stop: (f: number) => void } | null = null, musicStarted = false;
+    let scene = 0, bedScene = -1;
     const store = { get: (k: string) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k: string, v: string) => { try { localStorage.setItem(k, v); } catch {} } };
     const get = (name: string) => cache[name] || (cache[name] = fetch(`${cs.dataset.audio || 'audio/'}${name}.mp3`).then((r) => r.arrayBuffer()).then((b) => ctx!.decodeAudioData(b)));
     const curve = (up: boolean) => { const a = new Float32Array(48); for (let i = 0; i < 48; i++) { const t = i / 47; a[i] = up ? Math.sin(t * Math.PI / 2) : Math.cos(t * Math.PI / 2); } return a; };
@@ -302,14 +312,9 @@ function initScenes() {
       spawn(ctx!.currentTime);
       return { stop: (f: number) => { stopped = true; clearTimeout(timer); out.gain.cancelScheduledValues(ctx!.currentTime); out.gain.setValueAtTime(out.gain.value, ctx!.currentTime); out.gain.linearRampToValueAtTime(0, ctx!.currentTime + f); setTimeout(() => out.disconnect(), f * 1000 + 300); } };
     };
-    const once = async (name: string, level: number, bus: AudioNode, delay = 0) => {
-      const buf = await get(name); if (!ctx) return null;
-      const s = ctx.createBufferSource(), g = ctx.createGain(); s.buffer = buf; g.gain.value = level; s.connect(g); g.connect(bus); s.start(ctx.currentTime + delay); return s;
-    };
-    const duck = (on: boolean) => {
-      if (!ctx) return; const t = ctx.currentTime;
-      bedBus.gain.cancelScheduledValues(t); bedBus.gain.setTargetAtTime(on ? 0.42 : 1, t, on ? 0.25 : 0.7);
-      musicBus.gain.cancelScheduledValues(t); musicBus.gain.setTargetAtTime(on ? 0.5 : 1, t, on ? 0.25 : 0.7);
+    const once = async (name: string, level: number, bus: AudioNode) => {
+      const buf = await get(name); if (!ctx) return;
+      const s = ctx.createBufferSource(), g = ctx.createGain(); s.buffer = buf; g.gain.value = level; s.connect(g); g.connect(bus); s.start(ctx.currentTime);
     };
     const start = () => {
       if (!ctx) {
@@ -318,72 +323,57 @@ function initScenes() {
         const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 3; comp.attack.value = 0.02; comp.release.value = 0.3;
         analyser = ctx.createAnalyser(); analyser.fftSize = 1024;
         master.connect(comp); comp.connect(analyser); analyser.connect(ctx.destination);
-        bedBus = ctx.createGain(); musicBus = ctx.createGain(); voiceBus = ctx.createGain();
-        bedBus.connect(master); musicBus.connect(master); voiceBus.connect(master);
+        bedBus = ctx.createGain(); musicBus = ctx.createGain();
+        bedBus.connect(master); musicBus.connect(master);
       }
       ctx.resume();
       running = true;
       master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(1, ctx.currentTime, 0.35);
-      if (!musicStarted) { musicStarted = true; loop('music', musicBus, 0.7, 4); }
-      if (missed && performance.now() - missed.at < 5200) { const mm = missed; missed = null; setTimeout(() => (api as any).voice(mm.i, 0), 400); }
-      if (!curBed || bedScene !== scene) { const old = curBed; curBed = loop('bed-' + (scene + 1), bedBus, 0.9, old ? 1.5 : 2.5); bedScene = scene; if (old) old.stop(1.5); }
+      if (!musicStarted) { musicStarted = true; loop('music', musicBus, 0.8, 4); }
+      if (!curBed || bedScene !== scene) { const old = curBed; curBed = loop('bed-' + (scene + 1), bedBus, 1, old ? 1.5 : 2.5); bedScene = scene; if (old) old.stop(1.5); }
     };
-    const stop = () => { if (!ctx) return; running = false; master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(0, ctx.currentTime, 0.25); if (voiceSrc) { try { voiceSrc.stop(ctx.currentTime + 0.6); } catch {} } };
-    const api = {
+    const stop = () => { if (!ctx) return; running = false; master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(0, ctx.currentTime, 0.25); };
+    return {
       get on() { return want; },
       set(v: boolean) { want = v; store.set('k3sound', v ? '1' : '0'); v ? start() : stop(); },
       remembered() { return store.get('k3sound') === '1'; },
-      resumeIfWanted() { if (want && !running) start(); },
-      // called by the scene engine
       cutTo(i: number, fade: number) {
         scene = i; if (!ctx || !running) return;
         once('swell', 0.55, bedBus);
-        const old = curBed; curBed = loop('bed-' + (i + 1), bedBus, 0.9, fade); bedScene = i; if (old) old.stop(fade);
+        const old = curBed; curBed = loop('bed-' + (i + 1), bedBus, 1, fade); bedScene = i; if (old) old.stop(fade);
       },
-      voice(i: number, delay = 0) {
-        if (!ctx || !running) { missed = { i, at: performance.now() }; return; }
-        get('voice-' + (i + 1)).then((buf) => {
-          if (!ctx || !running) return;
-          if (voiceSrc) { try { voiceSrc.stop(); } catch {} }
-          const s = ctx.createBufferSource(); s.buffer = buf; s.connect(voiceBus);
-          const t0 = ctx.currentTime + delay; s.start(t0); voiceSrc = s;
-          setTimeout(() => duck(true), delay * 1000);
-          setTimeout(() => duck(false), (delay + buf.duration) * 1000 + 300);
-        });
-      },
-      endMusic(up: boolean) { if (ctx && running) musicBus.gain.setTargetAtTime(up ? 1.5 : 1, ctx.currentTime, 0.8); },
+      hit() { if (ctx && running) once('swell', 0.7, bedBus); },
+      endMusic(up: boolean) { if (ctx && running) musicBus.gain.setTargetAtTime(up ? 1.4 : 1, ctx.currentTime, 0.8); },
       hush(v: boolean) { if (!ctx || !want) return; if (v) stop(); else if (!running) start(); },
       level() { if (!analyser) return 0; const a = new Uint8Array(analyser.fftSize); analyser.getByteTimeDomainData(a); let s = 0; for (const x of a) { const v = (x - 128) / 128; s += v * v; } return Math.sqrt(s / a.length); },
       get running() { return running; },
     };
-    return api;
   })();
-  let used = false;
-  const paintSound = () => { used = true; soundBtn.classList.remove('hint'); soundBtn.textContent = sound.on ? 'SOUND ON' : 'SOUND OFF'; soundBtn.setAttribute('aria-pressed', String(sound.on)); };
+  const paintSound = () => { soundBtn.classList.remove('hint'); soundBtn.textContent = sound.on ? 'SOUND ON' : 'SOUND OFF'; soundBtn.setAttribute('aria-pressed', String(sound.on)); };
   soundBtn.textContent = 'TURN SOUND ON'; soundBtn.classList.add('hint');
   soundBtn.addEventListener('click', (e) => { e.stopPropagation(); sound.set(!sound.on); paintSound(); });
   // browsers only allow sound after a touch: if the visitor chose sound before, the next touch anywhere brings it back
   if (sound.remembered()) { soundBtn.textContent = 'TAP FOR SOUND'; addEventListener('pointerdown', () => { if (!sound.on) { sound.set(true); paintSound(); } }, { once: true }); }
   setInterval(() => { sound.hush(!visible() || document.hidden); }, 500);
-  if (dbg) (window as any).__k3 = { sound, state: () => ({ cur, moving }) };
+  let cur = 0, moving = false;
+  if (dbg) (window as any).__k3 = { sound, state: () => ({ cur, moving }), vids };
 
-  // ---- video: the first two load at once, the rest as they come up; only the visible one plays
+  // ---- video: the first two load at once, the rest as they come up; every clip plays once at its own speed and never loops
   const loadVideo = (i: number) => {
     const v = vids[i];
     if (!v || phone || v.src) return;
-    v.src = v.dataset.src!; v.load();
+    v.src = v.dataset.src!; v.preload = 'auto'; v.load();
     v.addEventListener('playing', () => v.classList.add('live'), { once: true });
   };
-  let cur = 0, moving = false;
-  const play = (i: number) => { loadVideo(i); loadVideo((i + 1) % n); const v = vids[i]; if (v) { v.currentTime = 0; v.play().catch(() => {}); } };
+  const play = (i: number) => { loadVideo(i); loadVideo((i + 1) % n); const v = vids[i]; if (v) { v.playbackRate = data[i].rate || 1; v.currentTime = 0; v.play().catch(() => {}); } };
   const settle = (keep: number) => vids.forEach((v, k) => { if (v && k !== keep) v.pause(); });
-  play(0); loadVideo(1);
-  setInterval(() => { const v = vids[cur]; if (!v) return; if (!visible()) v.pause(); else if (v.paused && v.classList.contains('live')) v.play().catch(() => {}); }, 600);
+  loadVideo(0); loadVideo(1);
+  setInterval(() => { const v = vids[cur]; if (!v) return; if (!visible()) v.pause(); else if (v.paused && !v.ended && v.classList.contains('live')) v.play().catch(() => {}); }, 600);
 
   // ---- single letters glitch to a Malayalam letter for a blink (as in the reference)
   const flip = (el: HTMLElement, ms = 90 + Math.random() * 90) => { if (el.dataset.f) return; const keep = el.textContent; el.dataset.f = '1'; el.textContent = rnd(ML); setTimeout(() => { el.textContent = keep; delete el.dataset.f; }, ms); };
   setInterval(() => {
-    if (!visible() || titleEl.dataset.busy) return;
+    if (!visible() || titleEl.dataset.busy || cs.dataset.end) return;
     const sp = glyphs().filter((s) => s.textContent && s.textContent.trim());
     if (!sp.length) return;
     flip(sp[Math.floor(Math.random() * sp.length)]);
@@ -391,51 +381,47 @@ function initScenes() {
   }, 1100);
 
   // ---- at a cut the whole title scrambles and resolves into the next one
-  const scramble = (to: string[], dur = 1100) => new Promise<void>((done) => {
-    applyFit(to);
-    target = to.map((t) => graphemes(t));
-    build(target.map((ln) => ln.map((c) => (c === ' ' ? ' ' : '·'))));
-    const sp = glyphs(); const flat = target.flat();
+  const scramble = (el: HTMLElement, to: string[], dur = 1100, fitIdx: number | null = null) => new Promise<void>((done) => {
+    if (fitIdx !== null) applyFit(to, fitIdx);
+    const tg = to.map((t) => graphemes(t));
+    if (el === titleEl) target = tg;
+    build(el, tg.map((ln) => ln.map((c) => (c === ' ' ? ' ' : '·'))));
+    const sp = $$('.g', el); const flat = tg.flat();
     const start = performance.now();
     const at = flat.map((_, i) => (i / flat.length) * dur * 0.7 + Math.random() * dur * 0.3);
-    titleEl.dataset.busy = '1';
+    el.dataset.busy = '1';
     const id = setInterval(() => {
       const t = performance.now() - start;
-      sp.forEach((el, i) => {
-        const c = flat[i]; if (c === ' ') return;
-        const v = t >= at[i] ? c : rnd(Math.random() < 0.55 ? ML : LAT);
-        if (el.textContent !== v) el.textContent = v;
-      });
-      if (t >= dur) { clearInterval(id); delete titleEl.dataset.busy; done(); }
+      sp.forEach((g, i) => { const c = flat[i]; if (c === ' ') return; const v = t >= at[i] ? c : rnd(Math.random() < 0.55 ? ML : LAT); if (g.textContent !== v) g.textContent = v; });
+      if (t >= dur) { clearInterval(id); delete el.dataset.busy; done(); }
     }, 46);
   });
 
-  // ---- entrance: from black, the fire; the title appears in the middle, holds, then glides to the corner while the blur clears
+  // ---- entrance: black, then a hard cut onto the fire's whoosh; the title appears in the middle with it, holds, and glides to the corner
   document.documentElement.classList.remove('intro');
   gsap.set(stage, { opacity: 0 }); gsap.set(cs, { opacity: 1 });
   titleEl.style.opacity = '0'; mlEl.style.opacity = '0'; pEl.style.opacity = '0'; gsap.set(bar, { opacity: 0 });
-  const hb = head.getBoundingClientRect();
-  const S0 = 1.7, L = innerWidth * 0.011, T = innerHeight * 0.042;
-  const dx = innerWidth / 2 - L - (hb.width * S0) / 2, dy = innerHeight / 2 - T - (hb.height * S0) / 2;
-  gsap.set(head, { x: dx, y: dy, scale: S0 });
-  gsap.to(stage, { opacity: 1, duration: 1.8, ease: 'power2.in' });
-  gsap.fromTo(zoom, { opacity: 1, scale: 1.12 }, { opacity: 0, scale: 1, duration: 5.2, ease: 'power2.out', delay: 1.2 });
-  gsap.fromTo(layers[0].querySelectorAll('img, video'), { scale: 1.28 }, { scale: 1, duration: 6.4, ease: 'power2.out', delay: 0.6 });
-  gsap.to(head, { x: 0, y: 0, scale: 1, duration: 3.4, ease: 'power3.inOut', delay: 3.0 });
+  const S0 = 1.42, L = innerWidth * 0.011, T = innerHeight * 0.042;
+  let dx = 0, dy = 0;
+  const place = () => { const w = head.offsetWidth, h = head.offsetHeight; dx = innerWidth / 2 - L - (w * S0) / 2; dy = innerHeight / 2 - T - (h * S0) / 2; gsap.set(head, { x: dx, y: dy, scale: S0 }); };
+  place();
+  const HARD = 900; // ms: where the hard cut lands; the clip is trimmed so its whoosh arrives about half a second later
+  setTimeout(() => {
+    play(0); sound.hit();
+    gsap.set(stage, { opacity: 1 });
+    gsap.fromTo(zoom, { opacity: 1, scale: 1.1 }, { opacity: 0, scale: 1, duration: 4.4, ease: 'power2.out', delay: 0.4 });
+    gsap.fromTo(layers[0].querySelectorAll('img, video'), { scale: 1.2 }, { scale: 1, duration: 6.0, ease: 'power2.out' });
+    titleEl.style.opacity = '1'; scramble(titleEl, data[0].title, 1000, 0).then(place);
+  }, HARD);
+  gsap.to(head, { x: 0, y: 0, scale: 1, duration: 3.2, ease: 'power3.inOut', delay: 3.6 });
+  gsap.to(bar, { opacity: 1, duration: 1.2, stagger: 0.14, delay: 4.8 });
   gsap.to(mlEl, { opacity: 1, duration: 0.9, delay: 5.6 });
-  gsap.to(mlEl, { opacity: 0, duration: 1.0, delay: 8.2 });
-  gsap.to(bar, { opacity: 1, duration: 1.2, stagger: 0.14, delay: 4.4 });
-  gsap.to(pEl, { opacity: 1, duration: 1.4, delay: 6.0 });
-  (async () => {
-    await sleep(1500);
-    titleEl.style.opacity = '1';
-    await scramble(data[0].title, 1300);
-  })();
-  setTimeout(() => sound.voice(0, 0), 3400); // the first line is spoken as the title glides to its corner
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!titleEl.dataset.busy) applyFit(data[cur].title); });
+  gsap.to(mlEl, { opacity: 0, duration: 1.0, delay: 8.0 });
+  gsap.to(pEl, { opacity: 1, duration: 1.4, delay: 6.2 });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!titleEl.dataset.busy) applyFit(data[cur].title, cur); });
 
   // ---- the cut: a slanted panel carrying the next place slides in (transforms only, so it stays smooth)
-  const wipe = (from: number, to: number, dur = 1.9) => new Promise<void>((done) => {
+  const wipe = (from: number, to: number, dur = WIPE) => new Promise<void>((done) => {
     const next = layers[to], outgoing = layers[from];
     const Wd = innerWidth;
     next.classList.add('next');
@@ -455,64 +441,71 @@ function initScenes() {
   heroEl.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a, button')) return; if (!moving && skip) skip(); });
   addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' && visible() && !moving && skip) skip(); });
 
-  // ---- the ending: the title returns to the middle, English glitches into the Malayalam translation, it fades, and the logo stands alone
-  const mix = (en: string[], mlL: string[], dur: number) => new Promise<void>((done) => {
+  // ---- the ending: the corner title goes, a centred title says it in English, glitches into the Malayalam, dissolves, and the logo takes its place
+  const mix = (el: HTMLElement, en: string[], mlL: string[], dur: number) => new Promise<void>((done) => {
     const E = en.map(graphemes), M = mlL.map(graphemes);
-    const kEN = fit(en), kML = fit(mlL);
+    const kEN = fit(en, el, '5vw', 0.7), kML = fit(mlL, el, '5vw', 0.7);
     const start = performance.now();
-    titleEl.dataset.busy = '1';
     const id = setInterval(() => {
       const t = (performance.now() - start) / dur;
       const p = Math.min(1, t * t * 1.15 + 0.05);
       const lines = E.map((ln, li) => { const len = Math.max(ln.length, (M[li] || []).length); const out: string[] = []; for (let k = 0; k < len; k++) { const c = Math.random() < p ? ((M[li] || [])[k] ?? '') : (ln[k] ?? ''); if (c !== '') out.push(c); } return out; });
-      build(lines);
-      titleEl.style.fontSize = `calc(8.6vw * ${(p > 0.5 ? kML : kEN).toFixed(3)})`;
-      if (t >= 1) { clearInterval(id); build(M); titleEl.style.fontSize = `calc(8.6vw * ${kML.toFixed(3)})`; delete titleEl.dataset.busy; done(); }
+      build(el, lines);
+      el.style.fontSize = `calc(5vw * ${(p > 0.5 ? kML : kEN).toFixed(3)})`;
+      if (t >= 1) { clearInterval(id); build(el, M); el.style.fontSize = `calc(5vw * ${kML.toFixed(3)})`; done(); }
     }, 90);
   });
   const endCard = async () => {
     cs.dataset.end = '1';
-    gsap.to([pEl, lineEl], { opacity: 0, duration: 0.6 });
-    const w0 = head.offsetWidth, h0 = head.offsetHeight, S1 = 1.6;
-    gsap.to(head, { x: innerWidth / 2 - innerWidth * 0.011 - (w0 * S1) / 2, y: innerHeight / 2 - innerHeight * 0.042 - (h0 * S1) / 2, scale: S1, duration: 2.2, ease: 'power3.inOut' });
-    await scramble(["GOD'S OWN", 'COUNTRY'], 1000);
-    sound.voice(6, 0.1); sound.endMusic(true); sample();
-    await sleep(1500);
-    await mix(["GOD'S OWN", 'COUNTRY'], data[0].ml, 3800);
-    await sleep(700);
-    gsap.to(head, { opacity: 0, duration: 1.1 });
-    await sleep(1000);
+    const v5 = vids[cur]; if (v5) v5.playbackRate = 0.4; // the last place keeps moving, slowly, beneath the ending
+    gsap.to([head, pEl, lineEl], { opacity: 0, duration: 0.8 });
+    gsap.to(bar, { opacity: 0.3, duration: 0.8 });
+    gsap.to(vig, { opacity: 1, duration: 1.4 });
+    await sleep(900);
+    const EN = ["GOD'S OWN", 'COUNTRY'];
+    endTitle.style.fontSize = `calc(5vw * ${fit(EN, endTitle, '5vw', 0.7).toFixed(3)})`;
+    gsap.set(endTitle, { opacity: 1 });
+    await scramble(endTitle, EN, 1000);
+    await sleep(1400);
+    await mix(endTitle, EN, data[0].ml, 3400);
+    await sleep(800);
+    gsap.to(endTitle, { opacity: 0, duration: 1.1 });
+    await sleep(900);
+    gsap.to(vig, { opacity: 0.6, duration: 1.0 });
     gsap.set(endEl, { opacity: 0 }); endEl.classList.add('on'); endEl.setAttribute('aria-hidden', 'false');
-    gsap.to(endEl, { opacity: 1, duration: 1.8, ease: 'power2.inOut' });
-    gsap.fromTo(endEl.children, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: 1.6, ease: 'power3.out', delay: 0.4 });
-    await nap(5200);
+    gsap.to(endEl, { opacity: 1, duration: 1.6, ease: 'power2.inOut' });
+    gsap.fromTo(endEl.children, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 1.4, ease: 'power3.out' });
+    sound.endMusic(true);
+    await nap(4600);
     gsap.to(endEl, { opacity: 0, duration: 1.2 });
+    gsap.to(vig, { opacity: 0, duration: 1.2 });
     await sleep(1200); endEl.classList.remove('on'); endEl.setAttribute('aria-hidden', 'true');
-    gsap.set(head, { x: 0, y: 0, scale: 1 }); gsap.to(head, { opacity: 1, duration: 0.6 });
+    endTitle.innerHTML = '';
+    gsap.set(head, { x: 0, y: 0, scale: 1 }); gsap.to(head, { opacity: 1, duration: 0.6 }); gsap.to(bar, { opacity: 1, duration: 0.6 });
     delete cs.dataset.end; sound.endMusic(false);
   };
 
   (async () => {
-    await sleep(9800);
+    await sleep(8600);
     for (;;) {
       await whenVisible();
       const next = (cur + 1) % n;
       moving = true;
+      fastUntil = performance.now() + WIPE * 1000 + 1500;
       play(next);
       gsap.to(pEl, { opacity: 0, duration: 0.6 });
       gsap.to(lineEl, { opacity: 0, duration: 0.5 });
-      sound.cutTo(next, 1.9);
-      const w = wipe(cur, next, 1.9);
+      sound.cutTo(next, WIPE);
+      const w = wipe(cur, next, WIPE);
       await sleep(420);
-      await scramble(data[next].title, 1100);
+      await scramble(titleEl, data[next].title, 1100, next);
       setLine(data[next].line || ''); lineEl.style.opacity = '1'; revealLine();
-      sound.voice(next, 0.7);
       await w;
       settle(next);
       cur = next;
       sample();
       moving = false;
-      await nap(7600);
+      await nap(data[cur].hold * 1000);
       if (cur === n - 1) { moving = true; await endCard(); moving = false; }
     }
   })();
@@ -525,7 +518,7 @@ function initScenes() {
     let last = 0;
     heroEl.addEventListener('pointermove', (e) => {
       qx(-(e.clientX / innerWidth - 0.5) * 22); qy(-(e.clientY / innerHeight - 0.5) * 12);
-      const now = performance.now(); if (now - last < 70 || titleEl.dataset.busy) return; last = now;
+      const now = performance.now(); if (now - last < 70 || titleEl.dataset.busy || cs.dataset.end) return; last = now;
       glyphs().forEach((g) => { const r = g.getBoundingClientRect(); if (Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2)) < r.height * 0.55 && g.textContent!.trim()) flip(g, 130); });
     });
   }
