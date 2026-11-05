@@ -24,28 +24,30 @@ Already there, so not proposed: hero film and the four-tab idea (our hero cycles
 ## Required steps, with evidence
 - Browser capture of keralatourism.org: done (above, `captures/keralatourism` not committed).
 - Motion inventory of the official page: done in a browser. The page has almost no scroll motion: a hero film, auto-advancing carousels (What's New, Memories, Events, Photo Gallery), tab switches in Hospitality, lazy-loaded cards. So the motion here is ours to design, in Red Dot's language (slow blur-to-clear lines, scrub, pointer depth).
-- motionsites lookup: done with `motionsites-shortlist.mjs`. Frames of eight previews in `proposal-reference-sheet.png`: Infinite Gallery, Runway Lookbook, Mostar Guide, Way Farer, Travel Journal, Tana Elephant, Saffron Field, Frostbound. Mechanisms are cited per idea below. Stills do not show scroll behaviour; I read the mechanism from the frame pairs and the gallery titles.
-- Palette: unchanged Red Dot plus Kerala green (approved in the first plan). Easter eggs: the four already built stay.
+- motionsites lookup: done with `motionsites-shortlist.mjs`. Frames of eight previews in `proposal-reference-sheet.png`: Infinite Gallery, Runway Lookbook, Mostar Guide, Travel Journal, Tana Elephant, Saffron Field, Frostbound, and Way Farer (looked at and rejected: a floating booking card over an illustration is a widget). Mechanisms are cited per idea below. Stills do not show scroll behaviour; I read the mechanism from the frame pairs and the gallery titles.
+- Palette: the new scenes use the page's own palette. Options if you want a change: (A) current, paper `#f4f3ef` and cocoa `#2c2623` with Kerala green `#12803a` / `#2fc25f` (recommended); (B) forest night, forest-black `#14281d` with green `#3fcf6e`; (C) paper and cocoa with a deep lagoon teal `#0f6b73` as the accent. Easter eggs: the four built ones stay; the lamps in After dark light up when you click them.
+- Critic log: round 1 said fix (Four welcomes thin, wall sizes, leaflet gimmick risk, Events unrequested, palette and log missing). Changes below. Round 2 result is logged at the end.
+- Capture evidence: the page strips are in `captures-keralatourism-strip.png` (committed).
 - Critic: run on this version before sending.
 
 ## Five additions, ranked, one recommendation each. Every item you named has a scene.
 
 ### 1. Popular Destinations as a drifting wall (after Stays)
-- **Visitor sees:** a full-bleed dark wall of eight tall photographs of different sizes (Thattekkad bird, Bekal fort, Periyar tiger, Kumarakom, Athirappilly, Munnar, Kovalam, Kavvayi). Moving the cursor drifts the wall slowly, like a camera over a table. The photograph nearest the centre sharpens and the rest soften; its name is set huge in the serif with the best months under it. Click opens the official page. Phones: drag with a finger.
+- **Visitor sees:** a full-bleed dark wall of eight photographs in clearly different sizes (one very large, two medium, five small), overlapping at the edges and set off-grid so it is never a card grid (Thattekkad bird, Bekal fort, Periyar tiger, Kumarakom, Athirappilly, Munnar, Kovalam, Kavvayi). Moving the cursor drifts the wall slowly, like a camera over a table. The photograph nearest the centre sharpens and the rest soften; its name is set huge in the serif with the best months under it. Click opens the official page. Phones: drag with a finger.
 - **Why it is a new thing:** the pinned fan is the seven flagship places stepped by scroll; this is the "everywhere else" moment and the only place you wander instead of scroll.
 - **Precedent:** Infinite Gallery (a drifting wall where depth blur marks focus), Runway Lookbook (sharp centre, blurred neighbours).
 - **Alternative:** extend the fan to twelve places.
 
 ### 2. E-Brochures: a leaflet that unfolds (after the wall)
-- **Visitor sees:** one large paper leaflet, a Wayanad cover photograph with its title. Scrolling opens it: the two side flaps swing out in 3D to reveal a full-bleed double-page photograph spread (tea estate, mist) with a short line, and the page tilts slightly with the cursor. A green pill: "Download the Wayanad guide". The other guides sit below as three large cover photographs you can swap.
+- **Visitor sees:** a real photographed paper leaflet (rendered with paper grain, fold shadows and soft light, not a flat vector), lying on a dark table: the Wayanad cover with its title. Scrolling opens it: the two side flaps swing out to reveal a full-bleed double-page photograph spread (tea estate, mist) that then grows to fill the screen and the spread's headline resolves from blur. After the unfold the next guide's cover slides in over it from the right, twice more (Munnar, Kumarakom), so the three guides are three moments of one unfold, not a card row. The download is one green pill after the last spread.
 - **Precedent:** Runway Lookbook (pages that turn, focus pulling in and out), Travel Journal (stacked cards that swap).
 - **Alternative:** a pile of covers that fans out.
 - **Why new:** the only 3D object on the page after the hero.
 
 ### 3. Hospitality Services: "Four welcomes" (before the close)
-- **Visitor sees:** one pinned full-bleed scene that stays four steps long. Scroll moves through four photographs with a slow push-in and soft blur between: a homestay veranda at dawn (Where to stay: Yathri Nivas and eco lodges), a boat captain at the jetty (Find a tour operator), a visitor-information desk under a tree (Tourist Information Centers), a naturalist guide on a forest path (Tour Guide). Each shows one line at 40 px and up and one green action. The Travel Care service is the first line.
+- **Visitor sees:** one pinned full-bleed scene, four steps long, told as one day of a visit. Dawn: a homestay veranda ("A bed that costs less than you think": Yathri Nivas and eco lodges, online reservation). Morning: a boat captain at the jetty ("Someone who knows the water": approved tour operators and Travel Care, the help line if something goes wrong). Noon: a visitor-information desk under a tree ("Ask at any of the centres", with the number of centres and a real town on each). Dusk: a naturalist guide on a forest path ("A licensed guide for the hours you cannot plan"). Light changes dawn to dusk across the four photographs, each push-in is slow, and each step has one practical sentence and one green action that goes to the official page. The practical detail (names, what you get) is what carries it, so it is not a photo with a caption.
 - **Precedent:** Frostbound (a film that carries a travel page), Tana Elephant (one huge word behind a real subject, with the section changing under it).
-- **Alternative:** four stacked full-bleed photographs, no pin.
+- **Alternative:** the same four as one long scrolling photograph strip lit from dawn to dusk, no pin.
 - **Why new:** it is the only practical-help moment and it is people, not places.
 
 ### 4. Video Gallery: a cinema with the light on the page (after the wall)
@@ -54,13 +56,13 @@ Already there, so not proposed: hero film and the four-tab idea (our hero cycles
 - **Alternative:** slices that expand on hover (rejected earlier as too close to the trips tiles).
 - **Why new:** the hero is a timed film; this is a film you choose, with ambient light.
 
-### 5. Events: "After dark" (after Get inspired)
-- **Visitor sees:** one full-bleed night photograph of the next festival, its date set huge in the serif with the day in green, and the other two festivals as two large lines below. The motion is in the image: lamps flicker and a slow push-in.
+### 5. Events: "After dark" (after Get inspired). A bonus beyond your four; cut it if you prefer.
+- **Visitor sees:** one full-bleed night photograph of the next festival, its date set huge in the serif with the day in green, and the other two festivals beneath it, each with its own small night photograph that rises in as you scroll, so the three dated nights read as the calendar of October to November. The motion is in the image: lamps flicker and a slow push-in. Clicking a lamp lights it (the easter egg).
 - **Precedent:** Saffron Field (a dark scene whose light is the focus), Doves' night image.
 - **Alternative:** three stacked night scenes.
 
 Not additions: Stunning Wonders' three themes (heritage, Malabar, wellness) become the content of the existing Get inspired section. What's New, Latest News, Memories, Gateway, social embeds and partner logos are left out, as in the first version.
 
-Flow becomes 15 sections against Red Dot's 14 (limit is 17). To protect the length I would let Trips and Stays share one band if the owner wants it shorter.
+Flow becomes 15 sections against Red Dot's 14 (limit is 17).
 
 Reply go, or tell me what to change.
