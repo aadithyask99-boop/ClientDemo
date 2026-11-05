@@ -284,3 +284,6 @@ Correction after the kerala3 redo (2026-11-05): it was much better (designs in t
 
 ## I invented a rule again (2026-11-05)
 I told the owner they had rejected the paper leaflet as a fake device and wrote a no-fake-devices rule. They never said that; they are fine with the leaflet. Same error as the glass panels. Reversed: stand-in objects are named as risks with a fallback, not banned. Rule for me and for chats: a rule needs the owner's own words or an approved/rejected example behind it; my judgement is an opinion to offer, not a rule to write.
+
+## I invented a section-count cap (2026-11-05)
+I turned the owner's "looks cluttered, find a fine balance" (EVM) into "the page is about the size of the reference" and then told the kerala3 chat to cut a section to stay near Red Dot's 14. The owner never said that; sections come from the reference and other websites and can always be improved. Reversed to a balance check with no cap. Guard (third time: glass panels, the paper leaflet, the section cap): before I write any rule or instruction for a chat, I must quote the owner's own words behind it in the commit message or the feedback entry, and label anything else "my suggestion" and leave the choice to the owner.
