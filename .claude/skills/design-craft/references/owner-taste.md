@@ -61,3 +61,5 @@ Two quiet colours and one loud accent make a design memorable and show where to 
 The owner "really didn't like" the orange dot, and called the green line-drawn stuff and the orange dot with green on the right edge "quite bad", with the orange-on-green combination in those small devices "quite bad" too. Treat every small vermilion dot, drop or marker riding on a drawn line as a hard pass. After removal (rounds 1 and 2) the page's palette itself (paper, deep green, vermilion laid over content) stays.
 
 The owner is fine with the generated paper leaflet idea for e-brochures (stated 2026-11-05). Do not treat rendered or illustrated stand-in objects as banned; only the specific things the owner rejected are rules (orange dots, line-drawn charts, the pull-strip planner, gold, boxes, hairlines, small labels).
+
+Section count (owner, 2026-11-05): the owner never set a cap. The sections come from the reference and from other websites, and the client's sections can always be improved. Their earlier complaint was clutter from pasting all the client's content, which is about balance, not about matching the reference's number of sections.
