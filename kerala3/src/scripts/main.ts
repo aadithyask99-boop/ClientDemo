@@ -265,7 +265,8 @@ function initScenes() {
       was.set(el, dark);
       const fail = 1 - (dark ? fd : fw);
       el.style.setProperty('--ink', dark ? '#17110d' : '#ffffff');
-      el.style.setProperty('--shade', (dark ? 'rgba(255,255,255,' : 'rgba(0,0,0,') + Math.min(0.78, 0.2 + fail * 0.7).toFixed(2) + ')');
+      const isBig = Array.from(el.classList).some((c) => big.has(c));
+      el.style.setProperty('--shade', (dark ? 'rgba(255,255,255,' : 'rgba(0,0,0,') + (isBig ? Math.min(0.78, 0.2 + fail * 0.7) : Math.min(0.85, 0.5 + fail * 0.35)).toFixed(2) + ')');
       el.style.setProperty('--sb', Math.round(14 + fail * 30) + 'px');
     });
   };
@@ -278,9 +279,9 @@ function initScenes() {
     let master: GainNode, bedBus: GainNode, musicBus: GainNode, voiceBus: GainNode, analyser: AnalyserNode;
     const cache: Record<string, Promise<AudioBuffer>> = {};
     let want = false, running = false, curBed: { stop: (f: number) => void } | null = null, musicStarted = false, voiceSrc: AudioBufferSourceNode | null = null;
-    let scene = 0, bedScene = -1;
+    let scene = 0, bedScene = -1, missed: { i: number; at: number } | null = null;
     const store = { get: (k: string) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k: string, v: string) => { try { localStorage.setItem(k, v); } catch {} } };
-    const get = (name: string) => cache[name] || (cache[name] = fetch(`${base}audio/${name}.mp3`).then((r) => r.arrayBuffer()).then((b) => ctx!.decodeAudioData(b)));
+    const get = (name: string) => cache[name] || (cache[name] = fetch(`${cs.dataset.audio || 'audio/'}${name}.mp3`).then((r) => r.arrayBuffer()).then((b) => ctx!.decodeAudioData(b)));
     const curve = (up: boolean) => { const a = new Float32Array(48); for (let i = 0; i < 48; i++) { const t = i / 47; a[i] = up ? Math.sin(t * Math.PI / 2) : Math.cos(t * Math.PI / 2); } return a; };
     const UP = curve(true), DOWN = curve(false);
     // a loop that overlaps itself with an equal-power crossfade, so the seam cannot be heard
@@ -324,10 +325,11 @@ function initScenes() {
       running = true;
       master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(1, ctx.currentTime, 0.35);
       if (!musicStarted) { musicStarted = true; loop('music', musicBus, 0.7, 4); }
+      if (missed && performance.now() - missed.at < 5200) { const mm = missed; missed = null; setTimeout(() => (api as any).voice(mm.i, 0), 400); }
       if (!curBed || bedScene !== scene) { const old = curBed; curBed = loop('bed-' + (scene + 1), bedBus, 0.9, old ? 1.5 : 2.5); bedScene = scene; if (old) old.stop(1.5); }
     };
     const stop = () => { if (!ctx) return; running = false; master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(0, ctx.currentTime, 0.25); if (voiceSrc) { try { voiceSrc.stop(ctx.currentTime + 0.6); } catch {} } };
-    return {
+    const api = {
       get on() { return want; },
       set(v: boolean) { want = v; store.set('k3sound', v ? '1' : '0'); v ? start() : stop(); },
       remembered() { return store.get('k3sound') === '1'; },
@@ -339,7 +341,7 @@ function initScenes() {
         const old = curBed; curBed = loop('bed-' + (i + 1), bedBus, 0.9, fade); bedScene = i; if (old) old.stop(fade);
       },
       voice(i: number, delay = 0) {
-        if (!ctx || !running) return;
+        if (!ctx || !running) { missed = { i, at: performance.now() }; return; }
         get('voice-' + (i + 1)).then((buf) => {
           if (!ctx || !running) return;
           if (voiceSrc) { try { voiceSrc.stop(); } catch {} }
@@ -354,11 +356,14 @@ function initScenes() {
       level() { if (!analyser) return 0; const a = new Uint8Array(analyser.fftSize); analyser.getByteTimeDomainData(a); let s = 0; for (const x of a) { const v = (x - 128) / 128; s += v * v; } return Math.sqrt(s / a.length); },
       get running() { return running; },
     };
+    return api;
   })();
-  const paintSound = () => { soundBtn.textContent = sound.on ? 'SOUND ON' : 'SOUND OFF'; soundBtn.setAttribute('aria-pressed', String(sound.on)); };
+  let used = false;
+  const paintSound = () => { used = true; soundBtn.classList.remove('hint'); soundBtn.textContent = sound.on ? 'SOUND ON' : 'SOUND OFF'; soundBtn.setAttribute('aria-pressed', String(sound.on)); };
+  soundBtn.textContent = 'TURN SOUND ON'; soundBtn.classList.add('hint');
   soundBtn.addEventListener('click', (e) => { e.stopPropagation(); sound.set(!sound.on); paintSound(); });
   // browsers only allow sound after a touch: if the visitor chose sound before, the next touch anywhere brings it back
-  if (sound.remembered()) { soundBtn.textContent = 'SOUND OFF'; addEventListener('pointerdown', () => { if (!sound.on) { sound.set(true); paintSound(); } }, { once: true }); }
+  if (sound.remembered()) { soundBtn.textContent = 'TAP FOR SOUND'; addEventListener('pointerdown', () => { if (!sound.on) { sound.set(true); paintSound(); } }, { once: true }); }
   setInterval(() => { sound.hush(!visible() || document.hidden); }, 500);
   if (dbg) (window as any).__k3 = { sound, state: () => ({ cur, moving }) };
 
@@ -450,19 +455,40 @@ function initScenes() {
   heroEl.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a, button')) return; if (!moving && skip) skip(); });
   addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' && visible() && !moving && skip) skip(); });
 
-  // ---- the end card: after the last place the film ends on the logo and an invitation, then starts again
+  // ---- the ending: the title returns to the middle, English glitches into the Malayalam translation, it fades, and the logo stands alone
+  const mix = (en: string[], mlL: string[], dur: number) => new Promise<void>((done) => {
+    const E = en.map(graphemes), M = mlL.map(graphemes);
+    const kEN = fit(en), kML = fit(mlL);
+    const start = performance.now();
+    titleEl.dataset.busy = '1';
+    const id = setInterval(() => {
+      const t = (performance.now() - start) / dur;
+      const p = Math.min(1, t * t * 1.15 + 0.05);
+      const lines = E.map((ln, li) => { const len = Math.max(ln.length, (M[li] || []).length); const out: string[] = []; for (let k = 0; k < len; k++) { const c = Math.random() < p ? ((M[li] || [])[k] ?? '') : (ln[k] ?? ''); if (c !== '') out.push(c); } return out; });
+      build(lines);
+      titleEl.style.fontSize = `calc(8.6vw * ${(p > 0.5 ? kML : kEN).toFixed(3)})`;
+      if (t >= 1) { clearInterval(id); build(M); titleEl.style.fontSize = `calc(8.6vw * ${kML.toFixed(3)})`; delete titleEl.dataset.busy; done(); }
+    }, 90);
+  });
   const endCard = async () => {
     cs.dataset.end = '1';
-    gsap.to([pEl, lineEl, head], { opacity: 0, duration: 0.8 });
+    gsap.to([pEl, lineEl], { opacity: 0, duration: 0.6 });
+    const w0 = head.offsetWidth, h0 = head.offsetHeight, S1 = 1.6;
+    gsap.to(head, { x: innerWidth / 2 - innerWidth * 0.011 - (w0 * S1) / 2, y: innerHeight / 2 - innerHeight * 0.042 - (h0 * S1) / 2, scale: S1, duration: 2.2, ease: 'power3.inOut' });
+    await scramble(["GOD'S OWN", 'COUNTRY'], 1000);
+    sound.voice(6, 0.1); sound.endMusic(true); sample();
+    await sleep(1500);
+    await mix(["GOD'S OWN", 'COUNTRY'], data[0].ml, 3800);
+    await sleep(700);
+    gsap.to(head, { opacity: 0, duration: 1.1 });
+    await sleep(1000);
     gsap.set(endEl, { opacity: 0 }); endEl.classList.add('on'); endEl.setAttribute('aria-hidden', 'false');
-    gsap.to(endEl, { opacity: 1, duration: 1.6, ease: 'power2.inOut' });
-    gsap.fromTo(endEl.children, { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 1.4, stagger: 0.22, ease: 'power3.out', delay: 0.5 });
-    sound.voice(6, 1.2); sound.endMusic(true);
-    sample();
-    await nap(8500);
+    gsap.to(endEl, { opacity: 1, duration: 1.8, ease: 'power2.inOut' });
+    gsap.fromTo(endEl.children, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: 1.6, ease: 'power3.out', delay: 0.4 });
+    await nap(5200);
     gsap.to(endEl, { opacity: 0, duration: 1.2 });
     await sleep(1200); endEl.classList.remove('on'); endEl.setAttribute('aria-hidden', 'true');
-    gsap.to([lineEl], { opacity: 0, duration: 0 }); gsap.to(head, { opacity: 1, duration: 0.8 });
+    gsap.set(head, { x: 0, y: 0, scale: 1 }); gsap.to(head, { opacity: 1, duration: 0.6 });
     delete cs.dataset.end; sound.endMusic(false);
   };
 

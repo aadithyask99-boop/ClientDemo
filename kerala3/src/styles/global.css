@@ -327,3 +327,15 @@ html[data-hero='4'] .cs-line .w.on { color: var(--ink, #fff); }
 @media (max-width: 820px) { .cs-sound { display: none; } .cs-end-title { font-size: 7vw; } .cs-end-logo { width: 54vw; } }
 
 html[data-hero='4'] .cs[data-end='1'] :is(.cs-meta, .cs-nav, .cs-cta, .cs-sound, .cs-c, .cs-scroll) { color: #fff !important; text-shadow: 0 0 14px rgba(0, 0, 0, 0.5) !important; }
+
+/* hero 4 v4: small text that stays legible on any footage */
+html[data-hero='4'] :is(.cs-meta, .cs-nav, .cs-cta, .cs-sound, .cs-c, .cs-scroll, .cs-p) {
+  font-weight: 500;
+  text-shadow: 1px 0 0 var(--shade, rgba(0, 0, 0, 0.55)), -1px 0 0 var(--shade, rgba(0, 0, 0, 0.55)), 0 1px 0 var(--shade, rgba(0, 0, 0, 0.55)), 0 -1px 0 var(--shade, rgba(0, 0, 0, 0.55)), 0 0 var(--sb, 16px) var(--shade, rgba(0, 0, 0, 0.55));
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+html[data-hero='4'] :is(.cs-meta, .cs-nav, .cs-cta, .cs-sound, .cs-c, .cs-scroll) { font-size: 13.5px; }
+html[data-hero='4'] .cs-p { font-size: 15px; }
+.cs-sound.hint { animation: breathe 2.4s ease-in-out infinite; }
+@keyframes breathe { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.cs-end-logo { width: min(30vw, 480px); }
