@@ -350,5 +350,53 @@
   "src_px": "6000x3759",
   "out_px": "2880x1804",
   "alt": "A wooden boat on calm backwater among palm trees at dawn"
+ },
+ {
+  "name": "video-scene-1",
+  "by": "Pexels video 12142366 (free to use, filmmaker credit to be added)",
+  "page": "https://www.pexels.com/video/12142366/",
+  "src_px": "video",
+  "out_px": "1920x1080",
+  "alt": ""
+ },
+ {
+  "name": "video-scene-2",
+  "by": "Pexels video 14977505 (free to use, filmmaker credit to be added)",
+  "page": "https://www.pexels.com/video/14977505/",
+  "src_px": "video",
+  "out_px": "1920x1080",
+  "alt": ""
+ },
+ {
+  "name": "video-scene-3",
+  "by": "Pexels video 9656493 (free to use, filmmaker credit to be added)",
+  "page": "https://www.pexels.com/video/9656493/",
+  "src_px": "video",
+  "out_px": "1920x1080",
+  "alt": ""
+ },
+ {
+  "name": "video-scene-4",
+  "by": "Pexels video 16262225 (free to use, filmmaker credit to be added)",
+  "page": "https://www.pexels.com/video/16262225/",
+  "src_px": "video",
+  "out_px": "1920x1080",
+  "alt": ""
+ },
+ {
+  "name": "video-scene-5",
+  "by": "Pexels video 12867922 (free to use, filmmaker credit to be added)",
+  "page": "https://www.pexels.com/video/12867922/",
+  "src_px": "video",
+  "out_px": "1920x1080",
+  "alt": ""
+ },
+ {
+  "name": "video-scene-6",
+  "by": "Pexels video 12554415 (free to use, filmmaker credit to be added)",
+  "page": "https://www.pexels.com/video/12554415/",
+  "src_px": "video",
+  "out_px": "1920x1080",
+  "alt": ""
  }
 ]

@@ -78,9 +78,8 @@ const ordered = ['January','February','March','April','May','June','July','Augus
         <div class="stage s4" aria-hidden="true">
           {site.scenes.map((sc, k) => (
             <div class={`scn ${k === 0 ? 'on' : ''}`} data-i={k}>
-              {existsSync(`public/video/scene-${k + 1}.mp4`)
-                ? <video muted playsinline loop preload={k < 2 ? 'auto' : 'metadata'} poster={img(sc.img)} src={`${base}video/scene-${k + 1}.mp4`}></video>
-                : <img src={img(sc.img)} alt="" fetchpriority={k === 0 ? 'high' : 'low'} />}
+              <img src={img(sc.img)} alt="" fetchpriority={k === 0 ? 'high' : 'low'} />
+              {existsSync(`public/video/scene-${k + 1}.mp4`) && <video muted playsinline loop preload="none" data-src={`${base}video/scene-${k + 1}.mp4`}></video>}
             </div>
           ))}
           <img class="zoomblur" src={img('hero-mist-zoom')} alt="" />

@@ -177,102 +177,181 @@ if (hero === '1') {
 if (hero === '4') initScenes();
 function initScenes() {
   const data = site.scenes as any[];
+  const n = data.length;
   const layers = $$('.scn');
+  const stage = $('.s4');
   const cs = $('#cs'), head = $('.cs-head'), titleEl = $('#h4-title'), mlEl = $('#cs-ml'), pEl = $('#cs-p'), lineEl = $('#h4-line'), zoom = $('.zoomblur');
   const segmenter = new Intl.Segmenter('ml', { granularity: 'grapheme' });
   const graphemes = (t: string) => Array.from(segmenter.segment(t), (x) => x.segment);
   const ML = Array.from('കഖഗഘചജടഠഡതദധനപഫബഭമയരലവശഷസഹളഴറ');
+  const LAT = Array.from('ABCDEFGHIKLNORSTUY');
   const rnd = (a: string[]) => a[Math.floor(Math.random() * a.length)];
-  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
   const visible = onScreen(heroEl);
   const whenVisible = async () => { while (!visible() || document.hidden) await sleep(300); };
+  const phone = innerWidth <= 820;
 
   // live local time, as in the reference
   const clock = $('#cs-time');
   const tick = () => { clock.textContent = '[ ' + new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true }).format(new Date()) + ' ]'; };
   tick(); setInterval(tick, 20000);
 
-  // the title is two lines of single letters, so single letters can glitch
-  const paint = (lines: string[][]) => { titleEl.innerHTML = lines.map((ln) => `<span class="ln">${ln.map((c) => `<span class="g">${c === ' ' ? '&nbsp;' : c}</span>`).join('')}</span>`).join(''); };
-  let current = data[0].title.map((t: string) => graphemes(t));
-  paint(current);
+  // the title is two lines of single-letter spans; letters are changed in place, never rebuilt while animating
+  const build = (lines: string[][]) => { titleEl.innerHTML = lines.map((ln) => `<span class="ln">${ln.map((c) => `<span class="g">${c === ' ' ? '&nbsp;' : c}</span>`).join('')}</span>`).join(''); };
+  const glyphs = () => $$('.g', titleEl);
   const setLine = (t: string) => { lineEl.innerHTML = t.split(' ').map((w) => `<span class="w">${w}</span>`).join(' '); };
   const revealLine = () => { $$('.w', lineEl).forEach((w, i) => setTimeout(() => w.classList.add('on'), 200 + i * 130)); };
-  const setTone = (t: string) => { cs.dataset.tone = t; };
-  setTone(data[0].tone);
+  let target = data[0].title.map((t: string) => graphemes(t));
+  build(target);
   lineEl.style.opacity = '0';
-  if (reduced) return;
 
-  // between cuts only single letters glitch: one letter flips to a Malayalam letter for a blink
+  // ---- text colour follows the footage: sample the picture under five zones and choose dark or white for each
+  const probe = document.createElement('canvas'); probe.width = 64; probe.height = 36;
+  const pctx = probe.getContext('2d', { willReadFrequently: true })!;
+  const zones: Record<string, number[]> = { title: [0, 0.02, 0.46, 0.34], bar: [0.46, 0.03, 1, 0.1], p: [0.46, 0.62, 0.76, 0.82], line: [0.5, 0.76, 1, 0.98], foot: [0.46, 0.93, 1, 0.99] };
+  const tone: Record<string, boolean> = {}; // true means dark ink
+  const vids = layers.map((l) => l.querySelector('video') as HTMLVideoElement | null);
+  const topMedia = () => {
+    const lay = layers.find((l) => l.classList.contains('next')) || layers.find((l) => l.classList.contains('on')) || layers[0];
+    const v = lay.querySelector('video') as HTMLVideoElement | null;
+    return v && v.readyState >= 2 && v.classList.contains('live') ? v : (lay.querySelector('img') as HTMLImageElement);
+  };
+  const sample = () => {
+    try { pctx.drawImage(topMedia(), 0, 0, 64, 36); } catch { return; }
+    const d = pctx.getImageData(0, 0, 64, 36).data;
+    for (const z in zones) {
+      const [x0, y0, x1, y1] = zones[z];
+      let sum = 0, cnt = 0;
+      for (let y = Math.floor(y0 * 36); y < Math.ceil(y1 * 36); y++) for (let x = Math.floor(x0 * 64); x < Math.ceil(x1 * 64); x++) { const k = (y * 64 + x) * 4; sum += 0.299 * d[k] + 0.587 * d[k + 1] + 0.114 * d[k + 2]; cnt++; }
+      const L = sum / cnt / 255;
+      const was = tone[z];
+      const dark = was === undefined ? L > 0.58 : was ? L > 0.5 : L > 0.66; // hysteresis so the colour does not flicker
+      tone[z] = dark;
+      cs.style.setProperty('--ink-' + z, dark ? '#1b1511' : '#ffffff');
+      cs.style.setProperty('--shade-' + z, dark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.62)');
+    }
+  };
+  sample(); setInterval(() => { if (visible()) sample(); }, 320);
+  if (reduced) { pEl.style.opacity = '1'; return; }
+
+  // ---- video: the first two load at once, the rest as they come up; only the visible one plays
+  const loadVideo = (i: number) => {
+    const v = vids[i];
+    if (!v || phone || v.src) return;
+    v.src = v.dataset.src!; v.load();
+    v.addEventListener('playing', () => v.classList.add('live'), { once: true });
+  };
+  let cur = 0;
+  const play = (i: number) => { loadVideo(i); loadVideo((i + 1) % n); const v = vids[i]; if (v) { v.currentTime = 0; v.play().catch(() => {}); } };
+  const settle = (keep: number) => vids.forEach((v, k) => { if (v && k !== keep) v.pause(); });
+  play(0); loadVideo(1);
+  setInterval(() => { const v = vids[cur]; if (!v) return; if (!visible()) v.pause(); else if (v.paused && v.classList.contains('live')) v.play().catch(() => {}); }, 600);
+
+  // ---- single letters glitch to a Malayalam letter for a blink (as in the reference)
+  const flip = (el: HTMLElement, ms = 90 + Math.random() * 90) => { if (el.dataset.f) return; const keep = el.textContent; el.dataset.f = '1'; el.textContent = rnd(ML); setTimeout(() => { el.textContent = keep; delete el.dataset.f; }, ms); };
   setInterval(() => {
     if (!visible() || titleEl.dataset.busy) return;
-    const spans = $$('.g', titleEl).filter((s) => s.textContent && s.textContent.trim() && s.textContent !== ' ');
-    if (!spans.length) return;
-    const n = Math.random() < 0.3 ? 2 : 1;
-    for (let k = 0; k < n; k++) {
-      const el = spans[Math.floor(Math.random() * spans.length)];
-      const keep = el.textContent;
-      el.textContent = rnd(ML);
-      setTimeout(() => { el.textContent = keep; }, 90 + Math.random() * 90);
-    }
+    const sp = glyphs().filter((s) => s.textContent && s.textContent.trim());
+    if (!sp.length) return;
+    flip(sp[Math.floor(Math.random() * sp.length)]);
+    if (Math.random() < 0.3) flip(sp[Math.floor(Math.random() * sp.length)]);
   }, 620);
 
-  // at a cut the whole title scrambles and resolves into the next one
+  // ---- at a cut the whole title scrambles and resolves into the next one
   const scramble = (to: string[], dur = 700) => new Promise<void>((done) => {
-    const target = to.map((t) => graphemes(t));
-    const flat = target.flat().length;
+    target = to.map((t) => graphemes(t));
+    build(target.map((ln) => ln.map((c) => (c === ' ' ? ' ' : '·'))));
+    const sp = glyphs(); const flat = target.flat();
     const start = performance.now();
-    const at = target.map((ln, li) => ln.map((_, i) => ((li * 0.5 * target[0].length + i) / flat) * dur * 0.7 + Math.random() * dur * 0.3));
+    const at = flat.map((_, i) => (i / flat.length) * dur * 0.7 + Math.random() * dur * 0.3);
     titleEl.dataset.busy = '1';
     const id = setInterval(() => {
       const t = performance.now() - start;
-      paint(target.map((ln, li) => ln.map((c, i) => (c === ' ' ? ' ' : t >= at[li][i] ? c : rnd(Math.random() < 0.55 ? ML : Array.from('ABCDEFGHIKLNORSTUY'))))));
-      if (t >= dur) { clearInterval(id); paint(target); current = target; delete titleEl.dataset.busy; done(); }
+      sp.forEach((el, i) => {
+        const c = flat[i]; if (c === ' ') return;
+        const v = t >= at[i] ? c : rnd(Math.random() < 0.55 ? ML : LAT);
+        if (el.textContent !== v) el.textContent = v;
+      });
+      if (t >= dur) { clearInterval(id); delete titleEl.dataset.busy; done(); }
     }, 42);
   });
 
-  const vids = layers.map((l) => l.querySelector('video') as HTMLVideoElement | null);
-  const play = (i: number) => { vids.forEach((v, k) => { if (!v) return; if (k === i) v.play().catch(() => {}); else v.pause(); }); };
-  play(0);
+  // ---- entrance: from black, the fire; the title ignites, starts large and settles; the second-script row comes and goes
+  gsap.set(stage, { opacity: 0 });
+  titleEl.style.opacity = '0'; mlEl.style.opacity = '0'; pEl.style.opacity = '0';
+  gsap.to(stage, { opacity: 1, duration: 1.4, ease: 'power2.in' });
+  gsap.fromTo(zoom, { opacity: 1, scale: 1.1 }, { opacity: 0, scale: 1, duration: 3.2, ease: 'power2.out', delay: 1.0 });
+  gsap.fromTo(layers[0].querySelectorAll('img, video'), { scale: 1.25 }, { scale: 1, duration: 3.8, ease: 'power2.out', delay: 0.6 });
+  gsap.fromTo(head, { scale: 1.38 }, { scale: 1, duration: 2.8, ease: 'power3.inOut', delay: 1.0 });
+  gsap.to(mlEl, { opacity: 1, duration: 0.7, delay: 1.9 });
+  gsap.to(mlEl, { opacity: 0, duration: 0.8, delay: 4.4 });
+  gsap.to(pEl, { opacity: 1, duration: 1.2, delay: 3.4 });
+  (async () => {
+    await sleep(900);
+    titleEl.style.opacity = '1';
+    await scramble(data[0].title, 1000);
+  })();
 
-  // opening: a rush of zoom-blur clears to the view; the title starts large and settles smaller; the second-script row goes
-  gsap.fromTo(zoom, { opacity: 1, scale: 1.1 }, { opacity: 0, scale: 1, duration: 3, ease: 'power2.out' });
-  gsap.fromTo(layers[0].firstElementChild, { scale: 1.25 }, { scale: 1, duration: 3.4, ease: 'power2.out' });
-  gsap.fromTo(head, { scale: 1.38 }, { scale: 1, duration: 2.7, ease: 'power3.inOut', delay: 0.15 });
-  gsap.to(mlEl, { opacity: 0, duration: 0.8, delay: 2.2 });
-  gsap.fromTo(pEl, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 1.2, delay: 1.4 });
-
+  // ---- the cut: a slanted panel carrying the next place slides in (transforms only, so it stays smooth)
   const wipe = (from: number, to: number) => new Promise<void>((done) => {
-    const next = layers[to];
+    const next = layers[to], outgoing = layers[from];
+    const Wd = innerWidth;
     next.classList.add('next');
-    const p = { v: 0 };
-    gsap.fromTo(next.firstElementChild, { scale: 1.2 }, { scale: 1, duration: 1.8, ease: 'power3.out' });
-    gsap.to(p, { v: 1, duration: 1.15, ease: 'power3.inOut', onUpdate: () => { const x = p.v * 138 - 18; next.style.clipPath = `polygon(0 0, ${x + 20}% 0, ${x}% 100%, 0 100%)`; }, onComplete: () => {
-      layers[from].classList.remove('on');
-      next.classList.remove('next'); next.classList.add('on'); next.style.clipPath = '';
+    gsap.set(next, { x: -Wd * 1.2, skewX: -14 });
+    gsap.fromTo(next.querySelectorAll('img, video'), { scale: 1.22 }, { scale: 1, duration: 1.9, ease: 'power3.out' });
+    gsap.to(outgoing, { x: Wd * 0.07, duration: 1.2, ease: 'power2.inOut' });
+    gsap.to(next, { x: 0, skewX: 0, duration: 1.2, ease: 'power3.inOut', onComplete: () => {
+      outgoing.classList.remove('on'); gsap.set(outgoing, { clearProps: 'transform' });
+      next.classList.remove('next'); next.classList.add('on'); gsap.set(next, { clearProps: 'transform' });
       done();
     } });
   });
 
+  // ---- skipping: a click or tap, or the arrow keys, goes straight to the next place
+  let skip: (() => void) | null = null;
+  let moving = false;
+  const nap = (ms: number) => new Promise<void>((r) => { const t = setTimeout(r, ms); skip = () => { clearTimeout(t); r(); }; });
+  heroEl.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a, button')) return; if (!moving && skip) skip(); });
+  addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' && visible() && !moving && skip) skip(); });
+
   (async () => {
-    let i = 0;
-    await sleep(5400);
+    await sleep(6800);
     for (;;) {
       await whenVisible();
-      const n = (i + 1) % data.length;
-      play(n);
+      const next = (cur + 1) % n;
+      moving = true;
+      play(next);
       gsap.to(pEl, { opacity: 0, duration: 0.4 });
       gsap.to(lineEl, { opacity: 0, duration: 0.3 });
-      const w = wipe(i, n);
+      const w = wipe(cur, next);
       await sleep(260);
-      setTone(data[n].tone);
-      await scramble(data[n].title, 700);
-      setLine(data[n].line || ''); lineEl.style.opacity = '1'; revealLine();
+      await scramble(data[next].title, 700);
+      setLine(data[next].line || ''); lineEl.style.opacity = '1'; revealLine();
       await w;
-      i = n;
-      await sleep(4800);
+      settle(next);
+      cur = next;
+      sample();
+      moving = false;
+      await nap(5200);
     }
   })();
+
+  // ---- the cursor: the footage drifts a little, and letters near the pointer flip to Malayalam
+  if (!phone) {
+    const qx = gsap.quickTo(stage, 'x', { duration: 1.2, ease: 'power3.out' });
+    const qy = gsap.quickTo(stage, 'y', { duration: 1.2, ease: 'power3.out' });
+    gsap.set(stage, { scale: 1.03 });
+    let last = 0;
+    heroEl.addEventListener('pointermove', (e) => {
+      qx(-(e.clientX / innerWidth - 0.5) * 22); qy(-(e.clientY / innerHeight - 0.5) * 12);
+      const now = performance.now(); if (now - last < 70 || titleEl.dataset.busy) return; last = now;
+      glyphs().forEach((g) => { const r = g.getBoundingClientRect(); if (Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2)) < r.height * 0.55 && g.textContent!.trim()) flip(g, 130); });
+    });
+  }
+
+  // ---- scrolling hands the hero over to the page
+  gsap.to(cs, { opacity: 0, ease: 'none', scrollTrigger: { trigger: heroEl, start: 'top top', end: '55% top', scrub: true } });
+  gsap.to(stage, { yPercent: 6, ease: 'none', scrollTrigger: { trigger: heroEl, start: 'top top', end: 'bottom top', scrub: true } });
 }
 
 if (hero === '2') initGlass();

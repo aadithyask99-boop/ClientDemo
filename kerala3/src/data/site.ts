@@ -25,16 +25,16 @@ export const site = {
       { img: 'hero-mist', label: 'December, mist', weather: 'mist' },
     ],
   },
-  // Hero 4 replicates the owner's reference (Costa Serenade): a film of places. Each scene plays public/video/scene-N.mp4 when it exists,
-  // otherwise its photograph. Title lines, tone (the ink colour that reads on that footage), and either a small paragraph or a tagline.
+  // Hero 4 replicates the owner's reference (Costa Serenade) and plays like a tourism film: hook (Theyyam in fire), wonder (Munnar dawn),
+  // calm (backwaters), intimacy (Kochi's fishermen), release (the coast). Each scene plays public/video/scene-N.mp4 over its poster image.
   scenes: [
-    { img: 'hero-mist', tone: 'dark', title: ["GOD'S OWN", 'COUNTRY'], ml: ['ദൈവത്തിന്റെ', 'സ്വന്തം നാട്'],
-      p: 'We row the backwaters before the first houseboat wakes. Four crossings, still green water, ourselves, and nobody out here until the fishing canoes come off the Kuttanad shore.' },
-    { img: 'fan-alappuzha', tone: 'dark', title: ['ENTER THE', 'BACKWATERS'], line: 'FOUR HOURS ON THE WATER. FROM FIRST LIGHT TO LAST LAMP.' },
-    { img: 'fan-munnar', tone: 'dark', title: ['ABOVE THE', 'CLOUDS'], line: 'TEA HILLS, MIST AND A MORNING THAT STARTS AT FIVE.' },
-    { img: 'fan-athirappilly', tone: 'light', title: ['FOLLOW THE', 'RIVER DOWN'], line: 'FORTY-FOUR RIVERS RUN WEST. THIS IS WHERE ONE FALLS.' },
-    { img: 'fan-varkala', tone: 'dark', title: ['CLIFF', 'AND SEA'], line: 'RED CLIFFS, A QUIET BEACH, THE LAST LIGHT OF THE DAY.' },
-    { img: 'fan-kochi', tone: 'dark', title: ['WHERE THE NETS', 'STILL FALL'], line: 'OLD HARBOURS, SPICE LANES AND THE EVENING TIDE.' },
+    { img: 'scene-1-poster', title: ["GOD'S OWN", 'COUNTRY'], ml: ['ദൈവത്തിന്റെ', 'സ്വന്തം നാട്'],
+      p: 'Where gods dance in fire. In Kerala a Theyyam dancer becomes a deity for one night, and the whole village comes to watch.' },
+    { img: 'scene-2-poster', title: ['ABOVE THE', 'CLOUDS'], line: 'THE MORNING STARTS AT FIVE, AND IT IS WORTH IT.' },
+    { img: 'scene-3-poster', title: ['ENTER THE', 'BACKWATERS'], line: 'FOUR HOURS ON THE WATER. FROM FIRST LIGHT TO LAST LAMP.' },
+    { img: 'scene-4-poster', title: ['RICE BELOW', 'THE SEA'], line: 'KUTTANAD FARMS BELOW THE WATERLINE, AND NOBODY THINKS IT STRANGE.' },
+    { img: 'scene-5-poster', title: ['WHERE THE NETS', 'STILL FALL'], line: 'COME FOR THE PLACES. STAY FOR THE PEOPLE.' },
+    { img: 'scene-6-poster', title: ['AND THEN', 'THE SEA'], line: 'START ANYWHERE. THE COAST WILL FIND YOU.' },
   ],
   statement: {
     text: 'A green strip between the Western Ghats and the Arabian Sea, with 44 rivers, spice forests and a festival in every month. Come for the landscape, stay for the people.',
