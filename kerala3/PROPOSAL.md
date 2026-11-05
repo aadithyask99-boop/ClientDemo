@@ -29,45 +29,40 @@ Already there, so not proposed: hero film and the four-tab idea (our hero cycles
 - Critic log: round 1 said fix (Four welcomes thin, wall sizes, leaflet gimmick risk, Events unrequested, palette and log missing). Changes below. Round 2 said fix (small): show five previews in the message, name the films, say whether the leaflet is rendered, name real towns, put the capture in the message. All done below.
 - Capture evidence: the page strips are in `captures-keralatourism-strip.png` (committed).
 
-## Five additions, ranked, one recommendation each. Every item you named has a scene.
+## Repetition audit (owner: repeated sections are a no-go)
+Existing mechanisms in kerala3: hero film (footage drifts with the cursor), pinned fan stepped by scroll, pinned months wipe, sideways headline (heart), frame grows to full bleed (water), three tall photographs rising, mosaic with hover reveal (trips), centred carousel (stays), footer word. Each addition below says which of these it must not repeat and what is different. Dropped for repeating: the pinned "Four welcomes" (fan and months), the standalone Events section (a full-bleed photograph with huge type is Water and months), the leaflet's grow-to-full-bleed (Water), the film title list and slanted cut (months list, hero).
 
-### 1. Popular Destinations as a drifting wall (after Stays)
-- **Visitor sees:** a full-bleed dark wall of eight photographs in clearly different sizes (one very large, two medium, five small), overlapping at the edges and set off-grid so it is never a card grid (Thattekkad bird, Bekal fort, Periyar tiger, Kumarakom, Athirappilly, Munnar, Kovalam, Kavvayi). Moving the cursor drifts the wall slowly, like a camera over a table. The photograph nearest the centre sharpens and the rest soften; its name is set huge in the serif with the best months under it. Click opens the official page. Phones: drag with a finger.
-- **Why it is a new thing:** the pinned fan is the seven flagship places stepped by scroll; this is the "everywhere else" moment and the only place you wander instead of scroll.
-- **Precedent:** Infinite Gallery (a drifting wall where depth blur marks focus), Runway Lookbook (sharp centre, blurred neighbours).
-- **Alternative:** extend the fan to twelve places.
+## Four additions, ranked, one recommendation each. Every item you named has a scene.
 
-### 2. E-Brochures: a leaflet that unfolds (after the wall)
-- **Visitor sees:** a rendered paper leaflet (an image-generated render with paper grain and fold shadows, built from a real Wayanad photograph; if it cannot be made convincing it falls back to a plain flat cover, never a vector drawing), lying on a dark table: the Wayanad cover with its title. Scrolling opens it: the two side flaps swing out to reveal a full-bleed double-page photograph spread (tea estate, mist) that then grows to fill the screen and the spread's headline resolves from blur. After the unfold the next guide's cover slides in over it from the right, twice more (Munnar, Kumarakom), so the three guides are three moments of one unfold, not a card row. The download is one green pill after the last spread.
-- **Precedent:** Runway Lookbook (pages that turn, focus pulling in and out), Travel Journal (stacked cards that swap).
-- **Alternative:** a pile of covers that fans out.
-- **Why new:** the only 3D object on the page after the hero.
+### 1. Popular Destinations: a drifting wall (after Stays)
+- **Visitor sees:** a dark full-bleed wall of eight photographs: one very large, two medium, five small, overlapping at the edges and off-grid (Thattekkad bird, Bekal fort, Periyar tiger, Kumarakom, Athirappilly, Munnar, Kovalam, Kavvayi). The cursor drifts the wall like a camera over a table; the photograph nearest the centre sharpens, the rest soften, and its name is set huge with its best months. Click opens the official page. Phones: drag.
+- **Not a repeat of:** the fan (seven flagships stepped by scroll) or Trips (equal-ish mosaic with hover): this is the only place you wander instead of scroll, with depth blur and very unequal sizes.
+- **Precedent:** Infinite Gallery, Runway Lookbook.
 
-### 3. Hospitality Services: "Four welcomes" (before the close)
-- **Visitor sees:** one pinned full-bleed scene, four steps long, told as one day of a visit. Dawn: a homestay veranda ("A bed that costs less than you think": Yathri Nivas and eco lodges, online reservation). Morning: a boat captain at the jetty ("Someone who knows the water": approved tour operators and Travel Care, the help line if something goes wrong). Noon: a visitor-information desk under a tree ("Ask at any of the centres", with the number of centres and a real town on each). Dusk: a naturalist guide on a forest path in Thekkady ("A licensed guide for the hours you cannot plan"). Light changes dawn to dusk across the four photographs, each push-in is slow, and each step has one practical sentence and one green action that goes to the official page. The practical detail (names, what you get) is what carries it, so it is not a photo with a caption.
-- **Precedent:** Frostbound (a film that carries a travel page), Tana Elephant (one huge word behind a real subject, with the section changing under it).
-- **Alternative:** the same four as one long scrolling photograph strip lit from dawn to dusk, no pin.
-- **Why new:** it is the only practical-help moment and it is people, not places.
+### 2. E-Brochures: a leaflet that opens on a table (after the wall)
+- **Visitor sees:** a rendered paper leaflet (image-generated from a real Wayanad photograph, paper grain and fold shadows; falls back to a flat cover if unconvincing, never a vector drawing) on a dark table. Scrolling swings the flaps open to a double-page photograph spread, which holds on the table and does not grow. The Munnar and Kumarakom covers slide in over it in turn. One green pill offers the download.
+- **Not a repeat of:** Water's grow-to-full-bleed (it never fills the screen) or the carousel (three moments of one unfold, not a row).
+- **Precedent:** Runway Lookbook, Travel Journal. Weakest item: depends on the render.
 
-### 4. Video Gallery: a cinema with the light on the page (after the wall)
-- **Visitor sees:** a large framed film on paper turning dark, with the film's own colours spilling softly into the background (a blurred copy of the clip fills the section, as in Mostar Guide's framed photograph over its own enlarged copy). Five film titles in large type sit under it: The night the god walks (Theyyam), Snake boats on the Punnamada (boat race), Eight hours to a face (Kathakali make-up), Before the clouds come down (tea picking, Munnar), Nets at dusk (Fort Kochi); choosing one cuts to that film with the hero's slanted-slice cut. Sound is off until the visitor taps it.
-- **Precedent:** Mostar Guide (frame over its own blurred backdrop), Frostbound.
-- **Alternative:** slices that expand on hover (rejected earlier as too close to the trips tiles).
-- **Why new:** the hero is a timed film; this is a film you choose, with ambient light.
+### 3. Video Gallery: a cinema whose light spills onto the page (after the leaflet)
+- **Visitor sees:** a large framed film on a section that turns dark, with a blurred copy of the clip filling the background so its colours spill onto the page. The five films play in sequence by themselves, no title list: The night the god walks (Theyyam), Snake boats on the Punnamada, Eight hours to a face (Kathakali), Before the clouds come down (tea, Munnar), Nets at dusk (Fort Kochi). Tap the frame to skip; sound off until tapped.
+- **Not a repeat of:** the hero (timed full-bleed film with the slice cut; this is a framed film in a glowing room) or the months list (no list, no wipe).
+- **Precedent:** Mostar Guide, Frostbound.
 
-### 5. Events: "After dark" (after Get inspired). A bonus beyond your four; cut it if you prefer.
-- **Visitor sees:** one full-bleed night photograph of the next festival, its date set huge in the serif with the day in green, and the other two festivals beneath it, each with its own small night photograph that rises in as you scroll, so the three dated nights read as the calendar of October to November. The motion is in the image: lamps flicker and a slow push-in. Clicking a lamp lights it (the easter egg).
-- **Precedent:** Saffron Field (a dark scene whose light is the focus), Doves' night image.
-- **Alternative:** three stacked night scenes.
+### 4. Hospitality Services: a lane at dusk (before the close)
+- **Visitor sees:** one wide photograph of a Kerala village lane at dusk, lit windows and doorways. Four doorways are the four services. Hover or tap a doorway: the light in it warms, the lane dims around it and one practical line opens beside it. Where to stay (Yathri Nivas eco lodges, online reservation), tour operators and Travel Care, tourist information centres, licensed guides; each ends in one green action to the official page.
+- **Not a repeat of:** anything pinned or stepped by scroll. No scroll mechanism at all; the pointer works inside the photograph.
+- **Precedent:** Solar Fog (lit house at dusk where the cursor changes the scene, rated love), Saffron Field (light as the focus).
+- **Risk:** hotspots can read as gadgets, so the doorways are the photograph's own lit doors with no icons, rings or pins. If it still feels like hotspots, the fallback is the four practical lines in the closing section.
 
-Not additions: Stunning Wonders' three themes (heritage, Malabar, wellness) become the content of the existing Get inspired section. What's New, Latest News, Memories, Gateway, social embeds and partner logos are left out, as in the first version.
+Stunning Wonders' three themes (heritage, Malabar, wellness) become the content of the existing Get inspired section. The three festival dates (Beemapally Uroos 11 Nov, Kalpathi Ratholsavam 14 Nov, Guruvayur Ekadasi 21 Nov, as shown on the official page, to be confirmed) go into the October and November step of the months scene. What's New, Latest News, social embeds and partner logos stay out.
 
-Flow becomes 15 sections against Red Dot's 14 (limit is 17).
-
-Reply go, or tell me what to change.
+Flow becomes 14 sections, Red Dot's count.
 
 ## Footage needed
-The five films need new clips (the hero uses the owner's six Pexels clips). Without your own footage, the section plays slow push-in stills of the same five scenes and says so. Photographs for the leaflet, four welcomes and wall come from Unsplash and Wikimedia Commons as before.
+The five films need new clips. Without your own footage the section plays slow push-in stills of the same five scenes and says so. Photographs for the rest come from Unsplash and Wikimedia Commons.
 
 ## Critic log
-Round 1: fix. Round 2: fix (small, applied). Round 3 not run.
+Round 1: fix. Round 2: fix (small, applied). Round 3 (after the repetition rewrite): see below.
+
+Reply go, or tell me what to change.
