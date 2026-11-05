@@ -299,11 +299,16 @@ function initScenes() {
       const s = ctx.createBufferSource(), g = ctx.createGain(); s.buffer = buf; g.gain.value = level; s.connect(g); g.connect(bus); s.start(ctx.currentTime);
     };
     const stopScene = (fade: number) => { active.forEach((a) => a.stop(fade)); active = []; timers.forEach(clearTimeout); timers = []; };
+    const ACCENTS = ['s1-whoosh', 's2-bell', 's3-horn', 's5-gulls', 's6-gull'];
     const AMBIENT = false; // ambient beds, layers and accents are muted for now: background music only
     const playScene = (i: number, fade: number, withHits: boolean) => {
       stopScene(fade);
       activeScene = i;
-      if (!AMBIENT) return;
+      if (!AMBIENT) {
+        // music only, plus a few single accents laid over it
+        if (withHits) (data[i].sound?.hits || []).filter((h: any) => ACCENTS.includes(h.n)).forEach((h: any) => timers.push(window.setTimeout(() => once(h.n, h.l * 0.8, fxBus), h.at * 1000)));
+        return;
+      }
       const c = data[i].sound || {};
       active.push(loop('bed-' + (i + 1), bedBus, 0.75, fade));
       (c.layers || []).forEach((l: any) => active.push(loop(l.n, layerBus, l.l, fade)));
@@ -461,7 +466,7 @@ function initScenes() {
     gsap.to(vig, { opacity: 1, duration: 1.4 });
     await sleep(900);
     const EN = ["GOD'S OWN"]; // the line ends on the open phrase; the name follows
-    const ML = [data[0].ml[0]];
+    const ML = [data[0].ml[0] + ' ' + data[0].ml[1].split(' ')[0]]; // ദൈവത്തിന്റെ സ്വന്തം, without നാട്
     endTitle.style.fontSize = `calc(5vw * ${fit(EN, endTitle, '5vw', 0.7).toFixed(3)})`;
     gsap.set(endTitle, { opacity: 1 });
     await scramble(endTitle, EN, 1000);
