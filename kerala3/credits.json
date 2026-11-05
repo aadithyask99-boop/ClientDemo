@@ -408,14 +408,6 @@
   "alt": ""
  },
  {
-  "name": "video-water",
-  "by": "Pexels video 13229312 (free to use, filmmaker credit to be added)",
-  "page": "https://www.pexels.com/video/13229312/",
-  "src_px": "video",
-  "out_px": "",
-  "alt": ""
- },
- {
   "name": "video-story-1",
   "by": "Pexels video 12022559 (free to use, filmmaker credit to be added)",
   "page": "https://www.pexels.com/video/12022559/",
@@ -469,6 +461,14 @@
   "page": "https://www.pexels.com/video/9656493/",
   "src_px": "video",
   "out_px": "",
+  "alt": ""
+ },
+ {
+  "name": "video-water",
+  "by": "Animated from the photograph of Athirappilly by Rashi Raffi (Unsplash) with Seedance 1.5 Pro via OpenRouter",
+  "page": "",
+  "src_px": "video",
+  "out_px": "1920x1080",
   "alt": ""
  }
 ]
