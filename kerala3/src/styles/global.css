@@ -387,12 +387,7 @@ html[data-hero='4'] .cs-meta, html[data-hero='4'] .cs-nav, html[data-hero='4'] .
 
 .water { background: #edf2ec; }
 .water-frame { background: #dfe7de; }
-.pin .water-frame { clip-path: inset(30vh 41vw 30vh 41vw); }
-.pin .water-frame::after { display: none; }
 .water-frame video { object-position: 50% 50%; }
-.pin .water-copy { left: 0; right: auto; top: 50%; bottom: auto; transform: translateY(-50%); max-width: 30vw; padding: 0 clamp(24px, 4vw, 70px); }
-.water-copy h2 { color: #14391f; font-size: clamp(40px, 5.2vw, 90px); }
-.water-copy p, .water-copy { color: #3c4a3f; }
 
 .stays { overflow: hidden; }
 .stays-title { text-align: center; margin-bottom: 2vh; }
@@ -440,5 +435,5 @@ html[data-hero='4'] .cs-meta, html[data-hero='4'] .cs-nav, html[data-hero='4'] .
   .slide { flex-basis: 74vw; } .car { padding-inline: calc(50% - 37vw); } .slide-text { max-width: 64vw; }
   .stay-arrow { display: none; }
   .foot .bigword { font-size: 30vw; } .foot-film { height: 90svh; }
-  .water-frame { aspect-ratio: 9 / 14; }
 }
+.pin .water-frame::after { display: none; }

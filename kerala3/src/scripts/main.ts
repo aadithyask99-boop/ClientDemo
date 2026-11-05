@@ -690,10 +690,8 @@ if (pinned && !reduced) {
 /* ---------- WATER (frame grows to full bleed) ---------- */
 if (pinned && !reduced) {
   const tl = gsap.timeline({ scrollTrigger: { trigger: '.water-pin', start: 'top top', end: () => `+=${innerHeight * 1.2}`, pin: true, scrub: 0.6, invalidateOnRefresh: true } });
-  tl.fromTo('.water-frame', { clipPath: 'inset(30vh 41vw 30vh 41vw)' }, { clipPath: 'inset(9vh 33vw 9vh 33vw)', ease: 'none', duration: 0.6 }, 0);
+  tl.fromTo('.water-frame', { clipPath: 'inset(15vh 14vw 15vh 14vw)' }, { clipPath: 'inset(0vh 0vw 0vh 0vw)', ease: 'none', duration: 0.6 }, 0);
   tl.fromTo('.water-frame video', { scale: 1.12 }, { scale: 1, ease: 'none', duration: 1 }, 0);
-  tl.fromTo('.water-copy h2', { opacity: 0, y: 70 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.35 }, 0.4);
-  tl.fromTo('.water-copy p', { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.3 }, 0.6);
 } else if (!reduced) {
 }
 
