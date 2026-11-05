@@ -299,9 +299,11 @@ function initScenes() {
       const s = ctx.createBufferSource(), g = ctx.createGain(); s.buffer = buf; g.gain.value = level; s.connect(g); g.connect(bus); s.start(ctx.currentTime);
     };
     const stopScene = (fade: number) => { active.forEach((a) => a.stop(fade)); active = []; timers.forEach(clearTimeout); timers = []; };
+    const AMBIENT = false; // ambient beds, layers and accents are muted for now: background music only
     const playScene = (i: number, fade: number, withHits: boolean) => {
       stopScene(fade);
       activeScene = i;
+      if (!AMBIENT) return;
       const c = data[i].sound || {};
       active.push(loop('bed-' + (i + 1), bedBus, 0.75, fade));
       (c.layers || []).forEach((l: any) => active.push(loop(l.n, layerBus, l.l, fade)));
@@ -320,7 +322,7 @@ function initScenes() {
       ctx.resume();
       running = true;
       master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(1, ctx.currentTime, 0.35);
-      if (!musicStarted) { musicStarted = true; loop('music', musicBus, 0.7, 4); }
+      if (!musicStarted) { musicStarted = true; loop('music', musicBus, 0.95, 4); }
       if (activeScene !== scene) playScene(scene, 2.5, false);
     };
     const stop = () => { if (!ctx) return; running = false; timers.forEach(clearTimeout); timers = []; master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(0, ctx.currentTime, 0.25); };
@@ -329,8 +331,8 @@ function initScenes() {
       set(v: boolean) { want = v; store.set('k3sound', v ? '1' : '0'); v ? start() : stop(); },
       remembered() { return store.get('k3sound') === '1'; },
       // the hard cut that opens the film, and every later cut
-      begin() { scene = 0; if (ctx && running) { once('swell', 0.7, fxBus); playScene(0, 0.4, true); } },
-      cutTo(i: number, fade: number) { scene = i; if (!ctx || !running) return; once('swell', 0.55, fxBus); playScene(i, fade, true); },
+      begin() { scene = 0; if (ctx && running) { if (AMBIENT) once('swell', 0.7, fxBus); playScene(0, 0.4, true); } },
+      cutTo(i: number, fade: number) { scene = i; if (!ctx || !running) return; if (AMBIENT) once('swell', 0.55, fxBus); playScene(i, fade, true); },
       endMusic(up: boolean) { if (ctx && running) musicBus.gain.setTargetAtTime(up ? 1.4 : 1, ctx.currentTime, 0.8); },
       hush(v: boolean) { if (!ctx || !want) return; if (v) stop(); else if (!running) { activeScene = -1; start(); } },
       level() { if (!analyser) return 0; const a = new Uint8Array(analyser.fftSize); analyser.getByteTimeDomainData(a); let s = 0; for (const x of a) { const v = (x - 128) / 128; s += v * v; } return Math.sqrt(s / a.length); },
@@ -458,12 +460,13 @@ function initScenes() {
     gsap.to(bar, { opacity: 0.3, duration: 0.8 });
     gsap.to(vig, { opacity: 1, duration: 1.4 });
     await sleep(900);
-    const EN = ["GOD'S OWN", 'COUNTRY'];
+    const EN = ["GOD'S OWN"]; // the line ends on the open phrase; the name follows
+    const ML = [data[0].ml[0]];
     endTitle.style.fontSize = `calc(5vw * ${fit(EN, endTitle, '5vw', 0.7).toFixed(3)})`;
     gsap.set(endTitle, { opacity: 1 });
     await scramble(endTitle, EN, 1000);
     await sleep(1400);
-    await mix(endTitle, EN, data[0].ml, 3400);
+    await mix(endTitle, EN, ML, 3400);
     await sleep(800);
     gsap.to(endTitle, { opacity: 0, duration: 1.1 });
     await sleep(900);
