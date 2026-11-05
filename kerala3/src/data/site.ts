@@ -25,6 +25,15 @@ export const site = {
       { img: 'hero-mist', label: 'December, mist', weather: 'mist' },
     ],
   },
+  // Hero 4: a film of places. Each scene takes public/video/scene-N.mp4 when it exists, otherwise the photograph.
+  scenes: [
+    { img: 'hero-onam', title: "GOD'S OWN COUNTRY", ml: 'ദൈവത്തിന്റെ സ്വന്തം നാട്', line: 'Where the mountains meet the sea.' },
+    { img: 'fan-alappuzha', title: 'ALAPPUZHA', ml: 'ആലപ്പുഴ', line: 'Slow water and long mornings.' },
+    { img: 'fan-munnar', title: 'MUNNAR', ml: 'മൂന്നാർ', line: 'Tea hills above the clouds.' },
+    { img: 'fan-athirappilly', title: 'ATHIRAPPILLY', ml: 'അതിരപ്പിള്ളി', line: 'The falls at full strength.' },
+    { img: 'fan-varkala', title: 'VARKALA', ml: 'വർക്കല', line: 'Red cliffs above the sea.' },
+    { img: 'fan-kochi', title: 'KOCHI', ml: 'കൊച്ചി', line: 'Old nets and older harbours.' },
+  ],
   statement: {
     text: 'A green strip between the Western Ghats and the Arabian Sea, with 44 rivers, spice forests and a festival in every month. Come for the landscape, stay for the people.',
     cta: 'Why Kerala',

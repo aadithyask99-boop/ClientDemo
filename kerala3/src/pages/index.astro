@@ -1,6 +1,8 @@
 ---
 import '@fontsource-variable/newsreader';
 import '@fontsource-variable/albert-sans';
+import '@fontsource-variable/noto-serif-malayalam';
+import { existsSync } from 'node:fs';
 import '../styles/global.css';
 import { site } from '../data/site';
 import credits from '../../credits.json';
@@ -23,7 +25,7 @@ const ordered = ['January','February','March','April','May','June','July','Augus
     <script is:inline>
       (function(){var d=document.documentElement;
       if(innerWidth>820&&!matchMedia("(prefers-reduced-motion: reduce)").matches)d.classList.add("pin");
-      var m=(location.hash.match(/hero=([123])/)||[])[1]||"1";d.dataset.hero=m;})();
+      var m=(location.hash.match(/hero=([1234])/)||[])[1]||"4";d.dataset.hero=m;})();
     </script>
     <link rel="preload" as="image" href={img('hero-monsoon')} />
   </head>
@@ -72,6 +74,20 @@ const ordered = ['January','February','March','April','May','June','July','Augus
             <img class="L" data-z="1.3" src={leaf('leaf-areca')} alt="" style="right:-6%;bottom:-14%;height:78%" />
           </div>
         </div>
+        <div class="stage s4" aria-hidden="true">
+          {site.scenes.map((sc, i) => (
+            <div class={`scn ${i === 0 ? 'on' : ''}`} data-i={i}>
+              {existsSync(`public/video/scene-${i + 1}.mp4`)
+                ? <video muted playsinline loop preload={i < 2 ? 'auto' : 'metadata'} poster={img(sc.img)} src={`${base}video/scene-${i + 1}.mp4`}></video>
+                : <img src={img(sc.img)} alt="" fetchpriority={i === 0 ? 'high' : 'low'} />}
+            </div>
+          ))}
+          <img class="zoomblur" src={img('hero-onam-zoom')} alt="" />
+        </div>
+        <div class="h4-copy">
+          <h1 class="h4-title" id="h4-title" aria-label="God's Own Country">{site.scenes[0].title}</h1>
+        </div>
+        <p class="h4-line" id="h4-line">{site.scenes[0].line}</p>
         <div class="hero-copy">
           <h1 class="hero-title" id="hero-title">
             <span class="line"><span class="line-in">{site.hero.pre}</span></span>
@@ -251,7 +267,7 @@ const ordered = ['January','February','March','April','May','June','July','Augus
     </footer>
 
     <nav class="review" aria-label="Hero options (review only)">
-      <a href="#hero=1" data-h="1">Hero 1</a><a href="#hero=2" data-h="2">Hero 2</a><a href="#hero=3" data-h="3">Hero 3</a>
+      <a href="#hero=1" data-h="1">Hero 1</a><a href="#hero=2" data-h="2">Hero 2</a><a href="#hero=3" data-h="3">Hero 3</a><a href="#hero=4" data-h="4">Hero 4</a>
     </nav>
     <div class="egg-layer" id="egg-layer" aria-hidden="true"></div>
     <script>import '../scripts/main.ts';</script>

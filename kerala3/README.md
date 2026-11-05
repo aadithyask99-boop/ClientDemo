@@ -7,11 +7,12 @@ A concept homepage for Kerala Tourism (keralatourism.org). Not the official site
 **Spine:** one year in Kerala. Each section has a season job, shown only as weather and light inside photographs.
 **Fonts:** Newsreader Light and Albert Sans, stand-ins for Red Dot's licensed F37 Wicklow and PP Neue Montreal.
 
-## Three heroes (switch with the review pill at the bottom left, or `#hero=1|2|3`)
+## Four heroes (switch with the review pill at the bottom left, or `#hero=1|2|3|4`; the page opens on 4)
 1. **Three seasons:** stills cycle monsoon, Onam, December mist, with soft rain or mist and cut-out foliage that drifts with the cursor.
 2. **Rain on the glass:** a misted window over a backwater; the cursor wipes it clear, rain runs trails, it clouds over again.
 3. **Through the leaves:** layered foliage; scrolling carries the camera through into the backwater.
-The review pill and the two unused heroes are removed once the owner chooses.
+4. **A film of places** (from the owner's Costa Serenade reference): six scenes, each with its place name that scrambles into Malayalam letters and back, a slanted slice wipe between scenes, an opening zoom-blur that clears, and a word-by-word tagline. Each scene plays `public/video/scene-N.mp4` when that file exists and otherwise shows its photograph, so footage can be dropped in without code. Malayalam words need a native check.
+The review pill and the unused heroes are removed once the owner chooses.
 
 ## Easter eggs
 - Type `onam` (touch: long-press the headline): a pookalam flower carpet blooms.

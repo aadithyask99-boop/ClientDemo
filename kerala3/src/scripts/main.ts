@@ -174,6 +174,105 @@ if (hero === '1') {
   }
 }
 
+if (hero === '4') initScenes();
+function initScenes() {
+  const data = site.scenes;
+  const layers = $$('.scn');
+  const titleEl = $('#h4-title'), lineEl = $('#h4-line'), zoom = $('.zoomblur');
+  const segmenter = new Intl.Segmenter('ml', { granularity: 'grapheme' });
+  const graphemes = (t: string) => Array.from(segmenter.segment(t), (x) => x.segment);
+  const ML = Array.from('കഖഗഘചജടഠഡതദധനപഫബഭമയരലവശഷസഹളഴറ');
+  const LAT = Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  const rnd = (a: string[]) => a[Math.floor(Math.random() * a.length)];
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  const visible = onScreen(heroEl);
+  const whenVisible = async () => { while (!visible() || document.hidden) await sleep(400); };
+  const setLine = (t: string) => { lineEl.innerHTML = t.split(' ').map((w) => `<span class="w">${w}</span>`).join(' '); };
+  const revealLine = () => { $$('.w', lineEl).forEach((w, i) => setTimeout(() => w.classList.add('on'), 250 + i * 160)); };
+  const paint = (chars: string[]) => {
+    let html = '', word = '';
+    for (const c of chars) {
+      if (c === ' ') { html += `<span class="wd">${word}</span> `; word = ''; }
+      else word += `<span class="g">${c}</span>`;
+    }
+    titleEl.innerHTML = html + `<span class="wd">${word}</span>`;
+  };
+  let current = graphemes(data[0].title);
+  paint(current);
+  setLine(data[0].line);
+  if (reduced) { revealLine(); return; }
+
+  // resolve into a new text from a scramble, letter by letter
+  const scramble = (to: string, ml: boolean, dur = 950) => new Promise<void>((done) => {
+    const target = graphemes(to);
+    const start = performance.now();
+    const at = target.map((_, i) => (i / target.length) * dur * 0.75 + Math.random() * dur * 0.25);
+    titleEl.classList.toggle('ml', ml);
+    const id = setInterval(() => {
+      const t = performance.now() - start;
+      const out = target.map((c, i) => (c === ' ' ? ' ' : t >= at[i] ? c : rnd(Math.random() < 0.5 ? ML : LAT)));
+      paint(out);
+      if (t >= dur) { clearInterval(id); paint(target); current = target; done(); }
+    }, 45);
+  });
+  // now and then one letter flips to a Malayalam letter for a blink
+  setInterval(() => {
+    if (!visible() || titleEl.dataset.busy) return;
+    const i = Math.floor(Math.random() * current.length);
+    if (current[i] === ' ' || titleEl.classList.contains('ml')) return;
+    const spans = $$('.g', titleEl);
+    if (!spans[i]) return;
+    const keep = spans[i].textContent;
+    spans[i].textContent = rnd(ML);
+    setTimeout(() => { if (spans[i]) spans[i].textContent = keep; }, 110);
+  }, 900);
+
+  const vids = layers.map((l) => l.querySelector('video') as HTMLVideoElement | null);
+  const play = (i: number) => { vids.forEach((v, k) => { if (!v) return; if (k === i) v.play().catch(() => {}); else if (k !== i) v.pause(); }); };
+  play(0);
+
+  // opening: the rush through the blossoms becomes a clear view; the title starts large and settles
+  gsap.fromTo(zoom, { opacity: 1, scale: 1.12 }, { opacity: 0, scale: 1, duration: 2.8, ease: 'power2.out' });
+  gsap.fromTo(layers[0].firstElementChild, { scale: 1.22 }, { scale: 1, duration: 3.2, ease: 'power2.out' });
+  gsap.fromTo(titleEl, { scale: 1.45 }, { scale: 1, duration: 2.6, ease: 'power3.inOut', delay: 0.3 });
+  revealLine();
+
+  const wipe = (from: number, to: number) => new Promise<void>((done) => {
+    const next = layers[to];
+    next.classList.add('next');
+    const p = { v: 0 };
+    gsap.fromTo(next.firstElementChild, { scale: 1.2 }, { scale: 1, duration: 1.8, ease: 'power3.out' });
+    gsap.to(p, { v: 1, duration: 1.15, ease: 'power3.inOut', onUpdate: () => { const x = p.v * 138 - 18; next.style.clipPath = `polygon(0 0, ${x + 20}% 0, ${x}% 100%, 0 100%)`; }, onComplete: () => {
+      layers[from].classList.remove('on');
+      next.classList.remove('next'); next.classList.add('on'); next.style.clipPath = '';
+      done();
+    } });
+  });
+
+  (async () => {
+    let i = 0;
+    await sleep(2600);
+    for (;;) {
+      await whenVisible();
+      await scramble(data[i].ml, true);       // the place in Malayalam
+      await sleep(2300);
+      await whenVisible();
+      const n = (i + 1) % data.length;
+      play(n);
+      const w = wipe(i, n);                    // the slanted slice carries the next place in
+      lineEl.querySelectorAll('.w').forEach((x) => x.classList.remove('on'));
+      await sleep(250);
+      titleEl.dataset.busy = '1';
+      await scramble(data[n].title, false, 1000);
+      delete titleEl.dataset.busy;
+      setLine(data[n].line); revealLine();
+      await w;
+      i = n;
+      await sleep(2300);
+    }
+  })();
+}
+
 if (hero === '2') initGlass();
 function initGlass() {
   const c = $('#glass') as HTMLCanvasElement;
@@ -393,7 +492,7 @@ addEventListener('keydown', (e) => {
   if (typed === 'onam') pookalam(innerWidth / 2, innerHeight / 2);
 });
 { // touch: long-press the hero headline
-  let t = 0; const h = $('#hero-title');
+  let t = 0; const h = $(hero === '4' ? '#h4-title' : '#hero-title');
   h.addEventListener('pointerdown', (e) => (t = window.setTimeout(() => pookalam(e.clientX, e.clientY), 700)));
   ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => h.addEventListener(ev, () => clearTimeout(t)));
 }
