@@ -737,12 +737,12 @@ if (car && slides.length) {
 
 // films load when close and play only while on screen
 {
-  const vids = $$('.water-frame video, .story-img video, .foot-film video') as HTMLVideoElement[];
+  const vids = $$('.water-frame video, .story-img video') as HTMLVideoElement[];
   const small = innerWidth <= 820;
   const io = new IntersectionObserver((es) => es.forEach((en) => {
     const v = en.target as HTMLVideoElement;
     if (en.isIntersecting) {
-      if (!v.src && v.dataset.src && !(small && v.closest('.water-frame, .foot-film'))) { v.src = v.dataset.src; v.load(); }
+      if (!v.src && v.dataset.src && !(small && v.closest('.water-frame'))) { v.src = v.dataset.src; v.load(); }
       if (v.src && !reduced) v.play().catch(() => {});
     } else v.pause();
   }), { rootMargin: '200px 0px', threshold: 0.01 });

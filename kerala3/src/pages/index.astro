@@ -281,12 +281,8 @@ const ordered = ['January','February','March','April','May','June','July','Augus
         <div class="cols">
           {site.footer.cols.map((c) => <div><h3>{c.h}</h3>{c.l.map((l) => <a href={site.officialUrl}>{l}</a>)}</div>)}
         </div>
-        <p class="fine">A concept homepage, not the official site. <a href={`${base}credits/`}>Photo credits</a>. Figures and dates are illustrative and must be confirmed by Kerala Tourism.</p>
       </div>
       <button class="bigword" id="bigword" type="button" aria-label="Keralam">{site.footer.word}</button>
-      <div class="foot-film">
-        <video data-src={`${base}video/foot.mp4`} poster={img('foot-poster')} muted playsinline preload="none" aria-label="A houseboat gliding across the backwaters"></video>
-      </div>
     </footer>
 
     <nav class="review" aria-label="Hero options (review only)">
