@@ -437,3 +437,16 @@ html[data-hero='4'] .cs-meta, html[data-hero='4'] .cs-nav, html[data-hero='4'] .
   .foot .bigword { font-size: 30vw; } .foot-film { height: 90svh; }
 }
 .pin .water-frame::after { display: none; }
+
+/* v17: the footer film is a painted backwater that dissolves into the white page; the links sit on the page below it */
+.foot-film { height: 66vh; margin-top: 0; }
+.foot-film video { object-position: 50% 55%; transform-origin: 50% 80%; }
+.foot-film::before { height: 38%; background: linear-gradient(to bottom, var(--paper) 0%, rgba(244, 243, 239, 0) 100%); }
+.foot-film::after { display: none; }
+.foot-over { position: relative; z-index: 4; padding: 5vh clamp(20px, 5vw, 80px) 4vh; color: var(--ink); background: var(--paper); }
+.foot-over .news label, .foot-over .cols h3 { color: var(--ink); }
+.foot-over .news input { border-color: rgba(20, 57, 31, 0.4); color: var(--ink); } .foot-over .news input::placeholder { color: rgba(60, 74, 63, 0.75); }
+.foot-over .cols a { color: #3c4a3f; } .foot-over .cols a:hover { color: var(--green); }
+.foot-over .fine { color: #5c6a5f; }
+@media (max-width: 820px) { .foot-film { height: 48vh; } }
+.foot-film::after { display: block; height: 22%; background: linear-gradient(to top, var(--paper), rgba(244, 243, 239, 0)); }
