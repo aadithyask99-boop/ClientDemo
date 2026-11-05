@@ -398,5 +398,13 @@
   "src_px": "video",
   "out_px": "1920x1080",
   "alt": ""
+ },
+ {
+  "name": "audio-voice",
+  "by": "Voiceover, ambient sound and music generated with ElevenLabs (voice: Brian; to be replaced by the owner's chosen voice)",
+  "page": "https://elevenlabs.io/",
+  "src_px": "audio",
+  "out_px": "",
+  "alt": ""
  }
 ]

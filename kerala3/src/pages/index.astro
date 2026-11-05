@@ -26,7 +26,7 @@ const ordered = ['January','February','March','April','May','June','July','Augus
     <script is:inline>
       (function(){var d=document.documentElement;
       if(innerWidth>820&&!matchMedia("(prefers-reduced-motion: reduce)").matches)d.classList.add("pin");
-      var m=(location.hash.match(/hero=([1234])/)||[])[1]||"4";d.dataset.hero=m;})();
+      var m=(location.hash.match(/hero=([1234])/)||[])[1]||"4";d.dataset.hero=m;if(m==="4"&&innerWidth>820&&!matchMedia("(prefers-reduced-motion: reduce)").matches){d.classList.add("intro");setTimeout(function(){d.classList.remove("intro")},7000)}})();/*k3intro*/
     </script>
     <link rel="preload" as="image" href={img('hero-monsoon')} />
   </head>
@@ -93,9 +93,15 @@ const ordered = ['January','February','March','April','May','June','July','Augus
           <nav class="cs-nav" aria-label="Sections">
             <a href="#places">PLACES</a><a href="#months">WHEN TO COME</a><a href="#stays">STAYS</a><a href="#trips">JOURNEYS</a>
           </nav>
-          <a class="cs-cta" href={site.officialUrl}><b></b>PLAN YOUR TRIP</a>
+          <button class="cs-sound" id="cs-sound" type="button" aria-pressed="false">SOUND OFF</button>
+          <a class="cs-cta" href={site.officialUrl}>PLAN YOUR TRIP <span aria-hidden="true">&rarr;</span></a>
           <p class="cs-p" id="cs-p">{site.scenes[0].p}</p>
           <p class="cs-line" id="h4-line"></p>
+          <div class="cs-end" id="cs-end" aria-hidden="true">
+            <img class="cs-end-logo" src={`${base}img/kerala-logo.svg`} alt="" />
+            <p class="cs-end-title">GOD'S OWN COUNTRY</p>
+            <a class="cs-end-btn" href={site.officialUrl}>Plan your trip</a>
+          </div>
           <span class="cs-c">©2026</span>
           <span class="cs-scroll">SCROLL DOWN</span>
         </div>

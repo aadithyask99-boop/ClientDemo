@@ -31,3 +31,12 @@ Desktop (pointer, 820 px and wider, motion allowed): pinned fan, months scene, h
 
 ## Run
 `npm install && npm run dev`. Shared deploy: `node scripts/stage.mjs` (serves under `/kerala3`).
+
+## Hero 4 v3 (sound, adaptive text, end card)
+- **Entrance:** from black, the title appears in the middle, holds, then glides to the top-left corner while the zoom-blur clears (about 5.5 s). Title size fits itself so it never reaches the top bar.
+- **Adaptive text:** every text element is checked against the picture behind it each 260 ms (contrast of white and of dark ink against every sampled pixel). White is the default; dark ink only where the picture is light and dark clears almost every pixel; a halo in the opposite tone grows where it still struggles. The top bar turns white over the end card.
+- **Pacing:** each place holds about 7.6 s, the cut takes 1.9 s, the title scramble 1.1 s.
+- **End card:** after the last place, the Kerala logo (re-drawn as a clean SVG from the official 91 px logo; the palm crown is simplified), GOD'S OWN COUNTRY and a Plan your trip button, then the film restarts.
+- **Sound** (off until the visitor turns it on; browsers need a touch): ambient bed per scene (looped with an equal-power overlap so the seam cannot be heard), music bed, a swell on each cut, a voice line per scene with the beds ducking under it. All generated with ElevenLabs (free plan). The voice is **Brian** because the owner's choice, "Douglas - Deep voice", is a Voice Library voice and the free plan cannot use library voices through the API; swap `public/audio/voice-1..7.mp3` for Douglas files made on the website, or upgrade the plan and I regenerate.
+- **Video:** re-encoded from the owner's clips at up to 2560 px wide, about 8 Mbps (1080p sources stay at 1920).
+- Mute and the sound choice are remembered; sound fades when the hero leaves the screen.
