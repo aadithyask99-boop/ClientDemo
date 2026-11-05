@@ -3,6 +3,7 @@ import '@fontsource-variable/newsreader';
 import '@fontsource-variable/albert-sans';
 import '@fontsource-variable/inter-tight';
 import '@fontsource-variable/noto-sans-malayalam';
+import '@fontsource/instrument-serif';
 import { existsSync } from 'node:fs';
 import '../styles/global.css';
 import { site } from '../data/site';
@@ -180,7 +181,13 @@ const ordered = ['January','February','March','April','May','June','July','Augus
       <!-- 5 DARK: THE HEART -->
       <section class="heart" id="heart" data-tone="light">
         <div class="heart-pin">
-          <div class="heart-film"><video data-src={`${base}video/heart.mp4`} poster={img('heart-poster')} muted playsinline preload="none" aria-label="A helmsman steering a backwater boat"></video></div>
+          <div class="drift" aria-hidden="true">
+            {[0, 1, 2].map((l) => (
+              <div class={`dl dl${l}`}>
+                {site.heart.drift.filter((d) => d.l === l).map((d) => <img src={img(d.img)} alt="" loading="lazy" style={`left:${d.x}vw;top:${d.y}%;width:${d.w}vw`} />)}
+              </div>
+            ))}
+          </div>
           <h2 class="heart-title" id="heart-title">{site.heart.pre} <i>{site.heart.accent}</i></h2>
           <div class="heart-text">
             <p>{site.heart.text}</p>
@@ -190,7 +197,7 @@ const ordered = ['January','February','March','April','May','June','July','Augus
       </section>
 
       <!-- 6 WATER -->
-      <section class="water" id="water" data-tone="light">
+      <section class="water" id="water" data-tone="dark">
         <div class="water-pin">
           <div class="water-frame">
             <video data-src={`${base}video/water.mp4`} poster={img('water-poster')} muted playsinline preload="none" aria-label="Athirappilly waterfall in the monsoon"></video>
@@ -206,8 +213,7 @@ const ordered = ['January','February','March','April','May','June','July','Augus
       <section class="stories" id="stories" data-tone="light">
         <h2 class="stories-title" data-split>{site.stories.pre} <i>{site.stories.accent}</i></h2>
         <p class="stories-text" data-fade>{site.stories.text}</p>
-        <div class="rail-ctl"><button type="button" class="rail-btn" data-rail="stories" data-dir="-1" aria-label="Previous story">&larr;</button><button type="button" class="rail-btn" data-rail="stories" data-dir="1" aria-label="Next story">&rarr;</button></div>
-        <div class="stories-row rail" id="stories-row" tabindex="0" aria-label="Stories">
+        <div class="stories-row">
           {site.stories.items.map((s, i) => (
             <figure class={`story s${i}`}>
               <div class="story-img"><video data-src={`${base}video/story-${i + 1}.mp4`} poster={img(`story-${i + 1}-poster`)} muted loop playsinline preload="none" aria-label={s.title}></video></div>
@@ -232,17 +238,24 @@ const ordered = ['January','February','March','April','May','June','July','Augus
 
       <!-- 9 STAYS AND AWAY FROM THE PATH -->
       <section class="stays" id="stays" data-tone="light">
-        <h2 class="stays-title" data-split>{site.stays.title}</h2>
-        <div class="rail-ctl rail-ctl--stays"><span class="rail-count" id="stays-count">01 / 0{site.stays.items.length}</span><button type="button" class="rail-btn" data-rail="stays" data-dir="-1" aria-label="Previous stay">&larr;</button><button type="button" class="rail-btn" data-rail="stays" data-dir="1" aria-label="Next stay">&rarr;</button></div>
-        <div class="car rail" id="car" tabindex="0" aria-label="Stays">
-          {site.stays.items.map((s, i) => (
-            <figure class="slide" data-i={i}>
-              <div class="slide-img"><img src={img(s.img)} alt={alt(s.img)} loading="lazy" draggable="false" /></div>
-              <figcaption><b>{s.name}</b> <span>{s.place}</span></figcaption>
-            </figure>
-          ))}
+        <h2 class="stays-title" data-split>{site.stays.title} <i>{site.stays.accent}</i></h2>
+        <p class="stays-intro" data-fade>{site.stays.intro}</p>
+        <div class="stay-wrap">
+          <button type="button" class="stay-arrow prev" id="stay-prev" aria-label="Previous stay">&larr;</button>
+          <div class="car" id="car" tabindex="0" aria-label="Stays">
+            {site.stays.items.map((s, i) => (
+              <article class="slide" data-i={i}>
+                <h3>{s.name}</h3>
+                <p class="slide-place">{s.place}</p>
+                <div class="slide-img"><img src={img(s.img)} alt={alt(s.img)} loading="lazy" draggable="false" /></div>
+                <p class="slide-text">{s.text}</p>
+                <a class="pill-o" href={site.officialUrl}>More info</a>
+              </article>
+            ))}
+          </div>
+          <button type="button" class="stay-arrow next" id="stay-next" aria-label="Next stay">&rarr;</button>
         </div>
-        <div class="rail-bar" aria-hidden="true"><i id="stays-bar"></i></div>
+        <div class="stay-dots" id="stay-dots" aria-hidden="true">{site.stays.items.map(() => <i></i>)}</div>
         <div class="away">
           <img src={img(site.stays.away.img)} alt={alt(site.stays.away.img)} loading="lazy" />
           <div class="away-copy">
@@ -264,16 +277,24 @@ const ordered = ['January','February','March','April','May','June','July','Augus
     </main>
 
     <footer class="foot" id="foot" data-tone="light">
-      <form class="news" onsubmit="return false">
-        <label for="mail">{site.footer.news}</label>
-        <input id="mail" type="email" placeholder="Email address" />
-      </form>
-      <div class="cols">
-        {site.footer.cols.map((c) => <div><h3>{c.h}</h3>{c.l.map((l) => <a href={site.officialUrl}>{l}</a>)}</div>)}
+      <div class="foot-top">
+        <button class="bigword" id="bigword" type="button" aria-label="Keralam">{site.footer.word}</button>
+        <p class="foot-p">{site.footer.text}</p>
+        <a class="foot-btn" href={site.officialUrl}>{site.footer.button}</a>
       </div>
-      <button class="bigword" id="bigword" type="button" aria-label="Keralam">{site.footer.word}</button>
-      <div class="foot-film"><video data-src={`${base}video/foot.mp4`} poster={img('foot-poster')} muted playsinline preload="none" aria-label="A houseboat gliding across the backwaters"></video></div>
-      <p class="fine">A concept homepage, not the official site. <a href={`${base}credits/`}>Photo credits</a>. Figures and dates are illustrative and must be confirmed by Kerala Tourism.</p>
+      <div class="foot-film">
+        <video data-src={`${base}video/foot.mp4`} poster={img('foot-poster')} muted playsinline preload="none" aria-label="A houseboat gliding across the backwaters"></video>
+        <div class="foot-over">
+          <form class="news" onsubmit="return false">
+            <label for="mail">{site.footer.news}</label>
+            <input id="mail" type="email" placeholder="Email address" />
+          </form>
+          <div class="cols">
+            {site.footer.cols.map((c) => <div><h3>{c.h}</h3>{c.l.map((l) => <a href={site.officialUrl}>{l}</a>)}</div>)}
+          </div>
+          <p class="fine">A concept homepage, not the official site. <a href={`${base}credits/`}>Photo credits</a>. Figures and dates are illustrative and must be confirmed by Kerala Tourism.</p>
+        </div>
+      </div>
     </footer>
 
     <nav class="review" aria-label="Hero options (review only)">

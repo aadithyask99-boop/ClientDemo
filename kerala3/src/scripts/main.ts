@@ -681,15 +681,17 @@ if (pinned && !reduced) {
   const title = $('#heart-title');
   const tl = gsap.timeline({ scrollTrigger: { trigger: '.heart-pin', start: 'top top', end: () => `+=${innerHeight * 1.8}`, pin: true, scrub: 0.6, invalidateOnRefresh: true } });
   tl.fromTo(title, { x: () => innerWidth * 0.04 }, { x: () => -(title.scrollWidth - innerWidth * 0.82), ease: 'none', duration: 1 }, 0);
-  tl.fromTo('.heart-film', { yPercent: 14 }, { yPercent: -10, ease: 'none', duration: 1 }, 0);
+  const dist = [155, 235, 330];
+  $$('.dl').forEach((el, l) => tl.fromTo(el, { x: 0 }, { x: () => -innerWidth * (dist[l] / 100), ease: 'none', duration: 1 }, 0));
+  $$('.dl img').forEach((im, i) => tl.fromTo(im, { yPercent: 8 + (i % 3) * 5, rotation: i % 2 ? 2.5 : -2.5 }, { yPercent: -10 - (i % 3) * 6, rotation: i % 2 ? -1.5 : 1.5, ease: 'none', duration: 1 }, 0));
   tl.fromTo('.heart-text', { opacity: 0, y: 60 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.3 }, 0.55);
 }
 
 /* ---------- WATER (frame grows to full bleed) ---------- */
 if (pinned && !reduced) {
   const tl = gsap.timeline({ scrollTrigger: { trigger: '.water-pin', start: 'top top', end: () => `+=${innerHeight * 1.2}`, pin: true, scrub: 0.6, invalidateOnRefresh: true } });
-  tl.fromTo('.water-frame', { clipPath: 'inset(14vh 33vw 22vh 33vw)' }, { clipPath: 'inset(7vh 5vw 26vh 5vw)', ease: 'none', duration: 0.6 }, 0);
-  tl.fromTo('.water-frame video', { scale: 1.25 }, { scale: 1, ease: 'none', duration: 1 }, 0);
+  tl.fromTo('.water-frame', { clipPath: 'inset(30vh 41vw 30vh 41vw)' }, { clipPath: 'inset(9vh 33vw 9vh 33vw)', ease: 'none', duration: 0.6 }, 0);
+  tl.fromTo('.water-frame video', { scale: 1.12 }, { scale: 1, ease: 'none', duration: 1 }, 0);
   tl.fromTo('.water-copy h2', { opacity: 0, y: 70 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.35 }, 0.4);
   tl.fromTo('.water-copy p', { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.3 }, 0.6);
 } else if (!reduced) {
@@ -698,7 +700,8 @@ if (pinned && !reduced) {
 /* ---------- STORIES, TRIPS, STAYS ---------- */
 if (!reduced) {
   $$('.story').forEach((f, i) => {
-    gsap.from(f, { opacity: 0, y: 90, duration: 1.4, ease: 'power3.out', scrollTrigger: { trigger: f, start: 'top 95%' } });
+    gsap.from(f, { opacity: 0, y: 90, duration: 1.4, ease: 'power3.out', scrollTrigger: { trigger: f, start: 'top 90%' } });
+    gsap.fromTo($('video', f), { yPercent: -6, scale: 1.12 }, { yPercent: 6, scale: 1.12, ease: 'none', scrollTrigger: { trigger: f, start: 'top bottom', end: 'bottom top', scrub: true } });
     void i;
   });
   gsap.from('.tile', { opacity: 0, y: 70, duration: 1.2, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: '.mosaic', start: 'top 82%' } });
@@ -707,34 +710,36 @@ if (!reduced) {
   gsap.fromTo('.cta-sea', { scale: 1.2 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '#cta', start: 'top bottom', end: 'bottom top', scrub: true } });
   gsap.from('.cta-copy p, .cta-copy .btn', { opacity: 0, y: 30, duration: 1, stagger: 0.12, scrollTrigger: { trigger: '.cta-copy', start: 'top 75%' } });
 }
-// rails: stories and stays scroll sideways by drag, swipe, keys and the arrow buttons
-const rails: Record<string, HTMLElement> = { stories: $('#stories-row'), stays: $('#car') };
-Object.entries(rails).forEach(([name, el]) => {
-  if (!el) return;
-  const btns = $$(`.rail-btn[data-rail="${name}"]`);
-  const step = () => { const c = el.firstElementChild as HTMLElement; return c ? c.getBoundingClientRect().width + parseFloat(getComputedStyle(el).columnGap || '20') : 300; };
-  const sync = () => {
-    const max = el.scrollWidth - el.clientWidth;
-    btns.forEach((b) => ((b as HTMLButtonElement).disabled = (b.dataset.dir === '-1' && el.scrollLeft < 4) || (b.dataset.dir === '1' && el.scrollLeft > max - 4)));
-    if (name === 'stays') {
-      const n = el.children.length, i = Math.min(n - 1, Math.round(el.scrollLeft / step()));
-      const c = $('#stays-count'); if (c) c.textContent = `0${i + 1} / 0${n}`;
-      const bar = $('#stays-bar'); if (bar) bar.style.width = `${100 / n + (max > 0 ? (el.scrollLeft / max) * (100 - 100 / n) : 0)}%`;
-    }
+// stays: one stay at a time in the middle (as in the reference); neighbours fade back, arrows and dots move it
+const car = $('#car'); const slides = $$('.slide'); const dots = $$('#stay-dots i');
+if (car && slides.length) {
+  let cur = Math.floor(slides.length / 2);
+  const centre = (i: number, smooth = true) => { const s = slides[i]; car.scrollTo({ left: s.offsetLeft - (car.clientWidth - s.offsetWidth) / 2, behavior: smooth ? 'smooth' : 'auto' }); };
+  const upd = () => {
+    const cx = car.scrollLeft + car.clientWidth / 2;
+    let best = 0, bd = 1e9;
+    slides.forEach((s, i) => { const d = Math.abs(s.offsetLeft + s.offsetWidth / 2 - cx); if (d < bd) { bd = d; best = i; } const k = Math.min(1, d / (s.offsetWidth * 1.05)); s.style.setProperty('--s', String(1 - k * 0.16)); s.style.setProperty('--o', String(1 - k * 0.6)); });
+    cur = best;
+    slides.forEach((s, i) => s.classList.toggle('on', i === best));
+    dots.forEach((d, i) => d.classList.toggle('on', i === best));
+    ($('#stay-prev') as HTMLButtonElement).disabled = best === 0; ($('#stay-next') as HTMLButtonElement).disabled = best === slides.length - 1;
   };
-  btns.forEach((b) => b.addEventListener('click', () => el.scrollBy({ left: Number(b.dataset.dir) * step(), behavior: 'smooth' })));
-  el.addEventListener('scroll', sync, { passive: true }); addEventListener('resize', sync); sync();
-  el.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') el.scrollBy({ left: step(), behavior: 'smooth' }); if (e.key === 'ArrowLeft') el.scrollBy({ left: -step(), behavior: 'smooth' }); });
-  // drag with a mouse (touch already scrolls natively)
+  car.addEventListener('scroll', upd, { passive: true }); addEventListener('resize', () => { centre(cur, false); upd(); });
+  $('#stay-prev').addEventListener('click', () => centre(Math.max(0, cur - 1)));
+  $('#stay-next').addEventListener('click', () => centre(Math.min(slides.length - 1, cur + 1)));
+  slides.forEach((s, i) => s.addEventListener('click', (e) => { if (i !== cur && !(e.target as HTMLElement).closest('a')) centre(i); }));
+  dots.forEach((d, i) => d.addEventListener('click', () => centre(i)));
+  car.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') centre(Math.min(slides.length - 1, cur + 1)); if (e.key === 'ArrowLeft') centre(Math.max(0, cur - 1)); });
+  requestAnimationFrame(() => { centre(cur, false); upd(); setTimeout(() => { centre(cur, false); upd(); }, 600); });
   let down = false, moved = 0, sx = 0, sl = 0;
-  el.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') return; down = true; moved = 0; sx = e.clientX; sl = el.scrollLeft; });
-  addEventListener('pointermove', (e) => { if (!down) return; const dx = e.clientX - sx; moved = Math.max(moved, Math.abs(dx)); if (moved > 4) el.classList.add('drag'); el.scrollLeft = sl - dx; });
-  addEventListener('pointerup', () => { if (!down) return; down = false; el.classList.remove('drag'); });
-});
+  car.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') return; down = true; moved = 0; sx = e.clientX; sl = car.scrollLeft; });
+  addEventListener('pointermove', (e) => { if (!down) return; const dx = e.clientX - sx; moved = Math.max(moved, Math.abs(dx)); if (moved > 4) { car.classList.add('drag'); car.scrollLeft = sl - dx; } });
+  addEventListener('pointerup', () => { if (!down) return; down = false; car.classList.remove('drag'); if (moved > 4) centre(cur); });
+}
 
-// films load when they are close and play only while on screen
+// films load when close and play only while on screen
 {
-  const vids = $$('.heart-film video, .water-frame video, .story-img video, .foot-film video') as HTMLVideoElement[];
+  const vids = $$('.water-frame video, .story-img video, .foot-film video') as HTMLVideoElement[];
   const small = innerWidth <= 820;
   const io = new IntersectionObserver((es) => es.forEach((en) => {
     const v = en.target as HTMLVideoElement;
@@ -744,6 +749,8 @@ Object.entries(rails).forEach(([name, el]) => {
     } else v.pause();
   }), { rootMargin: '200px 0px', threshold: 0.01 });
   vids.forEach((v) => io.observe(v));
+  // the footer film drifts slowly forward as the page arrives, as the reference's valley does
+  if (!reduced) gsap.fromTo('.foot-film video', { scale: 1.0 }, { scale: 1.22, ease: 'none', scrollTrigger: { trigger: '.foot-film', start: 'top bottom', end: 'bottom bottom', scrub: true } });
 }
 
 /* ---------- FOOTER word, and easter eggs ---------- */
