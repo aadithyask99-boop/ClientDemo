@@ -33,10 +33,18 @@ Desktop (pointer, 820 px and wider, motion allowed): pinned fan, months scene, h
 `npm install && npm run dev`. Shared deploy: `node scripts/stage.mjs` (serves under `/kerala3`).
 
 ## Hero 4, current state
-- **Reference sizes:** the first title settles at about 31% of the width (the reference's 29%), starting about 44% in the middle (the reference's 41%); later titles are 78% of that. The tagline is 2.5vw, at most three lines, 40 to 48 characters.
-- **Entrance, synced to the fire:** black, then a hard cut at 0.9 s onto the Theyyam clip, which is trimmed to start 8.6 s into the source so its big flare (about 35% of the picture, at 9.8 to 12.5 s in the source) lands about 1.4 s in. The title appears in the middle with it, scrambles in, holds, then glides to the corner at 3.6 s while the zoom-blur clears. A swell sounds on the cut.
-- **Colour that follows the footage:** three groups (title, top bar, bottom row) each read the brightness and average hue of the picture right behind them (during a cut, the part of the picture the slanted panel has reached). Light picture, dark ink; dark picture, light ink; the ink carries a quiet tint of the picture's hue (warm yellows are pulled back to neutral, no gold). The decision is smoothed (about half a second) with a wide band and a dwell, so pulsing fire does not make it flicker, and it follows at once around a cut. A soft halo appears only on very mixed pictures.
-- **No looping:** clips play once at their own speed. The short ones are slowed (Kuttanad 0.55, Kochi 0.75, the coast 0.5, the Theyyam 0.85) and each scene's hold comes from its clip. The last place keeps moving, slowly, beneath the ending.
-- **Ending:** the corner title fades; a separate centred title says GOD'S OWN COUNTRY, glitches into ദൈവത്തിന്റെ സ്വന്തം നാട്, dissolves, and the Kerala logo (redrawn as a clean SVG from the official 91 px logo) takes its place at the same centre; then the film restarts. No button.
-- **Sound:** ambient bed per scene, music and a swell on each cut, off until the visitor turns it on; looped with an equal-power overlap. No voiceover (removed at the owner's request).
+- **Name:** the state is written Keralam (the department keeps its own name, Kerala Tourism). The logo is redrawn as a clean SVG from the official 91 px one, with an m added in the same hand (the official vector should replace it).
+- **Title:** it starts centred (both lines centred), holds in the middle, then glides to the top-left while its lines slide from centred to left alignment. Sizes follow the reference (about 31% of the width settled, about 44% in the middle).
+- **Text is always white.** Where the picture behind a group of text is bright, a soft dark veil rises at the top or bottom (measured from the picture every 120 ms, and at once around a cut), so white never washes out.
+- **Entrance, synced to the fire:** black, then a hard cut at 0.9 s onto the Theyyam clip, trimmed so its flare (found by measuring brightness, at 9.8 to 12.5 s in the source) lands about 1.4 s in; a fire-ignition boom lands with it.
+- **No looping:** clips play once at their own speed; the short ones are slowed; the last place keeps moving, slowly, beneath the ending.
+- **Ending:** the corner title fades; a centred title says GOD'S OWN COUNTRY, glitches into ദൈവത്തിന്റെ സ്വന്തം നാട്, dissolves, and the logo takes its place at the centre; the film restarts. No button.
+- **Sound design** (off until the visitor turns it on; no voiceover). Each scene has a bed, a living layer and timed accents, all generated with ElevenLabs:
+  - Theyyam: crackling fire, chenda and elathalam drumming, anklet bells, a fire-ignition boom on the flare, a crowd gasp.
+  - Munnar: dawn birds in the valley, a distant temple bell.
+  - Houseboat: slow diesel putter and water on the hull, a soft boat horn.
+  - Kuttanad: a cheerful putt-putt country boat, ducks and frogs, distant laughter.
+  - Kochi: ropes and creaking wood of the fishing nets with a hauling chant, gulls.
+  - Coast: distant voices and children on the beach, waves, a gull and a far horn.
+  - Music bed throughout; a swell on every cut. Loops overlap themselves with an equal-power crossfade. Research notes: the Theyyam ensemble (chenda, veekkuchenda, elathalam, kurumkuzhal), the clattering bells and bangles and the building rhythm come from published accounts; the ululation, horns and fire sounds are from general knowledge.
 - **Interaction:** letters near the cursor flip to Malayalam, the footage drifts with the cursor, click, tap or the right arrow skips to the next place, scrolling hands the hero to the page.

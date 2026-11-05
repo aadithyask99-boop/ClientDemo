@@ -18,7 +18,7 @@ export const site = {
   hero: {
     pre: "God's Own",
     accent: 'Country',
-    sub: 'Where the mountains meet the sea. Kerala for those who have never been.',
+    sub: 'Where the mountains meet the sea. Keralam for those who have never been.',
     seasons: [
       { img: 'hero-monsoon', label: 'June, the monsoon', weather: 'rain' },
       { img: 'hero-onam', label: 'August, Onam', weather: 'dust' },
@@ -29,17 +29,17 @@ export const site = {
   // calm (backwaters), intimacy (Kochi's fishermen), release (the coast). Each scene plays public/video/scene-N.mp4 over its poster image.
   // rate: playback speed (the short clips play slowed so none ever loops); hold: seconds a place stays once its cut has finished.
   scenes: [
-    { img: 'scene-1-poster', rate: 0.85, hold: 6.0, title: ["GOD'S OWN", 'COUNTRY'], ml: ['ദൈവത്തിന്റെ', 'സ്വന്തം നാട്'],
-      p: 'Where gods dance in fire. In Kerala a Theyyam dancer becomes a deity for one night, and the whole village comes to watch.' },
-    { img: 'scene-2-poster', rate: 1, hold: 6.0, title: ['ABOVE THE', 'CLOUDS'], line: 'THE MORNING STARTS AT FIVE. IT IS WORTH IT.' },
-    { img: 'scene-3-poster', rate: 1, hold: 6.0, title: ['ENTER THE', 'BACKWATERS'], line: 'FOUR HOURS AFLOAT. FIRST LIGHT TO LAST LAMP.' },
-    { img: 'scene-4-poster', rate: 0.55, hold: 5.4, title: ['RICE BELOW', 'THE SEA'], line: 'FARMS BELOW THE SEA. NOBODY THINKS IT STRANGE.' },
-    { img: 'scene-5-poster', rate: 0.75, hold: 4.4, title: ['WHERE THE NETS', 'STILL FALL'], line: 'COME FOR THE PLACES. STAY FOR THE PEOPLE.' },
-    { img: 'scene-6-poster', rate: 0.5, hold: 6.0, title: ['AND THEN', 'THE SEA'], line: 'START ANYWHERE. THE COAST WILL FIND YOU.' },
+    { img: 'scene-1-poster', sound: { layers: [{ n: 's1-chenda', l: 0.9 }, { n: 's1-bells', l: 0.55 }], hits: [{ n: 's1-whoosh', at: 0, l: 1 }, { n: 's1-crowd', at: 1.6, l: 0.85 }] }, rate: 0.85, hold: 6.0, title: ["GOD'S OWN", 'COUNTRY'], ml: ['ദൈവത്തിന്റെ', 'സ്വന്തം നാട്'],
+      p: 'Where gods dance in fire. In Keralam a Theyyam dancer becomes a deity for one night, and the whole village comes to watch.' },
+    { img: 'scene-2-poster', sound: { layers: [{ n: 's2-birds', l: 0.9 }], hits: [{ n: 's2-bell', at: 3.2, l: 0.8 }] }, rate: 1, hold: 6.0, title: ['ABOVE THE', 'CLOUDS'], line: 'THE MORNING STARTS AT FIVE. IT IS WORTH IT.' },
+    { img: 'scene-3-poster', sound: { layers: [{ n: 's3-engine', l: 0.8 }], hits: [{ n: 's3-horn', at: 3.6, l: 0.75 }] }, rate: 1, hold: 6.0, title: ['ENTER THE', 'BACKWATERS'], line: 'FOUR HOURS AFLOAT. FIRST LIGHT TO LAST LAMP.' },
+    { img: 'scene-4-poster', sound: { layers: [{ n: 's4-putt', l: 0.85 }], hits: [{ n: 's4-laugh', at: 2.6, l: 0.8 }] }, rate: 0.55, hold: 5.4, title: ['RICE BELOW', 'THE SEA'], line: 'FARMS BELOW THE SEA. NOBODY THINKS IT STRANGE.' },
+    { img: 'scene-5-poster', sound: { layers: [{ n: 's5-ropes', l: 0.9 }], hits: [{ n: 's5-gulls', at: 1.4, l: 0.8 }] }, rate: 0.75, hold: 4.4, title: ['WHERE THE NETS', 'STILL FALL'], line: 'COME FOR THE PLACES. STAY FOR THE PEOPLE.' },
+    { img: 'scene-6-poster', sound: { layers: [{ n: 's6-people', l: 0.4 }], hits: [{ n: 's6-gull', at: 2.0, l: 0.8 }] }, rate: 0.5, hold: 6.0, title: ['AND THEN', 'THE SEA'], line: 'START ANYWHERE. THE COAST WILL FIND YOU.' },
   ],
   statement: {
     text: 'A green strip between the Western Ghats and the Arabian Sea, with 44 rivers, spice forests and a festival in every month. Come for the landscape, stay for the people.',
-    cta: 'Why Kerala',
+    cta: 'Why Keralam',
     href: 'https://www.keralatourism.org/',
   },
   places: [
@@ -74,9 +74,9 @@ export const site = {
     November: 'The season opens. Cool evenings, clear skies, Theyyam in full swing and houseboats at their best.',
     December: 'Cool, dry and misty in the hills. The beaches fill, and Christmas is celebrated across the state.',
   } as Record<string, string>,
-  water: { line: 'Forty-four rivers run west.', sub: 'They are why Kerala is green, and why it moves by boat.', img: 'water-falls' },
+  water: { line: 'Forty-four rivers run west.', sub: 'They are why Keralam is green, and why it moves by boat.', img: 'water-falls' },
   heart: {
-    pre: 'The heart of Kerala is its',
+    pre: 'The heart of Keralam is its',
     accent: 'people',
     text: 'From heritage homes with carved verandas to houseboats and tea-estate bungalows, our stays are run by families who have lived here for generations. Come as a guest, leave as a friend.',
     cta: 'Discover your stay',
@@ -97,7 +97,7 @@ export const site = {
   stories: {
     pre: 'Swap the guidebook for a',
     accent: 'good story',
-    text: 'Kerala is best understood through its living traditions. A Theyyam dancer becomes a god by firelight. A Kathakali actor spends hours painting a face. A weaver makes a border of gold thread by hand. Spend an evening with them and you will understand the place.',
+    text: 'Keralam is best understood through its living traditions. A Theyyam dancer becomes a god by firelight. A Kathakali actor spends hours painting a face. A weaver makes a border of gold thread by hand. Spend an evening with them and you will understand the place.',
     items: [
       { img: 'story-theyyam', title: 'Theyyam', line: 'Fire, costume and trance, October to May' },
       { img: 'story-kathakali', title: 'Kathakali', line: 'Eight hours of face painting, one night of story' },
@@ -105,12 +105,12 @@ export const site = {
     ],
   },
   trips: {
-    title: 'Journeys across Kerala',
+    title: 'Journeys across Keralam',
     // Names, nights and months are illustrative and must be confirmed by the client.
     items: [
       { img: 'trip-hills', name: 'Hills and Spice', nights: '8 nights', months: 'December to February' },
       { img: 'trip-backwaters', name: 'Backwater Days', nights: '5 nights', months: 'November to February' },
-      { img: 'trip-heritage', name: 'Old Kerala', nights: '7 nights', months: 'October to March' },
+      { img: 'trip-heritage', name: 'Old Keralam', nights: '7 nights', months: 'October to March' },
       { img: 'trip-wildlife', name: 'Forest and Elephants', nights: '6 nights', months: 'January to May' },
       { img: 'trip-coast', name: 'Coast and Cliffs', nights: '6 nights', months: 'November to March' },
       { img: 'trip-ayurveda', name: 'Monsoon Ayurveda', nights: '10 nights', months: 'June to September' },
@@ -133,6 +133,6 @@ export const site = {
       { h: 'Plan', l: ['When to come', 'Festivals', 'Stays', 'Journeys'] },
       { h: 'Contact', l: ['Official site', 'Kerala Tourism, Thiruvananthapuram'] },
     ],
-    word: 'KERALA',
+    word: 'KERALAM',
   },
 };

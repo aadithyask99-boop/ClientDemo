@@ -35,7 +35,7 @@ const ordered = ['January','February','March','April','May','June','July','Augus
       <nav class="top-nav" aria-label="Main">
         {site.nav.map((n, i) => <a href={n.href} class={i === 0 ? 'has-mega' : ''}>{n.label}</a>)}
       </nav>
-      <a class="brand" href={base} aria-label="Kerala Tourism, home">KERALA</a>
+      <a class="brand" href={base} aria-label="Kerala Tourism, home">KERALAM</a>
       <div class="top-right">
         <a class="pill" href={site.officialUrl}>Plan your trip</a>
       </div>
@@ -85,13 +85,14 @@ const ordered = ['January','February','March','April','May','June','July','Augus
           <img class="zoomblur" src={img('hero-mist-zoom')} alt="" />
         </div>
         <div class="cs" id="cs" data-tone="dark" data-audio={`${base}audio/`}>
+          <div class="cs-scrim up" id="scrim-top"></div><div class="cs-scrim low" id="scrim-low"></div>
           <div class="cs-vig" id="cs-vig"></div>
           <h2 class="cs-endtitle" id="cs-endtitle" aria-hidden="true"></h2>
           <div class="cs-head">
             <h1 class="cs-title" id="h4-title" aria-label="God's Own Country">{site.scenes[0].title.map((t) => <span class="ln">{t}</span>)}</h1>
             <div class="cs-ml" id="cs-ml" aria-hidden="true"><span>{site.scenes[0].ml![0]}</span><i></i><span>{site.scenes[0].ml![1]}</span></div>
           </div>
-          <div class="cs-meta"><span id="cs-time">[ -- ]</span><span>KERALA, INDIA</span><span>INDIA STANDARD TIME</span></div>
+          <div class="cs-meta"><span id="cs-time">[ -- ]</span><span>KERALAM, INDIA</span><span>INDIA STANDARD TIME</span></div>
           <nav class="cs-nav" aria-label="Sections">
             <a href="#places">PLACES</a><a href="#months">WHEN TO COME</a><a href="#stays">STAYS</a><a href="#trips">JOURNEYS</a>
           </nav>
@@ -100,7 +101,7 @@ const ordered = ['January','February','March','April','May','June','July','Augus
           <p class="cs-p" id="cs-p">{site.scenes[0].p}</p>
           <p class="cs-line" id="h4-line"></p>
           <div class="cs-end" id="cs-end" aria-hidden="true">
-            <img class="cs-end-logo" src={`${base}img/kerala-logo.svg`} alt="Kerala" />
+            <img class="cs-end-logo" src={`${base}img/kerala-logo.svg`} alt="Keralam" />
           </div>
           <span class="cs-c">&copy;2026</span>
           <span class="cs-scroll">SCROLL DOWN</span>
@@ -158,7 +159,7 @@ const ordered = ['January','February','March','April','May','June','July','Augus
       <!-- 4 KERALA BY MONTH -->
       <section class="months" id="months" data-tone="dark">
         <div class="m-pin">
-          <h2 class="sr">Kerala by month</h2>
+          <h2 class="sr">Keralam by month</h2>
           {site.seasons.map((s, si) => (
             <article class={`m-season ${si === 0 ? 'on' : ''}`} data-weather={s.weather} data-si={si}>
               <img class="m-photo" src={img(s.img)} alt={alt(s.img)} loading="lazy" />
@@ -279,7 +280,7 @@ const ordered = ['January','February','March','April','May','June','July','Augus
       <div class="cols">
         {site.footer.cols.map((c) => <div><h3>{c.h}</h3>{c.l.map((l) => <a href={site.officialUrl}>{l}</a>)}</div>)}
       </div>
-      <button class="bigword" id="bigword" type="button" aria-label="Kerala">{site.footer.word}</button>
+      <button class="bigword" id="bigword" type="button" aria-label="Keralam">{site.footer.word}</button>
       <p class="fine">A concept homepage, not the official site. <a href={`${base}credits/`}>Photo credits</a>. Figures and dates are illustrative and must be confirmed by Kerala Tourism.</p>
     </footer>
 
