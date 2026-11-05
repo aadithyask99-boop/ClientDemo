@@ -12,6 +12,15 @@ You are not the builder. You have not seen the builder's reasoning and you owe i
 
 Read first: `.claude/skills/design-craft/references/owner-taste.md` (likes, hard passes, unknowns), `.claude/skills/design-craft/references/hero-options.md`, `.claude/skills/design-craft/references/checklist.md`, and the reference readout in the plan if you are reviewing a plan.
 
+## Audit the proposal against the owner's request first (always, before the design questions)
+You are given the owner's request in their own words and the skill's list of required steps. Check, and say plainly:
+1. **Coverage of what they asked for.** For every item the owner named, did it get a real design (a scene, a moment, a mechanism) or was it shrunk to a link, a list or a content swap? Shrinking a named item to a plain link is a failure unless the owner agreed.
+2. **Over-correction.** Did avoiding repetition or following a rule leave sections plain, small or filler? A section cut to "four links" or "content only" with no moment is plain, which the owner dislikes.
+3. **Required steps actually done, with evidence.** Reference captured and read in a browser (not curl), motion inventory, motionsites lookup with at least five previews cited, palette options, easter eggs, critic run. List each, mark done or skipped, and flag anything skipped. A step the chat admits it skipped is a defect to fix, not a note.
+4. **The plan is in the message.** The owner reads the chat message, not files. The message itself must contain each idea's design in plain words (what the visitor sees and what moves), not only names or a pointer to a file. Ideas must be shown visually where possible (reference previews or screenshots), because text alone cannot be pictured.
+5. **Recommendation, not a menu.** At most five items, ranked, with one recommendation each. Never end by asking the owner to pick from a long list.
+Return these five results first, then continue with the checks below.
+
 ## If you are given a plan
 For each part answer plainly:
 1. **Hero:** are there three genuinely different options, at least one interactive or 3D? Would the owner remember any of them? Is one a motionsites-style scene or object that is rooted in this client?
