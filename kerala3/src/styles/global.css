@@ -450,3 +450,13 @@ html[data-hero='4'] .cs-meta, html[data-hero='4'] .cs-nav, html[data-hero='4'] .
 .foot-over .fine { color: #5c6a5f; }
 @media (max-width: 820px) { .foot-film { height: 48vh; } }
 .foot-film::after { display: block; height: 22%; background: linear-gradient(to top, var(--paper), rgba(244, 243, 239, 0)); }
+
+/* v18: links above the word, the film is the last thing on the page and the word sits on its white sky, as in the reference */
+.foot { padding: 0; }
+.foot-over { padding: 12vh clamp(20px, 5vw, 80px) 4vh; background: transparent; position: relative; z-index: 4; }
+.foot .bigword { position: relative; z-index: 4; margin: 2vh 0 -9vw; font-size: 24vw; }
+.foot-film { position: relative; z-index: 1; height: 88vh; margin: 0; }
+.foot-film video { transform: none; object-position: 50% 62%; }
+.foot-film::before { height: 52%; background: linear-gradient(to bottom, var(--paper) 0%, var(--paper) 18%, rgba(244, 243, 239, 0) 100%); }
+.foot-film::after { display: none; }
+@media (max-width: 820px) { .foot .bigword { font-size: 27vw; margin-bottom: -12vw; } .foot-film { height: 62vh; } }

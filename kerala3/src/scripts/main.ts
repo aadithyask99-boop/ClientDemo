@@ -747,8 +747,6 @@ if (car && slides.length) {
     } else v.pause();
   }), { rootMargin: '200px 0px', threshold: 0.01 });
   vids.forEach((v) => io.observe(v));
-  // the footer film drifts slowly forward as the page arrives, as the reference's valley does
-  if (!reduced) gsap.fromTo('.foot-film video', { scale: 1.0 }, { scale: 1.22, ease: 'none', scrollTrigger: { trigger: '.foot-film', start: 'top bottom', end: 'bottom bottom', scrub: true } });
 }
 
 /* ---------- FOOTER word, and easter eggs ---------- */
