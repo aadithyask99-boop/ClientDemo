@@ -39,7 +39,7 @@ ScrollTrigger.create({ trigger: '[data-footer-hero]', start: 'top 55%', onEnter:
 const loader = $('[data-loader]');
 const loaderOn = root.classList.contains('js') && !root.classList.contains('no-loader') && loader && !reduce;
 // The hero reveals itself with CSS (blur to clear, see .hi); we only say when to start.
-const heroGo = () => root.classList.add('hero-go');
+const heroGo = () => { root.classList.add('hero-go'); startPops(); };
 if (loaderOn) {
   lock();
   // One reel of names rolls up, one name at a time; the colours morph between areas instead of cutting.
@@ -241,7 +241,6 @@ let fmFocus: Element | null = null;
 function revealPanel(cat: HTMLElement) {
   if (reduce) return;
   gsap.fromTo($$('.item', cat), { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.55, ease: 'power3.out', stagger: 0.04, overwrite: true });
-  gsap.fromTo($('.cat__img img', cat), { rotation: -14, scale: 0.8, opacity: 0 }, { rotation: 6, scale: 1, opacity: 1, duration: 0.9, ease: 'power3.out' });
   const list = $('.cat__items', cat); if (list) list.scrollTop = 0;
 }
 function selectCat(cat: HTMLElement) {
@@ -351,20 +350,43 @@ mascot.addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch') h
 ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => mascot.addEventListener(ev, () => window.clearTimeout(hold)));
 // 3. The sunburst changes the colours (wired above)
 
-/* ---------------- food menu: swipeable rail with arrows, drag and a staggered entrance ---------------- */
-const rail = $('[data-rail]');
-if (rail) {
-  const step = () => { const c = $('.dish', rail); return c ? c.getBoundingClientRect().width + parseFloat(getComputedStyle(rail).columnGap || '0') : rail.clientWidth * 0.8; };
-  $('[data-rail-prev]')?.addEventListener('click', () => rail.scrollBy({ left: -step(), behavior: reduce ? 'auto' : 'smooth' }));
-  $('[data-rail-next]')?.addEventListener('click', () => rail.scrollBy({ left: step(), behavior: reduce ? 'auto' : 'smooth' }));
-  // drag with a mouse (touch already scrolls natively)
-  let down = false, sx = 0, sl = 0, moved = false;
-  rail.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') return; down = true; moved = false; sx = e.clientX; sl = rail.scrollLeft; rail.classList.add('is-drag'); });
-  addEventListener('pointermove', (e) => { if (!down) return; const dx = e.clientX - sx; if (Math.abs(dx) > 4) moved = true; rail.scrollLeft = sl - dx; });
-  addEventListener('pointerup', () => { if (!down) return; down = false; rail.classList.remove('is-drag'); });
-  if (!reduce) {
-    gsap.from($$('.dish', rail), { x: 80, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.08, scrollTrigger: { trigger: rail, start: 'top 85%' } });
+/* ---------------- hero pop-ups: a themed hint 3.6 s in (it teaches CIAO), then a few random ones ---------------- */
+function startPops() {
+  const box = $('[data-pops]');
+  if (!box || reduce || box.dataset.started) return;
+  box.dataset.started = '1';
+  const first = JSON.parse(box.dataset.first || '{}');
+  const more: { t: string; kind: string }[] = JSON.parse(box.dataset.more || '[]');
+  const touch = matchMedia('(pointer: coarse)').matches;
+  const spots: [number, number][] = small() ? [[3, 17], [34, 21], [4, 66], [30, 62]] : [[4, 10], [66, 8], [3, 66], [70, 66]];
+  let last = -1, shown = 0, heroVisible = true;
+  new IntersectionObserver(([e]) => { heroVisible = e.isIntersecting; }).observe(box.parentElement!);
+  const burst = () => 'polygon(' + Array.from({ length: 32 }, (_, i) => { const a = (i / 32) * Math.PI * 2; const r = i % 2 ? 40 : 50; return (50 + Math.cos(a) * r).toFixed(1) + '% ' + (50 + Math.sin(a) * r).toFixed(1) + '%'; }).join(',') + ')';
+  function show(text: string, kind: string, hold: number) {
+    const el = document.createElement('div');
+    el.className = 'pop' + (kind === 'burst' ? ' pop--burst' : '');
+    el.textContent = text;
+    if (kind === 'burst') el.style.clipPath = burst();
+    let k = Math.floor(Math.random() * spots.length);
+    if (k === last) k = (k + 1) % spots.length;
+    last = k;
+    el.style.left = spots[k][0] + '%'; el.style.top = spots[k][1] + '%';
+    box!.appendChild(el);
+    const rot = Math.random() * 14 - 7;
+    gsap.fromTo(el, { scale: 0, rotation: rot - 25, opacity: 0 }, { scale: 1, rotation: rot, opacity: 1, duration: 0.85, ease: 'elastic.out(1, 0.6)' });
+    const out = () => gsap.to(el, { scale: 0.7, opacity: 0, y: -12, duration: 0.45, ease: 'power2.in', onComplete: () => el.remove() });
+    gsap.delayedCall(hold, out);
+    el.addEventListener('click', out);
   }
+  const next = () => {
+    if (shown >= 6) return;
+    window.setTimeout(() => {
+      if (heroVisible && !menuOpen && !fmOpen) { const m = more[Math.floor(Math.random() * more.length)]; show(m.t, m.kind, 4); shown += 1; }
+      next();
+    }, 6000 + Math.random() * 3000);
+  };
+  window.setTimeout(() => { show(touch ? first.touch : first.desktop, 'label', 5.5); shown += 1; next(); }, 3600);
 }
+
 
 addEventListener('load', () => ScrollTrigger.refresh());

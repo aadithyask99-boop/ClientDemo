@@ -65,3 +65,9 @@ After removing the extras the owner approved cutting (hero drift, services zoom 
 - Food menu: not a download. A full-screen overlay opened by the hero Menu link: categories on the left, items of the active category on the right (names, descriptions, prices, vegetarian mark) with a tilted plate image; accordion on phones. Same visual language as the reference's find-a-restaurant overlay (cream ground, thin lines, big dark names, rising text).
 - Bug found while testing the jump: an overlay whose child sets visibility visible stays clickable while the overlay is hidden (a child can override the parent's visibility hidden). The closed overlay then blocked clicks on the hero. Fix: pointer-events none on the closed overlay. Applies to every full-screen overlay with absolutely positioned children.
 - Encoding: the preview bundle declares no character set and minifiers turn CSS escapes into raw characters, so a pound sign showed as garbage. Keep served files ASCII: write currency as an HTML entity, avoid accented letters in copy.
+
+## Sixth pass (owner feedback, 2026-11-06)
+- Removed the MANGIA band and the swipeable dish row (the owner wanted the menu only on the hero), and the plate pictures in the menu overlay (text only: categories left, items right). The overlay's empty top strip was removed (a small margin remains).
+- Mobile hero: the mascot is now about 136vw wide (capped by height) so it fills the screen like the reference's hero idea; wordmark centred behind her.
+- Hero pop-ups: sticker-style messages appear in the hero from 3.6 s after the preloader (the first teaches the CIAO egg, or press and hold on touch), then random ones every 6 to 9 s, up to six, only while the hero is on screen and no overlay is open. Click to dismiss.
+- Lesson: when content is removed, delete its data, CSS and script too, not only the markup (the dish rail left about 60 lines of dead CSS).

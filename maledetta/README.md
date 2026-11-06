@@ -26,3 +26,6 @@ Brand name, nine sites and their addresses, phone numbers (020 7946 0xxx is the 
 
 ## Regenerating assets
 `scripts/unsplash-search.mjs` and `scripts/unsplash-get.mjs` (key in `UNSPLASH_ACCESS_KEY`, never committed; picks in `art-src/picks.json`). Generation: `.claude/skills/design-craft/scripts/gen-media.mjs art-src/jobs.json`. In a cloud session run node with `NODE_USE_ENV_PROXY=1 NODE_EXTRA_CA_CERTS=/root/.ccr/ca-bundle.crt`, or the proxy-injected OpenRouter key is not applied and requests return 401.
+
+## Latest changes
+The dish row section was removed; the food menu lives only in the hero Menu overlay (text only). Hero pop-ups (src/data/site.ts `pops`) start 3.6 s after the hero appears. Mobile mascot enlarged.

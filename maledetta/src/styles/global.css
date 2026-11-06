@@ -137,33 +137,7 @@ html.hero-go .hi { animation: hiIn 1.8s cubic-bezier(0.22, 0.61, 0.36, 1) var(--
 .sunburst .sticker { width: 13vw; }
 .band--footer .marquee { padding-bottom: 2.4vw; }
 
-/* ---------- food menu: a MANGIA band, then a swipeable row of dishes (from the reference's restaurant pages) ---------- */
-.band--mangia .marquee { padding: 0.8vw 0 1.2vw; }
-.marquee__name--solo { margin-right: 3.4vw; }
-.carte { position: relative; z-index: 3; background: var(--light); color: var(--dark); padding: 0 0 5vw; }
-.carte__bar { display: flex; gap: 0.7vw; padding: 3vw 5vw 2vw; }
-.carte__arrow { display: grid; place-items: center; width: 3.4vw; min-width: 46px; aspect-ratio: 1; border-radius: 50%; background: var(--dark); color: var(--light); transition: transform 0.25s var(--ease), opacity 0.25s; }
-.carte__arrow:hover { transform: scale(1.08); }
-.carte__arrow svg { width: 42%; }
-.carte__rail {
-  display: flex; gap: 2vw; padding: 2.6vw 5vw 1vw; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-left: 5vw; scrollbar-width: none; cursor: grab;
-  border-top: 1px solid var(--dark); border-bottom: 1px solid var(--dark); padding-bottom: 2.6vw;
-}
-.carte__rail::-webkit-scrollbar { display: none; }
-.carte__rail.is-drag { cursor: grabbing; scroll-snap-type: none; }
-.carte__rail.is-drag * { pointer-events: none; }
-.dish { position: relative; flex: 0 0 25vw; height: 32vw; scroll-snap-align: start; display: flex; flex-direction: column; padding: 1.6vw; border: 1px solid var(--dark); user-select: none; }
-.dish h3 { display: flex; align-items: flex-start; gap: 0.6vw; font-size: 2.3vw; line-height: 1; }
 .dish__leaf { width: 1.4vw; min-width: 18px; flex: none; margin-top: 0.1vw; color: var(--dark); }
-.dish__img { flex: 1; display: grid; place-items: center; min-height: 0; }
-.dish__img img { width: 72%; max-height: 100%; object-fit: contain; transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1); filter: drop-shadow(0 0.5vw 0.8vw rgba(0, 0, 0, 0.18)); }
-.dish:hover .dish__img img { transform: rotate(9deg) scale(1.07); }
-.dish p { font-size: clamp(16px, 1.15vw, 19px); line-height: 1.45; }
-.dish__tag { position: absolute; top: -2.2vw; right: 1.2vw; width: 5.6vw; min-width: 64px; transform: rotate(10deg); }
-.dish__tag polygon { fill: var(--ground); stroke: var(--dark); stroke-width: 1.6; }
-.dish__tag text { font: 700 19px 'Oswald', Impact, sans-serif; text-transform: uppercase; fill: var(--dark); }
-.carte__cta { display: block; width: max-content; margin: 3vw auto 0; padding: 1vw 2.6vw; background: var(--dark); color: var(--light); text-decoration: none; font: 700 clamp(18px, 1.6vw, 26px) / 1 'Oswald', Impact, sans-serif; text-transform: uppercase; transition: opacity 0.25s; }
-.carte__cta:hover { opacity: 0.8; }
 
 /* ---------- shop ---------- */
 .shop { background: var(--ground); padding: 4vw 5vw; position: relative; z-index: 3; }
@@ -254,25 +228,31 @@ html.hero-go .hi { animation: hiIn 1.8s cubic-bezier(0.22, 0.61, 0.36, 1) var(--
 @media (hover: hover) { .fm__close:hover { background: var(--dark); color: var(--ground); } }
 .fm__scroll { height: 100%; overflow-y: auto; scrollbar-width: none; }
 .fm__scroll::-webkit-scrollbar { display: none; }
-.fm__cats { list-style: none; position: relative; height: 100%; padding-top: 6vw; }
+.fm__cats { list-style: none; position: relative; height: 100%; padding-top: 2.2vw; }
 .cat__name { display: block; width: 42vw; height: 8.2vw; text-align: left; color: var(--dark); padding-left: 5vw; position: relative; z-index: 2; transition: background 0.3s var(--ease); }
 .cat.is-active .cat__name { background: var(--light); }
 .cat__mask { display: block; overflow: hidden; }
 .cat__text { display: block; font: 700 7vw / 8.2vw 'Oswald', Impact, sans-serif; text-transform: uppercase; transition: transform 0.4s var(--ease); }
 .cat__name:hover .cat__text { transform: translateX(1vw); }
 .cat .line--big { width: 42vw; }
-.cat__panel { position: absolute; left: 46vw; right: 5vw; top: 6vw; bottom: 3vw; display: flex; gap: 3vw; opacity: 0; visibility: hidden; }
+.cat__panel { position: absolute; left: 46vw; right: 4vw; top: 7.6vw; bottom: 2vw; display: flex; opacity: 0; visibility: hidden; }
 .cat.is-active .cat__panel { opacity: 1; visibility: visible; }
 .cat__items { list-style: none; flex: 1; min-width: 0; overflow-y: auto; scrollbar-width: none; padding-right: 1vw; }
 .cat__items::-webkit-scrollbar { display: none; }
 .item { padding: 1.1vw 0; border-bottom: 1px solid var(--light); }
 .item__head { display: flex; justify-content: space-between; align-items: baseline; gap: 2vw; }
 .item h3 { display: flex; align-items: flex-start; gap: 0.6vw; font-size: 2.4vw; line-height: 1.05; }
-.item__price { font: 700 1.9vw / 1 'Oswald', Impact, sans-serif; white-space: nowrap; }.item p { margin-top: 0.4vw; font-size: clamp(16px, 1.2vw, 19px); line-height: 1.45; max-width: 34vw; }
+.item__price { font: 700 1.9vw / 1 'Oswald', Impact, sans-serif; white-space: nowrap; }.item p { margin-top: 0.4vw; font-size: clamp(16px, 1.2vw, 19px); line-height: 1.45; max-width: 40vw; }
 .item--note { border-bottom: 0; }
 .item--note p { opacity: 0.8; }
-.cat__img { flex: 0 0 15vw; align-self: flex-start; padding-top: 0.6vw; order: 2; }
-.cat__img img { width: 100%; height: auto; transform: rotate(6deg); filter: drop-shadow(0 0.6vw 0.9vw rgba(0, 0, 0, 0.2)); }
+
+/* ---------- hero pop-ups: the site's own sticker style, a few seconds in ---------- */
+.pops { position: absolute; inset: 0; pointer-events: none; z-index: 6; overflow: hidden; }
+.pop {
+  position: absolute; max-width: 24vw; padding: 0.8vw 1.5vw; background: var(--light); color: var(--dark); border-radius: 1vw; opacity: 0; pointer-events: auto; cursor: pointer;
+  font: 700 clamp(18px, 1.9vw, 30px) / 1.05 'Oswald', Impact, sans-serif; text-transform: uppercase; text-align: center; box-shadow: 0 0.4vw 0.9vw rgba(0, 0, 0, 0.22);
+}
+.pop--burst { width: 11vw; min-width: 120px; aspect-ratio: 1; padding: 0 1.2vw; display: grid; place-items: center; border-radius: 0; box-shadow: none; font-size: clamp(18px, 1.7vw, 28px); }
 
 /* ---------- easter egg: food rain ---------- */
 .rain { position: fixed; inset: 0; pointer-events: none; z-index: 300; overflow: hidden; }
@@ -288,8 +268,8 @@ html.hero-go .hi { animation: hiIn 1.8s cubic-bezier(0.22, 0.61, 0.36, 1) var(--
 @media (max-width: 991px) {
   body { font-size: 16px; }
   .hero { min-height: 560px; }
-  .wordmark { left: 3vw; width: 94vw; top: calc(41% - 10.2vw); }
-  .mascot { --m: min(62vw, 44vh); top: 41%; }
+  .wordmark { left: 3vw; width: 94vw; top: calc(47% - 10.2vw); }
+  .mascot { --m: min(136vw, 66vh); top: 47%; }
   /* the sticker is the menu button: fixed at the top centre of every screen, as in the reference */
   .anchor--hero { position: fixed; right: auto; left: 50%; top: 2.2vh; transform: translateX(-50%); z-index: 60; }
   .sticker { width: 31vw; }
@@ -319,15 +299,9 @@ html.hero-go .hi { animation: hiIn 1.8s cubic-bezier(0.22, 0.61, 0.36, 1) var(--
   .sunburst { width: 54vw; }
   .sunburst .anchor { display: none; }
 
-  .band--mangia .marquee { padding: 2vw 0 0; }
-  .carte__bar { padding: 8vw 6vw 5vw; gap: 3vw; }
-  .carte__arrow { width: 13vw; }
-  .carte__rail { gap: 4vw; padding: 6vw 6vw; scroll-padding-left: 6vw; }
-  .dish { flex-basis: 78vw; height: 104vw; padding: 5vw; }
-  .dish h3 { font-size: 8vw; gap: 2vw; }
   .dish__leaf { width: 6vw; }
-  .dish__tag { width: 22vw; top: -8vw; right: 5vw; }
-  .carte__cta { margin-top: 8vw; padding: 4.5vw 9vw; }
+  .pop { max-width: 62vw; padding: 3vw 5vw; border-radius: 4vw; font-size: 6vw; }
+  .pop--burst { width: 34vw; min-width: 0; padding: 0 4vw; font-size: 5.2vw; }
   .shop { padding: 12vw 6vw; }
   .shop__grid { grid-template-columns: 1fr; gap: 8vw; }
   .shop__img { width: 100%; }
@@ -362,8 +336,7 @@ html.hero-go .hi { animation: hiIn 1.8s cubic-bezier(0.22, 0.61, 0.36, 1) var(--
   .cat .line--big { width: 100%; }
   .cat__panel { position: static; display: block; height: 0; overflow: hidden; opacity: 1; visibility: visible; }
   .cat:first-child .cat__panel { height: auto; }
-  .cat__img { width: 34vw; margin: 5vw auto 2vw; padding: 0; }
-  .cat__items { overflow: visible; padding: 0 5vw 6vw; }
+    .cat__items { overflow: visible; padding: 0 5vw 6vw; }
   .item { padding: 3.5vw 0; }
   .item h3 { font-size: 6.4vw; gap: 2vw; }
   .item__price { font-size: 5.4vw; }

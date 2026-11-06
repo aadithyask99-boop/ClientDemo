@@ -2,7 +2,7 @@
 import '@fontsource/oswald/700.css';
 import '@fontsource/merriweather/300.css';
 import '../styles/global.css';
-import { brand, pairs, curtains, services, areas, hours, statement, merch, wall, foods, heroLinks, footerLinks, note, credits, carte, menu } from '../data/site';
+import { brand, pairs, curtains, services, areas, hours, statement, merch, wall, foods, heroLinks, footerLinks, note, credits, menu, pops } from '../data/site';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const img = (f: string) => `${base}/img/${f}`;
@@ -16,8 +16,6 @@ const rays = Array.from({ length: 64 }, (_, i) => {
 });
 
 const marquee = areas.map((a) => ({ name: a.name, food: a.food }));
-// a 14-point starburst for the small tags on dishes
-const starPoints = Array.from({ length: 28 }, (_, i) => { const a = (i / 28) * Math.PI * 2; const r = i % 2 ? 40 : 48; return `${(50 + Math.cos(a) * r).toFixed(1)},${(50 + Math.sin(a) * r).toFixed(1)}`; }).join(' ');
 const Chev = 'M8 3l9 9-9 9';
 ---
 <!doctype html>
@@ -50,7 +48,6 @@ const Chev = 'M8 3l9 9-9 9';
           <button class="cat__name" type="button" aria-expanded={i === 0 ? 'true' : 'false'}><span class="cat__mask"><span class="cat__text">{c.name}</span></span></button>
           <span class="line line--big" aria-hidden="true"></span>
           <div class="cat__panel">
-            <div class="cat__img"><img src={art(`food-${c.img}.webp`)} alt="" loading="lazy" decoding="async" /></div>
             <ul class="cat__items" data-lenis-prevent>
               {c.items.map((it) => (
                 <li class="item">
@@ -134,6 +131,7 @@ const Chev = 'M8 3l9 9-9 9';
         </svg>
       </button>
     </div>
+    <div class="pops" data-pops aria-hidden="true" data-first={JSON.stringify(pops.first)} data-more={JSON.stringify(pops.more)}></div>
     <nav class="hero__nav hi" style="--d:0.5s" aria-label="Secondary">
       <button class="small-link" type="button" data-open-fm aria-haspopup="dialog">Menu<span class="arr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={Chev} fill="none" stroke="currentColor" stroke-width="1.8" /></svg></span></button>
       {heroLinks.map((l) => <a class="small-link" href={l.href}>{l.label}<span class="arr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={Chev} fill="none" stroke="currentColor" stroke-width="1.8" /></svg></span></a>)}
@@ -177,35 +175,6 @@ const Chev = 'M8 3l9 9-9 9';
         <div class="anchor anchor--star" data-anchor="star"></div>
       </div>
     </div>
-  </section>
-
-  <!-- 3b. The food menu: a MANGIA band, then a swipeable row of dishes (modelled on the reference's restaurant pages) -->
-  <section class="band band--mangia" aria-hidden="true">
-    <div class="marquee" data-marquee>
-      <div class="marquee__track" data-track>
-        {[0, 1].map(() => (
-          <div class="marquee__set">{Array.from({ length: 5 }, () => <span class="marquee__name marquee__name--solo">{carte.band}</span>)}</div>
-        ))}
-      </div>
-    </div>
-  </section>
-  <section class="carte" id="menu" aria-label="The menu">
-    <div class="carte__bar">
-      <h2 class="sr">The menu</h2>
-      <button class="carte__arrow" type="button" data-rail-prev aria-label="Previous dishes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3l-9 9 9 9" fill="none" stroke="currentColor" stroke-width="2.4" /></svg></button>
-      <button class="carte__arrow" type="button" data-rail-next aria-label="Next dishes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3l9 9-9 9" fill="none" stroke="currentColor" stroke-width="2.4" /></svg></button>
-    </div>
-    <div class="carte__rail" data-rail tabindex="0">
-      {carte.dishes.map((d) => (
-        <article class="dish">
-          {d.tag && <svg class="dish__tag" viewBox="0 0 100 100" aria-hidden="true"><polygon points={starPoints} /><text x="50" y="58" text-anchor="middle">{d.tag}</text></svg>}
-          <h3>{d.name}{d.veg && <svg class="dish__leaf" viewBox="0 0 24 24" role="img" aria-label="Vegetarian"><circle cx="12" cy="12" r="12" fill="currentColor" /><path d="M7 16c0-5 3-8 10-8 0 7-3 10-8 10M7 17l6-6" fill="none" stroke="var(--light)" stroke-width="1.6" stroke-linecap="round" /></svg>}</h3>
-          <div class="dish__img"><img src={art(`food-${d.img}.webp`)} alt="" loading="lazy" decoding="async" /></div>
-          <p>{d.text}</p>
-        </article>
-      ))}
-    </div>
-    <button class="carte__cta" type="button" data-open-fm>{carte.cta}</button>
   </section>
 
   <!-- 4. Shop -->

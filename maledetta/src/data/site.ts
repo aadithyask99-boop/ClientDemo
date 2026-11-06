@@ -128,19 +128,16 @@ export const menu = {
   ],
 };
 
-// The food menu, modelled on the reference's restaurant pages: a band, then a swipeable row of dishes.
-export const carte = {
-  band: 'Mangia!',
-  cta: 'See the full menu',
-  dishes: [
-    { name: 'Burrata e pomodorini', img: 'burrata', veg: true, tag: '', text: 'Whole burrata, datterini tomatoes, basil oil and grilled sourdough.' },
-    { name: 'Margherita', img: 'pizza', veg: true, tag: 'Fave', text: 'San Marzano tomato, fior di latte, fresh basil and a long-proved crust.' },
-    { name: 'Spaghetti pomodoro', img: 'pasta', veg: true, tag: '', text: 'Spaghetti, slow-cooked San Marzano tomatoes, basil and aged pecorino.' },
-    { name: 'Cannoli siciliani', img: 'cannoli', veg: true, tag: 'New', text: 'Crisp shells filled with sweet ricotta, rolled in pistachio.' },
-    { name: 'Tiramisu', img: 'tiramisu', veg: true, tag: '', text: 'Mascarpone cream, espresso-soaked savoiardi and cocoa.' },
-    { name: 'Gelato', img: 'gelato', veg: true, tag: '', text: 'Pistachio and strawberry, scooped to order.' },
-    { name: 'Spritz della casa', img: 'spritz', veg: true, tag: '', text: 'Aperol, prosecco, soda, a slice of orange and a green olive.' },
-    { name: 'Espresso e amaretti', img: 'espresso', veg: true, tag: '', text: 'A short, strong espresso with two amaretti.' },
+// Small pop-ups in the site's own sticker style that appear in the hero a few seconds in. The first one teaches the CIAO easter egg.
+export const pops = {
+  first: { desktop: 'Psst! Type CIAO', touch: 'Psst! Press and hold her' },
+  more: [
+    { t: 'Fresh dough, daily', kind: 'burst' },
+    { t: 'Press the mascot', kind: 'label' },
+    { t: 'Extra soul, no extra charge', kind: 'label' },
+    { t: 'Mangia!', kind: 'burst' },
+    { t: 'Hungry? Press Menu', kind: 'label' },
+    { t: 'Made slowly, eaten fast', kind: 'label' },
   ],
 };
 
