@@ -59,6 +59,7 @@ export const statement = [
 ];
 
 export const merch = {
+  mobileHeading: 'A bit of Maledetta in your everyday',
   heading: 'Looking sharp takes more than a good sauce.',
   body: 'But we did treat ourselves: a small collection of aprons, tees and kit that looks like us. The street, the sun, the good food and the attitude we own. Caps, socks, totes, tea towels, the Maledetta look from head to toe.',
   cta: 'The shop',
@@ -78,7 +79,6 @@ export const wall = [
 export const foods = ['pizza', 'spritz', 'tiramisu', 'burrata', 'cannoli', 'espresso', 'pasta', 'gelato'];
 
 export const heroLinks = [
-  { label: 'Join the crew', href: '#' },
   { label: 'Private dining', href: 'mailto:hello@maledetta.example' },
 ];
 export const footerLinks = [

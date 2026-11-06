@@ -35,32 +35,27 @@ function nextPair() {
 $('[data-palette-btn]')?.addEventListener('click', nextPair);
 ScrollTrigger.create({ trigger: '[data-footer-hero]', start: 'top 55%', onEnter: nextPair });
 
-/* ---------------- loader: nine curtains, then the whole stack lifts ---------------- */
+/* ---------------- loader: nine curtains you can read, then a soft fade into the hero ---------------- */
 const loader = $('[data-loader]');
 const loaderOn = root.classList.contains('js') && !root.classList.contains('no-loader') && loader && !reduce;
-function heroIntro() {
-  if (reduce) return;
-  const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-  tl.from('[data-hero] .wordmark', { scaleY: 0.55, transformOrigin: '50% 100%', opacity: 0, duration: 1.1 }, 0)
-    .from('[data-hero] .mascot', { scale: 0.9, opacity: 0, duration: 1.2 }, 0.1)
-    .from('[data-hero] .hero__nav', { y: 20, opacity: 0, duration: 0.8 }, 0.5)
-    .from('[data-hero] [data-sticker]', { scale: 0, rotation: -40, duration: 1, ease: 'elastic.out(1, 0.6)' }, 0.7);
-}
+// The hero reveals itself with CSS (blur to clear, see .hi); we only say when to start.
+const heroGo = () => root.classList.add('hero-go');
 if (loaderOn) {
-  try { sessionStorage.setItem('mld-seen', '1'); } catch (e) { /* private mode */ }
+  try { sessionStorage.setItem('mld-seen', '1'); } catch (e) { /* private mode or a sandboxed frame */ }
   lock();
   const items = $$('.loader__item', loader!);
   items.forEach((el, i) => (el.style.zIndex = String(items.length - i)));
-  const step = 0.24;
-  items.forEach((el, i) => { if (i < items.length - 1) gsap.delayedCall(0.2 + i * step, () => (el.style.opacity = '0')); });
-  gsap.to(loader, {
-    yPercent: -100, duration: 1, ease: 'power3.inOut', delay: 0.2 + (items.length - 1) * step + 0.35,
-    onStart: heroIntro,
-    onComplete: () => { (loader as HTMLElement).style.display = 'none'; unlock(); },
+  const step = 0.6; // slow enough to read every area name
+  items.forEach((el, i) => { if (i < items.length - 1) gsap.delayedCall(0.4 + i * step, () => (el.style.opacity = '0')); });
+  const leaveAt = 0.4 + (items.length - 1) * step + 0.9; // the last name rests a moment
+  gsap.delayedCall(leaveAt, () => {
+    loader!.classList.add('is-leaving');
+    heroGo();
+    gsap.to(loader, { opacity: 0, duration: 1.6, ease: 'power2.inOut', onComplete: () => { (loader as HTMLElement).style.display = 'none'; unlock(); } });
   });
 } else {
   loader && ((loader as HTMLElement).style.display = 'none');
-  heroIntro();
+  heroGo();
 }
 
 /* ---------------- the sticker travels between five places on the page (GSAP Flip, spin) ---------------- */
@@ -158,7 +153,7 @@ addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
 let openArea: HTMLElement | null = null;
 let openSite: HTMLElement | null = null;
 const dur = reduce ? 0 : 0.8;
-const rowH = () => (small() ? innerWidth * 0.16 : innerWidth * 0.06);
+const rowH = () => (small() ? innerWidth * 0.12 : innerWidth * 0.06);
 function setSite(site: HTMLElement, state: 'closed' | 'open' | 'full') {
   const item = $('.site__item', site)!;
   const banner = $('.site__banner', site)!;
@@ -235,23 +230,45 @@ $$('a[href^="#"]').forEach((a) => {
 $('[data-top]')?.addEventListener('click', (e) => { e.preventDefault(); lenis ? lenis.scrollTo(0, { duration: 2.2 }) : scrollTo({ top: 0 }); });
 
 /* ---------------- easter eggs ---------------- */
-// 1. The mascot takes a bite
+// 1. The mascot takes a bite: three clicks eat the slice (real bites cut out of the art), then a fresh slice pops back
 const mascot = $('[data-mascot]')!;
 const mascotArt = $('.mascot__art', mascot)!;
-function bite() {
-  if (reduce) return;
-  gsap.timeline()
-    .to(mascotArt, { scaleY: 0.93, scaleX: 1.05, duration: 0.12, ease: 'power2.in' })
-    .to(mascotArt, { scaleY: 1.09, scaleX: 0.96, duration: 0.18, ease: 'power2.out' })
-    .to(mascotArt, { scaleY: 1, scaleX: 1, duration: 0.7, ease: 'elastic.out(1, 0.35)' });
-  gsap.fromTo('[data-hero] .wordmark', { opacity: 1 }, { opacity: 0.25, duration: 0.07, repeat: 5, yoyo: true, ease: 'steps(1)', onComplete: () => { gsap.set('[data-hero] .wordmark', { opacity: 1 }); } });
+let stage = 0;
+function crumbs() {
   const hero = $('[data-hero]')!;
-  const r = mascot.getBoundingClientRect(); const hr = hero.getBoundingClientRect();
-  for (let i = 0; i < 16; i++) {
-    const e = document.createElement('span'); e.className = 'ember';
-    e.style.left = r.left - hr.left + r.width * (0.3 + Math.random() * 0.4) + 'px'; e.style.top = r.top - hr.top + r.height * 0.18 + 'px';
+  const r = mascot.getBoundingClientRect();
+  const hr = hero.getBoundingClientRect();
+  const ox = r.left - hr.left + r.width * 0.515;
+  const oy = r.top - hr.top + r.height * 0.69;
+  for (let i = 0; i < 12; i++) {
+    const e = document.createElement('span');
+    e.className = 'crumb';
+    e.style.left = ox + (Math.random() - 0.5) * r.width * 0.08 + 'px';
+    e.style.top = oy + 'px';
     hero.appendChild(e);
-    gsap.to(e, { x: (Math.random() - 0.5) * r.width * 0.6, y: -r.height * (0.2 + Math.random() * 0.4), scale: Math.random() * 1.4 + 0.3, opacity: 0, duration: 1 + Math.random() * 0.8, ease: 'power2.out', onComplete: () => e.remove() });
+    gsap.fromTo(e, { rotation: Math.random() * 90, opacity: 1, scale: 0.6 + Math.random() * 0.9 },
+      { x: (Math.random() - 0.5) * r.width * 0.5, y: r.height * (0.1 + Math.random() * 0.25), rotation: '+=' + (Math.random() * 400 - 200), opacity: 0, duration: 0.7 + Math.random() * 0.5, ease: 'power2.in', onComplete: () => e.remove() });
+  }
+}
+function setStage(n: number) {
+  stage = n;
+  mascotArt.className = 'mascot__art' + (n ? ' bite-' + n : '');
+}
+function bite() {
+  if (reduce) { setStage((stage + 1) % 4); return; }
+  if (stage >= 3) return; // a new slice is on its way
+  setStage(stage + 1);
+  crumbs();
+  gsap.timeline()
+    .to(mascotArt, { scaleY: 0.96, scaleX: 1.03, duration: 0.1, ease: 'power2.in' })
+    .to(mascotArt, { scaleY: 1.03, scaleX: 0.98, duration: 0.14, ease: 'power2.out' })
+    .to(mascotArt, { scaleY: 1, scaleX: 1, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
+  gsap.fromTo('[data-hero] .wordmark', { opacity: 1 }, { opacity: 0.3, duration: 0.06, repeat: 3, yoyo: true, ease: 'steps(1)', onComplete: () => { gsap.set('[data-hero] .wordmark', { opacity: 1 }); } });
+  if (stage === 3) {
+    gsap.delayedCall(1.6, () => {
+      setStage(0);
+      gsap.fromTo(mascotArt, { scale: 0.9 }, { scale: 1, duration: 0.9, ease: 'elastic.out(1, 0.5)' });
+    });
   }
 }
 mascot.addEventListener('click', bite);

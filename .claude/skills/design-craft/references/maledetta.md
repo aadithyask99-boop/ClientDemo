@@ -43,3 +43,11 @@ Lesson: for a replicate job, open every interactive state of the reference in a 
 
 ## Probe note
 After removing the extras the owner approved cutting (hero drift, services zoom on scroll, food tumble, tagline and footer settle), scroll-moving elements read 10 against the reference's 42. The reference counts the individual items of its marquee; ours moves as one track. The tumble can be added back (about 50 elements) if wanted.
+
+## Third pass (owner feedback, 2026-11-06)
+- The bite did fire but was a 6% squash and ink-coloured dots on an ink picture, so it read as nothing, and the slice never shortened. Fix: three bite shapes (disc unions clipped to the slice triangle, saved as small alpha PNGs) subtracted from the sprite with mask-composite: subtract (source-out for WebKit); three clicks eat the slice, then a fresh slice pops back. Not an image-generation problem: the artwork is the same, only masked.
+- Preloader was too quick to read: 0.6 s per curtain, long names sized to fit one line, a 0.9 s rest on the last, then a 1.6 s fade while the hero resolves from blur. The hero intro moved from GSAP to CSS (animation on opacity, filter and the individual scale property) with a CSS failsafe, so a script problem cannot leave the hero hidden.
+- Mobile: testing needs a viewport meta tag (the bundler strips it, so Chromium laid the first test out at 980px and made the page look twice as long). Compared with the reference at 390px: sticker is a fixed top-centre menu button, mascot smaller, services images 140vw tall, marquee type 31vw, statement 7.4vw, wall as framed cards with a centre line, single-column footer links, menu with a Close bar and smaller rows.
+- Reference note: on mobile the reference keeps its sticker fixed at the top but hides it behind its own z-4 sections; ours stays above everything so the menu is always reachable.
+- Photo counts: the reference wall has six prints and the shop section one photo; ours matches.
+- A sandboxed iframe without allow-same-origin blocks a plain static server's scripts, fonts and images (CORS from origin null); my failsafes keep the page usable but this was a test-server artefact, not the artifact host.

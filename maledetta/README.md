@@ -14,7 +14,12 @@ A fictional pizzeria group in central London, built as a like-for-like replica o
 - Wall of love: six prints in a five-column grid with the reference's own scroll parallax values (read from its Webflow interaction data).
 
 ## Easter eggs
-Click the mascot (bite, embers, wordmark flicker); type "ciao" or press and hold the mascot on touch (food rain); click the sunburst (next colour pair).
+Click the mascot: three clicks take three real bites out of the slice (bite shapes from scripts/make-bites.py, subtracted from the line art with CSS mask-composite), crumbs fall, then a fresh slice pops back; type "ciao" or press and hold the mascot on touch (food rain); click the sunburst (next colour pair).
+
+## Intro and mobile
+- Preloader: nine curtains at 0.6 s each, the last rests a moment, then it fades while the hero resolves from a soft blur (CSS only, html.hero-go, with a CSS failsafe so nothing stays hidden). Shown once per session.
+- Hero links: Menu (opens the overlay) and Private dining.
+- Mobile (checked against the reference at 390px): the sticker is the menu button, fixed at the top centre of every screen; services images are tall (140vw); wall prints are framed cards with a centre line and WALL OF LOVE between the second and third; the menu is a cream list with a Close bar at the top; footer links stack.
 
 ## Placeholders (invented)
 Brand name, nine sites and their addresses, phone numbers (020 7946 0xxx is the range reserved for fiction), opening hours, the shop (no shop exists), all links (`#` or `mailto:hello@maledetta.example`), socials, Book a table. Photography: Unsplash (credits in `src/data/credits.json` and the page source). The mascot and food are generated with Seedream 5.0 Flash (about $0.28 in total). Keep the mascot and wordmark masks under `src/assets/` (not `public/`): a root-absolute `url(/art/...)` in CSS breaks in the preview bundle: the mascot is woodcut line art turned into a mask (`scripts/process-art.py`, 4 wobbled frames played with CSS steps), the food was shot on magenta and keyed out. The wordmark is rendered once from Oswald through a displacement filter (`scripts/render-wordmark.mjs`).

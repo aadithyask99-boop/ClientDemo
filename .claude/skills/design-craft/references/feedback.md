@@ -306,3 +306,8 @@ I turned the owner's "looks cluttered, find a fine balance" (EVM) into "the page
 - Fixed from the reference's real interaction data (Webflow data read from its JS chunk, plus the menu opened in a browser). Owner chose: restore thin lines, no endless menu list, keep a Close button, homepage only.
 - Mistake and cause: I trusted reading the reference's script and a contact sheet instead of operating every interactive state of the reference myself. Also tested the bundle only from its root and only mid-page.
 - Lesson: operate every state of the reference in a browser, read its interaction data, and test the published bundle from a nested path, hero first.
+
+### Maledetta third pass (2026-11-06)
+- Owner: bite does not work, mobile white space and nav placement, preloader too fast and abrupt, hero links invisible until a reload, Join the crew should be Menu, check wall photo counts, replicate the reference menu.
+- Causes: the bite was too weak and never changed the art (my plan had promised a shorter slice); the hero links were left at opacity 0 by a CSS transition fighting a GSAP from() tween in an earlier build, and a hero that depends on JS to appear is fragile, so it is now CSS driven with a failsafe; on mobile the reference's fixed sticker is its menu button and mine scrolled away.
+- Lesson: when I promise an effect in a plan, check the built effect against the words of the plan; test a mobile viewport with a viewport tag and compare screen by screen with the reference; never let intro animation be the only thing that makes content visible.
