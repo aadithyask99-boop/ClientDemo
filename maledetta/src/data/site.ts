@@ -21,26 +21,33 @@ export const pairs = [
   { light: '#FFE0C7', dark: '#C2410C' }, // burnt tangerine
 ];
 
+// Loader curtains: a fixed ground and text colour per area (the reference does the same per city).
+export const curtains = [
+  { bg: '#0E5A3A', fg: '#CFEBD9' }, { bg: '#0A2FA5', fg: '#D6E4FF' }, { bg: '#B3121F', fg: '#F6F1E6' },
+  { bg: '#4B1D5E', fg: '#F7C9CF' }, { bg: '#C2410C', fg: '#FFE0C7' }, { bg: '#0E5A3A', fg: '#F7C9CF' },
+  { bg: '#B3121F', fg: '#CFEBD9' }, { bg: '#0A2FA5', fg: '#F6F1E6' }, { bg: '#F7C9CF', fg: '#B3121F' },
+];
+
 export const ink = '#0B3B2A'; // the mascot's line colour never changes, like the reference's
 
 export const services = [
-  { label: 'Delivery', img: 'svc-delivery.jpg', alt: 'A delivery rider on a scooter in a London street.', action: 'link', href: '#', pos: '50% 40%', flex: 1.25 },
-  { label: 'Collect', img: 'svc-collect.jpg', alt: 'A woman carrying a takeaway pizza box through the street.', action: 'menu', pos: '50% 35%', flex: 1.55 },
-  { label: 'Dine in', img: 'svc-dinein.jpg', alt: 'Pizzas, bowls and glasses on a dark wooden table, seen from above.', action: 'menu', pos: '50% 50%', flex: 1.4 },
-  { label: 'The shop', img: 'svc-kitchen.jpg', alt: 'A pizza chef in the steam of the kitchen.', action: 'scroll', href: '#shop', pos: '50% 30%', flex: 1.25 },
+  { label: 'Delivery', img: 'svc-delivery.jpg', alt: 'A delivery rider on a scooter in a London street.', action: 'link', href: '#', pos: '50% 40%', flex: 20 },
+  { label: 'Collect', img: 'svc-collect.jpg', alt: 'A woman carrying a takeaway pizza box through the street.', action: 'menu', pos: '50% 35%', flex: 32 },
+  { label: 'Dine in', img: 'svc-dinein.jpg', alt: 'Pizzas, bowls and glasses on a dark wooden table, seen from above.', action: 'menu', pos: '50% 50%', flex: 28 },
+  { label: 'The shop', img: 'svc-kitchen.jpg', alt: 'A pizza chef in the steam of the kitchen.', action: 'scroll', href: '#shop', pos: '50% 30%', flex: 20 },
 ];
 
 // Nine central London sites. Order = loader order (reversed) and marquee order.
 export const areas = [
-  { name: 'Soho', img: 'area-soho.jpg', food: 'pizza', street: '9 Lisle Yard, W1', phone: '020 7946 0101' },
-  { name: 'Covent Garden', img: 'area-covent-garden.jpg', food: 'spritz', street: '22 Maiden Row, WC2', phone: '020 7946 0102' },
-  { name: 'Fitzrovia', img: 'area-fitzrovia.jpg', food: 'tiramisu', street: '41 Rathmoor Street, W1', phone: '020 7946 0103' },
-  { name: 'Marylebone', img: 'area-marylebone.jpg', food: 'burrata', street: '6 Aldous Mews, W1', phone: '020 7946 0104' },
-  { name: 'Clerkenwell', img: 'area-clerkenwell.jpg', food: 'cannoli', street: '18 Spindle Lane, EC1', phone: '020 7946 0105' },
-  { name: 'Bloomsbury', img: 'area-bloomsbury.jpg', food: 'espresso', street: '3 Quill Passage, WC1', phone: '020 7946 0106' },
-  { name: 'Shoreditch', img: 'area-shoreditch.jpg', food: 'pasta', street: '57 Tenter Yard, E1', phone: '020 7946 0107' },
-  { name: 'Borough', img: 'area-borough.jpg', food: 'gelato', street: '12 Hopton Arch, SE1', phone: '020 7946 0108' },
-  { name: 'Mayfair', img: 'area-mayfair.jpg', food: 'spritz', street: '27 Brooke Row, W1', phone: '020 7946 0109' },
+  { name: 'Soho', site: 'Lisle Yard', img: 'area-soho.jpg', food: 'pizza', street: '9 Lisle Yard, W1', phone: '020 7946 0101' },
+  { name: 'Covent Garden', site: 'Maiden Row', img: 'area-covent-garden.jpg', food: 'spritz', street: '22 Maiden Row, WC2', phone: '020 7946 0102' },
+  { name: 'Fitzrovia', site: 'Rathmoor Street', img: 'area-fitzrovia.jpg', food: 'tiramisu', street: '41 Rathmoor Street, W1', phone: '020 7946 0103' },
+  { name: 'Marylebone', site: 'Aldous Mews', img: 'area-marylebone.jpg', food: 'burrata', street: '6 Aldous Mews, W1', phone: '020 7946 0104' },
+  { name: 'Clerkenwell', site: 'Spindle Lane', img: 'area-clerkenwell.jpg', food: 'cannoli', street: '18 Spindle Lane, EC1', phone: '020 7946 0105' },
+  { name: 'Bloomsbury', site: 'Quill Passage', img: 'area-bloomsbury.jpg', food: 'espresso', street: '3 Quill Passage, WC1', phone: '020 7946 0106' },
+  { name: 'Shoreditch', site: 'Tenter Yard', img: 'area-shoreditch.jpg', food: 'pasta', street: '57 Tenter Yard, E1', phone: '020 7946 0107' },
+  { name: 'Borough', site: 'Hopton Arch', img: 'area-borough.jpg', food: 'gelato', street: '12 Hopton Arch, SE1', phone: '020 7946 0108' },
+  { name: 'Mayfair', site: 'Brooke Row', img: 'area-mayfair.jpg', food: 'spritz', street: '27 Brooke Row, W1', phone: '020 7946 0109' },
 ];
 export const hours = ['Mon to Thu 12 to 11pm', 'Fri and Sat 12 to midnight', 'Sun 12 to 10pm'];
 
@@ -60,14 +67,12 @@ export const merch = {
 };
 
 export const wall = [
-  { img: 'wall-1.jpg', alt: 'Hands holding a ball of pizza dough.', x: 7, y: 1, w: 18, speed: 0.5 },
-  { img: 'wall-7.jpg', alt: 'A table football table in green and red.', x: 74, y: 8, w: 17, speed: 0.9 },
-  { img: 'wall-3.jpg', alt: 'Friends raising glasses at a long table.', x: 27, y: 21, w: 19, speed: 0.7 },
-  { img: 'wall-5.jpg', alt: 'A smiling man carrying a stack of boxes.', x: 51, y: 32, w: 16, speed: 1.1 },
-  { img: 'wall-2.jpg', alt: 'Spaghetti twirled high on a fork against black.', x: 71, y: 47, w: 16, speed: 0.6 },
-  { img: 'wall-4.jpg', alt: 'A lit restaurant doorway at night.', x: 8, y: 59, w: 17, speed: 1.0 },
-  { img: 'wall-6.jpg', alt: 'Hands holding a plate of dessert.', x: 28, y: 76, w: 16, speed: 0.8 },
-  { img: 'wall-8.jpg', alt: 'Women laughing together at a restaurant table.', x: 62, y: 79, w: 19, speed: 0.55 },
+  { img: 'wall-1.jpg', alt: 'Hands holding a ball of pizza dough.', x: 7.5, y: 0.5, w: 18, from: -80, to: 30 },
+  { img: 'wall-2.jpg', alt: 'Spaghetti twirled high on a fork against black.', x: 73.5, y: 18, w: 16.5, from: 40, to: -30 },
+  { img: 'wall-3.jpg', alt: 'Friends raising glasses at a long table.', x: 29.5, y: 28, w: 18.5, from: 30, to: -100 },
+  { img: 'wall-5.jpg', alt: 'A smiling man carrying a stack of boxes.', x: 52, y: 39, w: 18, from: 0, to: -50 },
+  { img: 'wall-6.jpg', alt: 'Hands holding a plate of dessert.', x: 7.6, y: 81, w: 18, from: 0, to: 30 },
+  { img: 'wall-7.jpg', alt: 'A table football table in green and red.', x: 74, y: 89, w: 16.5, from: -150, to: 0 },
 ];
 
 export const foods = ['pizza', 'spritz', 'tiramisu', 'burrata', 'cannoli', 'espresso', 'pasta', 'gelato'];

@@ -43,7 +43,7 @@ function heroIntro() {
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
   tl.from('[data-hero] .wordmark', { scaleY: 0.55, transformOrigin: '50% 100%', opacity: 0, duration: 1.1 }, 0)
     .from('[data-hero] .mascot', { scale: 0.9, opacity: 0, duration: 1.2 }, 0.1)
-    .from('[data-hero] .hero__nav > *', { y: 20, opacity: 0, duration: 0.8, stagger: 0.08 }, 0.5)
+    .from('[data-hero] .hero__nav', { y: 20, opacity: 0, duration: 0.8 }, 0.5)
     .from('[data-hero] [data-sticker]', { scale: 0, rotation: -40, duration: 1, ease: 'elastic.out(1, 0.6)' }, 0.7);
 }
 if (loaderOn) {
@@ -63,9 +63,8 @@ if (loaderOn) {
   heroIntro();
 }
 
-/* ---------------- the sticker travels between five places on the page (GSAP Flip) ---------------- */
+/* ---------------- the sticker travels between five places on the page (GSAP Flip, spin) ---------------- */
 const sticker = $('[data-sticker]')!;
-gsap.set(sticker, { rotation: -4 });
 let where = 'hero';
 function moveTo(name: string, duration = 1.6) {
   if (small() || reduce || where === name) return;
@@ -108,41 +107,18 @@ $$('[data-marquee]').forEach((m) => {
 
 /* ---------------- scroll motion ---------------- */
 if (!reduce) {
-  // hero drifts as you leave it
-  const heroScrub = { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: true };
-  gsap.to('[data-hero] .mascot', { y: () => -innerHeight * 0.12, ease: 'none', scrollTrigger: heroScrub });
-  gsap.to('[data-hero] .wordmark', { y: () => innerWidth * 0.05, ease: 'none', scrollTrigger: heroScrub });
-  gsap.to('[data-hero] .hero__nav', { y: -50, opacity: 0.2, ease: 'none', scrollTrigger: heroScrub });
-  // the food in the marquees tumbles as you scroll
-  $$('.marquee__food').forEach((f, i) => {
-    gsap.fromTo(f, { rotation: i % 2 ? -16 : 16 }, { rotation: i % 2 ? 16 : -16, ease: 'none', scrollTrigger: { trigger: f.closest('.band'), start: 'top bottom', end: 'bottom top', scrub: true } });
-  });
-  gsap.fromTo('.tagline p', { y: () => innerWidth * 0.03, scale: 0.9 }, { y: () => -innerWidth * 0.01, scale: 1, ease: 'none', scrollTrigger: { trigger: '.tagline', start: 'top bottom', end: 'center center', scrub: true } });
-  // footer wordmark and mascot settle in
-  gsap.fromTo('.hero--footer .mascot', { y: () => innerHeight * 0.1 }, { y: 0, ease: 'none', scrollTrigger: { trigger: '.hero--footer', start: 'top bottom', end: 'top 20%', scrub: true } });
-  gsap.fromTo('.hero--footer .wordmark', { y: () => -innerWidth * 0.04 }, { y: 0, ease: 'none', scrollTrigger: { trigger: '.hero--footer', start: 'top bottom', end: 'top 20%', scrub: true } });
-  // service photos settle
-  $$('.svc__img img').forEach((img) => {
-    gsap.fromTo(img, { scale: 1.18 }, { scale: 1.02, ease: 'none', scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom 25%', scrub: true } });
-  });
-  // sunburst turns with the page
-  gsap.to('[data-rays]', { rotation: 120, ease: 'none', transformOrigin: '50% 50%', scrollTrigger: { trigger: '.band', start: 'top bottom', end: 'bottom top', scrub: true } });
-  // shop photo
-  gsap.fromTo('.shop__img img', { scale: 1.2 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '.shop', start: 'top bottom', end: 'center center', scrub: true } });
-  // wall of love: every print drifts at its own speed; the big letters rise slowly
+  // wall of love: the reference's own parallax numbers, one scripted move per print (percent of its own height)
   const mm = gsap.matchMedia();
   mm.add('(min-width: 992px)', () => {
-    $$('.print').forEach((p, i) => {
-      const speed = parseFloat(p.dataset.speed || '1');
-      gsap.fromTo(p, { y: (speed - 0.6) * 260, rotation: i % 2 ? 3 : -3 }, { y: (speed - 0.6) * -260, rotation: i % 2 ? -2 : 2, ease: 'none', scrollTrigger: { trigger: '.wall', start: 'top bottom', end: 'bottom top', scrub: true } });
+    $$('.print').forEach((p) => {
+      const from = parseFloat(p.dataset.from || '0'), to = parseFloat(p.dataset.to || '0');
+      gsap.fromTo(p, { yPercent: from }, { yPercent: to, ease: 'none', scrollTrigger: { trigger: '.wall', start: 'top bottom', end: 'bottom top', scrub: true } });
     });
-    gsap.fromTo('.wall__word span', { yPercent: (i: number) => 14 - i * 4 }, { yPercent: (i: number) => -14 + i * 4, ease: 'none', scrollTrigger: { trigger: '.wall', start: 'top bottom', end: 'bottom top', scrub: true } });
   });
   // text lines rise out of a mask
   $$('[data-reveal]').forEach((el) => {
-    const split = SplitText.create(el.tagName === 'P' || el.tagName === 'H2' ? el : $$('p', el), { type: 'lines', mask: 'lines', autoSplit: true,
+    SplitText.create(el.tagName === 'P' || el.tagName === 'H2' ? el : $$('p', el), { type: 'lines', mask: 'lines', autoSplit: true,
       onSplit: (self) => gsap.from(self.lines, { yPercent: 105, duration: 0.95, ease: 'power3.out', stagger: 0.07, scrollTrigger: { trigger: el, start: 'top 82%' } }) });
-    void split;
   });
 }
 
@@ -158,11 +134,13 @@ function openMenu() {
   menu.setAttribute('aria-hidden', 'false'); menu.classList.add('is-open'); lock();
   scroller.scrollTop = 0;
   const names = $$('.area__text', menu);
+  const lines = $$('.line--big', menu);
   if (reduce) { gsap.set(menu, { opacity: 1 }); }
   else {
     const tl = gsap.timeline();
     tl.fromTo(menu, { opacity: 0 }, { opacity: 1, duration: 0.8, ease: 'power2.out' });
-    tl.fromTo(names, { yPercent: 105 }, { yPercent: 0, duration: 0.5, ease: 'power2.out', stagger: 0.04 }, '-=0.45');
+    tl.fromTo(lines, { width: 0 }, { width: '100%', duration: 0.4, ease: 'power2.out', stagger: 0.03 }, '-=0.4');
+    tl.fromTo(names, { yPercent: 105 }, { yPercent: 0, duration: 0.4, ease: 'power2.out', stagger: 0.03 }, '<');
   }
   ($('[data-menu-close]', menu) as HTMLElement).focus({ preventScroll: true });
 }
@@ -170,7 +148,7 @@ function closeMenu() {
   if (!menuOpen) return;
   menuOpen = false;
   const done = () => { menu.classList.remove('is-open'); menu.setAttribute('aria-hidden', 'true'); unlock(); (lastFocus as HTMLElement | null)?.focus?.({ preventScroll: true }); };
-  reduce ? (gsap.set(menu, { opacity: 0 }), done()) : gsap.to(menu, { opacity: 0, duration: 0.6, ease: 'power2.out', onComplete: done });
+  reduce ? (gsap.set(menu, { opacity: 0 }), done()) : gsap.to(menu, { opacity: 0, duration: 0.8, ease: 'power2.out', onComplete: done });
 }
 $$('[data-open-menu]').forEach((b) => b.addEventListener('click', openMenu));
 sticker.addEventListener('click', openMenu);
@@ -180,25 +158,27 @@ addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
 let openArea: HTMLElement | null = null;
 let openSite: HTMLElement | null = null;
 const dur = reduce ? 0 : 0.8;
+const rowH = () => (small() ? innerWidth * 0.16 : innerWidth * 0.06);
 function setSite(site: HTMLElement, state: 'closed' | 'open' | 'full') {
+  const item = $('.site__item', site)!;
   const banner = $('.site__banner', site)!;
-  const vh = innerHeight;
-  const h = state === 'closed' ? 0 : small() ? Math.round(innerWidth * 1.45) : state === 'open' ? vh * 0.6 : vh;
+  const h = state === 'closed' ? rowH() : small() ? innerWidth * 1.4 : state === 'open' ? innerHeight * 0.6 : innerHeight;
   site.classList.toggle('is-open', state === 'open');
   site.classList.toggle('is-full', state === 'full' || (small() && state === 'open'));
-  gsap.to(banner, { height: h, duration: dur, ease: 'power2.inOut' });
+  gsap.to(item, { height: h, duration: dur, ease: 'power2.inOut' });
+  gsap.to(banner, { height: state === 'closed' ? 0 : h, duration: dur, ease: 'power2.inOut' });
   if (state === 'full' && !small()) {
-    const top = $('.site__banner', site)!.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop;
+    const top = item.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop;
     scroller.scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
   }
 }
 $$('[data-area]').forEach((area) => {
-  const btn = $('.area__name', area)!;
+  const btn = $('.area__click', area)!;
   const sites = $('.area__sites', area)!;
   btn.addEventListener('click', () => {
     const open = btn.getAttribute('aria-expanded') === 'true';
     if (openArea && openArea !== area) {
-      $('.area__name', openArea)!.setAttribute('aria-expanded', 'false');
+      $('.area__click', openArea)!.setAttribute('aria-expanded', 'false');
       gsap.to($('.area__sites', openArea), { height: 0, duration: dur, ease: 'power2.inOut' });
       $$('[data-site]', openArea).forEach((s) => setSite(s, 'closed'));
     }
@@ -214,6 +194,7 @@ $$('[data-area]').forEach((area) => {
     }
   });
   $$('[data-site]', area).forEach((site) => {
+    const item = $('.site__item', site)!;
     const row = $('.site__row', site)!;
     const banner = $('.site__banner', site)!;
     const cursor = $('[data-cursor]', site)!;
@@ -223,17 +204,17 @@ $$('[data-area]').forEach((area) => {
       if (isOpen) { setSite(site, 'closed'); openSite = null; } else { setSite(site, 'open'); openSite = site; }
       gsap.to(sites, { height: 'auto', duration: 0.1, delay: dur });
     });
-    // the arrow that follows the pointer over the banner (springs in, like the reference)
+    // the round "Go!" that follows the pointer over the banner (springs in, like the reference)
     if (!reduce) {
       const qx = gsap.quickTo(cursor, 'x', { duration: 0.4, ease: 'power2.out' });
       const qy = gsap.quickTo(cursor, 'y', { duration: 0.4, ease: 'power2.out' });
       gsap.set(cursor, { xPercent: -50, yPercent: -50 });
       banner.addEventListener('mouseenter', () => { if (small() || site.classList.contains('is-full')) return; gsap.fromTo(cursor, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: 'elastic.out(1, 0.9)' }); });
-      banner.addEventListener('mousemove', (e) => { const r = banner.getBoundingClientRect(); qx(e.clientX - r.left); qy(e.clientY - r.top); });
+      banner.addEventListener('mousemove', (e) => { const r = item.getBoundingClientRect(); qx(e.clientX - r.left); qy(e.clientY - r.top); });
       banner.addEventListener('mouseleave', () => gsap.to(cursor, { scale: 0, opacity: 0, duration: 0.4, ease: 'power2.out' }));
     }
-    banner.addEventListener('click', (e) => {
-      if ((e.target as HTMLElement).closest('a,button') || small() || !site.classList.contains('is-open')) return;
+    banner.addEventListener('click', () => {
+      if (small() || !site.classList.contains('is-open')) return;
       gsap.to(cursor, { scale: 0, opacity: 0, duration: 0.25 });
       setSite(site, 'full');
     });
@@ -254,7 +235,7 @@ $$('a[href^="#"]').forEach((a) => {
 $('[data-top]')?.addEventListener('click', (e) => { e.preventDefault(); lenis ? lenis.scrollTo(0, { duration: 2.2 }) : scrollTo({ top: 0 }); });
 
 /* ---------------- easter eggs ---------------- */
-// 1. The mascot takes a bite (click, or press and hold on touch for the rain)
+// 1. The mascot takes a bite
 const mascot = $('[data-mascot]')!;
 const mascotArt = $('.mascot__art', mascot)!;
 function bite() {

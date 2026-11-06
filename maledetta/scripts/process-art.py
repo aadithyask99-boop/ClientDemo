@@ -58,7 +58,5 @@ for k in range(4):
     frames.append(f)
 strip=np.concatenate(frames,axis=1)
 rgba=np.zeros((H,W*4,4),np.uint8); rgba[...,3]=(strip*255).astype(np.uint8)
-Image.fromarray(rgba,'RGBA').save(O+'mascot-sprite.png',optimize=True)
-# static single frame for reduced-motion + footer
-Image.fromarray(np.dstack([np.zeros((H,W,3),np.uint8),(frames[0]*255).astype(np.uint8)]),'RGBA').save(O+'mascot.png',optimize=True)
+Image.fromarray(rgba,'RGBA').save('src/assets/mascot-sprite.png',optimize=True)  # src/assets so Vite resolves it at any base path
 print('mascot ok')

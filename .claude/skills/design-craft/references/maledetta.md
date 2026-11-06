@@ -30,3 +30,16 @@ No hairlines (menu wipes and the wall's faint vertical grid dropped, replaced by
 
 ## Weaker than the reference / unverified
 Unsplash photography is moodier and less uniformly flash-lit than the reference (a light common grade was applied); no real phone test; the Webflow marquee and wall parallax were matched from the recording, not from code; the "Book a table", socials and shop links are placeholders.
+
+## Second pass (owner: "is something missing?", 2026-11-06)
+The owner suspected gaps and was right. I had built the menu from the reference's code and never opened it in a browser. Opening it showed a different menu: cream ground, 7vw dark city names, thin light lines, small rows with a corner arrow, a photo band growing to 60vh with a round "GO!" cursor, then full screen; no close button on desktop; the list repeated six times. Also missed: the sticker is 258 x 158 px with a hand-drawn door that opens on hover (Lottie, frames 1 to 99 in 0.5 s) plus rotate(6deg) scale(1.02) and a drop shadow; the wall has six cards in a five-column grid with scripted parallax (percent of own height: -80 to 30, 40 to -30, 30 to -100, 0 to -50, 0 to 30, -150 to 0); links fade to 50% and the small arrow slides out and back in. All of this was found in the reference's own files: the Webflow interaction data is in `webflow.schunk.*.js` (search for an element's `data-w-id`), and styles are in the shared CSS.
+Lesson: for a replicate job, open every interactive state of the reference in a browser (menu, hover, click, cursor) and read its interaction data before writing the plan; reading main.js alone missed what Webflow does.
+
+## Bugs that only showed on the published artifact
+- The mascot was invisible: its colour variable lived on `<body style>` and the preview bundler keeps only the body's children. Put variables in `:root`.
+- CSS `url(/art/x.png)` for a public file stays root-absolute under a relative base, so masks 404 on the artifact. Keep CSS-referenced images in `src/assets` so Vite rewrites them.
+- A CSS `transition: opacity` on links made the intro's `gsap.from` leave them at 0: animate a wrapper instead.
+- Test the bundle from a nested path (`/a/b/page.html`), not from its root, and look at the hero, not only a mid-page section.
+
+## Probe note
+After removing the extras the owner approved cutting (hero drift, services zoom on scroll, food tumble, tagline and footer settle), scroll-moving elements read 10 against the reference's 42. The reference counts the individual items of its marquee; ours moves as one track. The tumble can be added back (about 50 elements) if wanted.

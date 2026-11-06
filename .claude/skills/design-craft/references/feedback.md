@@ -300,3 +300,9 @@ I turned the owner's "looks cluttered, find a fine balance" (EVM) into "the page
 - Findings: Impeccable only flagged the cream ground (the reference's own) and hidden easter-egg images (fixed by creating them on demand). Critic (build): wall sparse, photo grade inconsistent, palette hue drift (intended); applied a tighter wall and a shared grade.
 - Mistakes: first food key left shadows and ate a red drink and a metal bowl (regenerated those two, tuned the key); first motion count was 52% (fixed with scrubbed food, tagline and footer); Node fetch 401 because of the proxy; a GSAP/CSS transform conflict on the mascot.
 - Lesson: for a replicate job the quickest win is reading the reference's own script (it was public) and matching its numbers (Lenis, curtain timings, Flip anchors), which made the wheel-notch curve identical on the first try. Cut-outs: prompt for dishes that do not share the key colour.
+
+### Maledetta second pass (2026-11-06)
+- Owner asked whether things were missing and also said the hero mascot was missing. Both were true: the menu, sticker, wall and hover details differed from the reference, and the mascot was invisible on the published artifact (colour variable on the body tag dropped by the bundler; CSS url() root-absolute).
+- Fixed from the reference's real interaction data (Webflow data read from its JS chunk, plus the menu opened in a browser). Owner chose: restore thin lines, no endless menu list, keep a Close button, homepage only.
+- Mistake and cause: I trusted reading the reference's script and a contact sheet instead of operating every interactive state of the reference myself. Also tested the bundle only from its root and only mid-page.
+- Lesson: operate every state of the reference in a browser, read its interaction data, and test the published bundle from a nested path, hero first.

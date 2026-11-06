@@ -2,7 +2,7 @@
 import '@fontsource/oswald/700.css';
 import '@fontsource/merriweather/300.css';
 import '../styles/global.css';
-import { brand, pairs, ink, services, areas, hours, statement, merch, wall, foods, heroLinks, footerLinks, note, credits } from '../data/site';
+import { brand, pairs, curtains, services, areas, hours, statement, merch, wall, foods, heroLinks, footerLinks, note, credits } from '../data/site';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const img = (f: string) => `${base}/img/${f}`;
@@ -16,6 +16,7 @@ const rays = Array.from({ length: 64 }, (_, i) => {
 });
 
 const marquee = areas.map((a) => ({ name: a.name, food: a.food }));
+const Chev = 'M8 3l9 9-9 9';
 ---
 <!doctype html>
 <html lang="en-GB">
@@ -26,42 +27,47 @@ const marquee = areas.map((a) => ({ name: a.name, food: a.food }));
   <meta name="description" content={brand.description} />
   <meta name="theme-color" content="#F6F1E6" />
   <link rel="icon" href={`data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#0E5A3A"/><text x="32" y="47" font-family="Impact,Oswald,sans-serif" font-size="44" font-weight="700" fill="#CFEBD9" text-anchor="middle">M</text></svg>')}`} />
-  <link rel="preload" href={art('wordmark.png')} as="image" />
-  <link rel="preload" href={art('mascot-sprite.png')} as="image" />
   <script is:inline>document.documentElement.classList.add('js');try{if(sessionStorage.getItem('mld-seen')||matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('no-loader')}}catch(e){}</script>
 </head>
-<body style={`--art-wordmark:url(${art('wordmark.png')});--art-mascot:url(${art('mascot-sprite.png')});--ink:${ink}`}>
+<body>
 
-<!-- Loader: nine colour curtains, one per area -->
+<!-- Loader: nine colour curtains, one per area, each with its own fixed colours -->
 <div class="loader" aria-hidden="true" data-loader>
   {[...areas].reverse().map((a, i) => (
-    <div class="loader__item" style={`--l:${pairs[i % pairs.length].light};--d:${pairs[i % pairs.length].dark}`}><span>{a.name}</span></div>
+    <div class="loader__item" style={`--l:${curtains[i % curtains.length].fg};--d:${curtains[i % curtains.length].bg}`}><span>{a.name}</span></div>
   ))}
 </div>
 
-<!-- Menu overlay: areas, then sites -->
+<!-- Menu overlay: cream, big area names, small sub-rows, a photo band that grows -->
 <section class="menu" data-menu aria-label="Find your Maledetta" aria-hidden="true">
   <button class="menu__close" type="button" data-menu-close>Close</button>
   <div class="menu__scroll" data-menu-scroll>
     <ul class="menu__list">
-      {areas.map((a, i) => (
+      {areas.map((a) => (
         <li class="area" data-area>
-          <button class="area__name" type="button" aria-expanded="false"><span class="area__mask"><span class="area__text">{a.name}</span></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3l9 9-9 9" fill="none" stroke="currentColor" stroke-width="2.4" /></svg></button>
+          <button class="area__click" type="button" aria-expanded="false"><span class="area__mask"><span class="area__text">{a.name}</span></span></button>
+          <span class="line line--big" aria-hidden="true"></span>
           <div class="area__sites">
             <div class="site" data-site>
-              <button class="site__row" type="button"><span class="site__name">Maledetta {a.name}</span><span class="site__street">{a.street}</span></button>
-              <div class="site__banner">
-                <img src={img(a.img)} alt="" loading="lazy" decoding="async" />
-                <div class="site__shade"></div>
+              <div class="site__item">
+                <div class="site__banner">
+                  <img src={img(a.img)} alt="" loading="lazy" decoding="async" />
+                  <div class="site__shade"></div>
+                </div>
+                <button class="site__row" type="button">
+                  <svg class="site__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v10h12M12 9l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" /></svg>
+                  <h3 class="site__name">{a.site}</h3>
+                </button>
                 <div class="site__detail">
-                  <h3>Maledetta<br />{a.name}</h3>
+                  <h3>Maledetta {a.name}</h3>
                   <p>{a.street}<br />{a.phone}</p>
                   <ul>{hours.map((h) => <li>{h}</li>)}</ul>
                   <a class="btn" href="mailto:hello@maledetta.example?subject=Table at Maledetta">Book a table</a>
                   <button type="button" class="site__back" data-site-back>Back</button>
                 </div>
-                <div class="cursor" data-cursor aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" /></svg></div>
+                <div class="cursor" data-cursor aria-hidden="true">Go!</div>
               </div>
+              <span class="line line--small" aria-hidden="true"></span>
             </div>
           </div>
         </li>
@@ -78,16 +84,33 @@ const marquee = areas.map((a) => ({ name: a.name, food: a.food }));
     <button class="mascot" type="button" tabindex="-1" aria-label="Maledetta mascot. Press for a bite." data-mascot><span class="mascot__art"></span></button>
     <div class="anchor anchor--hero" data-anchor="hero">
       <button class="sticker" type="button" data-sticker aria-label="Find my local Maledetta" aria-haspopup="dialog">
-        <svg class="sticker__door" viewBox="0 0 40 60" aria-hidden="true"><path d="M4 56V10h32v46" fill="none" stroke="currentColor" stroke-width="3.2" /><path d="M2 10h36" stroke="currentColor" stroke-width="4" /><rect x="9" y="16" width="9" height="12" fill="currentColor" /><rect x="22" y="16" width="9" height="12" fill="currentColor" /><rect x="9" y="33" width="9" height="19" fill="currentColor" /><rect x="22" y="33" width="9" height="19" fill="currentColor" /></svg>
-        <span class="sticker__text"><span>{brand.sticker[0]}</span><span>{brand.sticker[1]}</span></span>
+        <svg class="sticker__art" viewBox="0 0 260 160" aria-hidden="true">
+          <g class="halo" fill="var(--light)" stroke="var(--light)" stroke-width="16" stroke-linejoin="round">
+            <rect x="16" y="8" width="64" height="92" rx="3" />
+            <text x="94" y="66" font-size="60" textLength="104" lengthAdjust="spacingAndGlyphs">MY</text>
+            <text x="12" y="148" font-size="64" textLength="236" lengthAdjust="spacingAndGlyphs">LOCAL</text>
+          </g>
+          <g class="door">
+            <rect x="22" y="14" width="52" height="80" fill="var(--light)" stroke="var(--dark)" stroke-width="4" />
+            <rect class="door__open" x="28" y="36" width="40" height="54" fill="var(--dark)" />
+            <g class="leaf leaf--l"><rect x="28" y="36" width="20" height="54" fill="var(--light)" stroke="var(--dark)" stroke-width="2.5" /><rect x="32" y="41" width="12" height="13" fill="var(--dark)" /><rect x="32" y="60" width="12" height="25" fill="none" stroke="var(--dark)" stroke-width="2" /></g>
+            <g class="leaf leaf--r"><rect x="48" y="36" width="20" height="54" fill="var(--light)" stroke="var(--dark)" stroke-width="2.5" /><rect x="52" y="41" width="12" height="13" fill="var(--dark)" /><rect x="52" y="60" width="12" height="25" fill="none" stroke="var(--dark)" stroke-width="2" /></g>
+            <rect x="22" y="14" width="52" height="16" fill="var(--dark)" />
+            <text x="48" y="26.5" font-size="11" text-anchor="middle" fill="var(--light)">PIZZERIA</text>
+          </g>
+          <g fill="var(--dark)">
+            <text x="94" y="66" font-size="60" textLength="104" lengthAdjust="spacingAndGlyphs">MY</text>
+            <text x="12" y="148" font-size="64" textLength="236" lengthAdjust="spacingAndGlyphs">LOCAL</text>
+          </g>
+        </svg>
       </button>
     </div>
     <nav class="hero__nav" aria-label="Secondary">
-      {heroLinks.map((l) => <a class="small-link" href={l.href}>{l.label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3l9 9-9 9" fill="none" stroke="currentColor" stroke-width="1.8" /></svg></a>)}
+      {heroLinks.map((l) => <a class="small-link" href={l.href}>{l.label}<span class="arr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={Chev} fill="none" stroke="currentColor" stroke-width="1.8" /></svg></span></a>)}
       <div class="social">
         <a href="#" aria-label="Instagram"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="currentColor" /><rect x="7.5" y="7.5" width="17" height="17" rx="5" fill="none" stroke="var(--bg-i)" stroke-width="2.4" /><circle cx="16" cy="16" r="4" fill="none" stroke="var(--bg-i)" stroke-width="2.4" /><circle cx="21.5" cy="10.5" r="1.3" fill="var(--bg-i)" /></svg></a>
         <a href="#" aria-label="TikTok"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="currentColor" /><path d="M17.5 7v12.2a3.4 3.4 0 1 1-3.4-3.4M17.5 7c.3 2.6 2 4.2 4.6 4.4" fill="none" stroke="var(--bg-i)" stroke-width="2.6" stroke-linecap="round" /></svg></a>
-        <a href="#" aria-label="Facebook"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="currentColor" /><path d="M18 27V17h3.4l.6-4H18v-2.2c0-1.2.5-1.9 2-1.9h2V5.3C21.600 5.2 20.500 5 19.200 5 16 5 14 7 14 10.300V13h-3.400v4H14v10z" fill="var(--bg-i)" /></svg></a>
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="currentColor" /><path d="M18 27V17h3.4l.6-4H18v-2.2c0-1.2.5-1.9 2-1.9h2V5.3C21.6 5.2 20.5 5 19.2 5 16 5 14 7 14 10.3V13h-3.4v4H14v10z" fill="var(--bg-i)" /></svg></a>
       </div>
     </nav>
   </header>
@@ -96,8 +119,8 @@ const marquee = areas.map((a) => ({ name: a.name, food: a.food }));
   <section class="services" data-flip="1" aria-label="How to enjoy Maledetta">
     {services.map((s) => (
       <div class="svc" style={`--f:${s.flex}`}>
-        {s.action === 'menu' ? <button type="button" class="svc__label" data-open-menu><h2>{s.label}</h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3l9 9-9 9" fill="none" stroke="currentColor" stroke-width="2.4" /></svg></button>
-          : <a class="svc__label" href={s.href}><h2>{s.label}</h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3l9 9-9 9" fill="none" stroke="currentColor" stroke-width="2.4" /></svg></a>}
+        {s.action === 'menu' ? <button type="button" class="svc__label" data-open-menu><h2>{s.label}</h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d={Chev} fill="none" stroke="currentColor" stroke-width="2.4" /></svg></button>
+          : <a class="svc__label" href={s.href}><h2>{s.label}</h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d={Chev} fill="none" stroke="currentColor" stroke-width="2.4" /></svg></a>}
         <div class="svc__img"><img src={img(s.img)} alt={s.alt} style={`object-position:${s.pos}`} loading="lazy" decoding="async" /></div>
       </div>
     ))}
@@ -133,29 +156,32 @@ const marquee = areas.map((a) => ({ name: a.name, food: a.food }));
       <div class="shop__text">
         <h2 data-reveal>{merch.heading}</h2>
         <p>{merch.body}</p>
-        <a class="btn btn--dark" href="#shop">{merch.cta}</a>
+        <a class="btn" href="#shop">{merch.cta}</a>
       </div>
       <div class="anchor anchor--shop" data-anchor="shop"></div>
     </div>
   </section>
 
-  <!-- 5. Wall of love -->
+  <!-- 5. Wall of love: six prints in a five-column grid -->
   <section class="wall" data-flip="3" aria-label="Wall of love">
+    <div class="wall__cols" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
     <div class="wall__word" aria-hidden="true"><span>Wall</span><span>of</span><span>Love</span></div>
     {wall.map((w) => (
-      <figure class="print" data-speed={w.speed} style={`left:${w.x}vw;top:${w.y}vw;--w:${w.w}vw`}><img src={img(w.img)} alt={w.alt} width="900" height="1125" decoding="async" /></figure>
+      <figure class="print" data-from={w.from} data-to={w.to} style={`left:${w.x}vw;top:${w.y}vw;--w:${w.w}vw`}><img src={img(w.img)} alt={w.alt} width="900" height="1125" decoding="async" /></figure>
     ))}
-    <div class="anchor anchor--wall" data-anchor="wall"></div>
   </section>
 
   <!-- 6. Tagline -->
-  <section class="tagline"><p data-reveal>{brand.tagline[0]}<br />{brand.tagline[1]}</p></section>
+  <section class="tagline">
+    <div class="anchor anchor--wall" data-anchor="wall"></div>
+    <p data-reveal>{brand.tagline[0]}<br />{brand.tagline[1]}</p>
+  </section>
 </main>
 
 <!-- 7. Footer -->
 <footer class="footer" id="footer">
   <div class="footer__links">
-    {footerLinks.map((l) => <a class="small-link small-link--light" href={l.href}>{l.label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3l9 9-9 9" fill="none" stroke="currentColor" stroke-width="1.8" /></svg></a>)}
+    {footerLinks.map((l) => <a class="small-link small-link--light" href={l.href}>{l.label}<span class="arr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={Chev} fill="none" stroke="currentColor" stroke-width="1.8" /></svg></span></a>)}
   </div>
   <div class="band band--footer">
     <div class="marquee" data-marquee data-reverse aria-hidden="true">
@@ -173,12 +199,12 @@ const marquee = areas.map((a) => ({ name: a.name, food: a.food }));
     <div class="mascot mascot--static" aria-hidden="true"><span class="mascot__art"></span></div>
     <div class="anchor anchor--hero" data-anchor="footer"></div>
     <nav class="hero__nav" aria-label="Footer">
-      <a class="small-link" href="#top" data-top>Back to top<svg viewBox="0 0 24 24" aria-hidden="true" style="transform:rotate(-90deg)"><path d="M8 3l9 9-9 9" fill="none" stroke="currentColor" stroke-width="1.8" /></svg></a>
-      <a class="small-link" href="mailto:hello@maledetta.example">Private dining<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3l9 9-9 9" fill="none" stroke="currentColor" stroke-width="1.8" /></svg></a>
+      <a class="small-link" href="#top" data-top>Back to top<span class="arr"><svg viewBox="0 0 24 24" aria-hidden="true" style="transform:rotate(-90deg)"><path d={Chev} fill="none" stroke="currentColor" stroke-width="1.8" /></svg></span></a>
+      <a class="small-link" href="mailto:hello@maledetta.example">Private dining<span class="arr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={Chev} fill="none" stroke="currentColor" stroke-width="1.8" /></svg></span></a>
       <div class="social">
         <a href="#" aria-label="Instagram"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="currentColor" /><rect x="7.5" y="7.5" width="17" height="17" rx="5" fill="none" stroke="var(--bg-i)" stroke-width="2.4" /><circle cx="16" cy="16" r="4" fill="none" stroke="var(--bg-i)" stroke-width="2.4" /><circle cx="21.5" cy="10.5" r="1.3" fill="var(--bg-i)" /></svg></a>
         <a href="#" aria-label="TikTok"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="currentColor" /><path d="M17.5 7v12.2a3.4 3.4 0 1 1-3.4-3.4M17.5 7c.3 2.6 2 4.2 4.6 4.4" fill="none" stroke="var(--bg-i)" stroke-width="2.6" stroke-linecap="round" /></svg></a>
-        <a href="#" aria-label="Facebook"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="currentColor" /><path d="M18 27V17h3.4l.6-4H18v-2.2c0-1.2.5-1.9 2-1.9h2V5.3C21.600 5.2 20.500 5 19.200 5 16 5 14 7 14 10.300V13h-3.400v4H14v10z" fill="var(--bg-i)" /></svg></a>
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="currentColor" /><path d="M18 27V17h3.4l.6-4H18v-2.2c0-1.2.5-1.9 2-1.9h2V5.3C21.6 5.2 20.5 5 19.2 5 16 5 14 7 14 10.3V13h-3.4v4H14v10z" fill="var(--bg-i)" /></svg></a>
       </div>
     </nav>
     <p class="note">{note}</p>
