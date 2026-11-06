@@ -311,3 +311,7 @@ I turned the owner's "looks cluttered, find a fine balance" (EVM) into "the page
 - Owner: bite does not work, mobile white space and nav placement, preloader too fast and abrupt, hero links invisible until a reload, Join the crew should be Menu, check wall photo counts, replicate the reference menu.
 - Causes: the bite was too weak and never changed the art (my plan had promised a shorter slice); the hero links were left at opacity 0 by a CSS transition fighting a GSAP from() tween in an earlier build, and a hero that depends on JS to appear is fragile, so it is now CSS driven with a failsafe; on mobile the reference's fixed sticker is its menu button and mine scrolled away.
 - Lesson: when I promise an effect in a plan, check the built effect against the words of the plan; test a mobile viewport with a viewport tag and compare screen by screen with the reference; never let intro animation be the only thing that makes content visible.
+
+### Maledetta fourth pass (2026-11-06)
+- Owner: could not see the preloader (my once-per-session rule), the bite looked unnatural (removed), 'Menu' meant the food menu (I built a nav link), wall has white space (more photos).
+- Mistake: I guessed what 'menu' meant instead of asking, and spent a round on the wrong thing. Lesson: ask one clarifying question when a request has two plausible readings, especially for a word like menu.

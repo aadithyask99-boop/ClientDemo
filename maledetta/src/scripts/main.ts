@@ -41,18 +41,27 @@ const loaderOn = root.classList.contains('js') && !root.classList.contains('no-l
 // The hero reveals itself with CSS (blur to clear, see .hi); we only say when to start.
 const heroGo = () => root.classList.add('hero-go');
 if (loaderOn) {
-  try { sessionStorage.setItem('mld-seen', '1'); } catch (e) { /* private mode or a sandboxed frame */ }
   lock();
   const items = $$('.loader__item', loader!);
   items.forEach((el, i) => (el.style.zIndex = String(items.length - i)));
   const step = 0.6; // slow enough to read every area name
-  items.forEach((el, i) => { if (i < items.length - 1) gsap.delayedCall(0.4 + i * step, () => (el.style.opacity = '0')); });
-  const leaveAt = 0.4 + (items.length - 1) * step + 0.9; // the last name rests a moment
-  gsap.delayedCall(leaveAt, () => {
+  const calls: gsap.core.Tween[] = [];
+  items.forEach((el, i) => { if (i < items.length - 1) calls.push(gsap.delayedCall(0.4 + i * step, () => (el.style.opacity = '0'))); });
+  let left = false;
+  const leave = () => {
+    if (left) return;
+    left = true;
+    calls.forEach((c) => c.kill());
+    removeEventListener('keydown', leave);
+    loader!.removeEventListener('pointerdown', leave);
     loader!.classList.add('is-leaving');
     heroGo();
     gsap.to(loader, { opacity: 0, duration: 1.6, ease: 'power2.inOut', onComplete: () => { (loader as HTMLElement).style.display = 'none'; unlock(); } });
-  });
+  };
+  calls.push(gsap.delayedCall(0.4 + (items.length - 1) * step + 0.9, leave)); // the last name rests a moment
+  // any click, tap or key skips it
+  loader!.addEventListener('pointerdown', leave);
+  addEventListener('keydown', leave);
 } else {
   loader && ((loader as HTMLElement).style.display = 'none');
   heroGo();
@@ -230,50 +239,9 @@ $$('a[href^="#"]').forEach((a) => {
 $('[data-top]')?.addEventListener('click', (e) => { e.preventDefault(); lenis ? lenis.scrollTo(0, { duration: 2.2 }) : scrollTo({ top: 0 }); });
 
 /* ---------------- easter eggs ---------------- */
-// 1. The mascot takes a bite: three clicks eat the slice (real bites cut out of the art), then a fresh slice pops back
 const mascot = $('[data-mascot]')!;
-const mascotArt = $('.mascot__art', mascot)!;
-let stage = 0;
-function crumbs() {
-  const hero = $('[data-hero]')!;
-  const r = mascot.getBoundingClientRect();
-  const hr = hero.getBoundingClientRect();
-  const ox = r.left - hr.left + r.width * 0.515;
-  const oy = r.top - hr.top + r.height * 0.69;
-  for (let i = 0; i < 12; i++) {
-    const e = document.createElement('span');
-    e.className = 'crumb';
-    e.style.left = ox + (Math.random() - 0.5) * r.width * 0.08 + 'px';
-    e.style.top = oy + 'px';
-    hero.appendChild(e);
-    gsap.fromTo(e, { rotation: Math.random() * 90, opacity: 1, scale: 0.6 + Math.random() * 0.9 },
-      { x: (Math.random() - 0.5) * r.width * 0.5, y: r.height * (0.1 + Math.random() * 0.25), rotation: '+=' + (Math.random() * 400 - 200), opacity: 0, duration: 0.7 + Math.random() * 0.5, ease: 'power2.in', onComplete: () => e.remove() });
-  }
-}
-function setStage(n: number) {
-  stage = n;
-  mascotArt.className = 'mascot__art' + (n ? ' bite-' + n : '');
-}
-function bite() {
-  if (reduce) { setStage((stage + 1) % 4); return; }
-  if (stage >= 3) return; // a new slice is on its way
-  setStage(stage + 1);
-  crumbs();
-  gsap.timeline()
-    .to(mascotArt, { scaleY: 0.96, scaleX: 1.03, duration: 0.1, ease: 'power2.in' })
-    .to(mascotArt, { scaleY: 1.03, scaleX: 0.98, duration: 0.14, ease: 'power2.out' })
-    .to(mascotArt, { scaleY: 1, scaleX: 1, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
-  gsap.fromTo('[data-hero] .wordmark', { opacity: 1 }, { opacity: 0.3, duration: 0.06, repeat: 3, yoyo: true, ease: 'steps(1)', onComplete: () => { gsap.set('[data-hero] .wordmark', { opacity: 1 }); } });
-  if (stage === 3) {
-    gsap.delayedCall(1.6, () => {
-      setStage(0);
-      gsap.fromTo(mascotArt, { scale: 0.9 }, { scale: 1, duration: 0.9, ease: 'elastic.out(1, 0.5)' });
-    });
-  }
-}
-mascot.addEventListener('click', bite);
 
-// 2. Type "ciao" anywhere, or press and hold the mascot: it rains food
+// 1. Type "ciao" anywhere, or press and hold the mascot on touch: it rains food
 const rainBox = $('[data-rain]')!;
 function rain() {
   if (reduce) return;
@@ -291,6 +259,22 @@ addEventListener('keydown', (e) => { if (e.key.length !== 1) return; typed = (ty
 let hold: number | undefined;
 mascot.addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch') hold = window.setTimeout(rain, 650); });
 ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => mascot.addEventListener(ev, () => window.clearTimeout(hold)));
-// 3. The sunburst changes the colours (wired above)
+// 2. The sunburst changes the colours (wired above)
+
+/* ---------------- food menu: swipeable rail with arrows, drag and a staggered entrance ---------------- */
+const rail = $('[data-rail]');
+if (rail) {
+  const step = () => { const c = $('.dish', rail); return c ? c.getBoundingClientRect().width + parseFloat(getComputedStyle(rail).columnGap || '0') : rail.clientWidth * 0.8; };
+  $('[data-rail-prev]')?.addEventListener('click', () => rail.scrollBy({ left: -step(), behavior: reduce ? 'auto' : 'smooth' }));
+  $('[data-rail-next]')?.addEventListener('click', () => rail.scrollBy({ left: step(), behavior: reduce ? 'auto' : 'smooth' }));
+  // drag with a mouse (touch already scrolls natively)
+  let down = false, sx = 0, sl = 0, moved = false;
+  rail.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') return; down = true; moved = false; sx = e.clientX; sl = rail.scrollLeft; rail.classList.add('is-drag'); });
+  addEventListener('pointermove', (e) => { if (!down) return; const dx = e.clientX - sx; if (Math.abs(dx) > 4) moved = true; rail.scrollLeft = sl - dx; });
+  addEventListener('pointerup', () => { if (!down) return; down = false; rail.classList.remove('is-drag'); });
+  if (!reduce) {
+    gsap.from($$('.dish', rail), { x: 80, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.08, scrollTrigger: { trigger: rail, start: 'top 85%' } });
+  }
+}
 
 addEventListener('load', () => ScrollTrigger.refresh());

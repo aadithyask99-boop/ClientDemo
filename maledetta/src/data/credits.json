@@ -76,7 +76,7 @@
  },
  {
   "file": "area-fitzrovia.jpg",
-  "photographer": "Jeppe Mønster",
+  "photographer": "Jeppe M\u00f8nster",
   "link": "https://unsplash.com/photos/a-red-double-decker-bus-driving-down-a-street-KkXuY8pRgY0"
  },
  {
@@ -108,5 +108,15 @@
   "file": "area-mayfair.jpg",
   "photographer": "Katya Korovkina",
   "link": "https://unsplash.com/photos/red-telephone-booth-near-black-car-and-building-during-daytime-iN84iuRqdGo"
+ },
+ {
+  "file": "wall-9.jpg",
+  "photographer": "Fatima Akram",
+  "link": "https://unsplash.com/photos/pepperoni-pizza-uU0Anw-8Vsg"
+ },
+ {
+  "file": "wall-10.jpg",
+  "photographer": "Ambitious Studio* | Rick Barrett",
+  "link": "https://unsplash.com/photos/a-close-up-of-a-fire-burning-in-a-brick-oven-4GNyMaoOV8c"
  }
 ]

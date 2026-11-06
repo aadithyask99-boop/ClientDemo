@@ -14,11 +14,11 @@ A fictional pizzeria group in central London, built as a like-for-like replica o
 - Wall of love: six prints in a five-column grid with the reference's own scroll parallax values (read from its Webflow interaction data).
 
 ## Easter eggs
-Click the mascot: three clicks take three real bites out of the slice (bite shapes from scripts/make-bites.py, subtracted from the line art with CSS mask-composite), crumbs fall, then a fresh slice pops back; type "ciao" or press and hold the mascot on touch (food rain); click the sunburst (next colour pair).
+(The mascot bite was tried and removed: the cut-out slice looked unnatural.) type "ciao" or press and hold the mascot on touch (food rain); click the sunburst (next colour pair).
 
 ## Intro and mobile
-- Preloader: nine curtains at 0.6 s each, the last rests a moment, then it fades while the hero resolves from a soft blur (CSS only, html.hero-go, with a CSS failsafe so nothing stays hidden). Shown once per session.
-- Hero links: Menu (opens the overlay) and Private dining.
+- Preloader: nine curtains at 0.6 s each, the last rests a moment, then it fades while the hero resolves from a soft blur (CSS only, html.hero-go, with a CSS failsafe so nothing stays hidden). It plays on every load, like the reference; a click, tap or key skips it; reduced motion skips it.
+- Food menu: the reference keeps its food menu on its restaurant pages (a MIAM band, a swipeable row of bordered dish cards with a leaf mark for vegetarian, a starburst tag, a cut-out plate, a short description, and a download button). Ours is the section under the statement band: a MANGIA band, eight dishes with the generated cut-outs, arrows, mouse drag, touch swipe, and a download button (placeholder link). The hero link Menu scrolls to it. The find-your-local overlay is opened by the sticker, Collect and Dine in.
 - Mobile (checked against the reference at 390px): the sticker is the menu button, fixed at the top centre of every screen; services images are tall (140vw); wall prints are framed cards with a centre line and WALL OF LOVE between the second and third; the menu is a cream list with a Close bar at the top; footer links stack.
 
 ## Placeholders (invented)

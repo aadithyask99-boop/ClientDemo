@@ -74,7 +74,27 @@ export const wall = [
   { img: 'wall-5.jpg', alt: 'A smiling man carrying a stack of boxes.', x: 52, y: 39, w: 18, from: 0, to: -50 },
   { img: 'wall-6.jpg', alt: 'Hands holding a plate of dessert.', x: 7.6, y: 81, w: 18, from: 0, to: 30 },
   { img: 'wall-7.jpg', alt: 'A table football table in green and red.', x: 74, y: 89, w: 16.5, from: -150, to: 0 },
+  { img: 'wall-4.jpg', alt: 'A lit restaurant doorway at night.', x: 33, y: 2, w: 15, from: -60, to: 20 },
+  { img: 'wall-9.jpg', alt: 'A slice of pizza lifted from the pie, the cheese pulling.', x: 6, y: 42, w: 16, from: 20, to: -60 },
+  { img: 'wall-10.jpg', alt: 'Flames in a wood-fired pizza oven.', x: 52, y: 64, w: 15, from: -30, to: 40 },
+  { img: 'wall-8.jpg', alt: 'Women laughing together at a restaurant table.', x: 29, y: 82, w: 16, from: 10, to: -40 },
 ];
+
+// The food menu, modelled on the reference's restaurant pages: a band, then a swipeable row of dishes.
+export const carte = {
+  band: 'Mangia!',
+  cta: 'Download the menu',
+  dishes: [
+    { name: 'Burrata e pomodorini', img: 'burrata', veg: true, tag: '', text: 'Whole burrata, datterini tomatoes, basil oil and grilled sourdough.' },
+    { name: 'Margherita', img: 'pizza', veg: true, tag: 'Fave', text: 'San Marzano tomato, fior di latte, fresh basil and a long-proved crust.' },
+    { name: 'Spaghetti pomodoro', img: 'pasta', veg: true, tag: '', text: 'Spaghetti, slow-cooked San Marzano tomatoes, basil and aged pecorino.' },
+    { name: 'Cannoli siciliani', img: 'cannoli', veg: true, tag: 'New', text: 'Crisp shells filled with sweet ricotta, rolled in pistachio.' },
+    { name: 'Tiramisu', img: 'tiramisu', veg: true, tag: '', text: 'Mascarpone cream, espresso-soaked savoiardi and cocoa.' },
+    { name: 'Gelato', img: 'gelato', veg: true, tag: '', text: 'Pistachio and strawberry, scooped to order.' },
+    { name: 'Spritz della casa', img: 'spritz', veg: true, tag: '', text: 'Aperol, prosecco, soda, a slice of orange and a green olive.' },
+    { name: 'Espresso e amaretti', img: 'espresso', veg: true, tag: '', text: 'A short, strong espresso with two amaretti.' },
+  ],
+};
 
 export const foods = ['pizza', 'spritz', 'tiramisu', 'burrata', 'cannoli', 'espresso', 'pasta', 'gelato'];
 

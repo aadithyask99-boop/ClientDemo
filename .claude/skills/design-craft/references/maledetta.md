@@ -51,3 +51,10 @@ After removing the extras the owner approved cutting (hero drift, services zoom 
 - Reference note: on mobile the reference keeps its sticker fixed at the top but hides it behind its own z-4 sections; ours stays above everything so the menu is always reachable.
 - Photo counts: the reference wall has six prints and the shop section one photo; ours matches.
 - A sandboxed iframe without allow-same-origin blocks a plain static server's scripts, fonts and images (CORS from origin null); my failsafes keep the page usable but this was a test-server artefact, not the artifact host.
+
+## Fourth pass (owner feedback, 2026-11-06)
+- I read 'Menu' on the hero as the navigation menu; the owner meant the FOOD menu (and had asked me to check the reference's). I should have asked. Lesson: when a word has two readings (menu, nav, carte), ask one short question before building.
+- The reference's food menu lives on its restaurant pages (for example /pizzeria/gand): a MIAM! band, then a Swiper row of dish cards with a thin-line grid, a leaf mark for vegetarian dishes, a HOT starburst on one, a cut-out plate, a short description, arrows, and a Telecharger la carte button (PDF). Rebuilt as a MANGIA band plus eight dishes, drag and swipe, plate that tilts on hover.
+- The mascot bite was removed (cutting the slice looked unnatural). The 'ciao' rain remains.
+- Wall of love: ten prints instead of six to cover the white space (the reference has six); positions chosen so the foosball print, which arrives from far above, does not cross another print.
+- Preloader: plays on every load now (the once-per-session rule hid it from the owner); a click, tap or key skips it.
