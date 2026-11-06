@@ -74,7 +74,10 @@ export const swaps = {
 };
 export const builder = { baseBun: { price: 3.5, kcal: 230, img: 'layer-bunbot', w: 100, h: 1, o: 0 }, maxLayers: 12 };
 
-export const facts = ['Beef smashed to order', 'Brioche baked at 5am', 'House pickles and sauces'];
+// Number of frames in the hero cheese-melt sequences (public/art/seq/d-001.webp ..., desktop 16:9; m-001.webp ..., phone 9:16).
+export const seq = { d: 91, m: 91 };
+
+export const facts =['Beef smashed to order', 'Brioche baked at 5am', 'House pickles and sauces'];
 
 export const areas = [
   { name: 'Soho', top: 6, left: 58 },

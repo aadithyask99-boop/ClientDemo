@@ -2,7 +2,7 @@
 import '@fontsource/mouse-memoirs/400.css';
 import '@fontsource/modak/400.css';
 import '../styles/global.css';
-import { brand, burgers, menu, parts, swaps, builder, facts, areas, places, contact, footerLinks, note, ingredients, credits } from '../data/site';
+import { brand, burgers, menu, parts, swaps, builder, facts, areas, places, contact, footerLinks, note, ingredients, credits, seq } from '../data/site';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const img = (f: string) => `${base}/img/${f}`;
@@ -97,21 +97,22 @@ const burgerSrc = Object.fromEntries(burgers.map((b) => [b.img, art(`burger-${b.
 
 <main id="top">
   <!-- 1. Hero -->
-  <section class="hero" data-hero>
-    <h1 class="hero__title"><span class="hi t1">{brand.hero[0]}</span><span class="hi t2">{brand.hero[1]}</span></h1>
-    <div class="hero__burger hi" data-burger>
-      <img src={art('burger-hero.webp')} alt="A tall double smash burger with melted cheese." width="1100" height="975" fetchpriority="high" />
-      <div class="drips" aria-hidden="true" data-hdrips>{[[22, 3.1, 14], [31, 2.2, 22], [40, 3.4, 11], [48, 2.4, 27], [56, 3, 16], [64, 2.1, 20]].map(([x, w, l]) => <i class="cdrip" style={`left:${x}%;width:${w}%;--l:${l}`}></i>)}</div>
+  <div class="seq" data-seq>
+    <section class="hero" data-hero>
+      <h1 class="hero__title"><span class="hi t1">{brand.hero[0]}</span><span class="hi t2">{brand.hero[1]}</span></h1>
+    </section>
+    <!-- the burger and its melting cheese: a frame sequence drawn to a canvas, multiplied onto the page so its background vanishes -->
+    <canvas class="seq__cv hi" data-seqcv data-nd={seq.d} data-nm={seq.m} role="img" aria-label="A tall double smash burger. As you scroll, its cheese melts and runs down in long strands."></canvas>
+    <div class="seq__front">
+      <span class="tag tag--a hi">Smashed fresh</span>
+      <span class="tag tag--b hi">Bold flavour</span>
+      <p class="hero__l hi">Smashed hot on the flat-top, our prime patties lock in ultimate juiciness under a caramelised crust.</p>
+      <p class="hero__r hi">Topped with melted cheddar and our signature chilli honey glaze crafted to satisfy your cravings since 1997.</p>
     </div>
-    <span class="tag tag--a hi">Smashed fresh</span>
-    <span class="tag tag--b hi">Bold flavour</span>
-    <p class="hero__l hi">Smashed hot on the flat-top, our prime patties lock in ultimate juiciness under a caramelised crust.</p>
-    <p class="hero__r hi">Topped with melted cheddar and our signature chilli honey glaze crafted to satisfy your cravings since 1997.</p>
-  </section>
+  </div>
 
   <!-- 2. Statement -->
   <section class="stmt">
-    <div class="cap" aria-hidden="true" data-cap></div>
     <span class="tag tag--orange">Top classic</span>
     <h2 data-reveal>Juicy cheesy<br />fully loaded</h2>
     <p>Smashley&rsquo;s is back and bolder than ever. Honouring our rich roots, we bring you the ultimate smashed experience: fully loaded, hot, and crafted fresh.</p>
@@ -249,11 +250,6 @@ const burgerSrc = Object.fromEntries(burgers.map((b) => [b.img, art(`burger-${b.
   <ul class="cart__list" data-cart-list data-lenis-prevent></ul>
   <div class="cart__foot"><p class="cart__tot"><span>Total</span><b data-cart-total>&pound;0.00</b></p><button class="pill pill--orange pill--big" type="button" data-cart-go>Checkout (concept)</button><p class="cart__msg" data-cart-msg aria-live="polite"></p></div>
 </aside>
-
-<div class="cursor" data-cursor aria-hidden="true">
-  <svg class="cur cur--arrow" viewBox="0 0 48 48"><path d="M9 6 L9 36 L16.5 29 L21.5 41.5 L28.5 38.5 L23.5 26.5 L33.5 26 Z" fill="#1F3FD9"/><path d="M6 3 L6 33 L13.5 26 L18.5 38.5 L25.5 35.5 L20.5 23.5 L30.5 23 Z" fill="#FFFFFF" stroke="#14162B" stroke-width="3.2" stroke-linejoin="round"/><path d="M10 10 L10 21" stroke="#D5DAF7" stroke-width="3" stroke-linecap="round"/></svg>
-  <svg class="cur cur--hand" viewBox="0 0 48 48"><path d="M20 6 A4.2 4.2 0 0 1 28.4 6 V18 A3.6 3.6 0 0 1 35.4 17.5 A3.6 3.6 0 0 1 42.4 19.5 A3.4 3.4 0 0 1 48 22 V33 Q48 45 36 45 H26 Q17 45 12.5 37 L6 27.5 A3.3 3.3 0 0 1 11.5 24 L20 30 Z" fill="#1F3FD9"/><path d="M17 4 A4.2 4.2 0 0 1 25.4 4 V17 A3.6 3.6 0 0 1 32.4 16.5 A3.6 3.6 0 0 1 39.4 18.5 A3.4 3.4 0 0 1 45 21 V32 Q45 44 33 44 H23 Q14 44 9.5 36 L3 26.5 A3.3 3.3 0 0 1 8.5 23 L17 29 Z" fill="#FFFFFF" stroke="#14162B" stroke-width="3" stroke-linejoin="round"/><path d="M25 22 V30 M32 22 V30 M39 24 V30" stroke="#14162B" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.5"/></svg>
-</div>
 
 <div class="rain" data-rain aria-hidden="true" data-srcs={JSON.stringify(ingredients.map((f) => art(`ing-${f}.webp`)))}></div>
 <div class="sprites" aria-hidden="true">{[...ingredients, 'bomb'].map((f) => <img data-sprite={f} src={art(`ing-${f}.webp`)} alt="" width="200" height="200" />)}</div>

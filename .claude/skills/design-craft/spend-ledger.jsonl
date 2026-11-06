@@ -60,3 +60,5 @@
 {"date":"2026-11-06","type":"image","model":"bytedance-seed/seedream-5-0-flash","name":"side-fries","cost":0.018}
 {"date":"2026-11-06","type":"image","model":"bytedance-seed/seedream-5-0-flash","name":"side-rings","cost":0.018}
 {"date":"2026-11-06","type":"image","model":"bytedance-seed/seedream-5-0-flash","name":"side-salad","cost":0.018}
+{"date":"2026-11-06","type":"video","model":"bytedance/seedance-1-5-pro","name":"cheese-draft","cost":0.1566}
+{"date":"2026-11-06","type":"video","model":"bytedance/seedance-1-5-pro","name":"cheese-m","cost":0.1566}

@@ -5,7 +5,6 @@ import Lenis from 'lenis';
 import { initBuilder } from './builder';
 import { initGame } from './game';
 import { initCart } from './cart';
-import { initCursor } from './cursor';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -180,37 +179,54 @@ $('[data-cform]')?.addEventListener('submit', (e) => {
   ((e.target as HTMLElement) as unknown as { reset: () => void }).reset();
 });
 
-/* ---------------- melting cheese: drips run down the hero burger and continue onto the next section ---------------- */
-const burgerEl = $('[data-burger]');
-const cap = $('[data-cap]');
-function cheese() {
-  if (!burgerEl || !cap) return;
-  const hd = $$('.cdrip', $('[data-hdrips]')!);
-  const br = burgerEl.getBoundingClientRect();
-  cap.innerHTML = '<span class="cap__bar"></span>';
-  hd.forEach((d, i) => {
-    const f = parseFloat(d.style.left) / 100, w = parseFloat(d.style.width) / 100;
-    const e = document.createElement('i'); e.className = 'cdrip cdrip--cap';
-    e.style.left = (br.left + f * br.width) + 'px'; e.style.width = (w * br.width) + 'px';
-    e.style.setProperty('--l', String(6 + (i % 3) * 5));
-    cap.appendChild(e);
-  });
-}
-cheese();
-if (!reduce && burgerEl) {
-  const drops = $$('.cdrip', $('[data-hdrips]')!);
-  drops.forEach((d, i) => {
-    gsap.set(d, { scaleY: 0.12, transformOrigin: '50% 0%' });
-    const run = () => gsap.timeline({ repeat: -1, repeatDelay: 0.4 + Math.random() }).to(d, { scaleY: 1, duration: 3.6 + i * 0.55, ease: 'power1.in' }).to(d, { scaleY: 0.82, duration: 2.4, ease: 'sine.inOut' }).to(d, { scaleY: 0.12, duration: 3.2, ease: 'power2.inOut', delay: 0.6 });
-    gsap.delayedCall(2 + i * 0.35, run);
-  });
-  // the cap and its drips on the statement section grow with the scroll and mix into the heading
-  const cd = $$('.cdrip--cap', cap!);
-  gsap.set(cd, { scaleY: 0.05, transformOrigin: '50% 0%' });
-  gsap.set('.cap__bar', { scaleY: 0, transformOrigin: '50% 0%' });
-  const st = { trigger: '.stmt', start: 'top 95%', end: 'top 25%', scrub: true };
-  gsap.to('.cap__bar', { scaleY: 1, ease: 'none', scrollTrigger: st });
-  cd.forEach((d, i) => gsap.to(d, { scaleY: 1, ease: 'none', scrollTrigger: { ...st, end: `top ${18 - (i % 3) * 3}%` } }));
+/* ---------------- hero: the cheese melts as you scroll (a frame sequence on a canvas) ---------------- */
+const cv = $('[data-seqcv]') as HTMLCanvasElement | null;
+if (cv) {
+  const ctx = cv.getContext('2d')!;
+  const probe = (document.querySelector('[data-sprite]') as HTMLImageElement).src; // an image that already loads shows the art folder
+  const dir = probe.slice(0, probe.lastIndexOf('/') + 1) + 'seq/';
+  const phone = () => small();
+  let set = phone() ? 'm' : 'd';
+  let N = Number(cv.dataset[set === 'm' ? 'nm' : 'nd']);
+  const frames: (HTMLImageElement | null)[] = [];
+  let want = 0, shown = -1, dpr = 1;
+  const url = (i: number) => `${dir}${set}-${String(i + 1).padStart(3, '0')}.webp`;
+  function size() {
+    dpr = Math.min(2, devicePixelRatio || 1);
+    const r = cv!.getBoundingClientRect();
+    cv!.width = Math.round(r.width * dpr); cv!.height = Math.round(r.height * dpr); shown = -1; draw();
+  }
+  function draw() {
+    // the nearest frame at or before the wanted one that has loaded
+    let i = Math.min(N - 1, Math.max(0, want));
+    while (i > 0 && !frames[i]) i--;
+    const im = frames[i];
+    if (!im || i === shown) return;
+    shown = i;
+    const cw = cv!.width, ch = cv!.height, s = Math.max(cw / im.naturalWidth, ch / im.naturalHeight);
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.drawImage(im, (cw - im.naturalWidth * s) / 2, (ch - im.naturalHeight * s) / 2, im.naturalWidth * s, im.naturalHeight * s);
+  }
+  function load() {
+    frames.length = 0; N = Number(cv!.dataset[set === 'm' ? 'nm' : 'nd']);
+    const order: number[] = [0, N - 1]; // the first and last frames first, then every fourth, then the rest, so scrubbing works early
+    for (let k = 4; k < N - 1; k += 4) order.push(k);
+    for (let k = 1; k < N - 1; k++) if (k % 4) order.push(k);
+    let n = 0;
+    const next = () => {
+      if (n >= order.length) return;
+      const i = order[n++]; const im = new Image(); im.decoding = 'async';
+      im.onload = () => { frames[i] = im; if (i === want || i === 0) draw(); next(); };
+      im.onerror = () => next();
+      im.src = url(i);
+    };
+    for (let w = 0; w < 4; w++) next();
+  }
+  size(); load();
+  addEventListener('resize', () => { const ns = phone() ? 'm' : 'd'; if (ns !== set) { set = ns; load(); } size(); });
+  const END = 0.7; // the melt plays across the first 70% of the pinned scroll, then holds
+  if (reduce) { want = N - 1; }
+  else ScrollTrigger.create({ trigger: '[data-seq]', start: 'top top', end: 'bottom bottom', onUpdate: (self) => { want = Math.round(Math.min(1, self.progress / END) * (N - 1)); draw(); } });
 }
 
 /* ---------------- in-page links ---------------- */
@@ -224,10 +240,9 @@ $$('a[href^="#"]').forEach((a) => {
 if (!reduce) {
   const mm = gsap.matchMedia();
   // hero: the burger rises and the giant words part as you leave
-  const hs = { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: true };
-  gsap.to('.hero__burger', { yPercent: -16, scale: 1.08, ease: 'none', scrollTrigger: hs });
-  gsap.to('.hero__title .t1', { xPercent: -14, ease: 'none', scrollTrigger: hs });
-  gsap.to('.hero__title .t2', { xPercent: 14, ease: 'none', scrollTrigger: hs });
+  const hs = { trigger: '[data-seq]', start: 'top top', end: 'bottom bottom', scrub: true };
+  gsap.to('.hero__title .t1', { xPercent: -10, ease: 'none', scrollTrigger: hs });
+  gsap.to('.hero__title .t2', { xPercent: 10, ease: 'none', scrollTrigger: hs });
   // tilted trio drift at their own speeds
   mm.add('(min-width: 992px)', () => {
     $$('.trio__p').forEach((p) => { const sp = parseFloat(p.dataset.speed || '1'); gsap.fromTo(p, { y: sp * 90 }, { y: -sp * 90, ease: 'none', scrollTrigger: { trigger: '.trio', start: 'top bottom', end: 'bottom top', scrub: true } }); });
@@ -253,8 +268,9 @@ if (!reduce) {
   gsap.fromTo('.stmt .tag', { rotation: -12, y: 20 }, { rotation: 4, y: -10, ease: 'none', scrollTrigger: { trigger: '.stmt', start: 'top bottom', end: 'bottom top', scrub: true } });
   gsap.fromTo('.tag--orange2', { y: 40 }, { y: -40, ease: 'none', scrollTrigger: { trigger: '[data-band]', start: 'top bottom', end: 'bottom top', scrub: true } });
   gsap.fromTo('.tag--c', { y: 30 }, { y: -30, ease: 'none', scrollTrigger: { trigger: '.held', start: 'top bottom', end: 'bottom top', scrub: true } });
-  gsap.fromTo('.hero .tag--a', { y: 0 }, { y: -90, ease: 'none', scrollTrigger: hs });
-  gsap.fromTo('.hero .tag--b', { y: 0 }, { y: -140, ease: 'none', scrollTrigger: hs });
+  const ts = { trigger: '[data-seq]', start: 'top top', end: '+=70%', scrub: true };
+  gsap.fromTo('.seq__front .tag--a', { y: 0, opacity: 1 }, { y: -70, opacity: 0, ease: 'none', scrollTrigger: ts });
+  gsap.fromTo('.seq__front .tag--b', { y: 0, opacity: 1 }, { y: -110, opacity: 0, ease: 'none', scrollTrigger: ts });
   // sticker tags wobble in
   $$('.tag').forEach((t) => { if (t.closest('.hero')) return; gsap.from(t, { scale: 0.4, rotation: -25, opacity: 0, duration: 0.7, ease: 'back.out(2)', scrollTrigger: { trigger: t, start: 'top 90%' } }); });
   // headlines rise out of a mask
@@ -291,7 +307,6 @@ let typed = '';
 addEventListener('keydown', (e) => { if (e.key.length !== 1) return; typed = (typed + e.key.toLowerCase()).slice(-5); if (typed === 'smash') rain(); });
 
 initCart(reduce);
-initCursor(reduce);
 initBuilder(reduce, rain);
 initGame(reduce);
 
