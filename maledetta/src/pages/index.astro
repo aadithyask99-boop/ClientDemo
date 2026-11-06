@@ -2,7 +2,7 @@
 import '@fontsource/oswald/700.css';
 import '@fontsource/merriweather/300.css';
 import '../styles/global.css';
-import { brand, pairs, curtains, services, areas, hours, statement, merch, wall, foods, heroLinks, footerLinks, note, credits, carte } from '../data/site';
+import { brand, pairs, curtains, services, areas, hours, statement, merch, wall, foods, heroLinks, footerLinks, note, credits, carte, menu } from '../data/site';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const img = (f: string) => `${base}/img/${f}`;
@@ -33,12 +33,39 @@ const Chev = 'M8 3l9 9-9 9';
 </head>
 <body>
 
-<!-- Loader: nine colour curtains, one per area, each with its own fixed colours -->
-<div class="loader" aria-hidden="true" data-loader>
-  {[...areas].reverse().map((a, i) => (
-    <div class="loader__item" style={`--l:${curtains[i % curtains.length].fg};--d:${curtains[i % curtains.length].bg};--fs:${Math.min(18, 150 / a.name.length).toFixed(1)}vw`}><span>{a.name}</span></div>
-  ))}
+<!-- Loader: one reel of area names rolling up, the colours morphing from one area to the next -->
+<div class="loader" aria-hidden="true" data-loader data-curtains={JSON.stringify(curtains)} style={`background:${curtains[0].bg};color:${curtains[0].fg}`}>
+  <div class="loader__mask"><div class="loader__reel" data-reel>
+    {[...areas].reverse().map((a) => <span class="loader__name">{a.name}</span>)}
+  </div></div>
 </div>
+
+<!-- Food menu overlay: categories on the left, the items of the chosen category on the right -->
+<section class="fm" data-fm aria-label="The menu" aria-hidden="true">
+  <button class="fm__close" type="button" data-fm-close>Close</button>
+  <div class="fm__scroll" data-fm-scroll>
+    <ul class="fm__cats">
+      {menu.categories.map((c, i) => (
+        <li class={i === 0 ? 'cat is-active' : 'cat'} data-cat>
+          <button class="cat__name" type="button" aria-expanded={i === 0 ? 'true' : 'false'}><span class="cat__mask"><span class="cat__text">{c.name}</span></span></button>
+          <span class="line line--big" aria-hidden="true"></span>
+          <div class="cat__panel">
+            <div class="cat__img"><img src={art(`food-${c.img}.webp`)} alt="" loading="lazy" decoding="async" /></div>
+            <ul class="cat__items" data-lenis-prevent>
+              {c.items.map((it) => (
+                <li class="item">
+                  <div class="item__head"><h3>{it.name}{it.veg && <svg class="dish__leaf" viewBox="0 0 24 24" role="img" aria-label="Vegetarian"><circle cx="12" cy="12" r="12" fill="currentColor" /><path d="M7 16c0-5 3-8 10-8 0 7-3 10-8 10M7 17l6-6" fill="none" stroke="var(--ground)" stroke-width="1.6" stroke-linecap="round" /></svg>}</h3><span class="item__price" set:html={'&pound;' + it.price}></span></div>
+                  <p>{it.text}</p>
+                </li>
+              ))}
+              <li class="item item--note"><p>{menu.note}</p></li>
+            </ul>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
 
 <!-- Menu overlay: cream, big area names, small sub-rows, a photo band that grows -->
 <section class="menu" data-menu aria-label="Find your Maledetta" aria-hidden="true">
@@ -83,7 +110,7 @@ const Chev = 'M8 3l9 9-9 9';
   <header class="hero" data-hero>
     <h1 class="sr">Maledetta</h1>
     <div class="wordmark hi" aria-hidden="true" data-wordmark></div>
-    <div class="mascot hi" style="--d:0.15s" aria-hidden="true" data-mascot><span class="mascot__art"></span></div>
+    <button class="mascot hi" style="--d:0.15s" type="button" tabindex="-1" aria-label="Maledetta mascot. Press for a jump." data-mascot><span class="mascot__art"></span></button>
     <div class="anchor anchor--hero hi" style="--d:0.8s" data-anchor="hero">
       <button class="sticker" type="button" data-sticker aria-label="Find my local Maledetta" aria-haspopup="dialog">
         <svg class="sticker__art" viewBox="0 0 260 160" aria-hidden="true">
@@ -108,7 +135,7 @@ const Chev = 'M8 3l9 9-9 9';
       </button>
     </div>
     <nav class="hero__nav hi" style="--d:0.5s" aria-label="Secondary">
-      <a class="small-link" href="#menu">Menu<span class="arr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={Chev} fill="none" stroke="currentColor" stroke-width="1.8" /></svg></span></a>
+      <button class="small-link" type="button" data-open-fm aria-haspopup="dialog">Menu<span class="arr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={Chev} fill="none" stroke="currentColor" stroke-width="1.8" /></svg></span></button>
       {heroLinks.map((l) => <a class="small-link" href={l.href}>{l.label}<span class="arr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={Chev} fill="none" stroke="currentColor" stroke-width="1.8" /></svg></span></a>)}
       <div class="social">
         <a href="#" aria-label="Instagram"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="currentColor" /><rect x="7.5" y="7.5" width="17" height="17" rx="5" fill="none" stroke="var(--bg-i)" stroke-width="2.4" /><circle cx="16" cy="16" r="4" fill="none" stroke="var(--bg-i)" stroke-width="2.4" /><circle cx="21.5" cy="10.5" r="1.3" fill="var(--bg-i)" /></svg></a>
@@ -178,7 +205,7 @@ const Chev = 'M8 3l9 9-9 9';
         </article>
       ))}
     </div>
-    <a class="carte__cta" href="#menu">{carte.cta}</a>
+    <button class="carte__cta" type="button" data-open-fm>{carte.cta}</button>
   </section>
 
   <!-- 4. Shop -->

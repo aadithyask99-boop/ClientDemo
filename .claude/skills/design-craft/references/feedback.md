@@ -315,3 +315,8 @@ I turned the owner's "looks cluttered, find a fine balance" (EVM) into "the page
 ### Maledetta fourth pass (2026-11-06)
 - Owner: could not see the preloader (my once-per-session rule), the bite looked unnatural (removed), 'Menu' meant the food menu (I built a nav link), wall has white space (more photos).
 - Mistake: I guessed what 'menu' meant instead of asking, and spent a round on the wrong thing. Lesson: ask one clarifying question when a request has two plausible readings, especially for a word like menu.
+
+### Maledetta fifth pass (2026-11-06)
+- Owner: keep the mascot jump (drop only the munching), smoother preloader, and an overlay food menu (categories left, items right) instead of a download.
+- Cause of the 'jump does not work' scare in my own test: a closed overlay was intercepting clicks. Lesson: after adding any overlay, click through the page underneath with the overlay closed.
+- Lesson: when the owner praises one part of an effect and rejects another, keep the praised part exactly and remove only the rejected part.

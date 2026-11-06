@@ -58,3 +58,10 @@ After removing the extras the owner approved cutting (hero drift, services zoom 
 - The mascot bite was removed (cutting the slice looked unnatural). The 'ciao' rain remains.
 - Wall of love: ten prints instead of six to cover the white space (the reference has six); positions chosen so the foosball print, which arrives from far above, does not cross another print.
 - Preloader: plays on every load now (the once-per-session rule hid it from the owner); a click, tap or key skips it.
+
+## Fifth pass (owner feedback, 2026-11-06)
+- Mascot: the owner liked the press-and-jump (the original squash, jump, land, flicker and embers) and only disliked the munching art change. Restored the jump, kept the art untouched.
+- Preloader: cross-fading full-screen curtains felt jerky and unprofessional. Replaced with one reel of names that rolls up in a mask while the background and text colours morph (GSAP colour tween), then a blurred fade into the hero.
+- Food menu: not a download. A full-screen overlay opened by the hero Menu link: categories on the left, items of the active category on the right (names, descriptions, prices, vegetarian mark) with a tilted plate image; accordion on phones. Same visual language as the reference's find-a-restaurant overlay (cream ground, thin lines, big dark names, rising text).
+- Bug found while testing the jump: an overlay whose child sets visibility visible stays clickable while the overlay is hidden (a child can override the parent's visibility hidden). The closed overlay then blocked clicks on the hero. Fix: pointer-events none on the closed overlay. Applies to every full-screen overlay with absolutely positioned children.
+- Encoding: the preview bundle declares no character set and minifiers turn CSS escapes into raw characters, so a pound sign showed as garbage. Keep served files ASCII: write currency as an HTML entity, avoid accented letters in copy.

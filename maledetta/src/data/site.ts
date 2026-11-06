@@ -80,10 +80,58 @@ export const wall = [
   { img: 'wall-8.jpg', alt: 'Women laughing together at a restaurant table.', x: 29, y: 82, w: 16, from: 10, to: -40 },
 ];
 
+// The full menu overlay: categories on the left, the items of the chosen category on the right. Invented dishes and prices.
+export const menu = {
+  note: 'Dishes and prices are illustrative. Tell us about allergies before you order.',
+  categories: [
+    { name: 'Pizza', img: 'pizza', items: [
+      { name: 'Margherita', veg: true, price: '11.50', text: 'San Marzano tomato, fior di latte, fresh basil, olive oil.' },
+      { name: 'Marinara', veg: true, price: '9.50', text: 'Tomato, garlic, oregano and extra virgin olive oil. Vegan.' },
+      { name: 'Diavola', veg: false, price: '13.50', text: 'Tomato, fior di latte, spicy salami, chilli oil.' },
+      { name: 'Quattro formaggi', veg: true, price: '14.00', text: 'Fior di latte, gorgonzola, taleggio, grana padano.' },
+      { name: 'Funghi e tartufo', veg: true, price: '14.50', text: 'Wild mushrooms, fior di latte, truffle cream, thyme.' },
+      { name: 'Salsiccia e friarielli', veg: false, price: '14.00', text: 'Fennel sausage, broccoli rabe, smoked provola.' },
+      { name: 'Nduja e miele', veg: false, price: '13.50', text: 'Spicy nduja, tomato, mozzarella, a drizzle of hot honey.' },
+      { name: 'Bianca', veg: true, price: '12.00', text: 'Thin potato, rosemary, mozzarella, sea salt, no tomato.' },
+    ] },
+    { name: 'Pasta', img: 'pasta', items: [
+      { name: 'Spaghetti pomodoro', veg: true, price: '11.00', text: 'Slow-cooked San Marzano tomatoes, basil, pecorino.' },
+      { name: 'Cacio e pepe', veg: true, price: '12.50', text: 'Tonnarelli, pecorino romano, black pepper, nothing else.' },
+      { name: 'Rigatoni alla vodka', veg: true, price: '13.00', text: 'Tomato and cream sauce, a little chilli, parmesan.' },
+      { name: 'Tagliatelle al ragu', veg: false, price: '14.50', text: 'Beef and pork ragu cooked for six hours.' },
+      { name: 'Lasagne della nonna', veg: false, price: '14.00', text: 'Fresh sheets, ragu, besciamella, baked until crisp at the edges.' },
+      { name: 'Gnocchi al gorgonzola', veg: true, price: '13.50', text: 'Potato gnocchi, gorgonzola cream, toasted walnuts.' },
+    ] },
+    { name: 'Sides', img: 'burrata', items: [
+      { name: 'Burrata e pomodorini', veg: true, price: '10.00', text: 'Whole burrata, datterini tomatoes, basil oil, grilled sourdough.' },
+      { name: 'Arancini al taleggio', veg: true, price: '7.50', text: 'Crisp risotto balls with taleggio, tomato puree.' },
+      { name: 'Dough balls', veg: true, price: '6.00', text: 'Warm pizza dough knots, garlic and herb butter.' },
+      { name: 'Fritto misto', veg: false, price: '11.00', text: 'Lightly fried squid, prawns and courgette, lemon.' },
+      { name: 'Marinated olives', veg: true, price: '4.00', text: 'Castelvetrano olives, orange peel, chilli.' },
+      { name: 'Rocket and pecorino', veg: true, price: '7.00', text: 'Wild rocket, shaved pecorino, lemon, olive oil.' },
+    ] },
+    { name: 'Dolci', img: 'tiramisu', items: [
+      { name: 'Tiramisu', veg: true, price: '7.50', text: 'Mascarpone cream, espresso-soaked savoiardi, cocoa.' },
+      { name: 'Cannoli siciliani', veg: true, price: '7.00', text: 'Crisp shells, sweet ricotta, pistachio.' },
+      { name: 'Gelato', veg: true, price: '5.50', text: 'Two scoops: pistachio, strawberry, hazelnut or fior di latte.' },
+      { name: 'Affogato', veg: true, price: '6.50', text: 'Vanilla gelato drowned in a hot espresso.' },
+      { name: 'Panna cotta', veg: true, price: '7.00', text: 'Vanilla cream, macerated berries.' },
+    ] },
+    { name: 'Drinks', img: 'spritz', items: [
+      { name: 'Spritz della casa', veg: true, price: '9.00', text: 'Aperol, prosecco, soda, orange, a green olive.' },
+      { name: 'Negroni', veg: true, price: '10.50', text: 'Gin, Campari, sweet vermouth, orange peel.' },
+      { name: 'Birra', veg: true, price: '5.50', text: 'Italian lager, cold, by the bottle.' },
+      { name: 'House wine', veg: true, price: '7.00', text: 'Red or white by the glass, from small growers.' },
+      { name: 'Limonata', veg: true, price: '4.00', text: 'Sparkling Sicilian lemonade.' },
+      { name: 'Espresso', veg: true, price: '3.00', text: 'Short and strong. Add amaretti for one pound.' },
+    ] },
+  ],
+};
+
 // The food menu, modelled on the reference's restaurant pages: a band, then a swipeable row of dishes.
 export const carte = {
   band: 'Mangia!',
-  cta: 'Download the menu',
+  cta: 'See the full menu',
   dishes: [
     { name: 'Burrata e pomodorini', img: 'burrata', veg: true, tag: '', text: 'Whole burrata, datterini tomatoes, basil oil and grilled sourdough.' },
     { name: 'Margherita', img: 'pizza', veg: true, tag: 'Fave', text: 'San Marzano tomato, fior di latte, fresh basil and a long-proved crust.' },

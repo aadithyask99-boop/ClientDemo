@@ -42,23 +42,28 @@ const loaderOn = root.classList.contains('js') && !root.classList.contains('no-l
 const heroGo = () => root.classList.add('hero-go');
 if (loaderOn) {
   lock();
-  const items = $$('.loader__item', loader!);
-  items.forEach((el, i) => (el.style.zIndex = String(items.length - i)));
-  const step = 0.6; // slow enough to read every area name
-  const calls: gsap.core.Tween[] = [];
-  items.forEach((el, i) => { if (i < items.length - 1) calls.push(gsap.delayedCall(0.4 + i * step, () => (el.style.opacity = '0'))); });
+  // One reel of names rolls up, one name at a time; the colours morph between areas instead of cutting.
+  const reel = $('[data-reel]', loader!)!;
+  const cs: { bg: string; fg: string }[] = JSON.parse((loader as HTMLElement).dataset.curtains || '[]');
+  const n = $$('.loader__name', reel).length;
   let left = false;
+  const roll = gsap.timeline({ delay: 0.5 });
+  for (let i = 1; i < n; i++) {
+    const c = cs[i % cs.length];
+    roll.to(reel, { yPercent: -(100 / n) * i, duration: 0.52, ease: 'power3.inOut' }, '>+0.2')
+      .to(loader, { backgroundColor: c.bg, color: c.fg, duration: 0.52, ease: 'power2.inOut' }, '<');
+  }
+  roll.call(() => leave(), [], '>+0.7'); // the last name rests a moment
   const leave = () => {
     if (left) return;
     left = true;
-    calls.forEach((c) => c.kill());
+    roll.kill();
     removeEventListener('keydown', leave);
     loader!.removeEventListener('pointerdown', leave);
     loader!.classList.add('is-leaving');
     heroGo();
-    gsap.to(loader, { opacity: 0, duration: 1.6, ease: 'power2.inOut', onComplete: () => { (loader as HTMLElement).style.display = 'none'; unlock(); } });
+    gsap.to(loader, { opacity: 0, duration: 1.8, ease: 'power2.inOut', onComplete: () => { (loader as HTMLElement).style.display = 'none'; unlock(); } });
   };
-  calls.push(gsap.delayedCall(0.4 + (items.length - 1) * step + 0.9, leave)); // the last name rests a moment
   // any click, tap or key skips it
   loader!.addEventListener('pointerdown', leave);
   addEventListener('keydown', leave);
@@ -226,6 +231,67 @@ $$('[data-area]').forEach((area) => {
   });
 });
 
+/* ---------------- food menu overlay: categories on the left, items on the right ---------------- */
+const fm = $('[data-fm]')!;
+const fmScroll = $('[data-fm-scroll]', fm)!;
+fmScroll.setAttribute('data-lenis-prevent', '');
+const cats = $$('[data-cat]', fm);
+let fmOpen = false;
+let fmFocus: Element | null = null;
+function revealPanel(cat: HTMLElement) {
+  if (reduce) return;
+  gsap.fromTo($$('.item', cat), { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.55, ease: 'power3.out', stagger: 0.04, overwrite: true });
+  gsap.fromTo($('.cat__img img', cat), { rotation: -14, scale: 0.8, opacity: 0 }, { rotation: 6, scale: 1, opacity: 1, duration: 0.9, ease: 'power3.out' });
+  const list = $('.cat__items', cat); if (list) list.scrollTop = 0;
+}
+function selectCat(cat: HTMLElement) {
+  const open = cat.classList.contains('is-active');
+  if (small()) {
+    // phone: an accordion, one category open at a time
+    cats.forEach((c) => {
+      if (c !== cat && c.classList.contains('is-active')) {
+        c.classList.remove('is-active'); $('.cat__name', c)!.setAttribute('aria-expanded', 'false');
+        gsap.to($('.cat__panel', c), { height: 0, duration: reduce ? 0 : 0.6, ease: 'power2.inOut' });
+      }
+    });
+    const panel = $('.cat__panel', cat)!;
+    if (open) { cat.classList.remove('is-active'); $('.cat__name', cat)!.setAttribute('aria-expanded', 'false'); gsap.to(panel, { height: 0, duration: reduce ? 0 : 0.6, ease: 'power2.inOut' }); }
+    else { cat.classList.add('is-active'); $('.cat__name', cat)!.setAttribute('aria-expanded', 'true'); gsap.fromTo(panel, { height: 0 }, { height: 'auto', duration: reduce ? 0 : 0.7, ease: 'power2.inOut' }); revealPanel(cat); }
+    return;
+  }
+  if (open) return;
+  cats.forEach((c) => { c.classList.toggle('is-active', c === cat); $('.cat__name', c)!.setAttribute('aria-expanded', String(c === cat)); gsap.set($('.cat__panel', c), { clearProps: 'height' }); });
+  revealPanel(cat);
+}
+cats.forEach((cat) => $('.cat__name', cat)!.addEventListener('click', () => selectCat(cat)));
+function openFm() {
+  if (fmOpen || menuOpen) return;
+  fmOpen = true; fmFocus = document.activeElement;
+  fm.setAttribute('aria-hidden', 'false'); fm.classList.add('is-open'); lock();
+  fmScroll.scrollTop = 0;
+  const first = cats[0];
+  const names = $$('.cat__text', fm);
+  const lines = $$('.line--big', fm);
+  if (reduce) { gsap.set(fm, { opacity: 1 }); }
+  else {
+    const tl = gsap.timeline();
+    tl.fromTo(fm, { opacity: 0 }, { opacity: 1, duration: 0.8, ease: 'power2.out' });
+    tl.fromTo(lines, { width: 0 }, { width: small() ? '100%' : '42vw', duration: 0.4, ease: 'power2.out', stagger: 0.03 }, '-=0.4');
+    tl.fromTo(names, { yPercent: 105 }, { yPercent: 0, duration: 0.4, ease: 'power2.out', stagger: 0.03 }, '<');
+    tl.add(() => revealPanel(first), '-=0.1');
+  }
+  ($('[data-fm-close]', fm) as HTMLElement).focus({ preventScroll: true });
+}
+function closeFm() {
+  if (!fmOpen) return;
+  fmOpen = false;
+  const done = () => { fm.classList.remove('is-open'); fm.setAttribute('aria-hidden', 'true'); unlock(); (fmFocus as HTMLElement | null)?.focus?.({ preventScroll: true }); };
+  reduce ? (gsap.set(fm, { opacity: 0 }), done()) : gsap.to(fm, { opacity: 0, duration: 0.8, ease: 'power2.out', onComplete: done });
+}
+$$('[data-open-fm]').forEach((b) => b.addEventListener('click', openFm));
+$('[data-fm-close]', fm)!.addEventListener('click', closeFm);
+addEventListener('keydown', (e) => { if (e.key === 'Escape') closeFm(); });
+
 /* ---------------- smooth in-page links ---------------- */
 $$('a[href^="#"]').forEach((a) => {
   const id = a.getAttribute('href')!;
@@ -239,9 +305,33 @@ $$('a[href^="#"]').forEach((a) => {
 $('[data-top]')?.addEventListener('click', (e) => { e.preventDefault(); lenis ? lenis.scrollTo(0, { duration: 2.2 }) : scrollTo({ top: 0 }); });
 
 /* ---------------- easter eggs ---------------- */
+// 1. Press the mascot: she squashes, jumps, lands and settles, the wordmark flickers and embers rise
 const mascot = $('[data-mascot]')!;
+const mascotArt = $('.mascot__art', mascot)!;
+function jump() {
+  if (reduce) return;
+  gsap.timeline()
+    .to(mascotArt, { scaleY: 0.9, scaleX: 1.06, duration: 0.12, ease: 'power2.in' })
+    .to(mascotArt, { y: () => -innerHeight * 0.07, scaleY: 1.05, scaleX: 0.97, duration: 0.26, ease: 'power2.out' })
+    .to(mascotArt, { y: 0, scaleY: 1, scaleX: 1, duration: 0.24, ease: 'power2.in' })
+    .to(mascotArt, { scaleY: 0.94, scaleX: 1.04, duration: 0.08, ease: 'power1.out' })
+    .to(mascotArt, { scaleY: 1, scaleX: 1, duration: 0.7, ease: 'elastic.out(1, 0.4)' });
+  gsap.fromTo('[data-hero] .wordmark', { opacity: 1 }, { opacity: 0.25, duration: 0.07, repeat: 5, yoyo: true, ease: 'steps(1)', onComplete: () => { gsap.set('[data-hero] .wordmark', { opacity: 1 }); } });
+  const hero = $('[data-hero]')!;
+  const r = mascot.getBoundingClientRect();
+  const hr = hero.getBoundingClientRect();
+  for (let i = 0; i < 16; i++) {
+    const e = document.createElement('span');
+    e.className = 'ember';
+    e.style.left = r.left - hr.left + r.width * (0.3 + Math.random() * 0.4) + 'px';
+    e.style.top = r.top - hr.top + r.height * 0.18 + 'px';
+    hero.appendChild(e);
+    gsap.to(e, { x: (Math.random() - 0.5) * r.width * 0.6, y: -r.height * (0.2 + Math.random() * 0.4), scale: Math.random() * 1.4 + 0.3, opacity: 0, duration: 1 + Math.random() * 0.8, ease: 'power2.out', onComplete: () => e.remove() });
+  }
+}
+mascot.addEventListener('click', jump);
 
-// 1. Type "ciao" anywhere, or press and hold the mascot on touch: it rains food
+// 2. Type "ciao" anywhere, or press and hold the mascot on touch: it rains food
 const rainBox = $('[data-rain]')!;
 function rain() {
   if (reduce) return;
@@ -259,7 +349,7 @@ addEventListener('keydown', (e) => { if (e.key.length !== 1) return; typed = (ty
 let hold: number | undefined;
 mascot.addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch') hold = window.setTimeout(rain, 650); });
 ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => mascot.addEventListener(ev, () => window.clearTimeout(hold)));
-// 2. The sunburst changes the colours (wired above)
+// 3. The sunburst changes the colours (wired above)
 
 /* ---------------- food menu: swipeable rail with arrows, drag and a staggered entrance ---------------- */
 const rail = $('[data-rail]');
