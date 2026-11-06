@@ -77,11 +77,11 @@ html.js:not(.no-loader) .loader { display: block; position: fixed; inset: 0; z-i
 .navcard p { margin-top: 1vw; font-size: clamp(20px, 1.4vw, 24px); opacity: 0.9; }
 
 /* ---------- hero ---------- */
-/* a tall wrapper; three layers stick to the viewport while the cheese melts: the title behind, the burger canvas (multiplied onto the page), tags and copy in front */
-.seq { position: relative; height: calc(var(--seq-h, 235) * 1svh); }
-.hero { position: sticky; top: 0; height: 100vh; height: 100svh; min-height: 560px; overflow: hidden; background: transparent; }
-.seq__cv { position: sticky; top: 0; display: block; width: 100%; height: 100vh; height: 100svh; min-height: 560px; margin-top: -100vh; margin-top: -100svh; z-index: 5; pointer-events: none; }
-.seq__front { position: sticky; top: 0; height: 100vh; height: 100svh; min-height: 560px; margin-top: -100vh; margin-top: -100svh; z-index: 6; pointer-events: none; }
+/* a normal, scrolling block: the first screen is the burger exactly as before; the canvas is taller than the screen so the melting strands can hang down toward the next headline as the page scrolls */
+.seq { position: relative; height: var(--seq-h, 130vh); }
+.hero { position: absolute; top: 0; left: 0; right: 0; height: 100vh; height: 100svh; min-height: 560px; overflow: hidden; background: transparent; }
+.seq__cv { position: absolute; top: 0; left: 0; display: block; width: 100%; height: var(--seq-h, 130vh); z-index: 5; pointer-events: none; }
+.seq__front { position: absolute; top: 0; left: 0; right: 0; height: 100vh; height: 100svh; min-height: 560px; z-index: 6; pointer-events: none; }
 .hero__title { position: absolute; left: 0; right: 0; top: 7vh; display: flex; justify-content: space-between; padding: 0 2.4vw; font-size: min(23vw, 60vh); line-height: 0.8; color: var(--blue); z-index: 1; white-space: nowrap; }
 .hero__title .t2 { align-self: flex-end; }
 .tag--a { position: absolute; left: 30%; top: 20%; z-index: 3; background: var(--orange); color: var(--white); -webkit-text-stroke: 0; }
@@ -95,7 +95,7 @@ html.hero-go .hero__title .t1 { --d: 0s; } html.hero-go .hero__title .t2 { --d: 
 @keyframes hiFail { to { opacity: 1; } }
 
 /* ---------- statement + tilted trio ---------- */
-.stmt { padding: 8vw 8vw 6vw; text-align: center; margin-top: calc(var(--seq-over, 40) * -1vh); z-index: 1; }
+.stmt { padding: 8vw 8vw 6vw; text-align: center; margin-top: calc(var(--seq-over, 36) * -1vh); z-index: 1; }
 .stmt .tag { margin-bottom: 1.4vw; }
 .stmt h2 { font-size: clamp(76px, 9.4vw, 160px); color: var(--blue); }
 .stmt > p { max-width: 46vw; margin: 2vw auto 2.4vw; }
@@ -306,8 +306,7 @@ input, textarea { cursor: text; }
   .hero { min-height: 560px; }
   .hero__title { top: 11vh; font-size: min(24vw, 14vh); flex-direction: row; align-items: flex-end; gap: 0; padding: 0 5vw; }
   .hero__title .t2 { align-self: flex-end; margin-top: 0; }
-  .seq__cv { transform: translateY(14svh); }
-  .tag--a { left: 4%; top: 33%; } .tag--b { right: 4%; top: 55%; }
+  .tag--a { left: 4%; top: 36%; } .tag--b { right: 4%; top: 57%; }
   .hero__l, .hero__r { display: none; }
   .stmt { padding: 16vw 6vw 10vw; } .stmt h2 { font-size: 22vw; } .stmt > p { max-width: none; margin: 5vw 0 6vw; }
   .trio { flex-direction: column; align-items: center; gap: 6vw; margin-top: 12vw; } .trio__p { width: 78vw; padding: 2vw; border-radius: 4vw; } .trio__p:nth-child(2) { margin-top: 0; }

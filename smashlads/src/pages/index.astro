@@ -102,7 +102,7 @@ const burgerSrc = Object.fromEntries(burgers.map((b) => [b.img, art(`burger-${b.
       <h1 class="hero__title"><span class="hi t1">{brand.hero[0]}</span><span class="hi t2">{brand.hero[1]}</span></h1>
     </section>
     <!-- the burger and its melting cheese: a frame sequence drawn to a canvas, multiplied onto the page so its background vanishes -->
-    <canvas class="seq__cv hi" data-seqcv data-nd={seq.d} data-nm={seq.m} role="img" aria-label="A tall double smash burger. As you scroll, its cheese melts and runs down in long strands."></canvas>
+    <canvas class="seq__cv hi" data-seqcv data-nd={seq.d} data-nm={seq.m} data-crop-d="0.2,0.8" role="img" aria-label="A tall double smash burger. As you scroll, its cheese melts and runs down in long strands."></canvas>
     <div class="seq__front">
       <span class="tag tag--a hi">Smashed fresh</span>
       <span class="tag tag--b hi">Bold flavour</span>
