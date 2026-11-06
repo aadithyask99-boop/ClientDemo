@@ -51,3 +51,8 @@ Lessons:
 - Do not use mix-blend-mode: multiply for this. It made the title show through the bun (black S). A real alpha cut-out hides what is behind it.
 - Prompt that worked: locked-off camera, the slices of melted cheese soften and sag, then thick glossy strands ooze and drip, stretching until they reach the bottom of the frame; burger and background unchanged. Place the burger high in the first frame so strands have room.
 - Cursor: native CSS `cursor: url(svg) x y` images (arrow and glove), always visible.
+
+## Sixth pass: hero fixed after owner feedback (2026-11-06)
+- Owner: the first screen was too big and pixelated, and the hero pinned so the next section slid up over the video instead of the page scrolling. Causes: a 720p clip stretched over the screen; a sticky pinned wrapper. Fix: 1080p render (about $0.35), a normal non-pinned scroll, the canvas placed so frame 1 sits exactly where the old hero image was (width min(52vw, 80vh), top 26%), desktop frames cropped to the middle 60% (smaller download), the melt tied to the first 0.8 screen of scrolling.
+- The model grew cheese on top of the bun in the first seconds: frozen by reusing frame 1 for the top 29% of the frame with a short feather.
+- Process failure to avoid: I ended a turn while the render was still running and reported a state the user could not see. Never stop mid-task; wait for the background job (Monitor) and verify in the headless browser before replying.

@@ -8,7 +8,9 @@ from scipy import ndimage as ndi
 
 video, pre = sys.argv[1], sys.argv[2]
 fps = sys.argv[3] if len(sys.argv) > 3 else '15'
-crop = tuple(float(x) for x in sys.argv[4].split(',')) if len(sys.argv) > 4 else None  # e.g. 0.2,0.8
+crop = tuple(float(x) for x in sys.argv[4].split(',')) if len(sys.argv) > 4 and sys.argv[4] != '-' else None  # e.g. 0.2,0.8
+freeze = float(sys.argv[5]) if len(sys.argv) > 5 else None  # e.g. 0.29: share of the frame height kept frozen at frame 1
+first = None
 tmp = f'art-src/frames-{pre}'
 os.makedirs(tmp, exist_ok=True)
 for f in glob.glob(tmp + '/*'): os.remove(f)
@@ -35,6 +37,12 @@ for i, f in enumerate(files, 1):
     comp = ndi.binary_dilation(comp, iterations=3)
     alpha = np.where(comp, 1 - w, 1.0)
     rgba = np.dstack([norm, alpha * 255.0]).astype(np.uint8)
+    if freeze:  # the bun never moves, so above its lower lip every frame reuses frame 1 (stops the model inventing cheese on top of the bun)
+        if i == 1: first = rgba.copy()
+        y0 = int(H * freeze); fe = 14
+        rgba[:y0] = first[:y0]
+        t = np.linspace(0, 1, fe)[None, :, None] if False else np.linspace(1, 0, fe)[:, None, None]
+        rgba[y0:y0 + fe] = (first[y0:y0 + fe] * t + rgba[y0:y0 + fe] * (1 - t)).astype(np.uint8)
     if crop:  # keep only the middle band: the burger and its strands never reach the sides
         rgba = rgba[:, int(W * crop[0]):int(W * crop[1])]
     path = f'{out}/{pre}-{i:03d}.webp'
