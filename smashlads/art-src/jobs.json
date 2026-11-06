@@ -1,0 +1,104 @@
+[
+ {
+  "type": "image",
+  "name": "burger-hero",
+  "prompt": "a tall juicy double smash burger with melted American cheese, pickles, lettuce, a glossy brioche bun with sesame seeds. Studio food photograph in a flash-lit editorial style, saturated colours, hard direct flash, ONE burger shown from the side at a slight angle, fully inside the frame with a clear margin, floating on a perfectly flat solid pure magenta (#FF00FF) background with no shadow, no table, no props, no text, no logo.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "burger-og",
+  "prompt": "a classic smash burger with a single beef patty, melted cheese, pickles and onion, toasted brioche bun. Studio food photograph in a flash-lit editorial style, saturated colours, hard direct flash, ONE burger shown from the side at a slight angle, fully inside the frame with a clear margin, floating on a perfectly flat solid pure magenta (#FF00FF) background with no shadow, no table, no props, no text, no logo.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "burger-jalapeno",
+  "prompt": "a spicy jalapeno smash burger with pepper jack cheese, sliced green jalapenos, chilli sauce, brioche bun. Studio food photograph in a flash-lit editorial style, saturated colours, hard direct flash, ONE burger shown from the side at a slight angle, fully inside the frame with a clear margin, floating on a perfectly flat solid pure magenta (#FF00FF) background with no shadow, no table, no props, no text, no logo.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "burger-bacon",
+  "prompt": "a bacon double cheeseburger with crispy bacon strips, melted cheddar, two smashed patties, sesame bun. Studio food photograph in a flash-lit editorial style, saturated colours, hard direct flash, ONE burger shown from the side at a slight angle, fully inside the frame with a clear margin, floating on a perfectly flat solid pure magenta (#FF00FF) background with no shadow, no table, no props, no text, no logo.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "burger-green",
+  "prompt": "a vegetarian burger with a crispy plant-based patty, lots of fresh lettuce, tomato, avocado, a seeded bun. Studio food photograph in a flash-lit editorial style, saturated colours, hard direct flash, ONE burger shown from the side at a slight angle, fully inside the frame with a clear margin, floating on a perfectly flat solid pure magenta (#FF00FF) background with no shadow, no table, no props, no text, no logo.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "burger-bbq",
+  "prompt": "a smoky BBQ burger with sticky BBQ sauce, crispy onion rings, cheddar, beef patty, shiny bun. Studio food photograph in a flash-lit editorial style, saturated colours, hard direct flash, ONE burger shown from the side at a slight angle, fully inside the frame with a clear margin, floating on a perfectly flat solid pure magenta (#FF00FF) background with no shadow, no table, no props, no text, no logo.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "burger-truffle",
+  "prompt": "a mushroom swiss burger with sauteed mushrooms, melted swiss cheese, a beef patty, dark glossy bun. Studio food photograph in a flash-lit editorial style, saturated colours, hard direct flash, ONE burger shown from the side at a slight angle, fully inside the frame with a clear margin, floating on a perfectly flat solid pure magenta (#FF00FF) background with no shadow, no table, no props, no text, no logo.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "ing-patty",
+  "prompt": "Food photograph, saturated, hard flash. a single round raw-looking smashed beef burger patty seen from above with crispy edges, centred, fully inside the frame with a clear margin, on a perfectly flat solid pure magenta (#FF00FF) background, no shadow, no table, no text.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "ing-tomato",
+  "prompt": "Food photograph, saturated, hard flash. one thick round tomato slice seen from above, glossy red with seeds, centred, fully inside the frame with a clear margin, on a perfectly flat solid pure magenta (#FF00FF) background, no shadow, no table, no text.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "ing-lettuce",
+  "prompt": "Food photograph, saturated, hard flash. one ruffled green lettuce leaf seen from above, centred, fully inside the frame with a clear margin, on a perfectly flat solid pure magenta (#FF00FF) background, no shadow, no table, no text.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "ing-cheese",
+  "prompt": "Food photograph, saturated, hard flash. one square slice of melted orange cheese with a dripping corner seen from above, centred, fully inside the frame with a clear margin, on a perfectly flat solid pure magenta (#FF00FF) background, no shadow, no table, no text.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "ing-onion",
+  "prompt": "Food photograph, saturated, hard flash. one onion ring, golden crispy fried, seen from above, centred, fully inside the frame with a clear margin, on a perfectly flat solid pure magenta (#FF00FF) background, no shadow, no table, no text.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "ing-pickle",
+  "prompt": "Food photograph, saturated, hard flash. one round green pickle slice with bumpy skin seen from above, centred, fully inside the frame with a clear margin, on a perfectly flat solid pure magenta (#FF00FF) background, no shadow, no table, no text.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "ing-bomb",
+  "prompt": "Food photograph, saturated, hard flash. a cartoon round black bomb with a short lit fuse and a spark, glossy, with a small skull and crossbones on it, centred, fully inside the frame with a clear margin, on a perfectly flat solid pure magenta (#FF00FF) background, no shadow, no table, no text.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "mascot-kid",
+  "prompt": "Black and white woodcut linocut sticker illustration, bold clean black ink lines only on a plain white background, no grey, no text. A cheeky cartoon boy in a backwards baseball cap sitting on a crate happily biting into an enormous stacked burger with both hands, a cola bottle beside him, a few flying crumbs and fries, thick confident outlines, hatching for texture.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "mascot-kid2",
+  "prompt": "Black and white woodcut linocut sticker illustration, bold clean black ink lines only on a plain white background, no grey, no text. A cheeky cartoon boy in a backwards baseball cap sitting on a crate happily biting into an enormous stacked burger with both hands, a cola bottle beside him, a few flying crumbs and fries, thick confident outlines, hatching for texture.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "mascot-glove",
+  "prompt": "A cute retro rubber-hose cartoon mascot: a big smiling cartoon burger character with big round white eyes, big smile, huge white cartoon gloved hands held out at the sides, tall stack of bun, lettuce, tomato, two patties, melted cheese, thick bold outlines, sticker style, centred and fully inside the frame on a perfectly flat solid pure magenta (#FF00FF) background, no shadow, no text.",
+  "aspect": "1:1"
+ }
+]

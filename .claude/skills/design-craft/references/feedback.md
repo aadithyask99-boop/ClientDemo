@@ -320,3 +320,8 @@ I turned the owner's "looks cluttered, find a fine balance" (EVM) into "the page
 - Owner: keep the mascot jump (drop only the munching), smoother preloader, and an overlay food menu (categories left, items right) instead of a download.
 - Cause of the 'jump does not work' scare in my own test: a closed overlay was intercepting clicks. Lesson: after adding any overlay, click through the page underneath with the overlay closed.
 - Lesson: when the owner praises one part of an effect and rejects another, keep the praised part exactly and remove only the rejected part.
+
+## Smashley's: replica of CRAV for a fictional London burger place (2026-11-06)
+- Brief: same idea as Maledetta, other colours, plus a Fruit Ninja footer (bombs, score, reset), a menu overlay, and a build-your-own-burger. I showed a plan with palettes and a generation list; the owner answered in one message (name, bombs, home-page builder, palette A, generation ok).
+- Mistakes: an orange chosen by eye failed text contrast; a shared selector stretched a tag; a desktop scroll effect leaked to phones. Lesson: run the contrast check on the accent as a text colour at palette time, and scope every parallax to its breakpoint.
+- Good: asking before building (plan with a visual palette sheet and the full generation list) meant no rework on scope.

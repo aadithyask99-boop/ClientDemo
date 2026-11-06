@@ -1,0 +1,5 @@
+dist/
+node_modules/
+.astro/
+art-src/gen/
+art-src/us/*.jpg

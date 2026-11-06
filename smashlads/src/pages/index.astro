@@ -1,0 +1,214 @@
+---
+import '@fontsource/mouse-memoirs/400.css';
+import '@fontsource/modak/400.css';
+import '../styles/global.css';
+import { brand, burgers, menu, parts, facts, areas, sites, footerLinks, note, ingredients, credits } from '../data/site';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const img = (f: string) => `${base}/img/${f}`;
+const art = (f: string) => `${base}/art/${f}`;
+const burgerSrc = Object.fromEntries(burgers.map((b) => [b.img, art(`burger-${b.img}.webp`)]));
+---
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{brand.title}</title>
+  <meta name="description" content={brand.description} />
+  <meta name="theme-color" content="#1F3FD9" />
+  <link rel="icon" href={`data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1F3FD9"/><text x="32" y="47" font-family="Impact,sans-serif" font-size="44" fill="#F3ECDD" text-anchor="middle">S</text></svg>')}`} />
+  <script is:inline>document.documentElement.classList.add('js');try{if(matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('no-loader')}}catch(e){}</script>
+</head>
+<body>
+
+<!-- Preloader: a burger builds itself, then a CRAVING flash -->
+<div class="loader" aria-hidden="true" data-loader>
+  <div class="loader__a" data-la>
+    <div class="loader__stack" data-ls>
+      <svg viewBox="0 0 300 96" class="ls ls--top"><path d="M8 90 Q8 8 150 8 Q292 8 292 90 Z" /><ellipse cx="90" cy="38" rx="9" ry="5" /><ellipse cx="150" cy="26" rx="9" ry="5" /><ellipse cx="210" cy="38" rx="9" ry="5" /></svg>
+      <svg viewBox="0 0 300 34" class="ls ls--let"><path d="M6 20 Q20 2 36 20 T66 20 T96 20 T126 20 T156 20 T186 20 T216 20 T246 20 T276 20 T294 20 V26 Q150 40 6 26 Z" /></svg>
+      <svg viewBox="0 0 300 42" class="ls ls--pat"><path d="M12 8 Q150 2 288 8 Q298 22 288 36 Q150 42 12 36 Q2 22 12 8Z" /></svg>
+      <svg viewBox="0 0 300 56" class="ls ls--bot"><path d="M10 8 H290 V28 Q290 50 262 50 H38 Q10 50 10 28 Z" /></svg>
+    </div>
+    <p>Preparing to serve the Smashley&rsquo;s masterpiece!</p>
+  </div>
+  <div class="loader__b" data-lb>Craving...</div>
+</div>
+
+<!-- Page blur and the nav card that drops from the top right -->
+<div class="veil" data-veil></div>
+<div class="navcard" data-navcard aria-hidden="true">
+  <button class="navcard__x" type="button" data-nav-close>Close</button>
+  <ul>
+    <li><a href="#top" data-nav-link>Home</a></li>
+    <li><button type="button" data-open-fm data-nav-link>Burgers</button></li>
+    <li><a href="#build" data-nav-link>Build your own</a></li>
+    <li><a href="#london" data-nav-link>Locations</a></li>
+    <li><a href="mailto:hello@smashleys.example" data-nav-link>Contact</a></li>
+  </ul>
+  <p>Est. 1997 &middot; London</p>
+</div>
+
+<!-- Food menu overlay: categories on the left, the chosen category on the right -->
+<section class="fm" data-fm aria-label="The menu" aria-hidden="true">
+  <button class="fm__close" type="button" data-fm-close>Close</button>
+  <div class="fm__scroll" data-fm-scroll>
+    <ul class="fm__cats">
+      {menu.map((c, i) => (
+        <li class={i === 0 ? 'cat is-active' : 'cat'} data-cat>
+          <button class="cat__name" type="button" aria-expanded={i === 0 ? 'true' : 'false'}><span class="cat__mask"><span class="cat__text">{c.name}</span></span></button>
+          <div class="cat__panel">
+            {c.kind === 'cards' ? (
+              <ul class="cards" data-lenis-prevent>
+                {burgers.map((b) => (
+                  <li class="card">
+                    <div class="card__stage"><span class="card__checker"></span><img src={burgerSrc[b.img]} alt="" loading="lazy" decoding="async" /></div>
+                    <div class="card__row"><h3>{b.name}</h3><span class="price" set:html={'&pound;' + b.price}></span></div>
+                    <dl class="card__more">
+                      <div><dt>Prep</dt><dd>{b.prep}</dd></div><div><dt>Bun</dt><dd>{b.bun}</dd></div><div><dt>Patty</dt><dd>{b.patty}</dd></div>
+                      <div><dt>Spice</dt><dd>{b.spice}</dd></div><div><dt>Energy</dt><dd>{b.kcal} kcal</dd></div><div><dt>Protein</dt><dd>{b.protein}g</dd></div>
+                    </dl>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <ul class="items" data-lenis-prevent>
+                {c.items!.map((it) => (
+                  <li class="item"><div class="item__head"><h3>{it.name}</h3><span class="price" set:html={'&pound;' + it.price}></span></div><p>{it.text}</p></li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<header class="top">
+  <a class="logo" href="#top" aria-label="Smashley's home">Smashley&rsquo;s</a>
+  <div class="top__r">
+    <button class="pill pill--orange" type="button" data-open-fm>Burgers</button>
+    <button class="pill pill--ink" type="button" data-open-nav>Menu<span class="burger-i" aria-hidden="true"></span></button>
+  </div>
+</header>
+
+<main id="top">
+  <!-- 1. Hero -->
+  <section class="hero" data-hero>
+    <h1 class="hero__title"><span class="hi t1">{brand.hero[0]}</span><span class="hi t2">{brand.hero[1]}</span></h1>
+    <img class="hero__burger hi" src={art('burger-hero.webp')} alt="A tall double smash burger with melted cheese." width="1100" height="975" fetchpriority="high" />
+    <span class="tag tag--a hi">Smashed fresh</span>
+    <span class="tag tag--b hi">Bold flavour</span>
+    <p class="hero__l hi">Smashed hot on the flat-top, our prime patties lock in ultimate juiciness under a caramelised crust.</p>
+    <p class="hero__r hi">Topped with melted cheddar and our signature chilli honey glaze crafted to satisfy your cravings since 1997.</p>
+  </section>
+
+  <!-- 2. Statement -->
+  <section class="stmt">
+    <span class="tag tag--orange">Top classic</span>
+    <h2 data-reveal>Juicy cheesy<br />fully loaded</h2>
+    <p>Smashley&rsquo;s is back and bolder than ever. Honouring our rich roots, we bring you the ultimate smashed experience: fully loaded, hot, and crafted fresh.</p>
+    <button class="pill pill--orange pill--big" type="button" data-open-fm>Order now</button>
+    <div class="trio">
+      <figure class="trio__p" data-speed="0.6"><img src={img('trio-1.jpg')} alt="Friends laughing over dinner." loading="lazy" decoding="async" /></figure>
+      <figure class="trio__p" data-speed="1"><img src={img('trio-2.jpg')} alt="Burgers and fries on a wooden board." loading="lazy" decoding="async" /></figure>
+      <figure class="trio__p" data-speed="0.8"><img src={img('trio-3.jpg')} alt="Hands holding a cheeseburger." loading="lazy" decoding="async" /></figure>
+    </div>
+  </section>
+
+  <!-- 3. The blue band with the gloved mascot -->
+  <section class="band" data-band>
+    <span class="tag tag--cream">Experience</span>
+    <h2 data-reveal>Food that<br />feels good</h2>
+    <button class="mascot" type="button" data-glove aria-label="Press the burger mascot"><img src={art('mascot-glove.webp')} alt="" width="1000" height="896" loading="lazy" decoding="async" /><span class="bubble" data-bubble aria-hidden="true"></span></button>
+    <span class="tag tag--orange2">Bold flavour</span>
+    <ul class="facts">{facts.map((f) => <li>{f}</li>)}</ul>
+  </section>
+
+  <!-- 4. Full-bleed photo -->
+  <section class="held">
+    <img src={img('held.jpg')} alt="Hands holding a stacked cheeseburger." loading="lazy" decoding="async" />
+    <span class="tag tag--cream tag--c">Pure quality</span>
+  </section>
+
+  <!-- 5. Build your own -->
+  <section class="build" id="build" data-build>
+    <span class="tag tag--orange">Every layer</span>
+    <h2 data-reveal>Build your<br />own smash</h2>
+    <p class="build__intro">Drag a layer onto the bun, or just tap it. Tap a layer in the stack to take it off.</p>
+    <div class="build__grid">
+      <ul class="chips" data-chips>
+        {parts.map((p) => <li><button class="chip" type="button" data-part={p.id}><span class="chip__art" data-art={p.id}></span><span class="chip__n">{p.name}</span></button></li>)}
+      </ul>
+      <div class="stackwrap">
+        <div class="drop" data-drop><p class="drop__hint" data-hint>Drop it here</p><div class="stack" data-stack></div><div class="plate"></div></div>
+      </div>
+      <div class="sum">
+        <p class="sum__row"><span>Layers</span><b data-n>0</b></p>
+        <p class="sum__row"><span>Energy</span><b data-kcal>150 kcal</b></p>
+        <p class="sum__row sum__row--big"><span>Total</span><b data-price>&pound;3.50</b></p>
+        <button class="pill pill--orange pill--big" type="button" data-send>Send to the kitchen</button>
+        <button class="pill pill--ink" type="button" data-clear>Start again</button>
+        <p class="sum__note" data-msg aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Take away across London -->
+  <section class="london" id="london" data-london>
+    <span class="tag tag--cream">Take away</span>
+    <h2 data-reveal>Hot across<br />the whole city</h2>
+    <p>Freshly packed smash burgers, ready to go wherever you crave. From Soho to the South Bank, every layer stays hot and juicy.</p>
+    <svg class="route" viewBox="0 0 1000 560" preserveAspectRatio="none" aria-hidden="true"><path data-route d="M-20 120 C 200 60, 320 260, 520 200 S 800 80, 1020 330" /><path data-route d="M-20 470 C 180 380, 380 540, 560 430 S 860 360, 1020 500" /></svg>
+    {areas.map((a, i) => (
+      <figure class="stop" style={`top:${a.top}%;left:${a.left}%`} data-stop><img src={img(`city-${i + 1}.jpg`)} alt="" loading="lazy" decoding="async" /><figcaption class="tag tag--cream">{a.name}</figcaption></figure>
+    ))}
+  </section>
+
+  <!-- 7. Feel the change -->
+  <section class="feel">
+    <div class="feel__txt">
+      <span class="tag tag--orange">Feel it</span>
+      <h2 data-reveal>Feel the<br />change</h2>
+      <p>Smashed for the bold, built for the hungry. Dive into a legendary craft experience where every crispy edge and juicy layer rules.</p>
+      <button class="pill pill--orange pill--big" type="button" data-open-fm>Order now</button>
+    </div>
+    <div class="feel__img"><img src={img('feel.jpg')} alt="A woman biting into a burger." loading="lazy" decoding="async" /></div>
+    <span class="feel__kid" aria-hidden="true"></span>
+  </section>
+</main>
+
+<!-- 8. Footer with the slicing game -->
+<footer class="foot" id="footer" data-foot>
+  <div class="foot__top">
+    <nav aria-label="Footer">{footerLinks.map((l) => l.menu ? <button type="button" data-open-fm>{l.label}</button> : <a href={l.href}>{l.label}</a>)}</nav>
+    <p>&copy; 2026 Smashley&rsquo;s. All rights reserved.</p>
+  </div>
+  <p class="foot__tag">Smashed patties &middot; Toasted buns &middot; Est. 1997</p>
+  <div class="foot__word" aria-hidden="true"><span>Smash</span><span>ley&rsquo;s</span></div>
+  <canvas class="game" data-canvas aria-label="Slicing game: swipe across the flying ingredients, avoid the bombs"></canvas>
+  <div class="game__msg" data-gmsg><b data-gtitle>Slice to play</b><span data-gsub>Swipe across the ingredients. Dodge the bombs.</span></div>
+  <div class="game__hud" data-hud>
+    <p>Score <b data-score>0</b></p>
+    <p>Best <b data-best>0</b></p>
+    <p class="lives" data-lives aria-label="Lives left">
+      <svg viewBox="0 0 24 24"><path d="M12 21s-8-5.5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.500-8 11-8 11z" /></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 21s-8-5.5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.500-8 11-8 11z" /></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 21s-8-5.5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.500-8 11-8 11z" /></svg>
+    </p>
+    <button class="pill pill--orange" type="button" data-reset>Reset</button>
+  </div>
+  <p class="foot__note">{note}</p>
+</footer>
+
+<div class="rain" data-rain aria-hidden="true" data-srcs={JSON.stringify(ingredients.map((f) => art(`ing-${f}.webp`)))}></div>
+<div class="sprites" aria-hidden="true">{[...ingredients, 'bomb'].map((f) => <img data-sprite={f} src={art(`ing-${f}.webp`)} alt="" width="200" height="200" />)}</div>
+<script type="application/json" id="parts" set:html={JSON.stringify({ parts, builder: { baseBun: { price: 3.5, kcal: 150 }, maxLayers: 12 } })}></script>
+<script>
+  import '../scripts/main.ts';
+</script>
+<!-- Photo credits: {credits.map((c) => `${c.photographer} (${c.link})`).join('; ')} -->
+</body>
+</html>
