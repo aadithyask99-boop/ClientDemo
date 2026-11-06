@@ -23,3 +23,9 @@ motion-probe: moving-with-scroll elements 33 vs reference 32 after adding scrubb
 
 ## Not verified
 Real phone; the game on a real touchscreen (tested with synthetic touch only); the Unsplash photos are moodier than the reference's.
+
+## Second pass (owner feedback, 2026-11-06)
+- Menu burger pictures looked cropped: the card stage used a percentage image height inside a grid track that had no fixed height, so the image overflowed and covered the name and price at laptop sizes. Fix: flex stage with a fixed height, image height 100%, rows sized max-content. Test overlays at 1280x720 and 1366x768 as well as 1440x900.
+- Preloader: the burger layers were drawn faint (dark outline on blue, fade in) and the CRAVING flash showed for under a second. Layers are now larger with a cream outline, drop in opaque, and the flash holds. Any click skips it.
+- Mobile white space: shop and build gaps were sized for desktop; reduced the build section padding and drop zone, retuned the footer (wordmark stacked, game message above it).
+- Owner feature requests queued for approval (plan in chat): realistic builder layers, cart, sides and swaps, cartoon cursor, locations and contact pages, melting cheese in the hero.

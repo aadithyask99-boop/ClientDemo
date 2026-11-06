@@ -36,14 +36,14 @@ if (loaderOn) {
   const b = $('[data-lb]', L)!;
   const a = $('[data-la]', L)!;
   let left = false;
-  const tl = gsap.timeline({ delay: 0.3 });
-  [...layers].reverse().forEach((el, i) => tl.fromTo(el, { y: -260, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: 'power3.in' }, i * 0.38));
-  tl.fromTo($('[data-ls]', L), { scaleY: 1 }, { scaleY: 0.94, duration: 0.14, yoyo: true, repeat: 1, transformOrigin: '50% 100%' }, '>')
-    .fromTo($('p', a), { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, 0.2)
-    .to(a, { opacity: 0, duration: 0.25 }, '>+0.7')
-    .set(b, { autoAlpha: 1 })
-    .fromTo(b, { scale: 0.92 }, { scale: 1, duration: 0.8, ease: 'power2.out' }, '<')
-    .call(() => leave(), [], '>+0.35');
+  const tl = gsap.timeline({ delay: 0.1 });
+  gsap.set(layers, { autoAlpha: 0 });
+  [...layers].reverse().forEach((el, i) => tl.fromTo(el, { y: -420, autoAlpha: 1 }, { y: 0, duration: 0.42, ease: 'power3.in' }, i * 0.34));
+  tl.fromTo($('[data-ls]', L), { scaleY: 1 }, { scaleY: 0.93, duration: 0.14, yoyo: true, repeat: 1, transformOrigin: '50% 100%' }, '>')
+    .fromTo($('p', a), { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, 0)
+    .set(b, { autoAlpha: 1 }, '>+0.7')
+    .fromTo(b, { scale: 0.92 }, { scale: 1, duration: 0.6, ease: 'power2.out' }, '<')
+    .call(() => leave(), [], '>+0.25');
   const leave = () => {
     if (left) return;
     left = true;
@@ -52,7 +52,7 @@ if (loaderOn) {
     L.removeEventListener('pointerdown', leave);
     L.classList.add('is-leaving');
     heroGo();
-    gsap.to(L, { opacity: 0, duration: 1.7, ease: 'power2.inOut', onComplete: () => { L.style.display = 'none'; unlock(); } });
+    gsap.to(L, { opacity: 0, duration: 1.2, ease: 'power2.inOut', onComplete: () => { L.style.display = 'none'; unlock(); } });
   };
   L.addEventListener('pointerdown', leave);
   addEventListener('keydown', leave);
