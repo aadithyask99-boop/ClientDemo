@@ -4,6 +4,8 @@ import { SplitText } from 'gsap/SplitText';
 import Lenis from 'lenis';
 import { initBuilder } from './builder';
 import { initGame } from './game';
+import { initCart } from './cart';
+import { initCursor } from './cursor';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -36,14 +38,17 @@ if (loaderOn) {
   const b = $('[data-lb]', L)!;
   const a = $('[data-la]', L)!;
   let left = false;
-  const tl = gsap.timeline({ delay: 0.1 });
-  gsap.set(layers, { autoAlpha: 0 });
-  [...layers].reverse().forEach((el, i) => tl.fromTo(el, { y: -420, autoAlpha: 1 }, { y: 0, duration: 0.42, ease: 'power3.in' }, i * 0.34));
-  tl.fromTo($('[data-ls]', L), { scaleY: 1 }, { scaleY: 0.93, duration: 0.14, yoyo: true, repeat: 1, transformOrigin: '50% 100%' }, '>')
-    .fromTo($('p', a), { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, 0)
-    .set(b, { autoAlpha: 1 }, '>+0.7')
-    .fromTo(b, { scale: 0.92 }, { scale: 1, duration: 0.6, ease: 'power2.out' }, '<')
-    .call(() => leave(), [], '>+0.25');
+  const tl = gsap.timeline({ delay: 0.2 });
+  const order = [...layers].reverse(); // bottom bun first, top bun last
+  gsap.set(layers, { y: -700, autoAlpha: 1 });
+  order.forEach((el, i) => tl.to(el, { y: 0, duration: 0.55, ease: 'bounce.out' }, i * 0.55));
+  tl.fromTo($('p', a), { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, 0.1)
+    .to($('[data-ls]', L), { scaleY: 0.94, duration: 0.12, yoyo: true, repeat: 1, transformOrigin: '50% 100%' }, '>-0.1')
+    .to({}, { duration: 0.9 }) // the finished burger holds, so it can be seen
+    .set(b, { autoAlpha: 1 })
+    .fromTo(b, { scale: 0.92 }, { scale: 1, duration: 0.7, ease: 'power2.out' }, '<')
+    .to({}, { duration: 0.5 })
+    .call(() => leave(), []);
   const leave = () => {
     if (left) return;
     left = true;
@@ -146,6 +151,68 @@ $('[data-fm-close]', fm)!.addEventListener('click', closeFm);
 addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeFm(); closeNav(); } });
 $$('[data-nav-link]').forEach((a) => { if (!(a as HTMLElement).hasAttribute('data-open-fm')) a.addEventListener('click', () => closeNav()); });
 
+/* ---------------- locations and contact overlays ---------------- */
+const ovs = $$('[data-ov]');
+let ovOpen: HTMLElement | null = null;
+function openOv(name: string) {
+  const el = ovs.find((o) => o.dataset.ov === name);
+  if (!el || ovOpen) return;
+  const go = () => {
+    ovOpen = el; el.classList.add('is-open'); el.setAttribute('aria-hidden', 'false'); lock();
+    gsap.fromTo(el, { opacity: 0 }, { opacity: 1, duration: reduce ? 0 : 0.6, ease: 'power2.out' });
+    gsap.fromTo($$('.place, .contact > *, .ov__title', el), { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: reduce ? 0 : 0.6, stagger: 0.08, ease: 'power3.out', delay: 0.1 });
+    ($('[data-ov-close]', el) as HTMLElement).focus({ preventScroll: true });
+  };
+  navOpen ? closeNav(go) : go();
+}
+function closeOv() {
+  if (!ovOpen) return;
+  const el = ovOpen; ovOpen = null;
+  gsap.to(el, { opacity: 0, duration: reduce ? 0 : 0.4, onComplete: () => { el.classList.remove('is-open'); el.setAttribute('aria-hidden', 'true'); unlock(); } });
+}
+$$('[data-open-ov]').forEach((b) => b.addEventListener('click', () => openOv(b.dataset.openOv!)));
+$$('[data-ov-close]').forEach((b) => b.addEventListener('click', closeOv));
+addEventListener('keydown', (e) => { if (e.key === 'Escape') closeOv(); });
+$('[data-cform]')?.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const o = $('[data-cok]');
+  if (o) o.textContent = 'Thanks! This is a concept, so nothing was sent.';
+  ((e.target as HTMLElement) as unknown as { reset: () => void }).reset();
+});
+
+/* ---------------- melting cheese: drips run down the hero burger and continue onto the next section ---------------- */
+const burgerEl = $('[data-burger]');
+const cap = $('[data-cap]');
+function cheese() {
+  if (!burgerEl || !cap) return;
+  const hd = $$('.cdrip', $('[data-hdrips]')!);
+  const br = burgerEl.getBoundingClientRect();
+  cap.innerHTML = '<span class="cap__bar"></span>';
+  hd.forEach((d, i) => {
+    const f = parseFloat(d.style.left) / 100, w = parseFloat(d.style.width) / 100;
+    const e = document.createElement('i'); e.className = 'cdrip cdrip--cap';
+    e.style.left = (br.left + f * br.width) + 'px'; e.style.width = (w * br.width) + 'px';
+    e.style.setProperty('--l', String(6 + (i % 3) * 5));
+    cap.appendChild(e);
+  });
+}
+cheese();
+if (!reduce && burgerEl) {
+  const drops = $$('.cdrip', $('[data-hdrips]')!);
+  drops.forEach((d, i) => {
+    gsap.set(d, { scaleY: 0.12, transformOrigin: '50% 0%' });
+    const run = () => gsap.timeline({ repeat: -1, repeatDelay: 0.4 + Math.random() }).to(d, { scaleY: 1, duration: 3.6 + i * 0.55, ease: 'power1.in' }).to(d, { scaleY: 0.82, duration: 2.4, ease: 'sine.inOut' }).to(d, { scaleY: 0.12, duration: 3.2, ease: 'power2.inOut', delay: 0.6 });
+    gsap.delayedCall(2 + i * 0.35, run);
+  });
+  // the cap and its drips on the statement section grow with the scroll and mix into the heading
+  const cd = $$('.cdrip--cap', cap!);
+  gsap.set(cd, { scaleY: 0.05, transformOrigin: '50% 0%' });
+  gsap.set('.cap__bar', { scaleY: 0, transformOrigin: '50% 0%' });
+  const st = { trigger: '.stmt', start: 'top 95%', end: 'top 25%', scrub: true };
+  gsap.to('.cap__bar', { scaleY: 1, ease: 'none', scrollTrigger: st });
+  cd.forEach((d, i) => gsap.to(d, { scaleY: 1, ease: 'none', scrollTrigger: { ...st, end: `top ${18 - (i % 3) * 3}%` } }));
+}
+
 /* ---------------- in-page links ---------------- */
 $$('a[href^="#"]').forEach((a) => {
   const id = a.getAttribute('href')!;
@@ -224,6 +291,8 @@ function rain() {
 let typed = '';
 addEventListener('keydown', (e) => { if (e.key.length !== 1) return; typed = (typed + e.key.toLowerCase()).slice(-5); if (typed === 'smash') rain(); });
 
+initCart(reduce);
+initCursor(reduce);
 initBuilder(reduce, rain);
 initGame(reduce);
 

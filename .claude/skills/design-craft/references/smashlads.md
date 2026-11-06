@@ -29,3 +29,12 @@ Real phone; the game on a real touchscreen (tested with synthetic touch only); t
 - Preloader: the burger layers were drawn faint (dark outline on blue, fade in) and the CRAVING flash showed for under a second. Layers are now larger with a cream outline, drop in opaque, and the flash holds. Any click skips it.
 - Mobile white space: shop and build gaps were sized for desktop; reduced the build section padding and drop zone, retuned the footer (wordmark stacked, game message above it).
 - Owner feature requests queued for approval (plan in chat): realistic builder layers, cart, sides and swaps, cartoon cursor, locations and contact pages, melting cheese in the hero.
+
+## Third pass (owner-approved plan, 2026-11-06)
+Built: photo builder layers (11 generated side-view cut-outs, 3 sides), patty/bun swaps and a meal option, cart (button, flying copy, panel, quantities, menu Add buttons), cartoon burger cursor (mouse only, crumb trail), Locations and Contact overlays, melting cheese (CSS drips on the hero burger aligned to the photo's cheese at 22 to 64% of its width, continued by a cheese cap and drips on the statement section that grow with scroll and mix into the heading with multiply), and a slower preloader that holds the finished burger.
+Lessons:
+- Generated side-view layers are thick: flatten them with an aspect-ratio box (`1 / (natural * h)`) and position the image absolutely inside it; an `img` at `height:100%` inside an auto-height box silently ignores the flattening.
+- Use percentage margins (relative to the parent width) for overlaps, not container units, and grep the mobile media block for old rules that override them (a leftover `margin-top: -1.6vw` made every overlap identical).
+- A script that builds image URLs must not trust a base path passed through the bundler (it rewrites './'): derive the folder from an image that already loads.
+- A full-footer canvas steals clicks from the links under it: lift the link row above it with a higher z-index.
+- Keep a sample `data-` attribute names unique: `data-price` on the menu Add button and the builder total collided in a test selector.

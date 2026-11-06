@@ -2,7 +2,7 @@
 import '@fontsource/mouse-memoirs/400.css';
 import '@fontsource/modak/400.css';
 import '../styles/global.css';
-import { brand, burgers, menu, parts, facts, areas, sites, footerLinks, note, ingredients, credits } from '../data/site';
+import { brand, burgers, menu, parts, swaps, builder, facts, areas, places, contact, footerLinks, note, ingredients, credits } from '../data/site';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const img = (f: string) => `${base}/img/${f}`;
@@ -44,8 +44,8 @@ const burgerSrc = Object.fromEntries(burgers.map((b) => [b.img, art(`burger-${b.
     <li><a href="#top" data-nav-link>Home</a></li>
     <li><button type="button" data-open-fm data-nav-link>Burgers</button></li>
     <li><a href="#build" data-nav-link>Build your own</a></li>
-    <li><a href="#london" data-nav-link>Locations</a></li>
-    <li><a href="mailto:hello@smashleys.example" data-nav-link>Contact</a></li>
+    <li><button type="button" data-open-ov="locations" data-nav-link>Locations</button></li>
+    <li><button type="button" data-open-ov="contact" data-nav-link>Contact</button></li>
   </ul>
   <p>Est. 1997 &middot; London</p>
 </div>
@@ -65,6 +65,7 @@ const burgerSrc = Object.fromEntries(burgers.map((b) => [b.img, art(`burger-${b.
                   <li class="card">
                     <div class="card__stage"><span class="card__checker"></span><img src={burgerSrc[b.img]} alt="" loading="lazy" decoding="async" /></div>
                     <div class="card__row"><h3>{b.name}</h3><span class="price" set:html={'&pound;' + b.price}></span></div>
+                    <button class="pill pill--orange add" type="button" data-add data-name={b.name} data-price={b.price} data-thumb={burgerSrc[b.img]}>Add to cart</button>
                     <dl class="card__more">
                       <div><dt>Prep</dt><dd>{b.prep}</dd></div><div><dt>Bun</dt><dd>{b.bun}</dd></div><div><dt>Patty</dt><dd>{b.patty}</dd></div>
                       <div><dt>Spice</dt><dd>{b.spice}</dd></div><div><dt>Energy</dt><dd>{b.kcal} kcal</dd></div><div><dt>Protein</dt><dd>{b.protein}g</dd></div>
@@ -98,7 +99,10 @@ const burgerSrc = Object.fromEntries(burgers.map((b) => [b.img, art(`burger-${b.
   <!-- 1. Hero -->
   <section class="hero" data-hero>
     <h1 class="hero__title"><span class="hi t1">{brand.hero[0]}</span><span class="hi t2">{brand.hero[1]}</span></h1>
-    <img class="hero__burger hi" src={art('burger-hero.webp')} alt="A tall double smash burger with melted cheese." width="1100" height="975" fetchpriority="high" />
+    <div class="hero__burger hi" data-burger>
+      <img src={art('burger-hero.webp')} alt="A tall double smash burger with melted cheese." width="1100" height="975" fetchpriority="high" />
+      <div class="drips" aria-hidden="true" data-hdrips>{[[22, 3.1, 14], [31, 2.2, 22], [40, 3.4, 11], [48, 2.4, 27], [56, 3, 16], [64, 2.1, 20]].map(([x, w, l]) => <i class="cdrip" style={`left:${x}%;width:${w}%;--l:${l}`}></i>)}</div>
+    </div>
     <span class="tag tag--a hi">Smashed fresh</span>
     <span class="tag tag--b hi">Bold flavour</span>
     <p class="hero__l hi">Smashed hot on the flat-top, our prime patties lock in ultimate juiciness under a caramelised crust.</p>
@@ -107,6 +111,7 @@ const burgerSrc = Object.fromEntries(burgers.map((b) => [b.img, art(`burger-${b.
 
   <!-- 2. Statement -->
   <section class="stmt">
+    <div class="cap" aria-hidden="true" data-cap></div>
     <span class="tag tag--orange">Top classic</span>
     <h2 data-reveal>Juicy cheesy<br />fully loaded</h2>
     <p>Smashley&rsquo;s is back and bolder than ever. Honouring our rich roots, we bring you the ultimate smashed experience: fully loaded, hot, and crafted fresh.</p>
@@ -143,13 +148,18 @@ const burgerSrc = Object.fromEntries(burgers.map((b) => [b.img, art(`burger-${b.
         {parts.map((p) => <li><button class="chip" type="button" data-part={p.id}><span class="chip__art" data-art={p.id}></span><span class="chip__n">{p.name}</span></button></li>)}
       </ul>
       <div class="stackwrap">
-        <div class="drop" data-drop><p class="drop__hint" data-hint>Drop it here</p><div class="stack" data-stack></div><div class="plate"></div></div>
+        <div class="drop" data-drop><p class="drop__hint" data-hint>Drop it here</p><div class="stack" data-stack></div><div class="plate"></div><div class="sidepic" data-sidepic></div></div>
+        <div class="opts">
+          <div class="opt"><span>Patty</span>{swaps.patty.map((o, i) => <button type="button" class={i === 0 ? 'pill pill--opt is-on' : 'pill pill--opt'} data-opt={'patty:' + o.id} aria-pressed={i === 0 ? 'true' : 'false'}>{o.name}</button>)}</div>
+          <div class="opt"><span>Bun</span>{swaps.bun.map((o, i) => <button type="button" class={i === 0 ? 'pill pill--opt is-on' : 'pill pill--opt'} data-opt={'bun:' + o.id} aria-pressed={i === 0 ? 'true' : 'false'}>{o.name}</button>)}</div>
+          <div class="opt"><span>Make it a meal</span>{swaps.side.map((o, i) => <button type="button" class={i === 0 ? 'pill pill--opt is-on' : 'pill pill--opt'} data-opt={'side:' + o.id} aria-pressed={i === 0 ? 'true' : 'false'}>{o.name}{o.price ? <span set:html={` +&pound;${o.price.toFixed(2)}`}></span> : null}</button>)}</div>
+        </div>
       </div>
       <div class="sum">
         <p class="sum__row"><span>Layers</span><b data-n>0</b></p>
-        <p class="sum__row"><span>Energy</span><b data-kcal>150 kcal</b></p>
+        <p class="sum__row"><span>Energy</span><b data-kcal>230 kcal</b></p>
         <p class="sum__row sum__row--big"><span>Total</span><b data-price>&pound;3.50</b></p>
-        <button class="pill pill--orange pill--big" type="button" data-send>Send to the kitchen</button>
+        <button class="pill pill--orange pill--big" type="button" data-send>Add to cart</button>
         <button class="pill pill--ink" type="button" data-clear>Start again</button>
         <p class="sum__note" data-msg aria-live="polite"></p>
       </div>
@@ -183,7 +193,7 @@ const burgerSrc = Object.fromEntries(burgers.map((b) => [b.img, art(`burger-${b.
 <!-- 8. Footer with the slicing game -->
 <footer class="foot" id="footer" data-foot>
   <div class="foot__top">
-    <nav aria-label="Footer">{footerLinks.map((l) => l.menu ? <button type="button" data-open-fm>{l.label}</button> : <a href={l.href}>{l.label}</a>)}</nav>
+    <nav aria-label="Footer">{footerLinks.map((l) => l.menu ? <button type="button" data-open-fm>{l.label}</button> : <a href={l.href}>{l.label}</a>)}<button type="button" data-open-ov="locations">Locations</button><button type="button" data-open-ov="contact">Contact</button></nav>
     <p>&copy; 2026 Smashley&rsquo;s. All rights reserved.</p>
   </div>
   <p class="foot__tag">Smashed patties &middot; Toasted buns &middot; Est. 1997</p>
@@ -203,9 +213,48 @@ const burgerSrc = Object.fromEntries(burgers.map((b) => [b.img, art(`burger-${b.
   <p class="foot__note">{note}</p>
 </footer>
 
+<!-- Locations and Contact overlays -->
+<section class="ov" data-ov="locations" aria-label="Locations" aria-hidden="true">
+  <button class="fm__close" type="button" data-ov-close>Close</button>
+  <div class="ov__scroll" data-lenis-prevent>
+    <h2 class="ov__title">Find a Smashley&rsquo;s</h2>
+    <ul class="places">
+      {places.map((pl) => (
+        <li class="place"><h3>{pl.name}</h3><p>{pl.street}<br />{pl.phone}</p><ul>{pl.hours.map((h) => <li>{h}</li>)}</ul><a class="pill pill--orange" href={'https://www.google.com/maps/search/' + encodeURIComponent('Smashleys ' + pl.street)} target="_blank" rel="noopener">Get directions</a></li>
+      ))}
+    </ul>
+  </div>
+</section>
+<section class="ov" data-ov="contact" aria-label="Contact" aria-hidden="true">
+  <button class="fm__close" type="button" data-ov-close>Close</button>
+  <div class="ov__scroll" data-lenis-prevent>
+    <h2 class="ov__title">Say hello</h2>
+    <div class="contact">
+      <form class="contact__form" data-cform>
+        <label>Your name<input type="text" name="name" autocomplete="name" required /></label>
+        <label>Email<input type="email" name="email" autocomplete="email" required /></label>
+        <label>Message<textarea name="msg" rows="5" required></textarea></label>
+        <button class="pill pill--orange pill--big" type="submit">Send</button>
+        <p class="contact__ok" data-cok aria-live="polite"></p>
+      </form>
+      <div class="contact__side"><p>{contact.note}</p><p><a href={'mailto:' + contact.email}>{contact.email}</a><br />{contact.phone}</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Cart -->
+<button class="cartbtn" type="button" data-cart-btn aria-label="Open the cart" aria-expanded="false"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 11h20l-2 14a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2z" fill="currentColor" /><path d="M11 11V9a5 5 0 0 1 10 0v2" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" /></svg><b class="cartbtn__n" data-cart-count>0</b></button>
+<aside class="cart" data-cart aria-label="Your cart" aria-hidden="true">
+  <div class="cart__head"><h2>Your cart</h2><button type="button" data-cart-close>Close</button></div>
+  <ul class="cart__list" data-cart-list data-lenis-prevent></ul>
+  <div class="cart__foot"><p class="cart__tot"><span>Total</span><b data-cart-total>&pound;0.00</b></p><button class="pill pill--orange pill--big" type="button" data-cart-go>Checkout (concept)</button><p class="cart__msg" data-cart-msg aria-live="polite"></p></div>
+</aside>
+
+<div class="cursor" data-cursor aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M5 27Q5 7 24 7T43 27Z" fill="#F0A94A" stroke="#14162B" stroke-width="2.6" stroke-linejoin="round"/><circle cx="17" cy="16" r="1.6" fill="#FFF3DA"/><circle cx="25" cy="12.500" r="1.6" fill="#FFF3DA"/><circle cx="33" cy="17" r="1.6" fill="#FFF3DA"/><path d="M4 31Q9 26 14 31T24 31T34 31T44 31" fill="#67B346" stroke="#14162B" stroke-width="2.4" stroke-linejoin="round"/><rect x="6" y="33" width="36" height="6" rx="3" fill="#6B2F20" stroke="#14162B" stroke-width="2.4"/><path d="M5 41H43Q43 46 36 46H12Q5 46 5 41Z" fill="#F0A94A" stroke="#14162B" stroke-width="2.6" stroke-linejoin="round"/><circle class="ceye" cx="19" cy="40.500" r="0"/></svg></div>
+
 <div class="rain" data-rain aria-hidden="true" data-srcs={JSON.stringify(ingredients.map((f) => art(`ing-${f}.webp`)))}></div>
 <div class="sprites" aria-hidden="true">{[...ingredients, 'bomb'].map((f) => <img data-sprite={f} src={art(`ing-${f}.webp`)} alt="" width="200" height="200" />)}</div>
-<script type="application/json" id="parts" set:html={JSON.stringify({ parts, builder: { baseBun: { price: 3.5, kcal: 150 }, maxLayers: 12 } })}></script>
+<script type="application/json" id="parts" set:html={JSON.stringify({ parts, swaps, builder, base })}></script>
 <script>
   import '../scripts/main.ts';
 </script>
