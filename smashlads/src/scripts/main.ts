@@ -196,8 +196,8 @@ if (cv) {
   const url = (i: number) => `${dir}${set}-${String(i + 1).padStart(3, '0')}.webp`;
   // where the burger sits inside its frame (fractions measured on the source frames)
   const geo = () => set === 'm'
-    ? { bw: 0.889, bt: 0.117, aspect: 9 / 16, wb: Math.min(innerWidth * 1.12, innerHeight * 0.58), top: 0.34 }
-    : { bw: 0.406, bt: 0.0648, aspect: 16 / 9, wb: Math.min(innerWidth * 0.52, innerHeight * 0.8), top: 0.26 };
+    ? { bw: 0.889, bt: 0.117, aspect: 9 / 16, wb: Math.min(innerWidth * 0.98, innerHeight * 0.5), top: 0.34 }
+    : { bw: 0.406, bt: 0.0648, aspect: 16 / 9, wb: Math.min(innerWidth * 0.42, innerHeight * 0.64), top: 0.24 };
   function size() {
     const g = geo(), H = innerHeight;
     vw = innerWidth; dpr = Math.min(2, devicePixelRatio || 1);

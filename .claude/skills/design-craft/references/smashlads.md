@@ -56,3 +56,7 @@ Lessons:
 - Owner: the first screen was too big and pixelated, and the hero pinned so the next section slid up over the video instead of the page scrolling. Causes: a 720p clip stretched over the screen; a sticky pinned wrapper. Fix: 1080p render (about $0.35), a normal non-pinned scroll, the canvas placed so frame 1 sits exactly where the old hero image was (width min(52vw, 80vh), top 26%), desktop frames cropped to the middle 60% (smaller download), the melt tied to the first 0.8 screen of scrolling.
 - The model grew cheese on top of the bun in the first seconds: frozen by reusing frame 1 for the top 29% of the frame with a short feather.
 - Process failure to avoid: I ended a turn while the render was still running and reported a state the user could not see. Never stop mid-task; wait for the background job (Monitor) and verify in the headless browser before replying.
+
+## Seventh pass: hero size, strand ends, builder test (2026-11-06)
+- Hero burger scaled to 80% of before (min(42vw, 64vh)); strands now sit behind the statement text (the statement section is transparent and above the canvas) and the canvas fades out at its bottom 22% so strands taper instead of being cut flat.
+- Builder test (Seedream edit with the hero burger as reference, $0.11 total): remove cheese: good; add bacon: good (sits under the top bun); single patty: good on the second try (first left the bun floating, needed "bun rests directly on the patty"); remove salad: still adds a third cheese slice, not usable yet. Lighting, bun and angle stayed consistent in all of them.

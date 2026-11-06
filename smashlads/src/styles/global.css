@@ -39,7 +39,7 @@ h1, h2, h3 { font-weight: 400; text-transform: uppercase; line-height: 0.86; }
   content: ''; position: absolute; left: 0; right: 0; top: calc(-5vw + 1px); height: 5vw; background: var(--bg); z-index: 2;
   -webkit-mask: var(--wave) 0 0 / 100% 100% no-repeat; mask: var(--wave) 0 0 / 100% 100% no-repeat; pointer-events: none;
 }
-.stmt { --bg: var(--ground); background: var(--ground); }
+.stmt { --bg: var(--ground); background: transparent; }
 .stmt::before { display: none; }
 .band { --bg: var(--blue); background: var(--blue); color: var(--ground); }
 .held { --bg: var(--ground); background: var(--ground); }
@@ -80,7 +80,7 @@ html.js:not(.no-loader) .loader { display: block; position: fixed; inset: 0; z-i
 /* a normal, scrolling block: the first screen is the burger exactly as before; the canvas is taller than the screen so the melting strands can hang down toward the next headline as the page scrolls */
 .seq { position: relative; height: var(--seq-h, 130vh); }
 .hero { position: absolute; top: 0; left: 0; right: 0; height: 100vh; height: 100svh; min-height: 560px; overflow: hidden; background: transparent; }
-.seq__cv { position: absolute; top: 0; left: 0; display: block; width: 100%; height: var(--seq-h, 130vh); z-index: 5; pointer-events: none; }
+.seq__cv { position: absolute; top: 0; left: 0; display: block; width: 100%; height: var(--seq-h, 130vh); z-index: 5; pointer-events: none; -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%); mask-image: linear-gradient(to bottom, #000 78%, transparent 100%); }
 .seq__front { position: absolute; top: 0; left: 0; right: 0; height: 100vh; height: 100svh; min-height: 560px; z-index: 6; pointer-events: none; }
 .hero__title { position: absolute; left: 0; right: 0; top: 7vh; display: flex; justify-content: space-between; padding: 0 2.4vw; font-size: min(23vw, 60vh); line-height: 0.8; color: var(--blue); z-index: 1; white-space: nowrap; }
 .hero__title .t2 { align-self: flex-end; }
@@ -95,7 +95,7 @@ html.hero-go .hero__title .t1 { --d: 0s; } html.hero-go .hero__title .t2 { --d: 
 @keyframes hiFail { to { opacity: 1; } }
 
 /* ---------- statement + tilted trio ---------- */
-.stmt { padding: 8vw 8vw 6vw; text-align: center; margin-top: calc(var(--seq-over, 36) * -1vh); z-index: 1; }
+.stmt { padding: 8vw 8vw 6vw; text-align: center; margin-top: calc(var(--seq-over, 36) * -1vh); position: relative; z-index: 7; }
 .stmt .tag { margin-bottom: 1.4vw; }
 .stmt h2 { font-size: clamp(76px, 9.4vw, 160px); color: var(--blue); }
 .stmt > p { max-width: 46vw; margin: 2vw auto 2.4vw; }

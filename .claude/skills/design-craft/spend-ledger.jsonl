@@ -63,3 +63,9 @@
 {"date":"2026-11-06","type":"video","model":"bytedance/seedance-1-5-pro","name":"cheese-draft","cost":0.1566}
 {"date":"2026-11-06","type":"video","model":"bytedance/seedance-1-5-pro","name":"cheese-m","cost":0.1566}
 {"date":"2026-11-06","type":"video","model":"bytedance/seedance-1-5-pro","name":"cheese-1080","cost":0.35235}
+{"date":"2026-11-06","type":"image","model":"bytedance-seed/seedream-5-0-flash","name":"var-nocheese","cost":0.018}
+{"date":"2026-11-06","type":"image","model":"bytedance-seed/seedream-5-0-flash","name":"var-onepatty","cost":0.018}
+{"date":"2026-11-06","type":"image","model":"bytedance-seed/seedream-5-0-flash","name":"var-nosalad","cost":0.018}
+{"date":"2026-11-06","type":"image","model":"bytedance-seed/seedream-5-0-flash","name":"var-bacon","cost":0.018}
+{"date":"2026-11-06","type":"image","model":"bytedance-seed/seedream-5-0-flash","name":"var-onepatty2","cost":0.018}
+{"date":"2026-11-06","type":"image","model":"bytedance-seed/seedream-5-0-flash","name":"var-nosalad2","cost":0.018}
