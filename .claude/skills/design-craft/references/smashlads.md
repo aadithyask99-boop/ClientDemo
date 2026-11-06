@@ -60,3 +60,9 @@ Lessons:
 ## Seventh pass: hero size, strand ends, builder test (2026-11-06)
 - Hero burger scaled to 80% of before (min(42vw, 64vh)); strands now sit behind the statement text (the statement section is transparent and above the canvas) and the canvas fades out at its bottom 22% so strands taper instead of being cut flat.
 - Builder test (Seedream edit with the hero burger as reference, $0.11 total): remove cheese: good; add bacon: good (sits under the top bun); single patty: good on the second try (first left the bun floating, needed "bun rests directly on the patty"); remove salad: still adds a third cheese slice, not usable yet. Lighting, bun and angle stayed consistent in all of them.
+
+## Eighth pass: builder rebuilt on finished photographs (owner decision: "reverse engineer", start from a full burger)
+- 16 photographs (patties 1 or 2 x cheese x bacon x lettuce-and-pickles), made by editing the hero burger with Seedream (refs in `gen-media.mjs`), about $0.37 in total including retries. `scripts/make-burgers.py` keys the background and aligns every burger on its bottom bun (same bun width, bottom edge and centre), so crossfades do not jump (checked by overlaying all 16).
+- Audit by eye against each recipe: first pass only 9 of 16 matched (the model adds a third patty, or a cheese sheet where lettuce was removed). Fix that worked: edit from the nearest correct image with ONE change and say "exactly TWO patties, exactly TWO cheese slices, put nothing in its place". Never chain more than one change per edit.
+- UI: toggles (patties, cheese, bacon, lettuce and pickles, sides) crossfade between photos; price, kcal, layer count update; Add to cart. Patty-type and bun swaps were dropped (no photos for them).
+- Bug: two elements used `data-price` (menu Add buttons and the builder total), so the total read "Add to cart". Use unique data attributes.

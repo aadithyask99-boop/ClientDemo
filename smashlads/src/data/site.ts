@@ -43,36 +43,26 @@ export const menu = [
   ] },
 ];
 
-// Build your own: photo layers, stacked bottom to top. w = width in % of the stack, h = height as a fraction of the natural
-// height (flattens thick cut-outs into slices), o = overlap with the layer below in container-width units.
-export const parts = [
-  { id: 'patty', name: 'Patty', price: 2.5, kcal: 260, img: 'layer-patty', w: 92, h: 0.7, o: 12 },
-  { id: 'cheese', name: 'Cheese', price: 0.8, kcal: 90, img: 'layer-cheese', w: 100, h: 0.36, o: 9 },
-  { id: 'bacon', name: 'Bacon', price: 1.2, kcal: 110, img: 'layer-bacon', w: 88, h: 0.5, o: 7 },
-  { id: 'lettuce', name: 'Lettuce', price: 0.4, kcal: 10, img: 'layer-lettuce', w: 104, h: 0.4, o: 12 },
-  { id: 'tomato', name: 'Tomato', price: 0.4, kcal: 15, img: 'layer-tomato', w: 80, h: 0.3, o: 9 },
-  { id: 'onion', name: 'Onion', price: 0.3, kcal: 20, img: 'layer-onion', w: 80, h: 0.3, o: 9 },
-  { id: 'pickle', name: 'Pickles', price: 0.3, kcal: 5, img: 'layer-pickle', w: 74, h: 0.8, o: 8 },
-  { id: 'top', name: 'Top bun', price: 0, kcal: 150, img: 'layer-buntop', w: 100, h: 1, o: 20 },
-];
-export const swaps = {
-  patty: [
-    { id: 'beef', name: 'Beef', price: 0, kcal: 0, img: 'layer-patty' },
-    { id: 'chicken', name: 'Chicken', price: 0.5, kcal: -20, img: 'layer-chicken' },
-    { id: 'plant', name: 'Plant', price: 0.3, kcal: -60, img: 'layer-plant' },
+// Build your own: finished burger photographs, one per combination (patties x cheese x bacon x lettuce and pickles).
+// Prices in pounds, energy in kcal. The photos are public/art/b/p{patties}c{cheese}b{bacon}s{salad}.webp.
+export const bld = {
+  base: { price: 3.5, kcal: 230 },
+  toggles: [
+    { id: 'cheese', name: 'Cheese', price: 0.8, kcal: 90, per: 'patty' },
+    { id: 'bacon', name: 'Bacon', price: 1.2, kcal: 110, per: 'once' },
+    { id: 'salad', name: 'Lettuce and pickles', price: 0.7, kcal: 25, per: 'once' },
   ],
-  bun: [
-    { id: 'brioche', name: 'Brioche', price: 0, kcal: 0 },
-    { id: 'wrap', name: 'Lettuce wrap', price: -0.3, kcal: -230 },
-  ],
-  side: [
+  patty: { price: 2.5, kcal: 260 },
+  sides: [
     { id: 'none', name: 'Just the burger', price: 0, kcal: 0 },
     { id: 'fries', name: 'Fries', price: 3, kcal: 365, img: 'side-fries' },
     { id: 'rings', name: 'Onion rings', price: 3.5, kcal: 410, img: 'side-rings' },
     { id: 'salad', name: 'Side salad', price: 3.2, kcal: 90, img: 'side-salad' },
   ],
 };
-export const builder = { baseBun: { price: 3.5, kcal: 230, img: 'layer-bunbot', w: 100, h: 1, o: 0 }, maxLayers: 12 };
+export const parts: never[] = [];
+export const swaps = {};
+export const builder = {};
 
 // Number of frames in the hero cheese-melt sequences (public/art/seq/d-001.webp ..., desktop 16:9; m-001.webp ..., phone 9:16).
 export const seq = { d: 73, m: 91 };

@@ -2,7 +2,7 @@
 import '@fontsource/mouse-memoirs/400.css';
 import '@fontsource/modak/400.css';
 import '../styles/global.css';
-import { brand, burgers, menu, parts, swaps, builder, facts, areas, places, contact, footerLinks, note, ingredients, credits, seq } from '../data/site';
+import { brand, burgers, menu, bld, facts, areas, places, contact, footerLinks, note, ingredients, credits, seq } from '../data/site';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const img = (f: string) => `${base}/img/${f}`;
@@ -143,23 +143,22 @@ const burgerSrc = Object.fromEntries(burgers.map((b) => [b.img, art(`burger-${b.
   <section class="build" id="build" data-build>
     <span class="tag tag--orange">Every layer</span>
     <h2 data-reveal>Build your<br />own smash</h2>
-    <p class="build__intro">Drag a layer onto the bun, or just tap it. Tap a layer in the stack to take it off.</p>
+    <p class="build__intro">Start with a full smash, then take things off or pile more on. The burger changes as you go.</p>
     <div class="build__grid">
-      <ul class="chips" data-chips>
-        {parts.map((p) => <li><button class="chip" type="button" data-part={p.id}><span class="chip__art" data-art={p.id}></span><span class="chip__n">{p.name}</span></button></li>)}
-      </ul>
-      <div class="stackwrap">
-        <div class="drop" data-drop><p class="drop__hint" data-hint>Drop it here</p><div class="stack" data-stack></div><div class="plate"></div><div class="sidepic" data-sidepic></div></div>
-        <div class="opts">
-          <div class="opt"><span>Patty</span>{swaps.patty.map((o, i) => <button type="button" class={i === 0 ? 'pill pill--opt is-on' : 'pill pill--opt'} data-opt={'patty:' + o.id} aria-pressed={i === 0 ? 'true' : 'false'}>{o.name}</button>)}</div>
-          <div class="opt"><span>Bun</span>{swaps.bun.map((o, i) => <button type="button" class={i === 0 ? 'pill pill--opt is-on' : 'pill pill--opt'} data-opt={'bun:' + o.id} aria-pressed={i === 0 ? 'true' : 'false'}>{o.name}</button>)}</div>
-          <div class="opt"><span>Make it a meal</span>{swaps.side.map((o, i) => <button type="button" class={i === 0 ? 'pill pill--opt is-on' : 'pill pill--opt'} data-opt={'side:' + o.id} aria-pressed={i === 0 ? 'true' : 'false'}>{o.name}{o.price ? <span set:html={` +&pound;${o.price.toFixed(2)}`}></span> : null}</button>)}</div>
-        </div>
+      <div class="bopts">
+        <div class="bopt"><span>Patties</span><div class="bopt__row"><button type="button" class="pill pill--opt" data-bp="1" aria-pressed="false">One</button><button type="button" class="pill pill--opt is-on" data-bp="2" aria-pressed="true">Two</button></div></div>
+        <div class="bopt"><span>On it</span><div class="bopt__row">{bld.toggles.map((t) => <button type="button" class={t.id === 'bacon' ? 'pill pill--opt' : 'pill pill--opt is-on'} data-bt={t.id} aria-pressed={t.id === 'bacon' ? 'false' : 'true'}>{t.name}</button>)}</div></div>
+        <div class="bopt"><span>Make it a meal</span><div class="bopt__row">{bld.sides.map((o, i) => <button type="button" class={i === 0 ? 'pill pill--opt is-on' : 'pill pill--opt'} data-side={o.id} aria-pressed={i === 0 ? 'true' : 'false'}>{o.name}{o.price ? <span set:html={` +&pound;${o.price.toFixed(2)}`}></span> : null}</button>)}</div></div>
+      </div>
+      <div class="bstage" data-drop>
+        <div class="bstage__burger" data-bburger><img class="bimg is-a" alt="" draggable="false" /><img class="bimg is-b" alt="" draggable="false" /></div>
+        <div class="plate"></div>
+        <div class="sidepic" data-sidepic></div>
       </div>
       <div class="sum">
         <p class="sum__row"><span>Layers</span><b data-n>0</b></p>
-        <p class="sum__row"><span>Energy</span><b data-kcal>230 kcal</b></p>
-        <p class="sum__row sum__row--big"><span>Total</span><b data-price>&pound;3.50</b></p>
+        <p class="sum__row"><span>Energy</span><b data-kcal>0 kcal</b></p>
+        <p class="sum__row sum__row--big"><span>Total</span><b data-total>&pound;0.00</b></p>
         <button class="pill pill--orange pill--big" type="button" data-send>Add to cart</button>
         <button class="pill pill--ink" type="button" data-clear>Start again</button>
         <p class="sum__note" data-msg aria-live="polite"></p>
@@ -253,7 +252,7 @@ const burgerSrc = Object.fromEntries(burgers.map((b) => [b.img, art(`burger-${b.
 
 <div class="rain" data-rain aria-hidden="true" data-srcs={JSON.stringify(ingredients.map((f) => art(`ing-${f}.webp`)))}></div>
 <div class="sprites" aria-hidden="true">{[...ingredients, 'bomb'].map((f) => <img data-sprite={f} src={art(`ing-${f}.webp`)} alt="" width="200" height="200" />)}</div>
-<script type="application/json" id="parts" set:html={JSON.stringify({ parts, swaps, builder, base })}></script>
+<script type="application/json" id="parts" set:html={JSON.stringify({ bld })}></script>
 <script>
   import '../scripts/main.ts';
 </script>
