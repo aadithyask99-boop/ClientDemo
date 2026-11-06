@@ -241,7 +241,6 @@ if (!reduce) {
   gsap.from('[data-stop]', { scale: 0, rotation: -20, opacity: 0, duration: 0.8, ease: 'back.out(1.6)', stagger: 0.18, scrollTrigger: { trigger: '[data-london]', start: 'top 50%' } });
   // more scrubbed life: chips bob, stops drift, the route marches, the kid and the facts slide
   mm.add('(min-width: 992px)', () => {
-    $$('.chip').forEach((c, i) => gsap.fromTo(c, { y: 24 + (i % 3) * 10 }, { y: -24 - (i % 3) * 10, ease: 'none', scrollTrigger: { trigger: '[data-build]', start: 'top bottom', end: 'bottom top', scrub: true } }));
     $$('[data-stop]').forEach((s, i) => gsap.fromTo(s, { y: 50 + i * 20 }, { y: -50 - i * 20, ease: 'none', scrollTrigger: { trigger: '[data-london]', start: 'top bottom', end: 'bottom top', scrub: true } }));
     gsap.fromTo('.facts li', { y: 30 }, { y: -10, ease: 'none', stagger: 0.1, scrollTrigger: { trigger: '[data-band]', start: 'top bottom', end: 'bottom top', scrub: true } });
   });

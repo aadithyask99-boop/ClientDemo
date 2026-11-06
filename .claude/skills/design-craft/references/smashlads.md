@@ -38,3 +38,8 @@ Lessons:
 - A script that builds image URLs must not trust a base path passed through the bundler (it rewrites './'): derive the folder from an image that already loads.
 - A full-footer canvas steals clicks from the links under it: lift the link row above it with a higher z-index.
 - Keep a sample `data-` attribute names unique: `data-price` on the menu Add button and the builder total collided in a test selector.
+
+## Fourth pass (owner feedback, 2026-11-06): look before you hand over
+- Owner: the cheese drips "look horrible", the builder had awful white space and "unnatural" placement, and I should have asked about the cheese. Lesson: for any effect that must look physically convincing (melting, dripping, liquid), do not build from a guess; ask what the owner pictures, show a sketch or a reference clip first, and look at full-size frames before publishing.
+- Builder fixes: section cut from 1446px to 1272px, drop zone fixed at 29vw with the stack auto-scaling to fit (CSS `scale` var, so GSAP's transform squash still works), the layer that sits on the bun tucks deeper (its top face is an ellipse inset from the image edge), chips no longer bob (a scrub offset had knocked the grid out of line).
+- Cursor: a normal arrow (white, ink outline, blue hard shadow) and a pointing glove over clickable things; no trail.

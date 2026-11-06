@@ -72,7 +72,16 @@ export function initBuilder(reduce: boolean, celebrate: () => void) {
     price += swap('bun').price + swap('side').price; kcal += swap('bun').kcal + swap('side').kcal;
     return { price, kcal, n: state.length + (topOn ? 1 : 0) };
   }
+  function relayout() {
+    // the layer straight on the bun tucks deeper into its soft top; then the whole stack scales to fit the drop zone
+    const ls = $$('.layer', stack).filter((n) => !n.classList.contains('is-base'));
+    ls.forEach((el, i) => { const p = parts[el.dataset.id!]; el.style.setProperty('--o', (p.o + (i === 0 ? 9 : 0)) + '%'); });
+    stack.style.setProperty('--fit', '1');
+    const room = drop.clientHeight * 0.88, h = stack.offsetHeight;
+    stack.style.setProperty('--fit', String(h > room ? room / h : 1));
+  }
   function refresh() {
+    relayout();
     const t = totals();
     $('[data-n]', root)!.textContent = String(t.n);
     $('[data-kcal]', root)!.textContent = `${Math.max(0, t.kcal)} kcal`;
