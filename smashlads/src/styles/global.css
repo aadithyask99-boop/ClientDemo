@@ -304,7 +304,7 @@ input, textarea { cursor: text; }
   .navcard { top: 3vw; right: 3vw; left: 3vw; width: auto; padding: 5vw; border-radius: 5vw; }
   .navcard li a, .navcard li button { font-size: 16vw; } .navcard__x { margin-bottom: 3vw; font-size: 24px; } .navcard p { font-size: 24px; margin-top: 4vw; }
   .hero { min-height: 560px; }
-  .hero__title { top: 11vh; font-size: min(24vw, 14vh); flex-direction: row; align-items: flex-end; gap: 0; padding: 0 5vw; }
+  .hero__title { top: 10vh; font-size: min(30vw, 18vh); flex-direction: row; justify-content: center; align-items: flex-end; gap: 0.14em; padding: 0 3vw; }
   .hero__title .t2 { align-self: flex-end; margin-top: 0; }
   .tag--a { left: 4%; top: 36%; } .tag--b { right: 4%; top: 57%; }
   .hero__l, .hero__r { display: none; }
