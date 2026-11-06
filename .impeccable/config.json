@@ -1,7 +1,9 @@
 {
   "telemetry": false,
   "detector": {
-    "ignoreRules": [],
+    "ignoreRules": [
+      "cream-palette"
+    ],
     "ignoreFiles": [],
     "ignoreValues": [
       {

@@ -29,3 +29,4 @@ If the next brief points at one of these, ask whether the owner wants it or whet
 
 ## Accent log (add one row per site so the next site picks a different accent)
 Garden: gold thread (history; gold is now banned). DJ ESKA: gold (history). EVM and evm2: red `#d6111c`. Kerala: gold (history). Kerala 2: vermilion `#ee5a36` on paper and backwater green-black. Add new sites here with their loud accent.
+Maledetta (replica, owner-approved reference language): Oswald 700 + Merriweather 300, cream ground with one rotating pale/dark pair (green, red, Tube blue, plum, tangerine), giant rough wordmark behind a woodcut mascot, one sticker that travels with GSAP Flip. This is the reference's fingerprint, not ours; do not reuse it for an unrelated client.

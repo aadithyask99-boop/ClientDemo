@@ -1,0 +1,74 @@
+[
+ {
+  "type": "image",
+  "name": "food-pizza",
+  "prompt": "a whole margherita pizza on a round vintage floral-rimmed ceramic plate, blistered crust, basil leaves. Food photograph in a flash-lit editorial style, saturated colours, hard direct flash, the single dish centred and fully inside the frame with a clear margin around it, shot slightly from above, on a perfectly flat solid pure magenta (#FF00FF) background with no shadow, no table, no props, no text.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "food-spritz",
+  "prompt": "a tall glass of orange Aperol spritz with ice and an orange slice and a green olive on a pick. Food photograph in a flash-lit editorial style, saturated colours, hard direct flash, the single dish centred and fully inside the frame with a clear margin around it, shot slightly from above, on a perfectly flat solid pure magenta (#FF00FF) background with no shadow, no table, no props, no text.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "food-tiramisu",
+  "prompt": "a generous square slice of tiramisu dusted with cocoa on a small vintage plate. Food photograph in a flash-lit editorial style, saturated colours, hard direct flash, the single dish centred and fully inside the frame with a clear margin around it, shot slightly from above, on a perfectly flat solid pure magenta (#FF00FF) background with no shadow, no table, no props, no text.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "food-burrata",
+  "prompt": "a whole burrata with halved cherry tomatoes and olive oil on a patterned vintage plate. Food photograph in a flash-lit editorial style, saturated colours, hard direct flash, the single dish centred and fully inside the frame with a clear margin around it, shot slightly from above, on a perfectly flat solid pure magenta (#FF00FF) background with no shadow, no table, no props, no text.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "food-cannoli",
+  "prompt": "three sicilian cannoli with pistachio ends on a small vintage plate. Food photograph in a flash-lit editorial style, saturated colours, hard direct flash, the single dish centred and fully inside the frame with a clear margin around it, shot slightly from above, on a perfectly flat solid pure magenta (#FF00FF) background with no shadow, no table, no props, no text.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "food-negroni",
+  "prompt": "a short tumbler of red negroni with a large ice cube and an orange peel twist. Food photograph in a flash-lit editorial style, saturated colours, hard direct flash, the single dish centred and fully inside the frame with a clear margin around it, shot slightly from above, on a perfectly flat solid pure magenta (#FF00FF) background with no shadow, no table, no props, no text.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "food-pasta",
+  "prompt": "a bowl of spaghetti pomodoro with basil, twirled high, in a deep vintage bowl. Food photograph in a flash-lit editorial style, saturated colours, hard direct flash, the single dish centred and fully inside the frame with a clear margin around it, shot slightly from above, on a perfectly flat solid pure magenta (#FF00FF) background with no shadow, no table, no props, no text.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "food-gelato",
+  "prompt": "two scoops of pistachio and strawberry gelato in a small metal cup with a spoon. Food photograph in a flash-lit editorial style, saturated colours, hard direct flash, the single dish centred and fully inside the frame with a clear margin around it, shot slightly from above, on a perfectly flat solid pure magenta (#FF00FF) background with no shadow, no table, no props, no text.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "mascot-a",
+  "prompt": "Black and white woodcut linocut illustration, bold clean black ink lines only on a plain white background, no grey, no shading gradients, no text. A glamorous defiant woman with 1940s victory-roll hair, cat-eye makeup, big hoop earrings, seen from the front, bust length, biting into a large slice of pizza held in both hands in front of her chin, tall dramatic stylised flames rising up from behind her head and hair, a few flying embers above. Symmetrical poster composition, thick confident outlines, hatching for texture.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "mascot-b",
+  "prompt": "Black and white woodcut linocut illustration, bold clean black ink lines only on a plain white background, no grey, no shading gradients, no text. A glamorous defiant woman with 1940s victory-roll hair, cat-eye makeup, big hoop earrings, seen from the front, bust length, biting into a large slice of pizza held in both hands in front of her chin, tall dramatic stylised flames rising up from behind her head and hair, a few flying embers above. Symmetrical poster composition, thick confident outlines, hatching for texture.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "mascot-c",
+  "prompt": "Black and white woodcut linocut illustration, bold clean black ink lines only on a plain white background, no grey, no shading gradients, no text. A glamorous defiant woman with 1940s victory-roll hair, cat-eye makeup, big hoop earrings, seen from the front, bust length, biting into a large slice of pizza held in both hands in front of her chin, tall dramatic stylised flames rising up from behind her head and hair, a few flying embers above. Symmetrical poster composition, thick confident outlines, hatching for texture.",
+  "aspect": "1:1"
+ },
+ {
+  "type": "image",
+  "name": "mascot-d",
+  "prompt": "Black and white woodcut linocut illustration, bold clean black ink lines only on a plain white background, no grey, no shading gradients, no text. A glamorous defiant woman with 1940s victory-roll hair, cat-eye makeup, big hoop earrings, seen from the front, bust length, biting into a large slice of pizza held in both hands in front of her chin, tall dramatic stylised flames rising up from behind her head and hair, a few flying embers above. Symmetrical poster composition, thick confident outlines, hatching for texture.",
+  "aspect": "1:1"
+ }
+]

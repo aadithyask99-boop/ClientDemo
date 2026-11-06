@@ -1,0 +1,6 @@
+dist/
+node_modules/
+art-src/gen/
+art-src/us/*.jpg
+art-src/wordmark-raw.png
+.astro/

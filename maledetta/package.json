@@ -1,0 +1,14 @@
+{
+  "name": "maledetta",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": { "node": ">=22.12.0" },
+  "scripts": { "dev": "astro dev", "build": "astro build", "preview": "astro preview", "astro": "astro" },
+  "dependencies": {
+    "@fontsource/merriweather": "^5.2.0",
+    "@fontsource/oswald": "^5.2.0",
+    "astro": "^7.3.8",
+    "gsap": "^3.13.0",
+    "lenis": "^1.3.0"
+  }
+}
