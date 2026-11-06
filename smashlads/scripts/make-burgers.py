@@ -6,6 +6,7 @@ from scipy import ndimage as ndi
 os.makedirs('public/art/b', exist_ok=True)
 src = {'p2c1b0s1': 'art-src/base-burger.png'}
 for f in glob.glob('art-src/gen/b-*.png'): src[os.path.basename(f)[2:-4]] = f
+outs = {}
 for k, f in sorted(src.items()):
     a = np.asarray(Image.open(f).convert('RGB').resize((1000, 1000), Image.LANCZOS)).astype(np.float32)
     s = 40
@@ -28,5 +29,14 @@ for k, f in sorted(src.items()):
     im = im.resize((int(1000 * sc), int(1000 * sc)), Image.LANCZOS)
     out = Image.new('RGBA', (1000, 1000), (0, 0, 0, 0))
     out.paste(im, (int(500 - bc * sc), int(930 - y1 * sc)), im)
-    out.save(f'public/art/b/{k}.webp', quality=84, alpha_quality=90, method=6)
-print(len(src), 'burgers')
+    outs[k] = out
+# one shared crop for every burger: no empty space above the tallest one, none at the sides
+tops = [np.where(np.asarray(o)[..., 3] > 40)[0].min() for o in outs.values()]
+lefts = [np.where(np.asarray(o)[..., 3] > 40)[1].min() for o in outs.values()]
+rights = [np.where(np.asarray(o)[..., 3] > 40)[1].max() for o in outs.values()]
+cy0 = max(0, min(tops) - 14); cy1 = 962; cx0 = max(0, min(lefts) - 14); cx1 = min(1000, max(rights) + 14)
+for k, o in outs.items():
+    o.crop((cx0, cy0, cx1, cy1)).save(f'public/art/b/{k}.webp', quality=84, alpha_quality=90, method=6)
+import json
+json.dump({'w': int(cx1 - cx0), 'h': int(cy1 - cy0), 'bottom': round(float((930 - cy0) / (cy1 - cy0)), 4)}, open('src/data/burger-dims.json', 'w'))
+print(len(src), 'burgers', cx1 - cx0, 'x', cy1 - cy0)

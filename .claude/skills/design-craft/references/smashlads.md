@@ -66,3 +66,9 @@ Lessons:
 - Audit by eye against each recipe: first pass only 9 of 16 matched (the model adds a third patty, or a cheese sheet where lettuce was removed). Fix that worked: edit from the nearest correct image with ONE change and say "exactly TWO patties, exactly TWO cheese slices, put nothing in its place". Never chain more than one change per edit.
 - UI: toggles (patties, cheese, bacon, lettuce and pickles, sides) crossfade between photos; price, kcal, layer count update; Add to cart. Patty-type and bun swaps were dropped (no photos for them).
 - Bug: two elements used `data-price` (menu Add buttons and the builder total), so the total read "Add to cart". Use unique data attributes.
+
+## Ninth pass: alignment and white-space audit (2026-11-06)
+- Method that found things: measure each section's content top and bottom against its box in the headless browser (space above and below the first and last visible child), then look at element screenshots of the builder, band and footer at 1440 and 390.
+- Builder gap: the generated burger photos have about 22% empty margin above the burger; crop every photo to one shared box (scripts/make-burgers.py writes src/data/burger-dims.json, read by the page for aspect-ratio and the plate position). The plate looked in front of the burger because a later positioned element paints over an earlier one: give the burger a higher z-index and place the plate absolutely at the bun's bottom edge.
+- Footer: duplicate Contact link (old mailto plus the new overlay button), the cart button covered Reset (give the HUD right padding), the wordmark crowded the HUD on phones (raise it), and the footer was far taller than its content.
+- Fixed-position helpers (cart, top bar) must be in the audit: check that no control is covered at the page corners.

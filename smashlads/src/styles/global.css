@@ -235,20 +235,20 @@ input, textarea { cursor: text; }
 .feel__kid { position: absolute; left: 31vw; bottom: 3vw; width: 22vw; aspect-ratio: 1; background: var(--orange); z-index: 3; -webkit-mask: url('../assets/mascot-kid.png') center / contain no-repeat; mask: url('../assets/mascot-kid.png') center / contain no-repeat; }
 
 /* ---------- footer: the slicing game ---------- */
-.foot { min-height: 62vw; overflow: hidden; padding: 3vw 3vw 0; }
+.foot { min-height: 46vw; overflow: hidden; padding: 3vw 3vw 0; }
 .foot__top { display: flex; justify-content: space-between; align-items: center; font-size: clamp(22px, 1.8vw, 30px); text-transform: uppercase; position: relative; z-index: 7; }
 .foot__top nav { display: flex; gap: 2.4vw; }
 .foot__top a, .foot__top button { text-decoration: none; transition: color 0.25s; }
 .foot__top a:hover, .foot__top button:hover { color: var(--orange); }
 .foot__tag { position: relative; z-index: 2; margin-top: 1.4vw; font-size: clamp(22px, 1.8vw, 30px); text-transform: uppercase; }
-.foot__word { position: absolute; left: 0; right: 0; bottom: 3.6vw; text-align: center; font: 400 15.6vw / 0.9 'Modak', sans-serif; color: var(--blue); -webkit-text-stroke: 0.06em var(--white); paint-order: stroke fill; white-space: nowrap; pointer-events: none; z-index: 1; }
+.foot__word { position: absolute; left: 0; right: 0; bottom: 5.6vw; text-align: center; font: 400 15.6vw / 0.9 'Modak', sans-serif; color: var(--blue); -webkit-text-stroke: 0.06em var(--white); paint-order: stroke fill; white-space: nowrap; pointer-events: none; z-index: 1; }
 .game { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 4; touch-action: pan-y; }
 .game.is-live { touch-action: none; }
-.game__msg { position: absolute; left: 50%; top: 40%; transform: translateX(-50%); z-index: 5; text-align: center; pointer-events: none; display: grid; gap: 0.3vw; text-transform: uppercase; }
+.game__msg { position: absolute; left: 50%; top: 24%; transform: translateX(-50%); z-index: 5; text-align: center; pointer-events: none; display: grid; gap: 0.3vw; text-transform: uppercase; }
 .game__msg b { font: 400 clamp(60px, 7vw, 120px) / 0.9 'Mouse Memoirs', sans-serif; color: var(--orange); }
 .game__msg span { font-size: clamp(24px, 2vw, 34px); }
 .game__msg.is-hidden { opacity: 0; transition: opacity 0.3s; }
-.game__hud { position: absolute; left: 3vw; right: 3vw; bottom: 1.2vw; z-index: 6; display: flex; align-items: center; gap: 2.6vw; text-transform: uppercase; font-size: clamp(24px, 2vw, 34px); pointer-events: none; }
+.game__hud { position: absolute; left: 3vw; right: 9vw; bottom: 1.4vw; z-index: 6; display: flex; align-items: center; gap: 2.6vw; text-transform: uppercase; font-size: clamp(24px, 2vw, 34px); pointer-events: none; }
 .game__hud > * { pointer-events: auto; }
 .game__hud b { color: var(--orange); font-weight: 400; margin-left: 0.3em; }
 .game__hud .pill { margin-left: auto; }
@@ -334,11 +334,11 @@ input, textarea { cursor: text; }
   .route { display: none; }
   .feel { grid-template-columns: 1fr; padding: 20vw 6vw 10vw; gap: 8vw; } .feel h2 { font-size: 26vw; } .feel__txt p { max-width: none; margin-bottom: 6vw; } .feel__img img { border-radius: 5vw; }
   .feel__kid { position: relative; left: auto; bottom: auto; width: 66vw; margin: -14vw auto 0; }
-  .foot { min-height: 196vw; padding: 7vw 5vw 0; } .foot__top { flex-direction: column; align-items: flex-start; gap: 3vw; font-size: 24px; } .foot__top nav { gap: 5vw; flex-wrap: wrap; }
+  .foot { min-height: 178vw; padding: 7vw 5vw 0; } .foot__top { flex-direction: column; align-items: flex-start; gap: 3vw; font-size: 24px; } .foot__top nav { gap: 5vw; flex-wrap: wrap; }
   .foot__tag { font-size: 24px; margin-top: 4vw; }
-  .foot__word { font-size: 31vw; line-height: 0.8; bottom: 30vw; padding: 0 2vw; }
+  .foot__word { font-size: 31vw; line-height: 0.8; bottom: 40vw; padding: 0 2vw; }
   .foot__word span { display: block; }
-  .game__msg { top: 41%; width: 90vw; } .game__msg b { font-size: 17vw; } .game__msg span { font-size: 26px; }
+  .game__msg { top: 32%; width: 90vw; } .game__msg b { font-size: 17vw; } .game__msg span { font-size: 26px; }
   .game__hud { left: 5vw; right: 5vw; bottom: 4vw; flex-wrap: wrap; gap: 3vw 6vw; font-size: 28px; } .lives svg { width: 28px; } .game__hud .pill { margin-left: 0; }
   .foot__note { display: block; position: relative; left: auto; bottom: auto; margin-top: 4vw; font-size: 18px; opacity: 0.7; }
   .fm__close { top: 0; left: 0; right: 0; border-radius: 0; text-align: center; padding: 3vw 0; width: 100%; font-size: 26px; }
@@ -356,13 +356,13 @@ input, textarea { cursor: text; }
 .bopt { display: grid; gap: 0.6vw; justify-items: center; text-align: center; }
 .bopt > span { color: var(--blue); font-size: clamp(24px, 1.9vw, 32px); text-transform: uppercase; }
 .bopt__row { display: flex; flex-wrap: wrap; gap: 0.5vw; justify-content: center; }
-.bstage { position: relative; width: min(100%, 41vw); margin: 0 auto; }
-.bstage__burger { position: relative; width: 100%; aspect-ratio: 1; }
+.bstage { position: relative; width: min(100%, 38vw); margin: 0 auto; padding-bottom: 1.6vw; }
+.bstage__burger { position: relative; width: 100%; aspect-ratio: var(--ar, 1); z-index: 2; }
 .bimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 1vw 1.2vw rgba(20, 22, 43, 0.25)); }
-.bstage .plate { width: 84%; margin: -4.2vw auto 0; position: relative; z-index: 0; }
+.bstage .plate { position: absolute; left: 6%; width: 88%; top: var(--pb, 95%); margin: 0; transform: translateY(calc(-62% - 1.7vw)); z-index: 1; }
 .bstage .sidepic { right: -6vw; bottom: 0.6vw; width: 11vw; }
 @media (max-width: 991px) {
   .build__grid { grid-template-columns: 1fr; }
   .bstage { order: 1; width: 100%; } .bopts { order: 2; gap: 6vw; } .bopt { gap: 2vw; } .bopt__row { gap: 2vw; }
-  .bstage .plate { margin-top: -9vw; } .bstage .sidepic { right: -2vw; bottom: 4vw; width: 30vw; }
+  .bstage .sidepic { right: -2vw; bottom: 4vw; width: 30vw; } .bstage .plate { transform: translateY(calc(-62% - 2.2vw)); }
 }

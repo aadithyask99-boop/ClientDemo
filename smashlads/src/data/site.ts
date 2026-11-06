@@ -1,6 +1,7 @@
 // All content for Smashley's, a fictional smash-burger restaurant group in central London. Everything here is invented:
 // the brand, addresses, phone numbers (020 7946 0xxx is the Ofcom range reserved for fiction), hours, prices and claims.
 import credits from './credits.json';
+import dims from './burger-dims.json';
 
 export const brand = {
   name: "Smashley's",
@@ -45,6 +46,7 @@ export const menu = [
 
 // Build your own: finished burger photographs, one per combination (patties x cheese x bacon x lettuce and pickles).
 // Prices in pounds, energy in kcal. The photos are public/art/b/p{patties}c{cheese}b{bacon}s{salad}.webp.
+export const burgerDims = dims;
 export const bld = {
   base: { price: 3.5, kcal: 230 },
   toggles: [
@@ -85,7 +87,6 @@ export const footerLinks = [
   { label: 'Home', href: '#top' },
   { label: 'Burgers', href: '#', menu: true },
   { label: 'Build', href: '#build' },
-  { label: 'Contact', href: 'mailto:hello@smashleys.example' },
 ];
 
 export const note = "Smashley's is a fictional restaurant, a design concept. Photography from Unsplash contributors.";
