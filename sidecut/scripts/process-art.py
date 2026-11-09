@@ -7,10 +7,8 @@ from scipy import ndimage as ndi
 
 G, OUT = 'art-src/gen', 'public/art'
 os.makedirs(f'{OUT}/seq', exist_ok=True)
-# native resolution: the chair sits in x 120..880, y 60..1040 of the 1080 square cut from the 1080p clip (no downscale)
-for i, f in enumerate(sorted(glob.glob('art-src/fr-hi/f-*.png')), 1):
-    Image.open(f).convert('RGB').crop((120, 60, 880, 1040)).save(f'{OUT}/seq/c-{i:03d}.webp', quality=80, method=6)
-for n in ['kofi', 'raj', 'mateo', 'jin']:
+# the chair frames are made by scripts/make-chair.py (keyed from the magenta orbit); this script does not touch them
+for n in ['kofi', 'raj', 'mateo', 'jin', 'luca', 'omar', 'ben', 'tom', 'dre']:
     for s in 'fb':
         Image.open(f'{G}/barber-{n}-{s}.png').convert('L').resize((720, 960), Image.LANCZOS).save(f'{OUT}/barber-{n}-{s}.webp', quality=76, method=6)
 Image.open(f'{G}/fur.png').convert('RGB').resize((1920, 1080), Image.LANCZOS).save(f'{OUT}/hair.webp', quality=70, method=6)
@@ -23,6 +21,10 @@ def key(path, out, size=900):
     lab, n = ndi.label(solid)
     edge = set(np.unique(np.r_[lab[0], lab[-1], lab[:, 0], lab[:, -1]])) - {0}
     bg = np.isin(lab, list(edge))
+    # enclosed backdrop (the holes in scissors, rings and handles) is cleared too when it is a real patch of magenta
+    sizes = ndi.sum(solid, lab, range(1, n + 1)) if n else []
+    for k, sz in enumerate(sizes, 1):
+        if sz > 120: bg |= lab == k
     alpha = np.where(bg, 0.0, 1.0)
     alpha = ndi.gaussian_filter(alpha, 0.8)
     # remove magenta spill on the edge
@@ -38,6 +40,10 @@ def key(path, out, size=900):
     im = im.crop(bbox)
     im.thumbnail((size, size), Image.LANCZOS)
     im.save(out, quality=85, alpha_quality=90, method=6)
+for n in ['kofi', 'raj', 'mateo', 'jin']:
+    Image.open(f'{G}/mirror-{n}.png').convert('L').resize((1200, 800), Image.LANCZOS).save(f'{OUT}/mirror-{n}.webp', quality=74, method=6)
+for n in ['scissors', 'razor', 'brush']:
+    key(f'{G}/tool-{n}.png', f'{OUT}/tool-{n}.webp', 700)
 for n in ['clay', 'oil', 'comb', 'brush']:
     key(f'{G}/shelf-{n}.png', f'{OUT}/shelf-{n}.webp', 700)
 for n in ['spray', 'clock', 'pomade', 'clippers']:

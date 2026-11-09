@@ -12,6 +12,7 @@ const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
 const data = JSON.parse($('#data')!.textContent || '{}');
+const art = document.body.dataset.art || '';
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
 
 // smooth scroll on desktop pointers only
@@ -38,14 +39,21 @@ export function say(msg: string) {
   clearTimeout(toastT); toastT = window.setTimeout(() => toast.classList.remove('is-on'), 2800);
 }
 
-// ---------- hero: huge word, a beam that follows you, a chair you can turn ----------
+// "next chair" is a real time: a quarter of an hour from now, rounded up to the next twenty minutes
+function nextChair() {
+  const d = new Date(Date.now() + 15 * 60000);
+  d.setMinutes(Math.ceil(d.getMinutes() / 20) * 20, 0, 0);
+  const h = d.getHours(), m = d.getMinutes();
+  return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`;
+}
+
+// ---------- hero: a chair you can turn between two huge words ----------
 function hero() {
-  const root = $('[data-hero]')!;
   const stage = $('[data-stage]')!;
   const canvas = $<HTMLCanvasElement>('[data-chair]')!;
   const ctx = canvas.getContext('2d')!;
   const N = 73, TURN = 72; // frame 73 is frame 1 again, so the spin loops
-  const base = (document.querySelector('.intro__fur') as HTMLImageElement).src.replace('hair.webp', 'seq/');
+  const base = art + 'seq/';
   const frames: (HTMLImageElement | null)[] = new Array(N).fill(null);
   const load = (i: number) => new Promise<void>((res) => {
     const im = new Image(); im.onload = () => { frames[i] = im; res(); }; im.onerror = () => res();
@@ -74,48 +82,67 @@ function hero() {
     const p = clamp(scrollY / innerHeight, 0, 1);
     if (!dragging) { off += vel; vel *= 0.94; }
     const sway = reduce ? 0 : Math.sin(t * 0.5) * 1.6;
-    const target = p * 40 + off + sway;
-    shown += (target - shown) * 0.14;
+    shown += (p * 40 + off + sway - shown) * 0.14;
     paint((((Math.round(shown)) % TURN) + TURN) % TURN);
   });
 
-  // "next chair" is a real time: a quarter of an hour from now, rounded up to the next twenty minutes
-  const d = new Date(Date.now() + 15 * 60000);
-  d.setMinutes(Math.ceil(d.getMinutes() / 20) * 20, 0, 0);
-  const h = d.getHours(), m = d.getMinutes();
-  $('[data-next]')!.textContent = `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`;
+  const nc = nextChair();
+  $('[data-next]')!.textContent = nc;
+  $('[data-free]')!.textContent = nc;
 }
 
-// ---------- intro: fur, a thin word, the line that parts it, then the word becomes the hero's wordmark ----------
-function intro(done: () => void) {
+// hide the real hero until the intro hands over to it
+function heroEnter() {
+  const w = $$('[data-w1], [data-w2]');
+  const type = $('[data-type]')!;
+  const full = type.textContent || '';
+  const lines = $$('.hero__t1, .hero__t2');
+  if (reduce) { gsap.set(w, { opacity: 1 }); return; }
+  type.textContent = '';
+  gsap.set(w, { opacity: 1 });
+  const tl = gsap.timeline();
+  tl.from(lines, { yPercent: 100, opacity: 0, duration: 0.9, ease: 'power4.out', stagger: 0.1 }, 0)
+    .from('.hero__stage', { y: 90, opacity: 0, duration: 1.4, ease: 'power3.out' }, 0.1)
+    .from(['.hero__cone', '.hero__pool'], { opacity: 0, duration: 1.6 }, 0.2)
+    .from(['.hero__status', '.hero__copy'], { opacity: 0, y: 16, duration: 0.9, stagger: 0.12 }, 0.5);
+  const o = { n: 0 };
+  tl.to(o, { n: full.length, duration: 0.5, ease: 'none', onUpdate: () => { type.textContent = full.slice(0, Math.round(o.n)); } }, 0.9);
+}
+
+// ---------- intro: fur and a curved line, then two words fly to where the hero keeps them ----------
+function intro() {
   const el = $('[data-intro]')!;
-  const word = $('[data-introword]', el)!;
-  const ghost = $('[data-ghost]')!;
+  const iw1 = $('[data-iw1]', el)!, iw2 = $('[data-iw2]', el)!;
+  const w1 = $('[data-w1]')!, w2 = $('[data-w2]')!;
   const path = $<SVGPathElement>('.intro__line path', el)!;
   const len = path.getTotalLength();
   let finished = false;
-  gsap.set(ghost, { opacity: 0 });
+  gsap.set([w1, w2], { opacity: 0 });
   gsap.set(path, { strokeDasharray: len, strokeDashoffset: len });
+  // start "side" in the middle of the screen
+  const r = iw1.getBoundingClientRect();
+  const cx = innerWidth / 2 - (r.left + r.width / 2), cy = innerHeight / 2 - (r.top + r.height / 2);
 
-  const handoff = () => {
+  const finish = () => {
     if (finished) return; finished = true; tl.kill();
-    const g = ghost.getBoundingClientRect(), w = word.getBoundingClientRect();
-    const k = g.width / w.width;
-    const dur = reduce ? 0.01 : 1.15;
-    gsap.to(word, { x: (g.left + g.width / 2) - (w.left + w.width / 2), y: (g.top + g.height / 2) - (w.top + w.height / 2) + 6, scale: k, color: 'rgba(239,238,234,0.4)', textShadow: '0 0 0 rgba(0,0,0,0)', opacity: 1, duration: dur, ease: 'power3.inOut' });
-    gsap.to($$('.intro__fur, .intro__line, .intro__tag, .intro__skip', el), { opacity: 0, duration: dur * 0.8, ease: 'power2.out' });
-    gsap.to(el, { backgroundColor: 'rgba(10,10,10,1)', duration: dur * 0.9 });
-    gsap.to(ghost, { opacity: 1, duration: 0.4, delay: dur * 0.85 });
-    gsap.delayedCall(dur + 0.05, () => { el.remove(); done(); });
+    gsap.killTweensOf([iw1, iw2]);
+    const quick = reduce ? 0.01 : 0.5;
+    gsap.set([iw1, iw2], { x: 0, y: 0, opacity: 1 });
+    heroEnter();
+    gsap.to(el, { opacity: 0, duration: quick, delay: 0.1, onComplete: () => el.remove() });
   };
-  const tl = gsap.timeline({ onComplete: handoff });
-  if (reduce) tl.set(word, { opacity: 1 }).to({}, { duration: 0.5 });
+  const tl = gsap.timeline({ onComplete: finish });
+  if (reduce) { tl.to({}, { duration: 0.4 }); }
   else {
-    tl.fromTo(word, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }, 0.2)
+    tl.set(iw1, { x: cx, y: cy, scale: 0.8 })
+      .to(iw1, { opacity: 1, duration: 0.9, ease: 'power3.out' }, 0.2)
       .to(path, { strokeDashoffset: 0, duration: 1.5, ease: 'power2.inOut' }, 0.8)
-      .to({}, { duration: 0.5 });
+      .to($$('.intro__fur, .intro__line, .intro__tag', el), { opacity: 0, duration: 0.8, ease: 'power2.out' }, 2.4)
+      .to(iw1, { x: 0, y: 0, scale: 1, duration: 1.2, ease: 'power3.inOut' }, 2.4)
+      .fromTo(iw2, { x: innerWidth * 0.3, y: innerHeight * 0.3, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 1.2, ease: 'power3.inOut' }, 2.5)
+      .to({}, { duration: 0.35 });
   }
-  $('[data-skip]', el)!.addEventListener('click', handoff);
+  $('[data-skip]', el)!.addEventListener('click', finish);
 }
 
 // ---------- reveals ----------
@@ -123,7 +150,7 @@ function reveals() {
   $$('[data-reveal]').forEach((h) => {
     const spans = $$('.ln > span', h);
     if (reduce) { gsap.set(spans, { yPercent: 0, y: 0 }); return; }
-    gsap.to(spans, { yPercent: 0, y: 0, duration: 1.1, ease: 'power4.out', stagger: 0.12, scrollTrigger: { trigger: h, start: 'top 85%' } });
+    gsap.to(spans, { yPercent: 0, y: 0, duration: 1.1, ease: 'power4.out', stagger: 0.12, scrollTrigger: { trigger: h, start: 'top 88%' } });
   });
   // the statement lights up word by word as it scrolls past
   const st = $('[data-reveal-words]');
@@ -137,87 +164,119 @@ function reveals() {
     });
     st.innerHTML = tpl.innerHTML;
     if (reduce) gsap.set($$('.w', st), { opacity: 1 });
-    else gsap.to($$('.w', st), { opacity: 1, stagger: 0.08, ease: 'none', scrollTrigger: { trigger: '[data-why]', start: 'top 55%', end: 'center 35%', scrub: 0.6 } });
+    else gsap.to($$('.w', st), { opacity: 1, stagger: 0.08, ease: 'none', scrollTrigger: { trigger: '[data-why]', start: 'top 60%', end: 'center 40%', scrub: 0.6 } });
   }
+  // "before you sit" lights up as it arrives
+  ScrollTrigger.create({ trigger: '.book__title', start: 'top 75%', onEnter: () => $('.book__title')!.classList.add('is-lit') });
   if (!reduce) {
-    gsap.from('.cut', { y: 40, opacity: 0, duration: 0.8, ease: 'power3.out', stagger: 0.08, scrollTrigger: { trigger: '.cuts__list', start: 'top 82%' } });
-    gsap.from('.barber', { y: 60, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: '.crew__grid', start: 'top 85%' } });
-    gsap.from('.plan', { y: 80, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.14, scrollTrigger: { trigger: '.club__plans', start: 'top 85%' } });
-    gsap.from('.shelf__row li', { y: 60, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: '.shelf__row', start: 'top 85%' } });
-    gsap.from('.gift__card', { x: -80, rotateY: 40, opacity: 0, duration: 1.2, ease: 'power3.out', scrollTrigger: { trigger: '.gift', start: 'top 70%' } });
-    // the wordmark drifts up slower than the page
-    gsap.to('.hero__ghost', { yPercent: -14, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
-  }
-}
-function heroTitle() {
-  const spans = $$('.hero__title .ln > span');
-  if (reduce) gsap.set(spans, { yPercent: 0, y: 0 });
-  else {
-    gsap.to(spans, { yPercent: 0, y: 0, duration: 1.2, ease: 'power4.out', stagger: 0.14 });
-    gsap.from('.hero__stage', { opacity: 0, y: 60, duration: 1.4, ease: 'power3.out' });
-    gsap.from(['.hero__status', '.hero__hint', '.hero__cta'], { opacity: 0, y: 12, duration: 0.9, stagger: 0.1, delay: 0.3 });
+    gsap.from('.cuts__list li', { y: 36, opacity: 0, duration: 0.8, ease: 'power3.out', stagger: 0.07, scrollTrigger: { trigger: '.cuts__list', start: 'top 85%' } });
+    gsap.from('.mirrors__row .mirror', { y: 80, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: '.mirrors__row', start: 'top 88%' } });
+    gsap.from('.shelf__row li', { y: 60, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: '.shelf__row', start: 'top 88%' } });
+    gsap.from('.gift__card', { x: -80, opacity: 0, duration: 1.2, ease: 'power3.out', scrollTrigger: { trigger: '.gift', start: 'top 70%' } });
+    gsap.to('.hero__w1', { yPercent: -10, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
   }
 }
 
-// ---------- props: throw them around ----------
+// ---------- the guard menu: hover a cut and its tool comes to the cursor ----------
+function guardMenu() {
+  const list = $('[data-cuts]')!;
+  const tool = $<HTMLImageElement>('[data-toolpop]')!;
+  const src: Record<string, string> = { clippers: 'prop-clippers', comb: 'shelf-comb', scissors: 'tool-scissors', razor: 'tool-razor', brush: 'tool-brush' };
+  const rows = $$('.cut', list);
+  const moveX = gsap.quickTo(tool, 'x', { duration: 0.55, ease: 'power3' });
+  const moveY = gsap.quickTo(tool, 'y', { duration: 0.55, ease: 'power3' });
+  const place = (e: PointerEvent) => {
+    const r = list.getBoundingClientRect();
+    const w = tool.offsetWidth || 160;
+    moveX(clamp(e.clientX - r.left + 36, 0, r.width - w));
+    moveY(e.clientY - r.top - w * 0.55);
+  };
+  let shownTool = '';
+  rows.forEach((row) => {
+    const on = (e: PointerEvent | FocusEvent) => {
+      list.classList.add('is-hover'); rows.forEach((x) => x.classList.toggle('is-active', x === row));
+      if (!fine || reduce) return;
+      const t = row.dataset.tool || 'clippers';
+      if (t !== shownTool) { tool.src = `${art}${src[t]}.webp`; shownTool = t; }
+      if ('clientX' in e) place(e as PointerEvent);
+      gsap.fromTo(tool, { opacity: 0, scale: 0.7, rotation: gsap.utils.random(-22, -6) }, { opacity: 1, scale: 1, rotation: gsap.utils.random(-14, 14), duration: 0.5, ease: 'back.out(1.7)', overwrite: 'auto' });
+    };
+    row.addEventListener('pointerenter', on as EventListener);
+    row.addEventListener('focus', on as EventListener);
+  });
+  if (fine) list.addEventListener('pointermove', place as EventListener);
+  const off = () => { list.classList.remove('is-hover'); rows.forEach((x) => x.classList.remove('is-active')); gsap.to(tool, { opacity: 0, scale: 0.8, duration: 0.3, overwrite: 'auto' }); };
+  list.addEventListener('pointerleave', off);
+  list.addEventListener('focusout', (e) => { if (!list.contains((e as FocusEvent).relatedTarget as Node)) off(); });
+}
+
+// ---------- why: drag to spin, click a tool for a promise ----------
 function props() {
-  $$('[data-prop]').forEach((el, i) => {
-    gsap.set(el, { rotation: [-8, 6, -4, 9][i % 4] });
+  const list = data.props as { big: string; small: string }[];
+  const pill = $('[data-pill]')!, big = $('[data-pill-big]')!, small = $('[data-pill-small]')!;
+  const tilt = [-8, 6, -4, 9];
+  const show = (i: number) => {
+    big.textContent = list[i].big.replace('-', '−'); small.textContent = list[i].small;
+    if (!reduce) gsap.fromTo(pill, { y: 14, opacity: 0.4 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power3.out', overwrite: 'auto' });
+  };
+  show(0);
+  $$('[data-prop]').forEach((el) => {
+    const i = Number(el.dataset.prop);
+    gsap.set(el, { rotation: tilt[i % 4] });
     Draggable.create(el, {
       type: 'x,y', inertia: true, throwResistance: 3500, bounds: '[data-why]',
-      onDrag() { gsap.to(el, { rotation: gsap.utils.clamp(-25, 25, this.deltaX * 2.2), duration: 0.3, overwrite: true }); },
-      onThrowUpdate() { gsap.set(el, { rotation: gsap.utils.clamp(-40, 40, InertiaPlugin.getVelocity(el, 'x') / 60) }); },
-      onThrowComplete() { gsap.to(el, { rotation: [-8, 6, -4, 9][i % 4], duration: 0.6, ease: 'elastic.out(1, 0.5)' }); },
+      onClick() { show(i); if (!reduce) gsap.to(el, { rotation: '+=360', duration: 0.9, ease: 'power3.inOut' }); },
+      onDrag() { gsap.to(el, { rotation: gsap.utils.clamp(-30, 30, this.deltaX * 3), duration: 0.3, overwrite: true }); },
+      onThrowUpdate() { gsap.set(el, { rotation: gsap.utils.clamp(-40, 40, InertiaPlugin.getVelocity(el, 'x') / 50) }); },
+      onThrowComplete() { gsap.to(el, { rotation: tilt[i % 4], duration: 0.7, ease: 'elastic.out(1, 0.5)' }); },
     });
   });
 }
 
-// ---------- barbers: each mirror has a lamp ----------
-function crew() {
+// ---------- four mirrors ----------
+function mirrors() {
+  const items = $$('[data-mirror]');
+  const pick = (m: HTMLElement) => items.forEach((x) => x.classList.toggle('is-on', x === m));
+  items.forEach((m) => {
+    if (fine) m.addEventListener('pointerenter', () => pick(m));
+    m.addEventListener('click', () => pick(m));
+    m.addEventListener('focus', () => pick(m));
+    m.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(m); } });
+  });
+}
+
+// ---------- the book ----------
+function book() {
   const chips = $$('[data-filter]');
   chips.forEach((c) => c.addEventListener('click', () => {
     chips.forEach((x) => { const on = x === c; x.classList.toggle('is-on', on); x.setAttribute('aria-pressed', String(on)); });
     const f = c.dataset.filter!;
-    $$('.barber').forEach((b) => {
-      const show = f === 'all' || b.dataset.shop === f;
+    $$('.cutcard').forEach((b) => {
+      const show = f === 'all' || b.dataset.who === f;
       b.classList.toggle('is-off', !show);
-      if (show && !reduce) gsap.fromTo(b, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' });
+      if (show && !reduce) gsap.fromTo(b, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' });
     });
     ScrollTrigger.refresh();
   }));
   // touch: tap a portrait to see the back
-  $$('.barber__ph').forEach((p) => p.addEventListener('click', () => p.closest('.barber')!.classList.toggle('is-lit')));
+  $$('.cutcard__ph').forEach((p) => p.addEventListener('click', () => p.closest('.cutcard')!.classList.toggle('is-lit')));
+  if (!reduce) gsap.from('.cutcard', { y: 60, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.08, scrollTrigger: { trigger: '.book__grid', start: 'top 88%' } });
 }
 
-// ---------- shops: choose one, see its hours and whether it is open now ----------
-function shops() {
-  const list = data.shops as { id: string; name: string; street: string; phone: string; week: string[][] }[];
-  const panel = $('[data-shoppanel]')!;
-  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const fmt = (t: string) => { const h = +t.slice(0, 2); return `${h % 12 || 12}${t.slice(3) === '00' ? '' : ':' + t.slice(3)}${h >= 12 ? 'pm' : 'am'}`; };
-  let current = list[0];
-  function render(s: typeof current) {
-    current = s;
-    const now = new Date(), today = days[now.getDay()], mins = now.getHours() * 60 + now.getMinutes();
-    $('[data-s-name]', panel)!.textContent = s.name;
-    $('[data-s-addr]', panel)!.textContent = s.street;
-    const ph = $<HTMLAnchorElement>('[data-s-phone]', panel)!; ph.textContent = s.phone; ph.href = 'tel:' + s.phone.replace(/\s/g, '');
-    const row = s.week.find((r) => r[0] === today)!;
-    const [oh, om] = row[1].split(':').map(Number), [ch, cm] = row[2].split(':').map(Number);
-    const open = mins >= oh * 60 + om && mins < ch * 60 + cm;
-    const st = $('[data-s-status]', panel)!;
-    st.textContent = open ? `Open now, until ${fmt(row[2])}` : `Closed now, opens ${fmt(row[1])}`;
-    st.classList.toggle('is-closed', !open);
-    $('[data-s-hours]', panel)!.innerHTML = s.week.map((r) => `<div class="${r[0] === today ? 'is-today' : ''}"><dt>${r[0]}</dt><dd>${fmt(r[1])} to ${fmt(r[2])}</dd></div>`).join('');
-  }
-  render(current);
-  $('[data-s-book]', panel)!.addEventListener('click', () => document.dispatchEvent(new CustomEvent('book', { detail: 'shop:' + current.id })));
-  const tabs = $$('[data-shop-tab]');
-  tabs.forEach((t) => t.addEventListener('click', () => {
-    tabs.forEach((x) => { const on = x === t; x.classList.toggle('is-on', on); x.setAttribute('aria-pressed', String(on)); });
-    const go = () => { render(list.find((x) => x.id === t.dataset.shopTab)!); if (!reduce) gsap.fromTo(panel, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' }); };
-    go();
-  }));
+// ---------- the club: three cards fan up, the saving counts ----------
+function club() {
+  if (reduce) return;
+  gsap.from('.plan', { y: 170, opacity: 0, duration: 1.1, ease: 'power3.out', stagger: 0.14, scrollTrigger: { trigger: '[data-fan]', start: 'top 85%' } });
+  $$('[data-save]').forEach((el) => {
+    const v = Number(el.dataset.save); const o = { n: 0 };
+    gsap.to(o, { n: v, duration: 1.6, ease: 'power2.out', scrollTrigger: { trigger: '[data-fan]', start: 'top 75%', once: true }, onUpdate: () => { el.textContent = '£' + String(Math.round(o.n)).padStart(2, '0'); } });
+    el.textContent = '£00';
+  });
+}
+
+// ---------- the shelf ----------
+function shelf() {
+  $$('[data-add]').forEach((b) => b.addEventListener('click', () => say(`${b.dataset.add} added. A concept: nothing is sold.`)));
 }
 
 // ---------- gift card ----------
@@ -227,17 +286,16 @@ function gift() {
   $$('[data-amount]').forEach((b) => b.addEventListener('click', () => {
     $$('[data-amount]').forEach((x) => { const on = x === b; x.classList.toggle('is-on', on); x.setAttribute('aria-pressed', String(on)); });
     amt.textContent = '£' + b.dataset.amount;
-    if (!reduce) gsap.fromTo(card, { rotateY: 0 }, { rotateY: 360, duration: 0.9, ease: 'power3.inOut', overwrite: false });
   }));
   $('[data-gift-send]')!.addEventListener('click', () => say('A concept: no card is sent and nothing is charged.'));
   if (!fine || reduce) return;
-  const rx = gsap.quickTo(card, 'rotationX', { duration: 0.5, ease: 'power3' });
-  const ry = gsap.quickTo(card, 'rotationY', { duration: 0.5, ease: 'power3' });
+  const rx = gsap.quickTo(card, 'rotationX', { duration: 0.6, ease: 'power3' });
+  const ry = gsap.quickTo(card, 'rotationY', { duration: 0.6, ease: 'power3' });
   const area = $('[data-gift]')!;
   area.addEventListener('pointermove', (e) => {
     const r = card.getBoundingClientRect();
     const x = (e.clientX - (r.left + r.width / 2)) / innerWidth, y = (e.clientY - (r.top + r.height / 2)) / innerHeight;
-    ry(x * 40); rx(-y * 30);
+    ry(-16 + x * 40); rx(5 - y * 30);
     card.style.setProperty('--sx', (50 + x * 120) + '%'); card.style.setProperty('--sy', (50 + y * 120) + '%');
   });
 }
@@ -262,9 +320,70 @@ function reviews() {
   }
 }
 
-// ---------- easter eggs ----------
+// ---------- find the chair: a street map and a walking route ----------
+function visit() {
+  type Shop = { id: string; name: string; street: string; area: string; phone: string; tube: string; walk: number; rot: number; walkins: string; week: string[][] };
+  const list = data.shops as Shop[];
+  const root = $('[data-visit]')!;
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const full: Record<string, string> = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday', Sat: 'Saturday', Sun: 'Sunday' };
+  const fmt = (t: string) => { const h = +t.slice(0, 2); return `${h % 12 || 12}${t.slice(3) === '00' ? '' : ':' + t.slice(3)} ${h >= 12 ? 'PM' : 'AM'}`; };
+  const roads = $('[data-roads]', root)!, route = $<SVGPathElement>('[data-route]', root)!;
+  const stn = $<SVGCircleElement>('[data-stn]', root)!, stnL = $<SVGTextElement>('[data-stn-lbl]', root)!;
+  const pin = $<SVGCircleElement>('[data-pin]', root)!, pinL = $<SVGTextElement>('[data-pin-lbl]', root)!;
+  const NS = 'http://www.w3.org/2000/svg';
+  const C = { x: 300, y: 230 };
+  const rotate = (x: number, y: number, deg: number) => { const a = deg * Math.PI / 180, dx = x - C.x, dy = y - C.y; return [C.x + dx * Math.cos(a) - dy * Math.sin(a), C.y + dx * Math.sin(a) + dy * Math.cos(a)]; };
+
+  function drawMap(s: Shop, animate: boolean) {
+    roads.innerHTML = '';
+    roads.setAttribute('transform', `rotate(${s.rot} ${C.x} ${C.y})`);
+    const add = (x: number, y: number, w: number, h: number, fill = '#1c1c1f') => { const r = document.createElementNS(NS, 'rect'); r.setAttribute('x', String(x)); r.setAttribute('y', String(y)); r.setAttribute('width', String(w)); r.setAttribute('height', String(h)); r.setAttribute('rx', '3'); r.setAttribute('fill', fill); roads.appendChild(r); };
+    [-40, 70, 160, 250, 330, 420, 520].forEach((y, i) => add(-300, y, 1200, i === 2 ? 26 : 14));
+    [-80, 60, 190, 310, 440, 560, 700].forEach((x, i) => add(x, -300, i === 3 ? 26 : 14, 1100));
+    const a = rotate(130, 340, s.rot), m1 = rotate(317, 340, s.rot), m2 = rotate(317, 160, s.rot), b = rotate(440, 160, s.rot);
+    route.setAttribute('d', `M${a[0]} ${a[1]} L${m1[0]} ${m1[1]} L${m2[0]} ${m2[1]} L${b[0]} ${b[1]}`);
+    stn.setAttribute('cx', String(a[0])); stn.setAttribute('cy', String(a[1]));
+    stnL.setAttribute('x', String(a[0] - 4)); stnL.setAttribute('y', String(a[1] + 34)); stnL.textContent = s.tube;
+    pin.setAttribute('cx', String(b[0])); pin.setAttribute('cy', String(b[1]));
+    pinL.setAttribute('x', String(b[0] + 30)); pinL.setAttribute('y', String(b[1] + 4));
+    const len = route.getTotalLength();
+    route.style.strokeDasharray = String(len);
+    if (animate && !reduce) { gsap.fromTo(route, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: 1.2, ease: 'power2.inOut' }); gsap.fromTo(pin, { scale: 0.4, transformOrigin: '50% 50%' }, { scale: 1, duration: 0.6, delay: 0.9, ease: 'back.out(2)' }); }
+    else route.style.strokeDashoffset = '0';
+    $('[data-s-walk]', root)!.textContent = `${s.walk} min walk from ${s.tube}`;
+  }
+
+  function render(s: Shop, animate: boolean) {
+    $('[data-s-street]', root)!.textContent = s.street; $('[data-s-area]', root)!.textContent = s.area;
+    const ph = $<HTMLAnchorElement>('[data-s-phone]', root)!; ph.textContent = s.phone; ph.href = 'tel:' + s.phone.replace(/\s/g, '');
+    const today = days[new Date().getDay()];
+    // group days that share the same hours, like a printed door sign
+    const groups: { days: string[]; open: string; close: string }[] = [];
+    s.week.forEach((r) => { const g = groups[groups.length - 1]; if (g && g.open === r[1] && g.close === r[2]) g.days.push(r[0]); else groups.push({ days: [r[0]], open: r[1], close: r[2] }); });
+    $('[data-s-hours]', root)!.innerHTML = groups.map((g) => {
+      const label = g.days.length > 1 ? `${g.days[0]} – ${g.days[g.days.length - 1]}` : full[g.days[0]];
+      const isToday = g.days.includes(today);
+      return `<div class="${isToday ? 'is-today' : ''}"><dt>${label}${isToday ? ' · today' : ''}</dt><dd>${fmt(g.open)} – ${fmt(g.close)}</dd></div>`;
+    }).join('');
+    $('[data-s-walkins]', root)!.textContent = s.walkins;
+    drawMap(s, animate);
+  }
+  let current = list[0];
+  render(current, false);
+  $('[data-s-book]', root)!.addEventListener('click', () => document.dispatchEvent(new CustomEvent('book', { detail: 'shop:' + current.id })));
+  const tabs = $$('[data-shop-tab]', root);
+  tabs.forEach((t) => t.addEventListener('click', () => {
+    tabs.forEach((x) => { const on = x === t; x.classList.toggle('is-on', on); x.setAttribute('aria-pressed', String(on)); });
+    current = list.find((x) => x.id === t.dataset.shopTab)!;
+    render(current, true);
+  }));
+  // draw the route the first time the map comes into view
+  if (!reduce) ScrollTrigger.create({ trigger: '.visit__mapwrap', start: 'top 80%', once: true, onEnter: () => { const len = route.getTotalLength(); gsap.fromTo(route, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: 1.4, ease: 'power2.inOut' }); } });
+}
+
+// ---------- easter egg: type "fade" and the screen goes through a skin fade ----------
 function eggs() {
-  // 1. type "fade": the screen goes through a skin fade, dark at the bottom to clear at the top
   let buf = '';
   addEventListener('keydown', (e) => {
     if ((e.target as HTMLElement).closest('input, textarea')) return;
@@ -279,24 +398,9 @@ function eggs() {
       .to(items, { opacity: 0, duration: 0.9, stagger: { each: 0.05, from: 'start' } }, '+=0.35');
     say('Number one on the sides. Skin on the bottom.');
   });
-  // 2. the footer wordmark gets a pass with the clippers
-  const word = $('[data-word]')!;
-  const chars = $$('.ch', word);
-  const clip = $('.foot__clip', word)!;
-  let busy = false;
-  const pass = () => {
-    if (busy || reduce) return; busy = true;
-    const w = word.clientWidth;
-    const tl = gsap.timeline({ onComplete: () => { busy = false; } });
-    tl.set(clip, { opacity: 1, x: -clip.clientWidth })
-      .to(clip, { x: w, duration: 1.6, ease: 'power1.inOut' }, 0)
-      .to(chars, { opacity: 0.1, duration: 0.25, stagger: 1.2 / chars.length }, 0.1)
-      .to(clip, { opacity: 0, duration: 0.2 }, 1.7)
-      .to(chars, { opacity: 1, duration: 0.8, stagger: 0.05 }, 2.2);
-  };
-  word.addEventListener('pointerenter', pass); word.addEventListener('click', pass);
 }
 
-reveals(); props(); crew(); shops(); gift(); reviews(); eggs(); hero(); initBooking({ data, lenis, say, reduce });
-intro(heroTitle);
+reveals(); guardMenu(); props(); mirrors(); book(); club(); shelf(); gift(); reviews(); visit(); eggs(); hero();
+initBooking({ data, lenis, say, reduce, art });
+intro();
 ScrollTrigger.refresh();
