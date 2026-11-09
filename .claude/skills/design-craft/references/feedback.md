@@ -325,3 +325,10 @@ I turned the owner's "looks cluttered, find a fine balance" (EVM) into "the page
 - Brief: same idea as Maledetta, other colours, plus a Fruit Ninja footer (bombs, score, reset), a menu overlay, and a build-your-own-burger. I showed a plan with palettes and a generation list; the owner answered in one message (name, bombs, home-page builder, palette A, generation ok).
 - Mistakes: an orange chosen by eye failed text contrast; a shared selector stretched a tag; a desktop scroll effect leaked to phones. Lesson: run the contrast check on the accent as a text colour at palette time, and scope every parallax to its breakpoint.
 - Good: asking before building (plan with a visual palette sheet and the full generation list) meant no rework on scope.
+
+## Sidecut: replica of a barbershop reel for a fictional London group (2026-11-09)
+- Brief: owner shared an Instagram reel and asked for a frame-by-frame readout of design, animation, interactions and what to generate; then chose a multi-branch central London barbershop and hero option A. I answered the cost question honestly: my first estimate of $2 was too high; real prices (Seedream about $0.018 an image, Seedance $0.157 at 720p and $0.35 at 1080p) gave about $1.
+- Choices: generated chair turn played as canvas frames over three.js (photographic, light, no licence question); a free-model search found nothing with a clean CC0 licence.
+- Mistakes: GSAP versus a CSS percent transform (title hidden), a CSS transition fighting GSAP (portraits invisible), proxy flags missing for Node (401). All found by screenshots and a computed-style check, not by reading code.
+- Lesson: when a section looks empty in a screenshot, read its computed opacity and transform before touching layout.
+
