@@ -42,9 +42,8 @@ function buildShards() {
   const rnd = (a, b) => a + Math.random() * (b - a);
   // base x, base y, angle (deg, -90 is straight up), length, width
   const defs = [
-    [250, 600, -112, 380, 40], [345, 600, -104, 470, 52], [120, 600, -122, 300, 34], [60, 600, -128, 230, 26],
-    [770, 600, -70, 390, 40], [690, 600, -78, 480, 52], [890, 600, -60, 310, 34], [950, 600, -54, 230, 26],
-    [500, 600, -90, 250, 30],
+    [210, 600, -118, 400, 40], [300, 600, -108, 470, 50], [120, 600, -126, 330, 34], [380, 600, -98, 360, 36],
+    [50, 600, -132, 250, 26], [470, 600, -86, 300, 30],
   ];
   defs.forEach(([x, y, a, len, w]) => {
     const ang = (a * Math.PI) / 180, dx = Math.cos(ang), dy = Math.sin(ang), nx = -dy, ny = dx, bend = len * 0.16 * (a < -90 ? -1 : 1);
@@ -131,7 +130,6 @@ function initSpecs(desktop) {
   gsap.set('#spShadow', { opacity: 0, scaleX: 0.4 });
   gsap.set('[data-tag]', { opacity: 0, scale: 0.4, transformOrigin: '0 50%' });
   gsap.set('#spClose p span', { yPercent: 110 });
-  gsap.set('#spClose .sp-stag', { opacity: 0, scale: 0.6 });
   const tl = gsap.timeline({ scrollTrigger: { trigger: '#specsPin', start: 'top top', end: '+=300%', pin: true, scrub: 0.8, anticipatePin: 1 } });
   tl.to(words, { opacity: 1, duration: 0.12, stagger: 0.05, ease: 'none' }, 0)
     .to('#spKnit', { y: 0, x: 0, rotationZ: -5, rotationX: 0, rotationY: 0, scale: 1, opacity: 1, duration: 0.42, ease: 'power3.out' }, 0.02)
@@ -140,7 +138,6 @@ function initSpecs(desktop) {
     .to('#spKnit', { rotationY: 24, rotationZ: 5, rotationX: 6, scale: 1.1, y: -14, duration: 0.5, ease: 'sine.inOut' }, 0.44)
     .to('#spShadow', { scaleX: 0.9, duration: 0.5, ease: 'sine.inOut' }, 0.44)
     .to('#spCta', { opacity: 1, duration: 0.08 }, 0.62)
-    .to('#spClose .sp-stag', { opacity: 1, scale: 1, rotation: 360, duration: 0.14, ease: 'back.out(1.6)' }, 0.72)
     .to('#spClose p span', { yPercent: 0, duration: 0.14, stagger: 0.1, ease: 'power3.out' }, 0.74)
     .to('#spKnit', { rotationY: 0, rotationZ: -2, scale: 1.04, duration: 0.2, ease: 'sine.inOut' }, 0.84);
   if (fine) {
@@ -229,7 +226,7 @@ function initFooterFigs() {
   const chars = [...txt].map((c) => { const s = document.createElement('span'); s.textContent = c; word.append(s); return s; });
   const bl = document.createElement('i'); bl.className = 'bl'; word.append(bl);
   const small = matchMedia('(max-width: 860px)');
-  const sizes = () => (small.matches ? { a: 1.9, b: 1.2, c: 0.9 } : { a: 1.0, b: 0.66, c: 0.46 }); // figure height as a share of the letter height
+  const sizes = () => (small.matches ? { a: 1.9, b: 1.2, c: 0.9 } : { a: 1.15, b: 0.78, c: 0.55 }); // figure height as a share of the letter height
   const figs = $$('.fig');
   function place() {
     const fs = parseFloat(getComputedStyle(word).fontSize);

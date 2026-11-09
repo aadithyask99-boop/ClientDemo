@@ -125,8 +125,8 @@ function cloud(seed) {
   const c = document.createElement('canvas'); c.width = W; c.height = H;
   const x = c.getContext('2d'); const out = x.createImageData(W, H);
   for (let i = 0; i < W * H; i++) {
-    const a = Math.min(1, Math.max(0, (acc[i] - 0.4) / 0.3)), sm = a * a * (3 - 2 * a);
-    out.data[i * 4] = 232; out.data[i * 4 + 1] = 240; out.data[i * 4 + 2] = 248; out.data[i * 4 + 3] = Math.round(sm * 238);
+    const a = Math.min(1, Math.max(0, (acc[i] - 0.34) / 0.22)), sm = a * a * (3 - 2 * a);
+    out.data[i * 4] = 238; out.data[i * 4 + 1] = 244; out.data[i * 4 + 2] = 250; out.data[i * 4 + 3] = Math.round(sm * 252);
   }
   x.putImageData(out, 0, 0);
   return c.toDataURL('image/png');
@@ -406,8 +406,8 @@ initSections();
 
 /* reveals (all sizes) */
 if (!reduce) {
-  $$('[data-reveal]').forEach((el) => gsap.from(el, { y: 60, opacity: 0, duration: 1.1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%' } }));
-  ScrollTrigger.batch('.card, .feature', { start: 'top 90%', onEnter: (b) => gsap.from(b, { y: 70, opacity: 0, duration: 0.9, stagger: 0.08, ease: 'power3.out', overwrite: true }) });
+  $$('[data-reveal]').forEach((el) => gsap.from(el, { y: 60, opacity: 0, duration: 1.1, ease: 'power3.out', scrollTrigger: { trigger: el, start: el.closest('#collection') ? 'top 130%' : 'top 88%' } }));
+  ScrollTrigger.batch('.card, .feature', { start: 'top 125%', onEnter: (b) => gsap.from(b, { y: 70, opacity: 0, duration: 0.9, stagger: 0.08, ease: 'power3.out', overwrite: true }) });
   ScrollTrigger.batch('.pcard', { start: 'top 88%', onEnter: (b) => gsap.from(b, { y: 80, opacity: 0, duration: 1, stagger: 0.1, ease: 'power3.out', overwrite: true }) });
   ScrollTrigger.batch('.scard', { start: 'top 92%', onEnter: (b) => gsap.from(b, { x: 80, opacity: 0, duration: 0.9, stagger: 0.08, ease: 'power3.out', overwrite: true }) });
   $$('.lb__text > *').forEach((el) => gsap.from(el, { y: 40, opacity: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 90%' } }));

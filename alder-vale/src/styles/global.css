@@ -120,7 +120,7 @@ h1, h2, h3, p { margin: 0; }
 .hero__word {
   position: absolute; left: 0; right: 0; top: 46%; margin-top: -0.4em; text-align: center;
   font-family: var(--word); font-weight: 900; text-transform: uppercase; white-space: nowrap;
-  font-size: 19vw; line-height: 0.8; letter-spacing: -0.015em; color: var(--hw);
+  font-size: 17.6vw; line-height: 0.8; letter-spacing: -0.015em; color: var(--hw);
   transition: color 0.5s; user-select: none; pointer-events: none;
 }
 .hero__models { --mw: calc(97vh * 0.573); position: absolute; left: calc(50% - var(--mw) / 2); top: 12vh; height: 97vh; width: var(--mw); }
@@ -145,8 +145,8 @@ h1, h2, h3, p { margin: 0; }
 .rating .faces i { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--hg); margin-left: -8px; background-size: cover; background-position: center top; }
 .rating .faces i:first-child { margin-left: 0; }
 .picker { position: absolute; z-index: 3; right: var(--gut); top: 26vh; display: grid; gap: 10px; width: min(18.5rem, 24vw); }
-.swatch { display: grid; grid-template-columns: 54px 1fr; align-items: center; gap: 12px; padding: 8px 18px 8px 8px; border-radius: 999px; text-align: left; background: rgba(255, 255, 255, 0.34); transition: background 0.35s, translate 0.4s var(--ease), box-shadow 0.4s; min-height: 64px; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
-.hero.is-dark .swatch { background: rgba(255, 255, 255, 0.14); }
+.swatch { display: grid; grid-template-columns: 54px 1fr; align-items: center; gap: 12px; padding: 8px 18px 8px 8px; border-radius: 999px; text-align: left; background: color-mix(in srgb, var(--hg), #fff 52%); transition: background 0.35s, translate 0.4s var(--ease), box-shadow 0.4s; min-height: 64px; }
+.hero.is-dark .swatch { background: color-mix(in srgb, var(--hg), #fff 16%); }
 .swatch:hover { translate: -6px 0; }
 .swatch.is-on { background: rgba(255, 255, 255, 0.92); color: #0f1c33; box-shadow: 0 14px 30px -14px rgba(10, 20, 40, 0.45); }
 .swatch .t { width: 54px; height: 54px; border-radius: 50%; background: #dfe5ec; overflow: hidden; }

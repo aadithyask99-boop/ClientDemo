@@ -1,6 +1,5 @@
 ---
 import { specs, colourways } from '../data/site';
-import Stag from './Stag.astro';
 import { u } from '../lib';
 ---
 <section class="specs" id="specs" data-theme="dark">
@@ -17,6 +16,6 @@ import { u } from '../lib';
       </div>
     </div>
     <a class="pill sp-cta" id="spCta" href="#top">{specs.cta} ${colourways[0].price}<span class="go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a>
-    <div class="sp-close" id="spClose"><Stag class="sp-stag" /><p class="display">{specs.closing.map((l) => <span>{l}</span>)}</p></div>
+    <div class="sp-close" id="spClose"><p class="display">{specs.closing.map((l) => <span>{l}</span>)}</p></div>
   </div>
 </section>
