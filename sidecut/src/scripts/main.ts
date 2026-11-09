@@ -12,7 +12,8 @@ const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
 const data = JSON.parse($('#data')!.textContent || '{}');
-const art = document.body.dataset.art || '';
+// the art folder is read from a real image address, so it holds under any base path (and in the preview bundle)
+const art = ((document.querySelector('.intro__fur') as HTMLImageElement | null)?.src || '').replace(/hair\.webp.*$/, '') || document.body.dataset.art || '';
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
 
 // smooth scroll on desktop pointers only
