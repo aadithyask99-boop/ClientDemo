@@ -9,7 +9,7 @@ export function initCursor() {
   const root = document.documentElement;
   const needle = document.createElement('div'); needle.className = 'cur-n'; needle.setAttribute('aria-hidden', 'true');
   const vb = /viewBox="([^"]+)"/.exec(stagRaw)[1], sd = /d="([^"]+)"/.exec(stagRaw)[1];
-  needle.innerHTML = `<svg class="cur-arrow" viewBox="0 0 24 32" width="24" height="32"><path d="M3 2.5 L3 24.5 L8.4 19.6 L12.2 28.2 L15.8 26.6 L12 18.2 L19.2 18.2 Z" fill="#0f1c33" stroke="#f1ede4" stroke-width="1.8" stroke-linejoin="round"/></svg><svg class="cur-stag" viewBox="${vb}" width="26" height="42"><path d="${sd}" fill="#8c2433" stroke="#f1ede4" stroke-width="22" stroke-linejoin="round" paint-order="stroke" fill-rule="evenodd"/></svg>`;
+  needle.innerHTML = `<svg class="cur-arrow" viewBox="0 0 24 32" width="24" height="32"><path d="M3 2.5 L3 24.5 L8.4 19.6 L12.2 28.2 L15.8 26.6 L12 18.2 L19.2 18.2 Z" fill="#0f1c33" stroke="#f1ede4" stroke-width="1.8" stroke-linejoin="round"/></svg><svg class="cur-stag" viewBox="${vb}" width="20" height="32"><path d="${sd}" fill="#8c2433" stroke="#f1ede4" stroke-width="22" stroke-linejoin="round" paint-order="stroke" fill-rule="evenodd"/></svg>`;
   const ring = document.createElement('div'); ring.className = 'cur-r'; ring.setAttribute('aria-hidden', 'true');
   ring.innerHTML = '<span class="cur-r__t"></span>';
   document.body.append(ring, needle);

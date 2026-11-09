@@ -82,7 +82,7 @@ function initWeather(desktop) {
   }
   gsap.set(A.chars, { opacity: 0, y: 36 });
   gsap.set(B.chars, { opacity: 0, y: -30 });
-  gsap.set('#wPeak', { yPercent: 9, opacity: 0.55 });
+  gsap.set('#wPeak', { yPercent: 4, opacity: 0.92 });
   gsap.set('#wSnow', { opacity: 0 });
   // the frame's clip is driven from one numeric proxy: browsers collapse inset(a b c b) to three values and GSAP then loses the left edge
   const fr = { t: 100, s: 8, r: 22 }, frEl = $('#wFrame');
@@ -97,7 +97,6 @@ function initWeather(desktop) {
     .to(A.chars, { opacity: 0, y: -70, duration: 0.08, stagger: { each: 0.002, from: 'random' }, ease: 'power2.in' }, 0.38)
     .to('.w-note', { opacity: 0, duration: 0.06 }, 0.38)
     .to('#wSnow', { opacity: 0, duration: 0.1 }, 0.44)
-    .to('#wPeak', { opacity: 0, yPercent: -16, duration: 0.12, ease: 'none' }, 0.46)
     .to(B.chars, { opacity: 1, y: 0, duration: 0.08, stagger: { each: 0.004, from: 'random' }, ease: 'power2.out' }, 0.86)
     .to(fr, { t: 30, duration: 0.12, ease: 'power2.out', onUpdate: paint }, 0.56)
     .to(fr, { t: 0, s: 0, r: 0, duration: 0.26, ease: 'power2.inOut', onUpdate: paint }, 0.68)
@@ -274,8 +273,8 @@ function initFooterFigs() {
 /* ---------- pinned knit on a phone: no pin, but it still moves as you scroll ---------- */
 function initSpecsMobile() {
   const words = state.words;
-  gsap.set(words, { opacity: 0.22 });
-  gsap.to(words, { opacity: 1, stagger: 0.08, ease: 'none', scrollTrigger: { trigger: '#spHead', start: 'top 82%', end: 'bottom 48%', scrub: true } });
+  gsap.set(words, { opacity: 0.3 });
+  gsap.to(words, { opacity: 1, stagger: 0.07, ease: 'none', scrollTrigger: { trigger: '#spHead', start: 'top 85%', end: 'bottom 68%', scrub: true } });
   gsap.fromTo('#spKnit', { y: 70, scale: 0.88, rotation: 6, opacity: 0 }, { y: 0, scale: 1, rotation: -2, opacity: 1, ease: 'power2.out', scrollTrigger: { trigger: '#spStage', start: 'top 90%', end: 'top 38%', scrub: 0.6 } });
   gsap.set('[data-tag]', { opacity: 0, scale: 0.5, transformOrigin: '0 50%' });
   gsap.to('[data-tag]', { opacity: 1, scale: 1, stagger: 0.14, duration: 0.5, ease: 'back.out(2)', scrollTrigger: { trigger: '#spStage', start: 'top 48%', once: true } });

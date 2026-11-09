@@ -404,7 +404,7 @@ rail.addEventListener('wheel', (e) => { if (Math.abs(e.deltaX) > Math.abs(e.delt
   const bar = $('#mbar'), seen = new Set(); let addOut = false;
   const upd = () => bar.classList.toggle('is-on', matchMedia('(max-width: 860px)').matches && addOut && seen.size > 0 && !document.body.classList.contains('is-locked'));
   const io = new IntersectionObserver((es) => { es.forEach((e) => (e.isIntersecting ? seen.add(e.target.id) : seen.delete(e.target.id))); upd(); }, { rootMargin: '0px 0px -12% 0px' });
-  ['collection', 'proof', 'shelf'].forEach((id) => io.observe(document.getElementById(id)));
+  ['collection', 'proof'].forEach((id) => io.observe(document.getElementById(id)));
   new IntersectionObserver(([e]) => { addOut = !e.isIntersecting && e.boundingClientRect.top < 0; upd(); }).observe($('#addBtn'));
   document.addEventListener('lockchange', upd);
 }

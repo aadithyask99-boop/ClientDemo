@@ -290,7 +290,7 @@ html.has-cursor input, html.has-cursor textarea { cursor: text !important; }
 .cur-n.is-hidden, .cur-r.is-hidden { opacity: 0; }
 .cur-n svg { position: absolute; left: 0; top: 0; display: block; filter: drop-shadow(0 2px 3px rgba(9, 19, 31, 0.35)); transition: opacity 0.2s, scale 0.25s var(--ease); }
 .cur-arrow { margin: -3px 0 0 -4px; }
-.cur-stag { margin: -6px 0 0 -13px; opacity: 0; scale: 0.6; }
+.cur-stag { margin: 2px 0 0 4px; opacity: 0; scale: 0.6; transform-origin: 0 0; }
 .cur-n.is-link .cur-arrow { opacity: 0; scale: 0.6; }
 .cur-n.is-link .cur-stag { opacity: 1; scale: 1; }
 .cur-n.is-down svg { scale: 0.88; }
