@@ -12,6 +12,7 @@ const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
 const data = JSON.parse($('#data')!.textContent || '{}');
+const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
 
 // smooth scroll on desktop pointers only
 let lenis: Lenis | null = null;
@@ -37,86 +38,112 @@ export function say(msg: string) {
   clearTimeout(toastT); toastT = window.setTimeout(() => toast.classList.remove('is-on'), 2800);
 }
 
-// ---------- hero: the chair turns, the lamp follows the pointer ----------
+// ---------- hero: huge word, a beam that follows you, a chair you can turn ----------
 function hero() {
   const root = $('[data-hero]')!;
   const stage = $('[data-stage]')!;
   const canvas = $<HTMLCanvasElement>('[data-chair]')!;
   const ctx = canvas.getContext('2d')!;
-  const N = 73;
-  const base = (document.querySelector('.intro__hair') as HTMLImageElement).src.replace('hair.webp', 'seq/');
+  const N = 73, TURN = 72; // frame 73 is frame 1 again, so the spin loops
+  const base = (document.querySelector('.intro__fur') as HTMLImageElement).src.replace('hair.webp', 'seq/');
   const frames: (HTMLImageElement | null)[] = new Array(N).fill(null);
   const load = (i: number) => new Promise<void>((res) => {
     const im = new Image(); im.onload = () => { frames[i] = im; res(); }; im.onerror = () => res();
     im.src = `${base}c-${String(i + 1).padStart(3, '0')}.webp`;
   });
   let off = 0, shown = 0, vel = 0, dragging = false, lastX = 0, drawn = -1;
-  const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
-  const near = (i: number) => { for (let d = 0; d < N; d++) { const a = frames[i - d] || frames[i + d]; if (a) return a; } return null; };
+  const near = (i: number) => { for (let d = 0; d < TURN; d++) { const a = frames[(i - d + TURN) % TURN] || frames[(i + d) % TURN]; if (a) return a; } return null; };
   function paint(i: number) {
     const f = near(i);
     if (!f || i === drawn) return;
-    drawn = i; ctx.drawImage(f, 0, 0, canvas.width, canvas.height);
+    drawn = i;
+    if (canvas.width !== f.naturalWidth) { canvas.width = f.naturalWidth; canvas.height = f.naturalHeight; }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(f, 0, 0);
   }
-  load(0).then(() => { paint(0); const rest = Array.from({ length: N - 1 }, (_, k) => k + 1); (async () => { for (const i of rest) await load(i); })(); });
+  load(0).then(() => { paint(0); (async () => { for (let i = 1; i < N; i++) await load(i); })(); });
 
   stage.addEventListener('pointerdown', (e) => { dragging = true; lastX = e.clientX; vel = 0; stage.setPointerCapture(e.pointerId); });
-  stage.addEventListener('pointermove', (e) => { if (!dragging) return; const dx = e.clientX - lastX; lastX = e.clientX; off += dx * -0.1; vel = dx * -0.1; });
+  stage.addEventListener('pointermove', (e) => { if (!dragging) return; const dx = e.clientX - lastX; lastX = e.clientX; off += dx * -0.14; vel = dx * -0.14; });
   const up = () => { dragging = false; };
   stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
 
-  // the lamp
-  let lx = 50, ly = 22, tx = 50, ty = 22;
-  root.addEventListener('pointermove', (e) => { const r = root.getBoundingClientRect(); tx = ((e.clientX - r.left) / r.width) * 100; ty = ((e.clientY - r.top) / r.height) * 100; });
-  root.addEventListener('pointerleave', () => { tx = 50; ty = 22; });
+  // the beam of light follows the pointer across the hero
+  let lx = 50, tx = 50, active = false;
+  root.addEventListener('pointermove', (e) => { const r = root.getBoundingClientRect(); tx = clamp(((e.clientX - r.left) / r.width) * 100, 12, 88); active = true; });
+  root.addEventListener('pointerleave', () => { active = false; });
 
-  let t0 = performance.now();
+  const t0 = performance.now();
   gsap.ticker.add(() => {
     const t = (performance.now() - t0) / 1000;
     const p = clamp(scrollY / innerHeight, 0, 1);
     if (!dragging) { off += vel; vel *= 0.94; }
-    off = clamp(off, -p * 40 - 0, N - 1);
     const sway = reduce ? 0 : Math.sin(t * 0.5) * 1.6;
-    const target = clamp(p * 36 + off + sway, 0, N - 1);
-    if (off < 0 && !dragging) off += (0 - off) * 0.05;
+    const target = p * 40 + off + sway;
     shown += (target - shown) * 0.14;
-    paint(Math.round(shown));
-    lx += (tx - lx) * 0.1; ly += (ty - ly) * 0.1;
-    root.style.setProperty('--lx', lx.toFixed(2) + '%'); root.style.setProperty('--ly', ly.toFixed(2) + '%');
+    paint((((Math.round(shown)) % TURN) + TURN) % TURN);
+    if (!active) tx = 50 + (reduce ? 0 : Math.sin(t * 0.35) * 14);
+    lx += (tx - lx) * 0.08;
+    root.style.setProperty('--lx', lx.toFixed(2) + '%');
   });
+
+  // "next chair" is a real time: a quarter of an hour from now, rounded up to the next twenty minutes
+  const d = new Date(Date.now() + 15 * 60000);
+  d.setMinutes(Math.ceil(d.getMinutes() / 20) * 20, 0, 0);
+  const h = d.getHours(), m = d.getMinutes();
+  $('[data-next]')!.textContent = `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`;
 }
 
-// ---------- intro ----------
+// ---------- intro: fur, a thin word, the line that parts it, then the word becomes the hero's wordmark ----------
 function intro(done: () => void) {
   const el = $('[data-intro]')!;
-  const word = $('.intro__word', el)!;
-  const slash = $('.intro__slash', el)!;
+  const word = $('[data-introword]', el)!;
+  const ghost = $('[data-ghost]')!;
+  const path = $<SVGPathElement>('.intro__line path', el)!;
+  const len = path.getTotalLength();
   let finished = false;
-  const end = () => {
+  gsap.set(ghost, { opacity: 0 });
+  gsap.set(path, { strokeDasharray: len, strokeDashoffset: len });
+
+  const handoff = () => {
     if (finished) return; finished = true; tl.kill();
-    gsap.to(el, { yPercent: -100, duration: reduce ? 0.01 : 0.9, ease: 'power3.inOut', onComplete: () => { el.remove(); done(); } });
+    const g = ghost.getBoundingClientRect(), w = word.getBoundingClientRect();
+    const k = g.width / w.width;
+    const dur = reduce ? 0.01 : 1.15;
+    gsap.to(word, { x: (g.left + g.width / 2) - (w.left + w.width / 2), y: (g.top + g.height / 2) - (w.top + w.height / 2) + 6, scale: k, color: 'rgba(239,238,234,0.4)', textShadow: '0 0 0 rgba(0,0,0,0)', opacity: 1, duration: dur, ease: 'power3.inOut' });
+    gsap.to($$('.intro__fur, .intro__line, .intro__tag, .intro__skip', el), { opacity: 0, duration: dur * 0.8, ease: 'power2.out' });
+    gsap.to(el, { backgroundColor: 'rgba(10,10,10,1)', duration: dur * 0.9 });
+    gsap.to(ghost, { opacity: 1, duration: 0.4, delay: dur * 0.85 });
+    gsap.delayedCall(dur + 0.05, () => { el.remove(); done(); });
   };
-  const tl = gsap.timeline({ onComplete: end });
-  if (reduce) { tl.set(word, { opacity: 1, y: 0 }).to({}, { duration: 0.6 }); }
+  const tl = gsap.timeline({ onComplete: handoff });
+  if (reduce) tl.set(word, { opacity: 1 }).to({}, { duration: 0.5 });
   else {
-    tl.to(slash, { x: '170vw', duration: 1.5, ease: 'power2.inOut' }, 0.2)
-      .to(word, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 0.7)
-      .to({}, { duration: 0.7 });
+    tl.fromTo(word, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }, 0.2)
+      .to(path, { strokeDashoffset: 0, duration: 1.5, ease: 'power2.inOut' }, 0.8)
+      .to({}, { duration: 0.5 });
   }
-  $('[data-skip]', el)!.addEventListener('click', end);
+  $('[data-skip]', el)!.addEventListener('click', handoff);
 }
 
 // ---------- reveals ----------
 function reveals() {
   $$('[data-reveal]').forEach((h) => {
     const spans = $$('.ln > span', h);
-    if (reduce) { gsap.set(spans, { yPercent: 0 }); return; }
+    if (reduce) { gsap.set(spans, { yPercent: 0, y: 0 }); return; }
     gsap.to(spans, { yPercent: 0, y: 0, duration: 1.1, ease: 'power4.out', stagger: 0.12, scrollTrigger: { trigger: h, start: 'top 85%' } });
   });
   // the statement lights up word by word as it scrolls past
   const st = $('[data-reveal-words]');
   if (st) {
-    st.innerHTML = (st.textContent || '').split(' ').map((w) => `<span class="w">${w}</span>`).join(' ');
+    const tpl = document.createElement('div');
+    Array.from(st.childNodes).forEach((n) => {
+      const bold = n.nodeName === 'STRONG';
+      const wrap = bold ? document.createElement('strong') : document.createElement('span');
+      wrap.innerHTML = (n.textContent || '').split(' ').filter(Boolean).map((w) => `<span class="w">${w}</span>`).join(' ') + (bold ? '' : ' ');
+      tpl.appendChild(wrap);
+    });
+    st.innerHTML = tpl.innerHTML;
     if (reduce) gsap.set($$('.w', st), { opacity: 1 });
     else gsap.to($$('.w', st), { opacity: 1, stagger: 0.08, ease: 'none', scrollTrigger: { trigger: '[data-why]', start: 'top 55%', end: 'center 35%', scrub: 0.6 } });
   }
@@ -124,17 +151,21 @@ function reveals() {
     gsap.from('.cut', { y: 40, opacity: 0, duration: 0.8, ease: 'power3.out', stagger: 0.08, scrollTrigger: { trigger: '.cuts__list', start: 'top 82%' } });
     gsap.from('.barber', { y: 60, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: '.crew__grid', start: 'top 85%' } });
     gsap.from('.plan', { y: 80, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.14, scrollTrigger: { trigger: '.club__plans', start: 'top 85%' } });
-    // each shop photograph drifts slower than its frame
+    gsap.from('.shelf__row li', { y: 60, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: '.shelf__row', start: 'top 85%' } });
+    gsap.from('.gift__card', { x: -80, rotateY: 40, opacity: 0, duration: 1.2, ease: 'power3.out', scrollTrigger: { trigger: '.gift', start: 'top 70%' } });
     $$('.shop').forEach((sh) => gsap.fromTo($('.shop__img', sh), { yPercent: -5 }, { yPercent: 5, ease: 'none', scrollTrigger: { trigger: sh, start: 'top bottom', end: 'bottom top', scrub: true } }));
-    gsap.from('.gift__card', { y: 80, rotateY: -35, opacity: 0, duration: 1.2, ease: 'power3.out', scrollTrigger: { trigger: '.gift', start: 'top 70%' } });
-    // the ghost wordmark drifts up slower than the page
-    gsap.to('.hero__ghost', { yPercent: -18, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+    // the wordmark drifts up slower than the page
+    gsap.to('.hero__ghost', { yPercent: -14, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
   }
 }
 function heroTitle() {
   const spans = $$('.hero__title .ln > span');
-  if (reduce) gsap.set(spans, { yPercent: 0 });
-  else gsap.to(spans, { yPercent: 0, y: 0, duration: 1.2, ease: 'power4.out', stagger: 0.14 });
+  if (reduce) gsap.set(spans, { yPercent: 0, y: 0 });
+  else {
+    gsap.to(spans, { yPercent: 0, y: 0, duration: 1.2, ease: 'power4.out', stagger: 0.14 });
+    gsap.from('.hero__stage', { opacity: 0, y: 60, duration: 1.4, ease: 'power3.out' });
+    gsap.from(['.hero__status', '.hero__hint', '.hero__cta'], { opacity: 0, y: 12, duration: 0.9, stagger: 0.1, delay: 0.3 });
+  }
 }
 
 // ---------- props: throw them around ----------
@@ -150,7 +181,7 @@ function props() {
   });
 }
 
-// ---------- barbers ----------
+// ---------- barbers: each mirror has a lamp ----------
 function crew() {
   const chips = $$('[data-filter]');
   chips.forEach((c) => c.addEventListener('click', () => {
@@ -163,8 +194,8 @@ function crew() {
     });
     ScrollTrigger.refresh();
   }));
-  // touch: tap the portrait to see the back
-  $$('.barber__ph').forEach((p) => p.addEventListener('click', () => p.closest('.barber')!.classList.toggle('is-flip')));
+  // touch: tap a mirror to switch its lamp on and see the back
+  $$('.barber__ph').forEach((p) => p.addEventListener('click', () => p.closest('.barber')!.classList.toggle('is-lit')));
 }
 
 // ---------- gift card ----------
@@ -196,7 +227,7 @@ function reviews() {
   let i = 0;
   const set = () => { q.textContent = list[i].q; by.textContent = list[i].by; count.textContent = `${i + 1} / ${list.length}`; };
   set();
-  $('[data-next]')!.addEventListener('click', () => {
+  $('[data-next]', box)!.addEventListener('click', () => {
     i = (i + 1) % list.length;
     if (reduce) { set(); return; }
     gsap.to(box, { x: 30, opacity: 0, duration: 0.25, onComplete: () => { set(); gsap.fromTo(box, { x: -30, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: 'power3.out' }); } });
@@ -218,9 +249,9 @@ function eggs() {
     buf = (buf + e.key.toLowerCase()).slice(-4);
     if (buf !== 'fade') return;
     buf = '';
-    const bars = $$('i', $('[data-fadewipe]')!);
-    if (!bars.length) { const w = $('[data-fadewipe]')!; for (let k = 0; k < 10; k++) w.appendChild(document.createElement('i')); }
-    const items = $$('i', $('[data-fadewipe]')!);
+    const wipe = $('[data-fadewipe]')!;
+    if (!$$('i', wipe).length) for (let k = 0; k < 10; k++) wipe.appendChild(document.createElement('i'));
+    const items = $$('i', wipe);
     gsap.timeline()
       .fromTo(items, { opacity: 0 }, { opacity: (k: number) => 0.08 + (k / 9) * 0.92, duration: 0.5, stagger: { each: 0.04, from: 'end' } })
       .to(items, { opacity: 0, duration: 0.9, stagger: { each: 0.05, from: 'start' } }, '+=0.35');

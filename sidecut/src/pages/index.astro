@@ -3,10 +3,11 @@ import '@fontsource-variable/unbounded';
 import '@fontsource-variable/hanken-grotesk';
 import '@fontsource/jetbrains-mono/400.css';
 import '../styles/global.css';
-import { brand, nav, services, shops, barbers, props, plans, giftAmounts, reviews, faq, statement, note, contact } from '../data/site';
+import { brand, nav, services, shops, barbers, props, shelf, plans, giftAmounts, reviews, faq, statement, note, contact } from '../data/site';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '') + '/';
 const art = base + 'art/';
 const data = { services, shops, barbers, giftAmounts, reviews };
+const mark = 'M3 17 C9 5 17 4 25 7';
 ---
 <!doctype html>
 <html lang="en-GB">
@@ -15,38 +16,46 @@ const data = { services, shops, barbers, giftAmounts, reviews };
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{brand.title}</title>
   <meta name="description" content={brand.description} />
-  <meta name="theme-color" content="#0b0b0c" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b0b0c'/%3E%3Cpath d='M7 22 C13 8 19 8 25 10' stroke='%23efeeea' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a0a0a'/%3E%3Cpath d='M7 22 C13 8 19 8 25 10' stroke='%23efeeea' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
   <script is:inline>document.documentElement.classList.add('js');</script>
 </head>
 <body>
+  <!-- Intro: fur, a huge thin word, and the line that parts it -->
   <div class="intro" data-intro aria-hidden="true">
-    <img class="intro__hair" src={art + 'hair.webp'} alt="" />
-    <div class="intro__slash"></div>
-    <p class="intro__word">sidecut</p>
-    <button class="intro__skip" data-skip type="button">Skip</button>
+    <img class="intro__fur" src={art + 'hair.webp'} alt="" />
+    <p class="intro__tag">Sidecut &middot; Soho, Shoreditch, King's Cross</p>
+    <p class="intro__word" data-introword>sidecut</p>
+    <svg class="intro__line" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M1040 1040 C 930 880 940 520 1010 -40" fill="none" stroke="#efeeea" stroke-width="5" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+    </svg>
+    <button class="intro__skip" data-skip type="button">Skip <span aria-hidden="true">+</span></button>
   </div>
 
   <header class="nav" data-nav>
-    <a class="nav__logo" href="#top">sidecut</a>
+    <a class="nav__logo" href="#top" aria-label="Sidecut, back to the top">
+      <svg width="28" height="22" viewBox="0 0 28 22" fill="none" aria-hidden="true"><path d={mark} stroke="currentColor" stroke-width="2.4" stroke-linecap="round" /></svg>
+      <span>SIDECUT</span>
+    </a>
     <nav class="nav__links" aria-label="Main">
       {nav.map((l) => <a href={l.href}>{l.label}</a>)}
     </nav>
-    <button class="pill pill--light" type="button" data-book>Book <span aria-hidden="true">↗</span></button>
+    <button class="book-pill" type="button" data-book>Book <i aria-hidden="true">↗</i></button>
   </header>
 
   <main id="top">
-    <!-- 1. Hero: a chair you can turn, lit by a lamp that follows the cursor -->
+    <!-- 1. Hero: a huge thin wordmark, a beam of light that follows you, a chair you can turn -->
     <section class="hero" data-hero>
-      <p class="hero__ghost" aria-hidden="true">sidecut</p>
-      <div class="hero__stage" data-stage>
-        <canvas class="hero__chair" data-chair width="640" height="640" role="img" aria-label="A black leather barber chair that turns as you drag or scroll"></canvas>
-      </div>
-      <div class="hero__dim" aria-hidden="true"></div>
       <h1 class="hero__title">
         <span class="ln"><span class="l">You pick the cut.</span></span>
         <span class="ln"><span class="b">We do the rest.</span></span>
       </h1>
+      <p class="hero__status" data-status><span class="dot" aria-hidden="true"></span> Open now &middot; next chair <b data-next>2:40 PM</b></p>
+      <div class="hero__beam" aria-hidden="true"></div>
+      <p class="hero__ghost" data-ghost aria-hidden="true">sidecut</p>
+      <div class="hero__stage" data-stage>
+        <canvas class="hero__chair" data-chair role="img" aria-label="A black leather barber chair that turns as you drag or scroll"></canvas>
+      </div>
       <p class="hero__hint">Drag the chair. Move the light.</p>
       <button class="pill pill--light hero__cta" type="button" data-book>Book a chair <span aria-hidden="true">↗</span></button>
     </section>
@@ -57,33 +66,41 @@ const data = { services, shops, barbers, giftAmounts, reviews };
         <span class="ln"><span class="l">Every cut</span></span>
         <span class="ln"><span class="b">has a number.</span></span>
       </h2>
+      <p class="lead">Prices include the wash, the hot towel on the neck and a line-up on the way out. No surprises at the chair.</p>
       <ol class="cuts__list">
         {services.map((s) => (
-          <li>
-            <button type="button" class="cut" data-book={`service:${s.n}`}>
-              <span class="cut__n">#{s.n}</span>
-              <span class="cut__name">{s.name}</span>
-              <span class="cut__min">{s.min} min</span>
-              <span class="cut__price">£{s.price}</span>
-            </button>
+          <li class="cut">
+            <span class="cut__n">#{s.n}</span>
+            <span class="cut__main"><strong>{s.name}</strong><small>{s.text}</small></span>
+            <span class="cut__min">{s.min} min</span>
+            <span class="cut__price">£{s.price}</span>
+            <button type="button" class="pill pill--ghost" data-book={`service:${s.n}`} aria-label={`Book ${s.name}`}>Book <span aria-hidden="true">↗</span></button>
           </li>
         ))}
       </ol>
     </section>
 
-    <!-- 3. Why book here: props to throw around -->
-    <section class="sec sec--dark why" data-why>
-      <p class="why__text" data-reveal-words>{statement}</p>
-      {props.map((p, i) => (
+    <!-- 3. Why book here: tools to throw around a statement, on a light ground -->
+    <section class="sec sec--light why" data-why>
+      <p class="why__text" data-reveal-words>{statement[0]}<strong>{statement[1]}</strong></p>
+      <p class="why__hint">Drag a tool.</p>
+      {props.map((p) => (
         <img class={`prop prop--${p.id}`} data-prop style={`--w:${p.w}vw`} src={art + `prop-${p.id}.webp`} alt="" draggable="false" />
       ))}
     </section>
 
-    <!-- 4. The barbers -->
+    <!-- 4. The barbers: four mirrors, each with its own lamp -->
     <section class="sec sec--dark crew" id="barbers">
-      <h2 class="h2" data-reveal>
-        <span class="ln"><span class="l">Four barbers.</span></span>
-        <span class="ln"><span class="b">Pick yours.</span></span>
+      <div class="crew__head">
+        <h2 class="h2" data-reveal>
+          <span class="ln"><span class="l">Four mirrors.</span></span>
+          <span class="ln"><span class="b">Pick yours.</span></span>
+        </h2>
+        <p class="lead">Each barber has their own station and their own diary. Pick a mirror to switch its lamp on.</p>
+      </div>
+      <h2 class="h2 crew__sub" data-reveal>
+        <span class="ln"><span class="l">See the back</span></span>
+        <span class="ln"><span class="b">before you sit.</span></span>
       </h2>
       <div class="crew__filters" role="group" aria-label="Filter by shop">
         <button type="button" class="chip is-on" data-filter="all" aria-pressed="true">All</button>
@@ -93,6 +110,7 @@ const data = { services, shops, barbers, giftAmounts, reviews };
         {barbers.map((b) => (
           <figure class="barber" data-shop={b.shop} tabindex="0">
             <div class="barber__ph">
+              <span class="barber__lamp" aria-hidden="true"></span>
               <img class="barber__f" src={art + `barber-${b.id}-f.webp`} alt={`${b.name}, barber at ${b.shopName}`} loading="lazy" width="720" height="960" />
               <img class="barber__b" src={art + `barber-${b.id}-b.webp`} alt={`${b.name}'s cut from behind: ${b.does.toLowerCase()}`} loading="lazy" width="720" height="960" />
               <span class="barber__tag">Hover for the back</span>
@@ -113,10 +131,10 @@ const data = { services, shops, barbers, giftAmounts, reviews };
         <span class="ln"><span class="l">Your cut,</span></span>
         <span class="ln"><span class="b">on a schedule.</span></span>
       </h2>
-      <p class="club__lead">A fade holds about three weeks. Members keep a standing chair and pay less than walking in.</p>
+      <p class="lead">A fade holds about three weeks. Members keep a standing chair and pay less than walking in.</p>
       <div class="club__plans">
         {plans.map((p) => (
-          <article class={`plan${p.hot ? ' plan--hot' : ''}`} data-plan>
+          <article class={`plan${p.hot ? ' plan--hot' : ''}`}>
             {p.hot && <span class="plan__flag">Most booked</span>}
             <h3>{p.name}</h3>
             <p class="plan__price">£{p.price}<small>/month</small></p>
@@ -127,56 +145,70 @@ const data = { services, shops, barbers, giftAmounts, reviews };
       </div>
     </section>
 
-    <!-- 6. Gift cards -->
+    <!-- 6. The shelf -->
+    <section class="sec sec--dark shelf" id="shelf">
+      <h2 class="h2" data-reveal>
+        <span class="ln"><span class="l">What your barber</span></span>
+        <span class="ln"><span class="b">used on you.</span></span>
+      </h2>
+      <p class="lead">Pick it up at the chair or have it sent across London.</p>
+      <ul class="shelf__row">
+        {shelf.map((g) => (
+          <li>
+            <img src={art + `shelf-${g.id}.webp`} alt={g.name} loading="lazy" width="700" height="700" />
+            <strong>{g.name}</strong>
+            <span>£{g.price}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- 7. Gift cards -->
     <section class="sec sec--dark gift" data-gift>
+      <div class="gift__stage">
+        <div class="gift__card" data-card>
+          <img src={art + 'giftcard.webp'} alt="A brushed silver Sidecut gift card" loading="lazy" width="1200" height="743" />
+          <span class="gift__brand">SIDECUT</span>
+          <span class="gift__amt" data-amt>£100</span>
+          <span class="gift__fine">Gift card &middot; Soho, Shoreditch, King's Cross</span>
+          <span class="gift__shine" aria-hidden="true"></span>
+        </div>
+      </div>
       <div class="gift__copy">
-        <h2 class="h2" data-reveal>
-          <span class="ln"><span class="l">A chair,</span></span>
-          <span class="ln"><span class="b">gift-wrapped.</span></span>
+        <h2 class="gift__title" data-reveal>
+          <span class="ln"><span class="l">A chair,</span> <span class="b">gift-wrapped.</span></span>
         </h2>
-        <p>Sent by email in a minute, good for any cut or shave at any shop, never expires.</p>
+        <p>Sent by email in a minute, good for any service or product, never expires.</p>
         <div class="gift__amounts" role="group" aria-label="Amount">
           {giftAmounts.map((a, i) => <button type="button" class={`chip${i === 1 ? ' is-on' : ''}`} data-amount={a} aria-pressed={i === 1 ? 'true' : 'false'}>£{a}</button>)}
         </div>
         <button type="button" class="pill pill--light" data-gift-send>Send a gift card <span aria-hidden="true">↗</span></button>
       </div>
-      <div class="gift__stage">
-        <div class="gift__card" data-card>
-          <img src={art + 'giftcard.webp'} alt="A brushed silver Sidecut gift card" loading="lazy" width="1200" height="800" />
-          <span class="gift__brand">sidecut</span>
-          <span class="gift__amt" data-amt>£100</span>
-          <span class="gift__shine" aria-hidden="true"></span>
-        </div>
-      </div>
     </section>
 
-    <!-- 7. Reviews -->
+    <!-- 8. Reviews -->
     <section class="sec sec--light reviews" data-reviews>
-      <h2 class="h2" data-reveal>
-        <span class="ln"><span class="l">Reviews</span></span>
-        <span class="ln"><span class="b">that sell for you.</span></span>
-      </h2>
       <div class="reviews__body">
         <p class="reviews__score" aria-label="4.9 out of 5"><span data-score>4.9</span></p>
         <figure class="quote" data-quote>
           <blockquote data-q></blockquote>
           <figcaption data-by></figcaption>
-          <div class="quote__nav"><span data-count>1 / 4</span><button type="button" data-next>Next <span aria-hidden="true">→</span></button></div>
+          <div class="quote__nav"><button type="button" data-next>Next <span aria-hidden="true">→</span></button><span data-count>1 / 4</span></div>
         </figure>
       </div>
-      <p class="reviews__note">612 Google reviews. Illustrative figures for a concept.</p>
+      <p class="reviews__note"><span class="stars" aria-hidden="true">★★★★★</span> 612 Google reviews. Illustrative figures for a concept.</p>
     </section>
 
-    <!-- 8. Shops: three scenes, one per shop -->
-    <section class="sec sec--dark shops" id="shops">
+    <!-- 9. Shops -->
+    <section class="sec sec--light shops" id="shops">
       <h2 class="h2" data-reveal>
-        <span class="ln"><span class="l">Three shops.</span></span>
-        <span class="ln"><span class="b">One standard.</span></span>
+        <span class="ln"><span class="l">Hours, map,</span></span>
+        <span class="ln"><span class="b">found on Google.</span></span>
       </h2>
       <div class="shops__list">
         {shops.map((s) => (
           <article class="shop">
-            <img class="shop__img" src={art + `shop-${s.id}.webp`} alt={`Inside the ${s.name} shop at night`} loading="lazy" width="1600" height="900" />
+            <img class="shop__img" src={art + `shop-${s.id}.webp`} alt={`${s.name}: ${s.look}`} loading="lazy" width="1600" height="900" />
             <div class="shop__in">
               <h3>{s.name}</h3>
               <div class="shop__meta">
@@ -191,8 +223,8 @@ const data = { services, shops, barbers, giftAmounts, reviews };
       </div>
     </section>
 
-    <!-- 9. FAQ and hiring -->
-    <section class="sec sec--light faq">
+    <!-- 10. FAQ and hiring -->
+    <section class="sec sec--dark faq">
       <h2 class="faq__title"><span class="l">Before</span> <span class="b">you book</span></h2>
       <div class="faq__list">
         {faq.map((f) => (
@@ -201,13 +233,13 @@ const data = { services, shops, barbers, giftAmounts, reviews };
             <p>{f.a}</p>
           </details>
         ))}
-        <div class="hire">
-          <p>Now hiring: <strong>two chairs to rent</strong>. Steady clientele, your hours, your book.</p>
-          <a class="pill pill--light" href={`mailto:${contact.email}`}>Apply</a>
-        </div>
+      </div>
+      <div class="hire">
+        <svg width="22" height="22" viewBox="0 0 28 22" fill="none" aria-hidden="true"><path d={mark} stroke="currentColor" stroke-width="2.4" stroke-linecap="round" /></svg>
+        <p>Now hiring: <strong>two chairs to rent</strong> &middot; steady clientele, your hours, your book.</p>
+        <a class="pill pill--light" href={`mailto:${contact.email}`}>Apply</a>
       </div>
     </section>
-
   </main>
 
   <footer class="foot sec sec--dark" data-bookband>
@@ -230,7 +262,7 @@ const data = { services, shops, barbers, giftAmounts, reviews };
     </div>
   </footer>
 
-  <aside class="drawer" data-drawer aria-hidden="true" aria-label="Booking">
+  <aside class="drawer" data-drawer data-art={art} aria-hidden="true" aria-label="Booking">
     <div class="drawer__scrim" data-close></div>
     <div class="drawer__panel" role="dialog" aria-modal="true">
       <button class="drawer__x" type="button" data-close aria-label="Close booking">×</button>
