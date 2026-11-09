@@ -13,7 +13,6 @@ for n in ['kofi', 'raj', 'mateo', 'jin']:
     for s in 'fb':
         Image.open(f'{G}/barber-{n}-{s}.png').convert('L').resize((720, 960), Image.LANCZOS).save(f'{OUT}/barber-{n}-{s}.webp', quality=76, method=6)
 Image.open(f'{G}/hair-texture.png').convert('RGB').resize((1920, 1080), Image.LANCZOS).save(f'{OUT}/hair.webp', quality=70, method=6)
-Image.open(f'{G}/giftcard.png').convert('RGB').resize((1200, 800), Image.LANCZOS).save(f'{OUT}/giftcard.webp', quality=82, method=6)
 
 def key(path, out, size=900):
     a = np.asarray(Image.open(path).convert('RGB')).astype(np.float32)
@@ -40,4 +39,5 @@ def key(path, out, size=900):
     im.save(out, quality=85, alpha_quality=90, method=6)
 for n in ['spray', 'clock', 'pomade', 'clippers']:
     key(f'{G}/prop-{n}.png', f'{OUT}/prop-{n}.webp')
+key(f'{G}/giftcard.png', f'{OUT}/giftcard.webp', 1200)
 print('done')

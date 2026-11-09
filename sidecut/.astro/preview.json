@@ -1,0 +1,14 @@
+{
+	"pid": 1732,
+	"port": 4401,
+	"url": "http://localhost:4401",
+	"urls": {
+		"local": [
+			"http://localhost:4401/"
+		],
+		"network": [],
+		"networkInterfaceNames": []
+	},
+	"background": true,
+	"startedAt": "2026-11-09T12:11:21.180Z"
+}

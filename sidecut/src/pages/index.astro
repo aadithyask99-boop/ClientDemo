@@ -1,0 +1,244 @@
+---
+import '@fontsource-variable/unbounded';
+import '@fontsource-variable/hanken-grotesk';
+import '@fontsource/jetbrains-mono/400.css';
+import '../styles/global.css';
+import { brand, nav, services, shops, barbers, props, plans, giftAmounts, reviews, faq, statement, note, contact } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '') + '/';
+const art = base + 'art/';
+const data = { services, shops, barbers, giftAmounts, reviews };
+---
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{brand.title}</title>
+  <meta name="description" content={brand.description} />
+  <meta name="theme-color" content="#0b0b0c" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b0b0c'/%3E%3Cpath d='M7 22 C13 8 19 8 25 10' stroke='%23efeeea' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <script is:inline>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <div class="intro" data-intro aria-hidden="true">
+    <img class="intro__hair" src={art + 'hair.webp'} alt="" />
+    <div class="intro__slash"></div>
+    <p class="intro__word">sidecut</p>
+    <button class="intro__skip" data-skip type="button">Skip</button>
+  </div>
+
+  <header class="nav" data-nav>
+    <a class="nav__logo" href="#top">sidecut</a>
+    <nav class="nav__links" aria-label="Main">
+      {nav.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+    <button class="pill pill--light" type="button" data-book>Book <span aria-hidden="true">↗</span></button>
+  </header>
+
+  <main id="top">
+    <!-- 1. Hero: a chair you can turn, lit by a lamp that follows the cursor -->
+    <section class="hero" data-hero>
+      <p class="hero__ghost" aria-hidden="true">sidecut</p>
+      <div class="hero__stage" data-stage>
+        <canvas class="hero__chair" data-chair width="640" height="640" role="img" aria-label="A black leather barber chair that turns as you drag or scroll"></canvas>
+      </div>
+      <div class="hero__dim" aria-hidden="true"></div>
+      <h1 class="hero__title">
+        <span class="ln"><span class="l">You pick the cut.</span></span>
+        <span class="ln"><span class="b">We do the rest.</span></span>
+      </h1>
+      <p class="hero__hint">Drag the chair. Move the light.</p>
+      <button class="pill pill--light hero__cta" type="button" data-book>Book a chair <span aria-hidden="true">↗</span></button>
+    </section>
+
+    <!-- 2. The price list -->
+    <section class="sec sec--light cuts" id="cuts">
+      <h2 class="h2" data-reveal>
+        <span class="ln"><span class="l">Every cut</span></span>
+        <span class="ln"><span class="b">has a number.</span></span>
+      </h2>
+      <ol class="cuts__list">
+        {services.map((s) => (
+          <li>
+            <button type="button" class="cut" data-book={`service:${s.n}`}>
+              <span class="cut__n">#{s.n}</span>
+              <span class="cut__name">{s.name}</span>
+              <span class="cut__min">{s.min} min</span>
+              <span class="cut__price">£{s.price}</span>
+            </button>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <!-- 3. Why book here: props to throw around -->
+    <section class="sec sec--dark why" data-why>
+      <p class="why__text" data-reveal-words>{statement}</p>
+      {props.map((p, i) => (
+        <img class={`prop prop--${p.id}`} data-prop style={`--w:${p.w}vw`} src={art + `prop-${p.id}.webp`} alt="" draggable="false" loading="lazy" />
+      ))}
+    </section>
+
+    <!-- 4. The barbers -->
+    <section class="sec sec--dark crew" id="barbers">
+      <h2 class="h2" data-reveal>
+        <span class="ln"><span class="l">Four barbers.</span></span>
+        <span class="ln"><span class="b">Pick yours.</span></span>
+      </h2>
+      <div class="crew__filters" role="group" aria-label="Filter by shop">
+        <button type="button" class="chip is-on" data-filter="all" aria-pressed="true">All</button>
+        {shops.map((s) => <button type="button" class="chip" data-filter={s.id} aria-pressed="false">{s.name}</button>)}
+      </div>
+      <div class="crew__grid">
+        {barbers.map((b) => (
+          <figure class="barber" data-shop={b.shop} tabindex="0">
+            <div class="barber__ph">
+              <img class="barber__f" src={art + `barber-${b.id}-f.webp`} alt={`${b.name}, barber at ${b.shopName}`} loading="lazy" width="720" height="960" />
+              <img class="barber__b" src={art + `barber-${b.id}-b.webp`} alt={`${b.name}'s cut from behind: ${b.does.toLowerCase()}`} loading="lazy" width="720" height="960" />
+              <span class="barber__tag">Hover for the back</span>
+            </div>
+            <figcaption>
+              <strong>{b.name}</strong>
+              <span>{b.does}, {b.shopName}</span>
+              <button type="button" class="link" data-book={`barber:${b.id}`}>Book {b.name} <span aria-hidden="true">↗</span></button>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+
+    <!-- 5. Memberships -->
+    <section class="sec sec--light club" id="club">
+      <h2 class="h2" data-reveal>
+        <span class="ln"><span class="l">Your cut,</span></span>
+        <span class="ln"><span class="b">on a schedule.</span></span>
+      </h2>
+      <p class="club__lead">A fade holds about three weeks. Members keep a standing chair and pay less than walking in.</p>
+      <div class="club__plans">
+        {plans.map((p) => (
+          <article class={`plan${p.hot ? ' plan--hot' : ''}`} data-plan>
+            {p.hot && <span class="plan__flag">Most booked</span>}
+            <h3>{p.name}</h3>
+            <p class="plan__price">£{p.price}<small>/month</small></p>
+            <p class="plan__text">{p.text}</p>
+            <button type="button" class="pill pill--ghost" data-book>Join and book <span aria-hidden="true">↗</span></button>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- 6. Gift cards -->
+    <section class="sec sec--dark gift" data-gift>
+      <div class="gift__copy">
+        <h2 class="h2" data-reveal>
+          <span class="ln"><span class="l">A chair,</span></span>
+          <span class="ln"><span class="b">gift-wrapped.</span></span>
+        </h2>
+        <p>Sent by email in a minute, good for any cut or shave at any shop, never expires.</p>
+        <div class="gift__amounts" role="group" aria-label="Amount">
+          {giftAmounts.map((a, i) => <button type="button" class={`chip${i === 1 ? ' is-on' : ''}`} data-amount={a} aria-pressed={i === 1 ? 'true' : 'false'}>£{a}</button>)}
+        </div>
+        <button type="button" class="pill pill--light" data-gift-send>Send a gift card <span aria-hidden="true">↗</span></button>
+      </div>
+      <div class="gift__stage">
+        <div class="gift__card" data-card>
+          <img src={art + 'giftcard.webp'} alt="A brushed silver Sidecut gift card" loading="lazy" width="1200" height="800" />
+          <span class="gift__brand">sidecut</span>
+          <span class="gift__amt" data-amt>£100</span>
+          <span class="gift__shine" aria-hidden="true"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Reviews -->
+    <section class="sec sec--light reviews" data-reviews>
+      <h2 class="h2" data-reveal>
+        <span class="ln"><span class="l">Reviews</span></span>
+        <span class="ln"><span class="b">that sell for you.</span></span>
+      </h2>
+      <div class="reviews__body">
+        <p class="reviews__score" aria-label="4.9 out of 5"><span data-score>4.9</span></p>
+        <figure class="quote" data-quote>
+          <blockquote data-q></blockquote>
+          <figcaption data-by></figcaption>
+          <div class="quote__nav"><span data-count>1 / 4</span><button type="button" data-next>Next <span aria-hidden="true">→</span></button></div>
+        </figure>
+      </div>
+      <p class="reviews__note">612 Google reviews. Illustrative figures for a concept.</p>
+    </section>
+
+    <!-- 8. Shops -->
+    <section class="sec sec--light shops" id="shops">
+      <h2 class="h2" data-reveal>
+        <span class="ln"><span class="l">Three shops.</span></span>
+        <span class="ln"><span class="b">One standard.</span></span>
+      </h2>
+      <div class="shops__list">
+        {shops.map((s) => (
+          <article class="shop">
+            <h3>{s.name}</h3>
+            <p>{s.street}</p>
+            <p>{s.hours.join('. ')}</p>
+            <p><a href={`tel:${s.phone.replace(/\s/g, '')}`}>{s.phone}</a></p>
+            <button type="button" class="link" data-book={`shop:${s.id}`}>Book at {s.name} <span aria-hidden="true">↗</span></button>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- 9. FAQ and hiring -->
+    <section class="sec sec--dark faq">
+      <h2 class="faq__title"><span class="l">Before</span> <span class="b">you book</span></h2>
+      <div class="faq__list">
+        {faq.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+        <div class="hire">
+          <p>Now hiring: <strong>two chairs to rent</strong>. Steady clientele, your hours, your book.</p>
+          <a class="pill pill--light" href={`mailto:${contact.email}`}>Apply</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. Booking -->
+    <section class="sec sec--light book" data-bookband>
+      <h2 class="h2" data-reveal>
+        <span class="ln"><span class="l">Full booking.</span></span>
+        <span class="ln"><span class="b">Under a minute.</span></span>
+      </h2>
+      <p class="book__lead">Pick a cut, a barber and a time. A £10 deposit holds the chair and comes off your bill.</p>
+      <button type="button" class="pill pill--dark" data-book>Start booking <span aria-hidden="true">↗</span></button>
+    </section>
+  </main>
+
+  <footer class="foot sec sec--dark">
+    <p class="foot__word" data-word aria-label="sidecut">
+      {'sidecut'.split('').map((c) => <span class="ch" aria-hidden="true">{c}</span>)}
+      <img class="foot__clip" src={art + 'prop-clippers.webp'} alt="" aria-hidden="true" />
+    </p>
+    <div class="foot__cols">
+      <p>{contact.email}<br />{contact.phone}</p>
+      <p class="foot__note">{note}</p>
+      <p><a href="#top">Back to the top ↑</a></p>
+    </div>
+  </footer>
+
+  <aside class="drawer" data-drawer aria-hidden="true" aria-label="Booking">
+    <div class="drawer__scrim" data-close></div>
+    <div class="drawer__panel" role="dialog" aria-modal="true">
+      <button class="drawer__x" type="button" data-close aria-label="Close booking">×</button>
+      <div class="drawer__body" data-body></div>
+    </div>
+  </aside>
+  <div class="toast" data-toast role="status" aria-live="polite"></div>
+  <div class="fadewipe" data-fadewipe aria-hidden="true"></div>
+
+  <script type="application/json" id="data" set:html={JSON.stringify(data)}></script>
+  <script>
+    import '../scripts/main';
+  </script>
+</body>
+</html>
