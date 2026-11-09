@@ -219,7 +219,7 @@ main > section:not(.hero) { position: relative; z-index: 2; }
   .w-a { position: relative; height: 80svh; }
   .w-peak { height: 92%; }
   .w-b { position: relative; height: auto; pointer-events: auto; display: flex; flex-direction: column; background: var(--slate); }
-  .w-two { order: 1; position: static; padding: 56px var(--gut) 26px; flex-direction: column; gap: 0; font-size: 11vw; }
+  .w-two { order: 1; position: static; padding: 36px var(--gut) 22px; flex-direction: column; gap: 0; font-size: 11vw; }
   .w-frame { order: 2; position: relative; height: 66svh; }
   .w-note--r { display: none; }
   .w-note { top: 84px; max-width: 16rem; }
@@ -248,7 +248,7 @@ main > section:not(.hero) { position: relative; z-index: 2; }
   .lb__col:last-child .lb__fig:last-child { grid-column: span 2; aspect-ratio: 16/10; }
 
   .log__pin { height: auto; min-height: 0; padding: 100px var(--gut) 40px; display: flex; flex-direction: column; gap: 22px; }
-  .log__stage { position: relative; width: 100%; height: 66vw; right: auto; -webkit-mask-image: none; mask-image: none; border-radius: 20px; overflow: hidden; order: 2; }
+  .log__stage { position: relative; width: 100%; height: 92vw; right: auto; -webkit-mask-image: none; mask-image: none; border-radius: 20px; overflow: hidden; order: 2; }
   .log__left { position: static; width: auto; }
   .flag:not(.is-hi) .flag__alt { display: none; }
   .flag.is-hi .flag__alt { left: auto; right: 4px; }
@@ -261,7 +261,7 @@ main > section:not(.hero) { position: relative; z-index: 2; }
   .drop__img { object-position: 27% 50%; }
   .foot { border-radius: 24px 24px 0 0; }
   .foot__top { flex-direction: column; }
-  .foot__stage { height: 86vw; margin-top: 24px; }
+  .foot__stage { height: 74vw; margin-top: 16px; }
   .foot__word { font-size: 17.6vw; bottom: 20%; }
   .foot__valley { height: 20%; }
 }

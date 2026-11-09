@@ -7,7 +7,7 @@ export function initCursor() {
   if (!ok) return;
   const root = document.documentElement;
   const needle = document.createElement('div'); needle.className = 'cur-n'; needle.setAttribute('aria-hidden', 'true');
-  needle.innerHTML = '<svg viewBox="0 0 30 30" width="30" height="30"><line x1="3" y1="3" x2="21" y2="21" stroke="#0f1c33" stroke-width="6.5" stroke-linecap="round"/><circle cx="23.5" cy="23.5" r="6" fill="#0f1c33"/><line x1="3" y1="3" x2="21" y2="21" stroke="#f1ede4" stroke-width="3.2" stroke-linecap="round"/><circle cx="23.5" cy="23.5" r="4.2" fill="#8c2433"/></svg>';
+  needle.innerHTML = '<svg viewBox="0 0 40 40" width="40" height="40"><line x1="3" y1="3" x2="31" y2="31" stroke="#0f1c33" stroke-width="5.2" stroke-linecap="round"/><circle cx="34" cy="34" r="5" fill="#0f1c33"/><line x1="3" y1="3" x2="31" y2="31" stroke="#f1ede4" stroke-width="2.4" stroke-linecap="round"/><circle cx="34" cy="34" r="3.4" fill="#8c2433"/></svg>';
   const ring = document.createElement('div'); ring.className = 'cur-r'; ring.setAttribute('aria-hidden', 'true');
   ring.innerHTML = '<span class="cur-r__t"></span>';
   document.body.append(ring, needle);

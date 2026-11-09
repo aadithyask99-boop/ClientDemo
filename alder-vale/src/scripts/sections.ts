@@ -242,7 +242,7 @@ function initFooterFigs() {
   const chars = [...txt].map((c) => { const s = document.createElement('span'); s.textContent = c; word.append(s); return s; });
   const bl = document.createElement('i'); bl.className = 'bl'; word.append(bl);
   const small = matchMedia('(max-width: 860px)');
-  const sizes = () => (small.matches ? { a: 1.9, b: 1.2, c: 0.9 } : { a: 1.15, b: 0.78, c: 0.55 }); // figure height as a share of the letter height
+  const sizes = () => (small.matches ? { a: 2.5, b: 1.6, c: 1.2 } : { a: 1.15, b: 0.78, c: 0.55 }); // figure height as a share of the letter height
   const figs = $$('.fig');
   function place() {
     const fs = parseFloat(getComputedStyle(word).fontSize);
