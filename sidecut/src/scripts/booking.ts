@@ -40,7 +40,7 @@ export function initBooking({ data, lenis, reduce, art }: Opts) {
   function s1() {
     st.step = 1;
     html(`<div class="step"><p class="step__no">Step 1 of 4</p><h3 class="step__title" ${prog(1)}>Pick a service</h3>
-      ${services.map((s) => `<button class="opt${st.service?.n === s.n ? ' is-on' : ''}" data-s="${s.n}"><img src="${art}${toolFile[s.tool]}.webp" alt=""><span class="t"><strong>#${s.n} ${s.name}</strong><small>${s.min} min</small></span><span>£${s.price}</span></button>`).join('')}</div>`);
+      ${services.map((s) => `<button class="opt${st.service?.n === s.n ? ' is-on' : ''}" data-s="${s.n}"><img src="${art}${toolFile[s.tool]}.webp" alt=""><span class="t"><strong>${s.name}</strong><small>${s.min} min</small></span><span>£${s.price}</span></button>`).join('')}</div>`);
     $$('[data-s]', body).forEach((b) => b.addEventListener('click', () => {
       st.service = services[+b.dataset.s!];
       $$('[data-s]', body).forEach((x) => x.classList.toggle('is-on', x === b));

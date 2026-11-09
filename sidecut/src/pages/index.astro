@@ -3,7 +3,7 @@ import '@fontsource-variable/unbounded';
 import '@fontsource-variable/hanken-grotesk';
 import '@fontsource/jetbrains-mono/400.css';
 import '../styles/global.css';
-import { brand, nav, services, kids, shops, barbers, cuts, props, plans, shelf, giftAmounts, reviews, faq, statement, note, contact } from '../data/site';
+import { brand, nav, services, kids, shops, barbers, cuts, props, plans, shelf, giftAmounts, reviews, faq, statement, contact } from '../data/site';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '') + '/';
 const art = base + 'art/';
 const data = { services, shops, barbers, cuts, props, plans, giftAmounts, reviews };
@@ -48,12 +48,14 @@ const byId = (id: string) => barbers.find((b) => b.id === id)!;
   <main id="top">
     <!-- 1. Hero: a thin word top-left, a heavy word bottom-right, the chair between them -->
     <section class="hero" data-hero>
-      <p class="hero__w1" data-w1 aria-hidden="true">side</p>
-      <p class="hero__w2" data-w2 aria-hidden="true">cut</p>
-      <div class="hero__cone" aria-hidden="true"></div>
-      <div class="hero__pool" aria-hidden="true"></div>
-      <div class="hero__stage" data-stage>
-        <canvas class="hero__chair" data-chair role="img" aria-label="A leather barber chair that turns as you drag or scroll"></canvas>
+      <div class="hero__scene">
+        <p class="hero__w1" data-w1 aria-hidden="true">side</p>
+        <p class="hero__w2" data-w2 aria-hidden="true">cut</p>
+        <div class="hero__cone" aria-hidden="true"></div>
+        <div class="hero__pool" aria-hidden="true"></div>
+        <div class="hero__stage" data-stage>
+          <canvas class="hero__chair" data-chair role="img" aria-label="A leather barber chair that turns as you drag or scroll"></canvas>
+        </div>
       </div>
       <h1 class="hero__title" aria-label="You pick the cut. We do the rest."><span class="hero__t1" aria-hidden="true">You pick the cut.</span><span class="hero__t2" aria-hidden="true">We do the <span data-type>rest.</span></span></h1>
       <p class="hero__status" data-status><span class="dot" aria-hidden="true"></span> Open now &middot; next chair <b data-next>2:40 PM</b></p>
@@ -69,7 +71,6 @@ const byId = (id: string) => barbers.find((b) => b.id === id)!;
 
     <!-- 2. The guard menu: hover a cut and its tool comes to the cursor -->
     <section class="sec sec--light cuts" id="cuts">
-      <p class="tag">#1 — The guard menu</p>
       <h2 class="h2" data-reveal><span class="ln"><span><span class="l">Every cut </span><span class="b">has a number.</span></span></span></h2>
       <p class="lead">Prices include the wash, the hot towel on the neck and a line-up on the way out. No surprises at the chair.</p>
       <ol class="cuts__list" data-cuts>
@@ -91,8 +92,6 @@ const byId = (id: string) => barbers.find((b) => b.id === id)!;
 
     <!-- 3. Why book here: tools to drag and click -->
     <section class="sec sec--light why" data-why>
-      <p class="tag why__tag">#2 — Why book here</p>
-      <p class="tag why__tag2">Drag to spin · click a tool</p>
       <p class="why__text" data-reveal-words>{statement[0]}<strong>{statement[1]}</strong></p>
       {props.map((p, i) => (
         <img class={`prop prop--${p.id}`} data-prop={i} style={`--w:${p.w}vw`} src={art + `prop-${p.id}.webp`} alt="" draggable="false" />
@@ -102,7 +101,6 @@ const byId = (id: string) => barbers.find((b) => b.id === id)!;
 
     <!-- 4. Four mirrors: an expanding gallery, one lamp per mirror -->
     <section class="sec sec--dark mirrors" id="barbers">
-      <p class="tag">#3 — The chairs</p>
       <h2 class="h2" data-reveal><span class="ln"><span><span class="l">Four mirrors. </span><span class="b">Pick yours.</span></span></span></h2>
       <p class="lead">Each barber has their own station and their own diary. Pick a mirror to switch its lamp on.</p>
       <div class="mirrors__row" data-mirrors>
@@ -113,7 +111,6 @@ const byId = (id: string) => barbers.find((b) => b.id === id)!;
               <img src={art + `mirror-${b.id}.webp`} alt={`${b.name} cutting hair, seen in the mirror`} width="1200" height="800" decoding="async" />
               <span class="mirror__light" aria-hidden="true"></span>
               <span class="mirror__name">
-                <small>#{i + 1}</small>
                 <strong>{b.name}</strong>
                 <em>{b.does} · {b.years} yrs · {b.langs}</em>
                 <button type="button" class="link" data-book={`barber:${b.id}`}>Book {b.name} <span aria-hidden="true">↗</span></button>
@@ -126,7 +123,6 @@ const byId = (id: string) => barbers.find((b) => b.id === id)!;
 
     <!-- 5. The book: nine cuts, the back of the head on hover -->
     <section class="sec sec--dark book">
-      <p class="tag">#4 — The book</p>
       <h2 class="h2 book__title" data-reveal><span class="ln"><span><span class="l">See the back </span><span class="b">before you sit.</span></span></span></h2>
       <div class="book__filters" role="group" aria-label="Filter by barber">
         <button type="button" class="chip is-on" data-filter="all" aria-pressed="true">All</button>
@@ -151,7 +147,6 @@ const byId = (id: string) => barbers.find((b) => b.id === id)!;
 
     <!-- 6. The club: a hand of three cards -->
     <section class="sec sec--light club" id="club">
-      <p class="tag">#5 — The club</p>
       <h2 class="h2" data-reveal><span class="ln"><span><span class="l">Your cut, </span><span class="b b--grey">on a schedule.</span></span></span></h2>
       <p class="lead">A fade holds about three weeks. Members keep a standing chair and pay less than walking in.</p>
       <div class="club__fan" data-fan>
@@ -170,7 +165,6 @@ const byId = (id: string) => barbers.find((b) => b.id === id)!;
 
     <!-- 7. The shelf -->
     <section class="sec sec--dark shelf" id="shelf">
-      <p class="tag">#6 — The shelf</p>
       <h2 class="h2" data-reveal><span class="ln"><span><span class="l">What your barber </span><span class="b">used on you.</span></span></span></h2>
       <p class="lead">Pick it up at the chair or have it delivered across London the next day.</p>
       <ul class="shelf__row">
@@ -211,7 +205,6 @@ const byId = (id: string) => barbers.find((b) => b.id === id)!;
 
     <!-- 9. Reviews -->
     <section class="sec sec--light reviews" data-reviews>
-      <p class="tag">#7 — Said in the chair</p>
       <div class="reviews__body">
         <p class="reviews__score" aria-label="4.9 out of 5"><span data-score>4.9</span></p>
         <figure class="quote" data-quote>
@@ -227,7 +220,6 @@ const byId = (id: string) => barbers.find((b) => b.id === id)!;
 
     <!-- 10. Find the chair -->
     <section class="sec sec--dark visit" id="visit" data-visit>
-      <p class="tag">#8 — Find the chair</p>
       <div class="visit__grid">
         <div class="visit__info">
           <h2 class="h2" data-reveal><span class="ln"><span class="l">Three shops,</span></span><span class="ln"><span class="b">near a Tube.</span></span></h2>
@@ -283,7 +275,6 @@ const byId = (id: string) => barbers.find((b) => b.id === id)!;
         {nav.map((l) => <a href={l.href}>{l.label}</a>)}
         <a href={`mailto:${contact.email}`}>Email</a>
       </nav>
-      <p class="foot__note">{note}</p>
     </div>
   </footer>
 

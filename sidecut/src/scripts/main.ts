@@ -55,36 +55,54 @@ function hero() {
   const ctx = canvas.getContext('2d')!;
   const N = 73, TURN = 72; // frame 73 is frame 1 again, so the spin loops
   const base = art + 'seq/';
-  const frames: (HTMLImageElement | null)[] = new Array(N).fill(null);
-  const load = (i: number) => new Promise<void>((res) => {
-    const im = new Image(); im.onload = () => { frames[i] = im; res(); }; im.onerror = () => res();
-    im.src = `${base}c-${String(i + 1).padStart(3, '0')}.webp`;
-  });
-  let off = 0, shown = 0, vel = 0, dragging = false, lastX = 0, drawn = -1;
+  // every frame is decoded once into a bitmap, so drawing a frame never waits on the decoder
+  const frames: (CanvasImageSource | null)[] = new Array(N).fill(null);
+  const url = (i: number) => `${base}c-${String(i + 1).padStart(3, '0')}.webp`;
+  const load = async (i: number) => {
+    try {
+      if ('createImageBitmap' in window) { const r = await fetch(url(i)); frames[i] = await createImageBitmap(await r.blob()); }
+      else { const im = new Image(); im.src = url(i); await im.decode(); frames[i] = im; }
+    } catch { /* a missing frame is skipped */ }
+  };
+  const size = (f: any) => [f.width || f.naturalWidth, f.height || f.naturalHeight];
+  let pos = 0, target = 0, off = 0, vel = 0, dragging = false, lastX = 0, lastKey = '', visible = true;
   const near = (i: number) => { for (let d = 0; d < TURN; d++) { const a = frames[(i - d + TURN) % TURN] || frames[(i + d) % TURN]; if (a) return a; } return null; };
-  function paint(i: number) {
-    const f = near(i);
-    if (!f || i === drawn) return;
-    drawn = i;
-    if (canvas.width !== f.naturalWidth) { canvas.width = f.naturalWidth; canvas.height = f.naturalHeight; }
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(f, 0, 0);
+  function paint() {
+    const w = ((pos % TURN) + TURN) % TURN, i0 = Math.floor(w), f = w - i0;
+    const key = i0 + ':' + Math.round(f * 24);
+    if (key === lastKey) return;
+    const a = near(i0); if (!a) return;
+    lastKey = key;
+    const [cw, ch] = size(a);
+    if (canvas.width !== cw) { canvas.width = cw; canvas.height = ch; }
+    ctx.globalAlpha = 1; ctx.clearRect(0, 0, cw, ch); ctx.drawImage(a, 0, 0);
+    const b = frames[(i0 + 1) % TURN];
+    if (b && f > 0.04) { ctx.globalAlpha = f; ctx.drawImage(b, 0, 0); ctx.globalAlpha = 1; }
   }
-  load(0).then(() => { paint(0); (async () => { for (let i = 1; i < N; i++) await load(i); })(); });
+  // the first frame at once, then the rest four at a time
+  load(0).then(async () => {
+    paint();
+    const rest = Array.from({ length: N - 1 }, (_, k) => k + 1);
+    const pool = async () => { while (rest.length) await load(rest.shift()!); };
+    await Promise.all([pool(), pool(), pool(), pool()]);
+    lastKey = '';
+  });
 
   stage.addEventListener('pointerdown', (e) => { dragging = true; lastX = e.clientX; vel = 0; stage.setPointerCapture(e.pointerId); });
-  stage.addEventListener('pointermove', (e) => { if (!dragging) return; const dx = e.clientX - lastX; lastX = e.clientX; off += dx * -0.14; vel = dx * -0.14; });
+  stage.addEventListener('pointermove', (e) => { if (!dragging) return; const dx = e.clientX - lastX; lastX = e.clientX; off += dx * -0.12; vel = dx * -0.12; });
   const up = () => { dragging = false; };
   stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { threshold: 0 }).observe($('[data-hero]')!);
 
   const t0 = performance.now();
-  gsap.ticker.add(() => {
-    const t = (performance.now() - t0) / 1000;
+  gsap.ticker.add((_time, dtms) => {
+    if (!visible || document.hidden) return;
+    const dt = Math.min(dtms, 50) / 1000, t = (performance.now() - t0) / 1000;
+    if (!dragging) { off += vel * dt * 60; vel *= Math.pow(0.94, dt * 60); }
     const p = clamp(scrollY / innerHeight, 0, 1);
-    if (!dragging) { off += vel; vel *= 0.94; }
-    const sway = reduce ? 0 : Math.sin(t * 0.5) * 1.6;
-    shown += (p * 40 + off + sway - shown) * 0.14;
-    paint((((Math.round(shown)) % TURN) + TURN) % TURN);
+    target = p * 40 + off + (reduce ? 0 : Math.sin(t * 0.5) * 1.4);
+    pos += (target - pos) * (1 - Math.exp(-dt * 11));
+    paint();
   });
 
   const nc = nextChair();
@@ -120,17 +138,24 @@ function intro() {
   let finished = false;
   gsap.set([w1, w2], { opacity: 0 });
   gsap.set(path, { strokeDasharray: len, strokeDashoffset: len });
-  // start "side" in the middle of the screen
+  gsap.set([iw1, iw2], { transformOrigin: '0 0' });
+  // where each intro word has to land so it sits exactly on its twin in the hero (any layout, any size)
+  const home = (iw: HTMLElement, w: HTMLElement) => {
+    gsap.set(iw, { x: 0, y: 0, scale: 1 });
+    const a = iw.getBoundingClientRect(), b = w.getBoundingClientRect();
+    return { x: b.left - a.left, y: b.top - a.top, scale: b.width / a.width };
+  };
+  const h1 = home(iw1, w1), h2 = home(iw2, w2);
+  // "side" starts in the middle of the screen
   const r = iw1.getBoundingClientRect();
-  const cx = innerWidth / 2 - (r.left + r.width / 2), cy = innerHeight / 2 - (r.top + r.height / 2);
+  const cx = innerWidth / 2 - (r.left + r.width * 0.4), cy = innerHeight / 2 - (r.top + r.height / 2);
 
   const finish = () => {
     if (finished) return; finished = true; tl.kill();
     gsap.killTweensOf([iw1, iw2]);
-    const quick = reduce ? 0.01 : 0.5;
-    gsap.set([iw1, iw2], { x: 0, y: 0, opacity: 1 });
+    gsap.set(iw1, { ...h1, opacity: 1 }); gsap.set(iw2, { ...h2, opacity: 1 });
     heroEnter();
-    gsap.to(el, { opacity: 0, duration: quick, delay: 0.1, onComplete: () => el.remove() });
+    gsap.to(el, { opacity: 0, duration: reduce ? 0.01 : 0.5, delay: 0.1, onComplete: () => el.remove() });
   };
   const tl = gsap.timeline({ onComplete: finish });
   if (reduce) { tl.to({}, { duration: 0.4 }); }
@@ -139,8 +164,8 @@ function intro() {
       .to(iw1, { opacity: 1, duration: 0.9, ease: 'power3.out' }, 0.2)
       .to(path, { strokeDashoffset: 0, duration: 1.5, ease: 'power2.inOut' }, 0.8)
       .to($$('.intro__fur, .intro__line, .intro__tag', el), { opacity: 0, duration: 0.8, ease: 'power2.out' }, 2.4)
-      .to(iw1, { x: 0, y: 0, scale: 1, duration: 1.2, ease: 'power3.inOut' }, 2.4)
-      .fromTo(iw2, { x: innerWidth * 0.3, y: innerHeight * 0.3, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 1.2, ease: 'power3.inOut' }, 2.5)
+      .to(iw1, { ...h1, duration: 1.2, ease: 'power3.inOut' }, 2.4)
+      .fromTo(iw2, { x: h2.x + innerWidth * 0.3, y: h2.y + innerHeight * 0.3, scale: h2.scale, opacity: 0 }, { ...h2, opacity: 1, duration: 1.2, ease: 'power3.inOut' }, 2.5)
       .to({}, { duration: 0.35 });
   }
   $('[data-skip]', el)!.addEventListener('click', finish);
@@ -167,8 +192,6 @@ function reveals() {
     if (reduce) gsap.set($$('.w', st), { opacity: 1 });
     else gsap.to($$('.w', st), { opacity: 1, stagger: 0.08, ease: 'none', scrollTrigger: { trigger: '[data-why]', start: 'top 60%', end: 'center 40%', scrub: 0.6 } });
   }
-  // "before you sit" lights up as it arrives
-  ScrollTrigger.create({ trigger: '.book__title', start: 'top 75%', onEnter: () => $('.book__title')!.classList.add('is-lit') });
   if (!reduce) {
     gsap.from('.cuts__list li', { y: 36, opacity: 0, duration: 0.8, ease: 'power3.out', stagger: 0.07, scrollTrigger: { trigger: '.cuts__list', start: 'top 85%' } });
     gsap.from('.mirrors__row .mirror', { y: 80, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: '.mirrors__row', start: 'top 88%' } });
