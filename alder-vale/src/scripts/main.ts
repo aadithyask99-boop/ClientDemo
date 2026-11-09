@@ -93,7 +93,7 @@ function themeTick() {
   if (t === 'hero') { heroHeader(); header.classList.toggle('is-solid', false); return; }
   header.style.color = '';
   header.classList.toggle('is-light', t.startsWith('dark'));
-  header.classList.toggle('is-solid', t === 'light' || t === 'dark-solid');
+  header.classList.toggle('is-solid', t === 'light' || t === 'dark-solid' || matchMedia('(max-width: 860px)').matches);
 }
 let tf = 0;
 gsap.ticker.add(() => { if (++tf % 4 === 0) themeTick(); });
