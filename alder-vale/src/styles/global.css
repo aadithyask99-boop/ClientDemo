@@ -95,8 +95,8 @@ h1, h2, h3, p { margin: 0; }
   color: var(--hi); transition: color 0.35s, background 0.35s, transform 0.5s var(--ease);
 }
 .header.is-light { color: #f1ede4; }
-.header.is-solid { background: rgba(238, 235, 228, 0.95); color: var(--ink); }
-.header.is-solid.is-light { background: rgba(15, 28, 51, 0.95); color: #f1ede4; }
+.header.is-solid { background: rgb(238, 235, 228); color: var(--ink); }
+.header.is-solid.is-light { background: rgb(15, 28, 51); color: #f1ede4; }
 .header__nav { display: flex; gap: clamp(14px, 2vw, 32px); font-size: 0.82rem; font-weight: 600; letter-spacing: 0.04em; }
 .header__nav a { position: relative; padding: 12px 0; }
 .header__nav a::after { content: ''; position: absolute; left: 0; bottom: 8px; height: 2px; width: 100%; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 0.4s var(--ease); }
