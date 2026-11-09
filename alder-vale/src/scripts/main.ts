@@ -35,6 +35,7 @@ if (!reduce && !coarse) {
 }
 const lockScroll = (on) => {
   document.body.classList.toggle('is-locked', on);
+  document.dispatchEvent(new Event('lockchange'));
   if (lenis) on ? lenis.stop() : lenis.start();
 };
 const scrollToEl = (el) => (lenis ? lenis.scrollTo(el, { offset: -10, duration: 1.4 }) : el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }));
@@ -156,7 +157,7 @@ function applyCw(id) {
   hero.classList.toggle('is-dark', c.dark);
   models.forEach((m) => m.classList.toggle('is-on', m.dataset.id === id));
   picker.forEach((p) => { const on = p.dataset.id === id; p.classList.toggle('is-on', on); p.setAttribute('aria-pressed', on); });
-  $('#heroPrice').textContent = money(c.price);
+  $('#heroPrice').textContent = money(c.price); $('#mbarPrice').textContent = money(c.price);
   $('#heroIdx').textContent = String(order.indexOf(id) + 1).padStart(2, '0');
   if (hero.getBoundingClientRect().bottom > 40) heroHeader();
 }
@@ -261,7 +262,7 @@ function renderCart() {
   const lines = $('#lines');
   lines.innerHTML = cart.length ? '' : '<p class="empty">Your bag is empty. Add a knit and it flies in.</p>';
   cart.forEach((it) => {
-    const row = document.createElement('div'); row.className = 'line';
+    const row = document.createElement('div'); row.className = 'cline';
     row.innerHTML = `<div class="t"><img src="${it.img}" alt="" style="object-position:center 12%"></div><div><h3>${it.name}</h3><p>${it.sub}</p><div class="qty"><button aria-label="Fewer">&minus;</button><span>${it.qty}</span><button aria-label="More">+</button></div></div><div class="pr">${money(it.price * it.qty)}<button class="rm">Remove</button></div>`;
     const [minus, plus] = $$('.qty button', row);
     minus.onclick = () => { it.qty--; if (it.qty <= 0) cart.splice(cart.indexOf(it), 1); renderCart(); };
@@ -301,16 +302,19 @@ function fly(fromRect, src, done) {
     .to(f, { y: ty, duration: 0.8, ease: 'power3.in' }, 0.1)
     .to(f, { scale: 0.32, rotate: 14, duration: 0.8, ease: 'power2.in' }, 0.1);
 }
-$('#addBtn').addEventListener('click', () => {
+function addHero(from) {
   const c = CW[state.cw];
-  const r = $('#heroModels').getBoundingClientRect();
-  const chest = { left: r.left + r.width * 0.5 - 32, top: r.top + r.height * 0.5, width: 64, height: 64 };
   const src = $(`.swatch[data-id="${state.cw}"] img`).src;
-  fly(chest, src, () => {
+  fly(from, src, () => {
     add({ key: `stag-${state.cw}-${state.size}`, name: 'Stag cable quarter-zip', sub: `${c.name}, ${state.size}`, price: c.price, img: models.find((m) => m.dataset.id === state.cw).src });
     bump(); setTimeout(openCart, 160);
   });
+}
+$('#addBtn').addEventListener('click', () => {
+  const r = $('#heroModels').getBoundingClientRect();
+  addHero({ left: r.left + r.width * 0.5 - 32, top: Math.min(Math.max(r.top + r.height * 0.5, 80), innerHeight - 120), width: 64, height: 64 });
 });
+$('#mbar').addEventListener('click', () => addHero($('#mbar').getBoundingClientRect()));
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-add]'); if (!b) return;
   const r = b.getBoundingClientRect(); const d = b.dataset;
@@ -395,6 +399,23 @@ addEventListener('pointerup', () => { down = false; rail.classList.remove('is-dr
 rail.addEventListener('click', (e) => { if (moved > 6) { e.preventDefault(); e.stopPropagation(); } }, true);
 rail.addEventListener('wheel', (e) => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) e.stopPropagation(); }, { passive: true });
 
+/* ---------- phone: the add-to-bag bar shows in the shop sections once the hero button has scrolled away ---------- */
+{
+  const bar = $('#mbar'), seen = new Set(); let addOut = false;
+  const upd = () => bar.classList.toggle('is-on', matchMedia('(max-width: 860px)').matches && addOut && seen.size > 0 && !document.body.classList.contains('is-locked'));
+  const io = new IntersectionObserver((es) => { es.forEach((e) => (e.isIntersecting ? seen.add(e.target.id) : seen.delete(e.target.id))); upd(); }, { rootMargin: '0px 0px -12% 0px' });
+  ['collection', 'proof', 'shelf'].forEach((id) => io.observe(document.getElementById(id)));
+  new IntersectionObserver(([e]) => { addOut = !e.isIntersecting && e.boundingClientRect.top < 0; upd(); }).observe($('#addBtn'));
+  document.addEventListener('lockchange', upd);
+}
+if (!reduce) {
+  const mmz = gsap.matchMedia();
+  mmz.add('(max-width: 860px)', () => {
+    gsap.to('#heroModels', { scale: 1.08, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: () => '+=' + Math.round(innerHeight * 0.9), scrub: true } });
+    gsap.to('#heroWord', { yPercent: -14, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: () => '+=' + Math.round(innerHeight * 0.9), scrub: true } });
+  });
+}
+
 /* ---------- the collection slides up over the pinned hero ---------- */
 if (!reduce) {
   const mmh = gsap.matchMedia();
@@ -421,6 +442,8 @@ if (!reduce) {
   ScrollTrigger.batch('.card, .feature', { start: 'top 125%', onEnter: (b) => gsap.from(b, { y: 70, opacity: 0, duration: 0.9, stagger: 0.08, ease: 'power3.out', overwrite: true }) });
   ScrollTrigger.batch('.pcard', { start: 'top 88%', onEnter: (b) => gsap.from(b, { y: 80, opacity: 0, duration: 1, stagger: 0.1, ease: 'power3.out', overwrite: true }) });
   ScrollTrigger.batch('.scard', { start: 'top 92%', onEnter: (b) => gsap.from(b, { x: 80, opacity: 0, duration: 0.9, stagger: 0.08, ease: 'power3.out', overwrite: true }) });
+  ScrollTrigger.batch('.lb__fig', { start: 'top 94%', onEnter: (b) => gsap.from(b, { y: 56, opacity: 0, duration: 0.9, stagger: 0.08, ease: 'power3.out', overwrite: true }) });
+  $$('.foot__top > *, .shelf__side').forEach((el) => gsap.from(el, { y: 44, opacity: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 94%' } }));
   $$('.lb__text > *').forEach((el) => gsap.from(el, { y: 40, opacity: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 90%' } }));
   gsap.from('.drop__in > *', { y: 50, opacity: 0, duration: 1, stagger: 0.12, ease: 'power3.out', scrollTrigger: { trigger: '#drop', start: 'top 55%' } });
 }

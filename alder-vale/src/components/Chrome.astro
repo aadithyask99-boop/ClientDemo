@@ -26,3 +26,5 @@ import { brand, nav } from '../data/site';
 <div class="menu" id="menu" aria-hidden="true">
   {nav.map((n) => <a href={n.href} class="display">{n.label}</a>)}
 </div>
+
+<button class="mbar" id="mbar" aria-label="Add to bag"><span>Add to bag<span class="mbar__p" id="mbarPrice">$398</span></span><span class="mbar__go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></button>

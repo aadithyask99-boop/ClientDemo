@@ -1,13 +1,15 @@
 // @ts-nocheck
 // A knitting-needle pointer with an oxblood bead, and a ring that opens over things you can use.
 import gsap from 'gsap';
+import stagRaw from '../../public/stag.svg?raw';
 
 export function initCursor() {
   const ok = matchMedia('(hover: hover) and (pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!ok) return;
   const root = document.documentElement;
   const needle = document.createElement('div'); needle.className = 'cur-n'; needle.setAttribute('aria-hidden', 'true');
-  needle.innerHTML = '<svg viewBox="0 0 40 40" width="40" height="40"><line x1="3" y1="3" x2="31" y2="31" stroke="#0f1c33" stroke-width="5.2" stroke-linecap="round"/><circle cx="34" cy="34" r="5" fill="#0f1c33"/><line x1="3" y1="3" x2="31" y2="31" stroke="#f1ede4" stroke-width="2.4" stroke-linecap="round"/><circle cx="34" cy="34" r="3.4" fill="#8c2433"/></svg>';
+  const vb = /viewBox="([^"]+)"/.exec(stagRaw)[1], sd = /d="([^"]+)"/.exec(stagRaw)[1];
+  needle.innerHTML = `<svg class="cur-arrow" viewBox="0 0 24 32" width="24" height="32"><path d="M3 2.5 L3 24.5 L8.4 19.6 L12.2 28.2 L15.8 26.6 L12 18.2 L19.2 18.2 Z" fill="#0f1c33" stroke="#f1ede4" stroke-width="1.8" stroke-linejoin="round"/></svg><svg class="cur-stag" viewBox="${vb}" width="26" height="42"><path d="${sd}" fill="#8c2433" stroke="#f1ede4" stroke-width="22" stroke-linejoin="round" paint-order="stroke" fill-rule="evenodd"/></svg>`;
   const ring = document.createElement('div'); ring.className = 'cur-r'; ring.setAttribute('aria-hidden', 'true');
   ring.innerHTML = '<span class="cur-r__t"></span>';
   document.body.append(ring, needle);
@@ -36,7 +38,7 @@ export function initCursor() {
       else if (t.closest('.rail, .scard')) text = 'Drag';
       else if (t.closest('.card .tile, .feature')) text = 'View';
     }
-    set('is-link', link && !text); set('has-label', !!text); label.textContent = text;
+    set('is-link', link && !text); set('has-label', !!text); label.textContent = text; needle.classList.toggle('is-link', link && !text);
     needle.classList.toggle('is-hidden', hide || !!text); ring.classList.toggle('is-hidden', hide);
   });
 

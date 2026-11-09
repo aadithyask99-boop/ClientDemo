@@ -82,25 +82,26 @@ function initWeather(desktop) {
   }
   gsap.set(A.chars, { opacity: 0, y: 36 });
   gsap.set(B.chars, { opacity: 0, y: -30 });
-  gsap.set('#wPeak', { yPercent: 28, opacity: 0.15 });
-  gsap.set('.w-note', { opacity: 0, y: 24 });
+  gsap.set('#wPeak', { yPercent: 9, opacity: 0.55 });
   gsap.set('#wSnow', { opacity: 0 });
-  gsap.set('#wFrame', { clipPath: 'inset(100% 8vw 0% 8vw round 22px)' });
+  // the frame's clip is driven from one numeric proxy: browsers collapse inset(a b c b) to three values and GSAP then loses the left edge
+  const fr = { t: 100, s: 8, r: 22 }, frEl = $('#wFrame');
+  const paint = () => { frEl.style.clipPath = `inset(${fr.t}% ${fr.s}% 0% ${fr.s}% round ${fr.r}px)`; };
+  paint();
   gsap.set('#wFrame img', { scale: 1.22 });
-  const tl = gsap.timeline({ scrollTrigger: { trigger: pin, start: 'top top', end: '+=460%', pin: true, scrub: 0.7, anticipatePin: 1 } });
+  const tl = gsap.timeline({ scrollTrigger: { trigger: pin, start: 'top top', end: matchMedia('(max-width: 860px)').matches ? '+=340%' : '+=460%', pin: true, scrub: 0.7, anticipatePin: 1 } });
   tl.to('#wPeak', { yPercent: 0, opacity: 1, duration: 0.16, ease: 'power2.out' }, 0)
     .to('#wSnow', { opacity: 1, duration: 0.14 }, 0.06)
-    .to('.w-note', { opacity: 1, y: 0, duration: 0.08, stagger: 0.03 }, 0.1)
     .to(A.chars, { opacity: 1, y: 0, duration: 0.1, stagger: { each: 0.004, from: 'random' }, ease: 'power2.out' }, 0.12)
     .to('#wPeak', { yPercent: -6, duration: 0.3, ease: 'none' }, 0.18)
-    .to(A.chars, { opacity: 0, y: -70, duration: 0.1, stagger: { each: 0.003, from: 'random' }, ease: 'power2.in' }, 0.46)
-    .to('.w-note', { opacity: 0, duration: 0.06 }, 0.46)
-    .to('#wSnow', { opacity: 0, duration: 0.12 }, 0.5)
-    .to('#wPeak', { opacity: 0.2, yPercent: -16, duration: 0.3, ease: 'none' }, 0.5)
-    .to(B.chars, { opacity: 1, y: 0, duration: 0.1, stagger: { each: 0.005, from: 'random' }, ease: 'power2.out' }, 0.52)
-    .to('#wFrame', { clipPath: 'inset(30% 8vw 0% 8vw round 22px)', duration: 0.12, ease: 'power2.out' }, 0.54)
-    .to('#wFrame', { clipPath: 'inset(0% 0% 0% 0% round 0px)', duration: 0.26, ease: 'power2.inOut' }, 0.68)
-    .to('#wFrame img', { scale: 1, duration: 0.42, ease: 'none' }, 0.54)
+    .to(A.chars, { opacity: 0, y: -70, duration: 0.08, stagger: { each: 0.002, from: 'random' }, ease: 'power2.in' }, 0.38)
+    .to('.w-note', { opacity: 0, duration: 0.06 }, 0.38)
+    .to('#wSnow', { opacity: 0, duration: 0.1 }, 0.44)
+    .to('#wPeak', { opacity: 0, yPercent: -16, duration: 0.12, ease: 'none' }, 0.46)
+    .to(B.chars, { opacity: 1, y: 0, duration: 0.08, stagger: { each: 0.004, from: 'random' }, ease: 'power2.out' }, 0.86)
+    .to(fr, { t: 30, duration: 0.12, ease: 'power2.out', onUpdate: paint }, 0.56)
+    .to(fr, { t: 0, s: 0, r: 0, duration: 0.26, ease: 'power2.inOut', onUpdate: paint }, 0.68)
+    .to('#wFrame img', { scale: 1, duration: 0.4, ease: 'none' }, 0.56)
     .to({}, { duration: 0.06 }, 0.94);
 
   let stopWind = null;
@@ -242,7 +243,7 @@ function initFooterFigs() {
   const chars = [...txt].map((c) => { const s = document.createElement('span'); s.textContent = c; word.append(s); return s; });
   const bl = document.createElement('i'); bl.className = 'bl'; word.append(bl);
   const small = matchMedia('(max-width: 860px)');
-  const sizes = () => (small.matches ? { a: 2.5, b: 1.6, c: 1.2 } : { a: 1.15, b: 0.78, c: 0.55 }); // figure height as a share of the letter height
+  const sizes = () => (small.matches ? { a: 3.4, b: 2.3, c: 1.7 } : { a: 1.15, b: 0.78, c: 0.55 }); // figure height as a share of the letter height
   const figs = $$('.fig');
   function place() {
     const fs = parseFloat(getComputedStyle(word).fontSize);
@@ -254,7 +255,7 @@ function initFooterFigs() {
       const h = capH * sizes()[f.dataset.fig], w = h * ratio;
       const r = chars[Number(f.dataset.on)].getBoundingClientRect(), cx = r.left + r.width / 2 - sr.left;
       f.style.width = w + 'px'; f.style.height = h + 'px';
-      f.style.left = (cx - w / 2) + 'px'; f.style.top = (capTop - h + capH * 0.045) + 'px';
+      f.style.left = Math.min(Math.max(cx - w / 2, 6), sr.width - w - 6) + 'px'; f.style.top = (capTop - h + capH * 0.045) + 'px';
     });
   }
   const run = () => place();
@@ -270,12 +271,26 @@ function initFooterFigs() {
   }
 }
 
+/* ---------- pinned knit on a phone: no pin, but it still moves as you scroll ---------- */
+function initSpecsMobile() {
+  const words = state.words;
+  gsap.set(words, { opacity: 0.22 });
+  gsap.to(words, { opacity: 1, stagger: 0.08, ease: 'none', scrollTrigger: { trigger: '#spHead', start: 'top 82%', end: 'bottom 48%', scrub: true } });
+  gsap.fromTo('#spKnit', { y: 70, scale: 0.88, rotation: 6, opacity: 0 }, { y: 0, scale: 1, rotation: -2, opacity: 1, ease: 'power2.out', scrollTrigger: { trigger: '#spStage', start: 'top 90%', end: 'top 38%', scrub: 0.6 } });
+  gsap.set('[data-tag]', { opacity: 0, scale: 0.5, transformOrigin: '0 50%' });
+  gsap.to('[data-tag]', { opacity: 1, scale: 1, stagger: 0.14, duration: 0.5, ease: 'back.out(2)', scrollTrigger: { trigger: '#spStage', start: 'top 48%', once: true } });
+  gsap.set('#spClose p span', { yPercent: 110 });
+  gsap.to('#spClose p span', { yPercent: 0, stagger: 0.12, duration: 0.7, ease: 'power3.out', scrollTrigger: { trigger: '#spClose', start: 'top 94%', once: true } });
+}
+
 const state = {};
 export function initSections() {
   state.A = splitChars($('#wHead'), '[data-line]'); state.B = splitChars($('#wTwo'), '[data-split]'); state.words = splitWords($('#spHead'));
   const mm = gsap.matchMedia();
-  mm.add('(min-width: 861px) and (prefers-reduced-motion: no-preference)', () => { const c = [initWeather(true), initSpecs(true)]; initLookbook(); return () => c.forEach((f) => f && f()); });
-  mm.add('(max-width: 860px), (prefers-reduced-motion: reduce)', () => { const c = initWeather(false); initSpecs(false); return () => c && c(); });
+  mm.add('(prefers-reduced-motion: no-preference)', () => { const c = initWeather(true); return () => c && c(); });
+  mm.add('(min-width: 861px) and (prefers-reduced-motion: no-preference)', () => { const c = initSpecs(true); initLookbook(); return () => c && c(); });
+  mm.add('(max-width: 860px) and (prefers-reduced-motion: no-preference)', () => { initSpecsMobile(); });
+  mm.add('(prefers-reduced-motion: reduce)', () => { initWeather(false); initSpecs(false); });
   initLog();
   initFooterFigs();
 }

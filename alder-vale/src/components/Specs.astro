@@ -2,7 +2,7 @@
 import { specs, colourways } from '../data/site';
 import { u } from '../lib';
 ---
-<section class="specs" id="specs" data-theme="dark">
+<section class="specs" id="specs" data-theme="light">
   <div class="specs__pin" id="specsPin">
     <h2 class="display sp-head" id="spHead" aria-label={specs.heading.join(' ')}>{specs.heading.map((l) => <span class="line" aria-hidden="true">{l}</span>)}</h2>
     <p class="sp-tested">{specs.tested}</p>
@@ -15,7 +15,7 @@ import { u } from '../lib';
         </div>
       </div>
     </div>
-    <a class="pill sp-cta" id="spCta" href="#top">{specs.cta} ${colourways[0].price}<span class="go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a>
+    <a class="pill pill--dark sp-cta" id="spCta" href="#top">{specs.cta} ${colourways[0].price}<span class="go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a>
     <div class="sp-close" id="spClose"><p class="display">{specs.closing.map((l) => <span>{l}</span>)}</p></div>
   </div>
 </section>
