@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { initSections } from './sections';
+import { initCursor } from './cursor';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -85,25 +86,34 @@ heroHeader();
 const themed = $$('[data-theme]');
 let lastTheme = '';
 function themeTick() {
+  if (menu.classList.contains('is-on')) return;
+  const small = matchMedia('(max-width: 860px)').matches;
   let cur = null;
   for (const s of themed) { const r = s.getBoundingClientRect(); if (r.top <= 40 && r.bottom > 40) cur = s; }
   const t = cur ? cur.dataset.theme : 'hero';
-  if (t === lastTheme) { if (t === 'hero') heroHeader(); return; }
+  if (t === 'hero') {
+    // on a phone the bar turns solid once you scroll, in the hero's own colour, so nothing slides under the logo
+    const solid = small && scrollY > 70;
+    heroHeader(); header.classList.toggle('is-solid', solid); header.style.backgroundColor = solid ? CW[state.cw].ground : '';
+    lastTheme = 'hero'; return;
+  }
+  header.style.backgroundColor = '';
+  if (t === lastTheme) return;
   lastTheme = t;
-  if (t === 'hero') { heroHeader(); header.classList.toggle('is-solid', false); return; }
   header.style.color = '';
   header.classList.toggle('is-light', t.startsWith('dark'));
-  header.classList.toggle('is-solid', t === 'light' || t === 'dark-solid' || matchMedia('(max-width: 860px)').matches);
+  header.classList.toggle('is-solid', t === 'light' || t === 'dark-solid' || small);
 }
 let tf = 0;
 gsap.ticker.add(() => { if (++tf % 4 === 0) themeTick(); });
 
 /* ---------- mobile menu ---------- */
 const menu = $('#menu'), menuBtn = $('#menuBtn');
-function closeMenu() { menu.classList.remove('is-on'); header.classList.remove('is-menu'); menuBtn.setAttribute('aria-expanded', 'false'); if (!drawerOpen && !checkoutOpen) lockScroll(false); }
+function closeMenu() { menu.classList.remove('is-on'); header.classList.remove('is-menu'); lastTheme = ''; menuBtn.setAttribute('aria-expanded', 'false'); if (!drawerOpen && !checkoutOpen) lockScroll(false); }
 menuBtn.addEventListener('click', () => {
   const on = !menu.classList.contains('is-on');
   menu.classList.toggle('is-on', on); header.classList.toggle('is-menu', on); menuBtn.setAttribute('aria-expanded', String(on)); lockScroll(on);
+  if (on) { header.style.color = '#f1ede4'; header.style.backgroundColor = ''; header.classList.remove('is-solid'); } else { lastTheme = ''; }
 });
 
 /* ---------- hero: colourways ---------- */
@@ -403,6 +413,7 @@ if (!reduce) {
   });
 }
 initSections();
+initCursor();
 
 /* reveals (all sizes) */
 if (!reduce) {

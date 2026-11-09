@@ -25,7 +25,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: auto; -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: auto; -webkit-text-size-adjust: 100%; overflow-x: clip; }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 p { text-wrap: pretty; }
@@ -105,6 +105,7 @@ h1, h2, h3, p { margin: 0; }
 .logo svg { width: 34px; height: auto; }
 .logo .wordmark { font-family: var(--word); font-weight: 900; font-size: 1.55rem; letter-spacing: 0.04em; line-height: 1; }
 .header__tools { justify-self: end; display: flex; gap: 6px; align-items: center; }
+.help { font-size: 0.82rem; font-weight: 600; letter-spacing: 0.04em; margin-right: 6px; min-height: 44px; display: flex; align-items: center; }
 .icon-btn { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; }
 .icon-btn svg { width: 21px; height: 21px; }
 .icon-btn:hover { background: rgba(127, 127, 127, 0.18); }
@@ -215,6 +216,7 @@ h1, h2, h3, p { margin: 0; }
 .checkout { position: fixed; inset: 0; z-index: 130; background: #5d7391; color: var(--ink); overflow-y: auto; transform: translateY(100%); transition: transform 0.6s var(--ease); visibility: hidden; }
 .checkout.is-on { transform: none; visibility: visible; }
 .checkout__bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 76px; padding: 0 var(--gut); color: #f1ede4; }
+.back__s { display: none; }
 .checkout__bar .back { justify-self: start; font-weight: 700; font-size: 0.95rem; min-height: 44px; display: flex; align-items: center; gap: 8px; }
 .checkout__wrap { display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(24px, 4vw, 72px); padding: 8px var(--gut) 60px; max-width: 1400px; margin: 0 auto; }
 .checkout h1 { font-size: clamp(3.4rem, 8vw, 7rem); color: #f1ede4; margin-bottom: 22px; }
@@ -252,9 +254,13 @@ h1, h2, h3, p { margin: 0; }
   .hero__title { font-size: 4rem; }
   .picker { position: relative; right: auto; top: auto; width: auto; grid-template-columns: repeat(4, 1fr); margin: 22px var(--gut) 0; gap: 8px; z-index: 3; }
   .swatch { grid-template-columns: 1fr; justify-items: center; text-align: center; padding: 8px 4px 10px; border-radius: 20px; gap: 4px; }
-  .swatch span { display: none; }
+  .swatch > span:last-child > span { display: none; }
   .swatch strong { font-size: 0.72rem; }
   .hero__note, .hero__idx { display: none; }
+  .checkout__bar { grid-template-columns: auto 1fr auto; height: 64px; }
+  .checkout__bar .logo { justify-self: center; }
+  .back__t { display: none; }
+  .back__s { display: inline; }
   .checkout__wrap { grid-template-columns: 1fr; }
   .summary { position: static; }
   .row2 { grid-template-columns: 1fr; }
@@ -270,3 +276,19 @@ h1, h2, h3, p { margin: 0; }
 @media (min-width: 861px) {
   .hero { position: sticky; top: 0; z-index: 1; }
 }
+
+/* ------------------------------------------------------ cursor: a knitting needle with an oxblood bead */
+html.has-cursor, html.has-cursor * { cursor: none !important; }
+html.has-cursor input, html.has-cursor textarea { cursor: text !important; }
+.cur-n, .cur-r { position: fixed; left: 0; top: 0; z-index: 400; pointer-events: none; opacity: 0; transition: opacity 0.25s; }
+.cur-n.is-on, .cur-r.is-on { opacity: 1; }
+.cur-n.is-hidden, .cur-r.is-hidden { opacity: 0; }
+.cur-n svg { display: block; margin: -3px 0 0 -3px; transition: scale 0.2s var(--ease); filter: drop-shadow(0 2px 3px rgba(9, 19, 31, 0.35)); }
+.cur-n.is-down svg { scale: 0.86; }
+.cur-r { z-index: 399; }
+.cur-r::before { content: ''; position: absolute; left: -35px; top: -35px; width: 70px; height: 70px; border-radius: 50%; border: 1.5px solid rgba(241, 237, 228, 0.95); box-shadow: 0 0 0 1px rgba(15, 28, 51, 0.38), inset 0 0 0 1px rgba(15, 28, 51, 0.2); scale: 0; transition: scale 0.32s var(--ease), background 0.3s, border-color 0.3s; }
+.cur-r.is-link::before { scale: 0.62; }
+.cur-r.has-label::before { scale: 1; background: var(--ox); border-color: var(--ox); }
+.cur-r.is-down::before { scale: 0.5; }
+.cur-r__t { position: absolute; left: -35px; top: -35px; width: 70px; height: 70px; display: grid; place-items: center; font: 800 11px/1 var(--ui); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ox-ink); opacity: 0; transition: opacity 0.2s; }
+.cur-r.has-label .cur-r__t { opacity: 1; }

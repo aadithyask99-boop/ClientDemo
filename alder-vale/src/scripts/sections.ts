@@ -36,54 +36,66 @@ function splitWords(el) {
   return words;
 }
 
-/* ---------- weather: ice shards ---------- */
-function buildShards() {
-  const svg = $('#wShards'); if (!svg || svg.children.length) return;
-  const rnd = (a, b) => a + Math.random() * (b - a);
-  // base x, base y, angle (deg, -90 is straight up), length, width
-  const defs = [
-    [210, 600, -118, 400, 40], [300, 600, -108, 470, 50], [120, 600, -126, 330, 34], [380, 600, -98, 360, 36],
-    [50, 600, -132, 250, 26], [470, 600, -86, 300, 30],
-  ];
-  defs.forEach(([x, y, a, len, w]) => {
-    const ang = (a * Math.PI) / 180, dx = Math.cos(ang), dy = Math.sin(ang), nx = -dy, ny = dx, bend = len * 0.16 * (a < -90 ? -1 : 1);
-    const n = 9, L = [], R = [];
-    for (let i = 0; i <= n; i++) {
-      const t = i / n, wd = w * Math.pow(1 - t, 0.85) * (1 + rnd(-0.18, 0.18)), off = bend * Math.sin(t * Math.PI * 0.9);
-      const cx = x + dx * len * t + nx * off, cy = y + dy * len * t * 1 + ny * off;
-      L.push([cx + nx * wd / 2, cy + ny * wd / 2]); R.push([cx - nx * wd / 2, cy - ny * wd / 2]);
+/* ---------- weather: wind-blown snow over the ridge, pushed by the cursor ---------- */
+function initSpindrift() {
+  const cv = $('#wSnow'), pin = $('#weatherPin'); if (!cv || !pin) return null;
+  const ctx = cv.getContext('2d');
+  let W = 0, H = 0, parts = [], on = false, mx = -9999, my = -9999;
+  const mk = (any) => ({ x: any ? Math.random() * W : -24, y: H * (0.18 + Math.random() * 0.78), r: 0.7 + Math.random() * 2.2, vx: 1.1 + Math.random() * 2.8, vy: -0.25 + Math.random() * 0.6, a: 0.25 + Math.random() * 0.65, s: Math.random() * 6 });
+  const size = () => {
+    const dpr = Math.min(devicePixelRatio || 1, 1.5);
+    W = cv.clientWidth; H = cv.clientHeight; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    parts = Array.from({ length: Math.round((W * H) / (fine ? 5600 : 12000)) }, () => mk(true));
+  };
+  size();
+  const tick = () => {
+    if (!on || reduce) return;
+    ctx.clearRect(0, 0, W, H);
+    for (const p of parts) {
+      p.s += 0.02; p.x += p.vx + Math.sin(p.s) * 0.45; p.y += p.vy + Math.cos(p.s * 0.8) * 0.4;
+      const dx = p.x - mx, dy = p.y - my, d = Math.hypot(dx, dy);
+      if (d < 150) { const f = 1 - d / 150; p.x += (dx / (d || 1)) * f * 3.4; p.y += (dy / (d || 1)) * f * 3.4; }
+      if (p.x > W + 24 || p.y < -20 || p.y > H + 20) Object.assign(p, mk(false));
+      ctx.globalAlpha = p.a; ctx.fillStyle = '#f4f6fa'; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 7); ctx.fill();
     }
-    const pts = [...L, ...R.reverse()].map((p) => p.map((v) => v.toFixed(1)).join(',')).join(' ');
-    const p = document.createElementNS('http://www.w3.org/2000/svg', 'polygon'); p.setAttribute('points', pts); svg.append(p);
-  });
+    ctx.globalAlpha = 1;
+  };
+  const io = new IntersectionObserver(([e]) => (on = e.isIntersecting)); io.observe(pin);
+  const move = (e) => { const r = cv.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; };
+  const leave = () => { mx = my = -9999; };
+  if (fine) { pin.addEventListener('pointermove', move); pin.addEventListener('pointerleave', leave); }
+  addEventListener('resize', size);
+  gsap.ticker.add(tick);
+  return () => { gsap.ticker.remove(tick); io.disconnect(); removeEventListener('resize', size); pin.removeEventListener('pointermove', move); pin.removeEventListener('pointerleave', leave); };
 }
 
 /* ---------- weather ---------- */
 function initWeather(desktop) {
   const pin = $('#weatherPin');
-  buildShards();
   const A = state.A, B = state.B;
+  const stopSnow = initSpindrift();
   if (!desktop) {
     gsap.set([A.chars, B.chars], { opacity: 1, y: 0 });
     gsap.set('#wFrame', { clipPath: 'inset(0% 0% 0% 0% round 0px)' });
-    return;
+    gsap.set('#wSnow', { opacity: reduce ? 0 : 0.9 });
+    return () => stopSnow && stopSnow();
   }
   gsap.set(A.chars, { opacity: 0, y: 36 });
   gsap.set(B.chars, { opacity: 0, y: -30 });
   gsap.set('#wPeak', { yPercent: 28, opacity: 0.15 });
-  gsap.set('#wShards polygon', { transformOrigin: '50% 100%', scaleY: 0 });
   gsap.set('.w-note', { opacity: 0, y: 24 });
+  gsap.set('#wSnow', { opacity: 0 });
   gsap.set('#wFrame', { clipPath: 'inset(100% 8vw 0% 8vw round 22px)' });
   gsap.set('#wFrame img', { scale: 1.22 });
   const tl = gsap.timeline({ scrollTrigger: { trigger: pin, start: 'top top', end: '+=460%', pin: true, scrub: 0.7, anticipatePin: 1 } });
   tl.to('#wPeak', { yPercent: 0, opacity: 1, duration: 0.16, ease: 'power2.out' }, 0)
-    .to('#wShards polygon', { scaleY: 1, duration: 0.14, stagger: 0.012, ease: 'power3.out' }, 0.04)
+    .to('#wSnow', { opacity: 1, duration: 0.14 }, 0.06)
     .to('.w-note', { opacity: 1, y: 0, duration: 0.08, stagger: 0.03 }, 0.1)
     .to(A.chars, { opacity: 1, y: 0, duration: 0.1, stagger: { each: 0.004, from: 'random' }, ease: 'power2.out' }, 0.12)
     .to('#wPeak', { yPercent: -6, duration: 0.3, ease: 'none' }, 0.18)
     .to(A.chars, { opacity: 0, y: -70, duration: 0.1, stagger: { each: 0.003, from: 'random' }, ease: 'power2.in' }, 0.46)
     .to('.w-note', { opacity: 0, duration: 0.06 }, 0.46)
-    .to('#wShards', { opacity: 0, y: -40, duration: 0.12 }, 0.5)
+    .to('#wSnow', { opacity: 0, duration: 0.12 }, 0.5)
     .to('#wPeak', { opacity: 0.2, yPercent: -16, duration: 0.3, ease: 'none' }, 0.5)
     .to(B.chars, { opacity: 1, y: 0, duration: 0.1, stagger: { each: 0.005, from: 'random' }, ease: 'power2.out' }, 0.52)
     .to('#wFrame', { clipPath: 'inset(30% 8vw 0% 8vw round 22px)', duration: 0.12, ease: 'power2.out' }, 0.54)
@@ -91,14 +103,15 @@ function initWeather(desktop) {
     .to('#wFrame img', { scale: 1, duration: 0.42, ease: 'none' }, 0.54)
     .to({}, { duration: 0.06 }, 0.94);
 
+  let stopWind = null;
   if (fine) {
-    // the weather answers the cursor: shards sway and letters are blown aside
-    const sx = gsap.quickTo('#wShards', 'x', { duration: 1.2, ease: 'power3' });
+    // the cursor blows the headline letters aside
     const px = gsap.quickTo('#wPeak', 'x', { duration: 1.4, ease: 'power3' });
     const wcs = [...A.wcs, ...B.wcs];
     let mx = -9999, my = -9999, active = false, busy = false;
-    pin.addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; active = true; const r = (e.clientX / innerWidth - 0.5) * 2; sx(-r * 26); px(r * 12); });
-    pin.addEventListener('pointerleave', () => { active = false; });
+    const move = (e) => { mx = e.clientX; my = e.clientY; active = true; px(((e.clientX / innerWidth - 0.5) * 2) * 12); };
+    const leave = () => { active = false; };
+    pin.addEventListener('pointermove', move); pin.addEventListener('pointerleave', leave);
     const tick = () => {
       if (!active && !busy) return;
       busy = false;
@@ -117,36 +130,39 @@ function initWeather(desktop) {
       }
     };
     gsap.ticker.add(tick);
-    return () => gsap.ticker.remove(tick);
+    stopWind = () => { gsap.ticker.remove(tick); pin.removeEventListener('pointermove', move); pin.removeEventListener('pointerleave', leave); };
   }
+  return () => { stopSnow && stopSnow(); stopWind && stopWind(); };
 }
 
-/* ---------- pinned knit ---------- */
+/* ---------- pinned knit: flat and honest, it floats in and the cursor gives it a little parallax ---------- */
 function initSpecs(desktop) {
   const words = state.words;
   if (!desktop) { words.forEach((w) => (w.style.opacity = 1)); gsap.set('[data-tag]', { opacity: 1 }); return; }
   const h = innerHeight;
-  gsap.set('#spKnit', { transformPerspective: 1500, transformOrigin: '50% 55%', y: h * 0.75, x: 200, rotationZ: 32, rotationX: 62, rotationY: -42, scale: 0.5, opacity: 0 });
+  gsap.set('#spKnit', { transformOrigin: '50% 62%', y: h * 0.7, x: 90, rotation: 12, scale: 0.72, opacity: 0 });
   gsap.set('#spShadow', { opacity: 0, scaleX: 0.4 });
   gsap.set('[data-tag]', { opacity: 0, scale: 0.4, transformOrigin: '0 50%' });
   gsap.set('#spClose p span', { yPercent: 110 });
-  const tl = gsap.timeline({ scrollTrigger: { trigger: '#specsPin', start: 'top top', end: '+=300%', pin: true, scrub: 0.8, anticipatePin: 1 } });
+  const tl = gsap.timeline({ scrollTrigger: { trigger: '#specsPin', start: 'top top', end: '+=280%', pin: true, scrub: 0.8, anticipatePin: 1 } });
   tl.to(words, { opacity: 1, duration: 0.12, stagger: 0.05, ease: 'none' }, 0)
-    .to('#spKnit', { y: 0, x: 0, rotationZ: -5, rotationX: 0, rotationY: 0, scale: 1, opacity: 1, duration: 0.42, ease: 'power3.out' }, 0.02)
+    .to('#spKnit', { y: 0, x: 0, rotation: -3, scale: 1, opacity: 1, duration: 0.42, ease: 'power3.out' }, 0.02)
     .to('#spShadow', { opacity: 1, scaleX: 1, duration: 0.3, ease: 'power2.out' }, 0.2)
     .to('[data-tag]', { opacity: 1, scale: 1, duration: 0.07, stagger: 0.13, ease: 'back.out(2)' }, 0.4)
-    .to('#spKnit', { rotationY: 24, rotationZ: 5, rotationX: 6, scale: 1.1, y: -14, duration: 0.5, ease: 'sine.inOut' }, 0.44)
-    .to('#spShadow', { scaleX: 0.9, duration: 0.5, ease: 'sine.inOut' }, 0.44)
+    .to('#spKnit', { rotation: 2, scale: 1.07, y: -12, duration: 0.5, ease: 'sine.inOut' }, 0.44)
+    .to('#spShadow', { scaleX: 0.92, duration: 0.5, ease: 'sine.inOut' }, 0.44)
     .to('#spCta', { opacity: 1, duration: 0.08 }, 0.62)
     .to('#spClose p span', { yPercent: 0, duration: 0.14, stagger: 0.1, ease: 'power3.out' }, 0.74)
-    .to('#spKnit', { rotationY: 0, rotationZ: -2, scale: 1.04, duration: 0.2, ease: 'sine.inOut' }, 0.84);
+    .to('#spKnit', { rotation: -1, scale: 1.03, y: 0, duration: 0.2, ease: 'sine.inOut' }, 0.84);
   if (fine) {
-    const tx = gsap.quickTo('#spTilt', 'rotationY', { duration: 0.9, ease: 'power3' });
-    const ty = gsap.quickTo('#spTilt', 'rotationX', { duration: 0.9, ease: 'power3' });
-    gsap.set('#spTilt', { transformPerspective: 1500 });
+    // the knit drifts a little against the cursor, the way things do at different depths
+    const qx = gsap.quickTo('#spTilt', 'x', { duration: 1.1, ease: 'power3' });
+    const qy = gsap.quickTo('#spTilt', 'y', { duration: 1.1, ease: 'power3' });
     const pin = $('#specsPin');
-    pin.addEventListener('pointermove', (e) => { tx((e.clientX / innerWidth - 0.5) * 20); ty(-(e.clientY / innerHeight - 0.5) * 14); });
-    pin.addEventListener('pointerleave', () => { tx(0); ty(0); });
+    const move = (e) => { qx(-(e.clientX / innerWidth - 0.5) * 30); qy(-(e.clientY / innerHeight - 0.5) * 18); };
+    const leave = () => { qx(0); qy(0); };
+    pin.addEventListener('pointermove', move); pin.addEventListener('pointerleave', leave);
+    return () => { pin.removeEventListener('pointermove', move); pin.removeEventListener('pointerleave', leave); };
   }
 }
 
@@ -258,8 +274,8 @@ const state = {};
 export function initSections() {
   state.A = splitChars($('#wHead'), '[data-line]'); state.B = splitChars($('#wTwo'), '[data-split]'); state.words = splitWords($('#spHead'));
   const mm = gsap.matchMedia();
-  mm.add('(min-width: 861px) and (prefers-reduced-motion: no-preference)', () => { buildShards(); const c = [initWeather(true), initSpecs(true)]; initLookbook(); return () => c.forEach((f) => f && f()); });
-  mm.add('(max-width: 860px), (prefers-reduced-motion: reduce)', () => { buildShards(); initWeather(false); initSpecs(false); });
+  mm.add('(min-width: 861px) and (prefers-reduced-motion: no-preference)', () => { const c = [initWeather(true), initSpecs(true)]; initLookbook(); return () => c.forEach((f) => f && f()); });
+  mm.add('(max-width: 860px), (prefers-reduced-motion: reduce)', () => { const c = initWeather(false); initSpecs(false); return () => c && c(); });
   initLog();
   initFooterFigs();
 }

@@ -8,7 +8,7 @@ import { u } from '../lib';
       <p class="w-note w-note--l">{weather.left}</p>
       <p class="w-note w-note--r">{weather.right}</p>
       <div class="w-peak" id="wPeak"><img class="w-ridge" src={u('img/ridge.webp')} alt="A snow ridge with wind blowing off the summit" loading="lazy" width="2200" height="1238" /></div>
-      <svg class="w-shards" id="wShards" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <canvas class="w-snow" id="wSnow" aria-hidden="true"></canvas>
       <h2 class="display w-head" id="wHead" aria-label={weather.lines.join('. ')}>{weather.lines.map((l) => <span class="line" data-line aria-hidden="true">{l}</span>)}</h2>
     </div>
     <div class="w-b">
