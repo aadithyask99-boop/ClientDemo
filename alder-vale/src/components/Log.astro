@@ -1,0 +1,20 @@
+---
+import { log } from '../data/site';
+import { u } from '../lib';
+---
+<section class="log" id="log" data-theme="dark">
+  <div class="log__pin" id="logPin">
+    <div class="log__stage" id="logStage">
+      <img src={u('img/night-peak.webp')} alt="A lone snow peak under a moonlit navy sky" loading="lazy" width="2200" height="1238" />
+      <svg class="log__line" id="logLine" viewBox="0 0 1000 560" preserveAspectRatio="none" aria-hidden="true"><path id="logPath" fill="none" stroke="#f1ede4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" /></svg>
+      <div id="logFlags" class="log__flags" data-flags={JSON.stringify(log.flags)}></div>
+    </div>
+    <div class="log__left">
+      <h2 class="display log__title">{log.title.map((l) => <span>{l}</span>)}</h2>
+      <div class="log__rate"><b class="display" id="logNum" data-to={log.rating}>1.8</b><span class="stars" aria-label="4.9 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</span></div>
+      <p class="log__count">{log.count}</p>
+      <figure class="log__quote"><blockquote>{log.quote.text}</blockquote><figcaption><i style={`background-image:url(${u('img/look-2.webp')})`}></i><span><b>{log.quote.name}</b>{log.quote.where}</span></figcaption></figure>
+    </div>
+    <p class="log__note">{log.note}</p>
+  </div>
+</section>

@@ -1,0 +1,28 @@
+---
+import { collection, product } from '../data/site';
+import { u, money } from '../lib';
+---
+<section class="coll" id="collection" data-theme="light">
+  <div class="sec-head">
+    <h2 class="display h2" data-reveal>{collection.title}</h2>
+    <a class="pill pill--dark pill--sm" href="#collection">{collection.cta}</a>
+  </div>
+  <div class="coll__grid">
+    <article class="feature" data-card>
+      <img src={u(collection.feature.img)} alt="A woman in an ivory cable-knit sweater with a navy stag motif, standing in falling snow" loading="lazy" width="1100" height="1467" />
+      <div class="feature__cap"><h3 class="display">{collection.feature.name}</h3><p>{collection.feature.sub}</p><button class="pill pill--sm" data-add data-id="feature" data-name={collection.feature.name} data-sub="Ivory, M" data-price={collection.feature.price} data-img={collection.feature.img}>Shop {money(collection.feature.price)}<span class="go"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></button></div>
+    </article>
+    {collection.items.map((it) => (
+      <article class="card" data-card>
+        <div class="tile">
+          <img src={u(it.img)} alt={`${it.name}, ${it.sub}`} loading="lazy" width="900" height="1200" />
+          <div class="qa" role="group" aria-label={`Quick add ${it.name}`}>
+            <span class="qa__t">Quick add</span>
+            <span class="qa__s">{product.sizes.map((s) => <button data-add data-id={it.id} data-name={it.name} data-sub={`${it.sub}, ${s}`} data-price={it.price} data-img={it.img} aria-label={`Add size ${s}`}>{s}</button>)}</span>
+          </div>
+        </div>
+        <div class="meta"><div><h3>{it.name}</h3><p>{it.sub}</p></div><div class="r"><b>{money(it.price)}</b><span class="dots">{it.dots.map((d) => <i style={`background:${d}`}></i>)}</span></div></div>
+      </article>
+    ))}
+  </div>
+</section>

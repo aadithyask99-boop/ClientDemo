@@ -1,0 +1,13 @@
+---
+import { weather } from '../data/site';
+import { u } from '../lib';
+---
+<section class="weather" id="weather" data-theme="dark">
+  <div class="weather__pin" id="weatherPin">
+    <img class="w-ridge" src={u('img/ridge.webp')} alt="" loading="lazy" width="2200" height="1238" />
+    <div class="w-man" id="wMan"><img src={u('img/ridge-man.webp')} alt="The model on a snowy alpine ridge in a navy stag quarter-zip" loading="lazy" width="2200" height="1238" /></div>
+    <div class="w-scrim" aria-hidden="true"></div>
+    <p class="w-aside">{weather.aside}</p>
+    <h2 class="display w-head" id="wHead">{weather.lines.map((l) => <span class="line" data-line>{l}</span>)}</h2>
+  </div>
+</section>

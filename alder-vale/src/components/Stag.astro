@@ -1,0 +1,8 @@
+---
+import raw from '../../public/stag.svg?raw';
+const inner = raw.replace(/<\/?svg[^>]*>/g, (m) => m);
+const { class: cls = '' } = Astro.props;
+const vb = /viewBox="([^"]+)"/.exec(raw)?.[1] ?? '0 0 240 384';
+const d = /d="([^"]+)"/.exec(raw)?.[1] ?? '';
+---
+<svg class={cls} viewBox={vb} aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d={d} /></svg>

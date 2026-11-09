@@ -1,0 +1,21 @@
+---
+import { shelf, product } from '../data/site';
+import { u, money } from '../lib';
+---
+<section class="shelf" id="shelf" data-theme="dark-solid">
+  <div class="shelf__head">
+    <h2 class="display h2" data-reveal>{shelf.title}</h2>
+    <div class="shelf__side"><p>{shelf.text}</p><a class="pill pill--sm" href="#shelf">{shelf.cta}</a></div>
+  </div>
+  <div class="rail" id="rail" tabindex="0" aria-label="Accessories, scroll sideways">
+    {shelf.items.map((it) => (
+      <article class="scard">
+        <div class="stile">
+          <img src={u(it.img)} alt={it.name} loading="lazy" width="900" height="900" draggable="false" />
+          <div class="qa qa--dark" role="group" aria-label={`Quick buy ${it.name}`}><span class="qa__t">Quick buy</span><button class="pill pill--sm" data-add data-id={it.id} data-name={it.name} data-sub="One size" data-price={it.price} data-img={it.img}>Add</button></div>
+        </div>
+        <div class="meta"><div><h3>{it.name}</h3><p>&#9733; {it.rating}</p></div><div class="r"><b>{money(it.price)}</b><span class="dots">{it.dots.map((d) => <i style={`background:${d}`}></i>)}</span></div></div>
+      </article>
+    ))}
+  </div>
+</section>

@@ -1,0 +1,27 @@
+---
+import Stag from './Stag.astro';
+import { brand, nav } from '../data/site';
+---
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader__pale" id="loaderPale"></div>
+  <div class="loader__top"><span>{brand.name} / {brand.season}</span><span>Ascent to the lodge</span></div>
+  <div class="loader__mark"><Stag /><div class="wordmark">{brand.short}</div></div>
+  <div class="loader__bot"><div class="loader__count"><span id="loaderNum">0</span><small>M</small></div><span>Elev. {brand.lodgeElevation.toLocaleString('en-US')} m, Bernese Alps</span></div>
+</div>
+
+<header class="header" id="header">
+  <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 8h16M4 16h16"/></svg></button>
+  <nav class="header__nav" aria-label="Main">
+    {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+  </nav>
+  <a class="logo" href="#top" aria-label={`${brand.name}, home`}><Stag /><span class="wordmark">{brand.short}</span></a>
+  <div class="header__tools">
+    <button class="icon-btn hide-m" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg></button>
+    <button class="icon-btn hide-m" aria-label="Saved"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.600-7 10-7 10Z"/></svg></button>
+    <button class="icon-btn hide-m" aria-label="Find a lodge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 21s6-5.500 6-11a6 6 0 1 0-12 0c0 5.500 6 11 6 11Z"/><circle cx="12" cy="10" r="2"/></svg></button>
+    <button class="icon-btn" id="bagBtn" aria-label="Open bag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6.500a3 3 0 0 1 6 0V8"/></svg><span class="bag-count" id="bagCount">0</span></button>
+  </div>
+</header>
+<div class="menu" id="menu" aria-hidden="true">
+  {nav.map((n) => <a href={n.href} class="display">{n.label}</a>)}
+</div>
