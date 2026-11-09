@@ -4,10 +4,16 @@ import { u } from '../lib';
 ---
 <section class="weather" id="weather" data-theme="dark">
   <div class="weather__pin" id="weatherPin">
-    <img class="w-ridge" src={u('img/ridge.webp')} alt="" loading="lazy" width="2200" height="1238" />
-    <div class="w-man" id="wMan"><img src={u('img/ridge-man.webp')} alt="The model on a snowy alpine ridge in a navy stag quarter-zip" loading="lazy" width="2200" height="1238" /></div>
-    <div class="w-scrim" aria-hidden="true"></div>
-    <p class="w-aside">{weather.aside}</p>
-    <h2 class="display w-head" id="wHead">{weather.lines.map((l) => <span class="line" data-line>{l}</span>)}</h2>
+    <div class="w-a">
+      <p class="w-note w-note--l">{weather.left}</p>
+      <p class="w-note w-note--r">{weather.right}</p>
+      <div class="w-peak" id="wPeak"><img class="w-ridge" src={u('img/ridge.webp')} alt="A snow ridge with wind blowing off the summit" loading="lazy" width="2200" height="1238" /></div>
+      <svg class="w-shards" id="wShards" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <h2 class="display w-head" id="wHead" aria-label={weather.lines.join('. ')}>{weather.lines.map((l) => <span class="line" data-line aria-hidden="true">{l}</span>)}</h2>
+    </div>
+    <div class="w-b">
+      <div class="w-frame" id="wFrame"><img src={u('img/ridge-man.webp')} alt="The model on a snowy alpine ridge in a navy stag quarter-zip" loading="lazy" width="2200" height="1238" /><span class="w-frame__scrim" aria-hidden="true"></span></div>
+      <div class="w-two display" id="wTwo" aria-label={`${weather.two.l}. ${weather.two.r}.`}><span class="w-two__l" data-split aria-hidden="true">{weather.two.l}</span><span class="w-two__r" data-split aria-hidden="true">{weather.two.r}</span></div>
+    </div>
   </div>
 </section>

@@ -15,10 +15,9 @@ import { u } from '../lib';
   </div>
   <div class="foot__stage" id="footStage">
     <div class="foot__word" aria-hidden="true" id="footWord">{brand.short}</div>
-    <img class="fig fig1" src={u('img/fig-lean.webp')} alt="" loading="lazy" width="900" height="1200" />
-    <img class="fig fig2" src={u('img/fig-sit.webp')} alt="" loading="lazy" width="900" height="1200" />
-    <img class="fig fig3" src={u('img/fig-jump.webp')} alt="" loading="lazy" width="900" height="1200" />
+    <div class="fig fig-a" data-fig="a" data-on="11"><img src={u('img/fig-lean.webp')} alt="" loading="lazy" width="610" height="2143" /><i class="fig__sh" aria-hidden="true"></i></div>
+    <div class="fig fig-b" data-fig="b" data-on="8"><img src={u('img/fig-sit.webp')} alt="" loading="lazy" width="900" height="1256" /><i class="fig__sh" aria-hidden="true"></i></div>
+    <div class="fig fig-c" data-fig="c" data-on="3"><img src={u('img/fig-lie.webp')} alt="" loading="lazy" width="1200" height="693" /><i class="fig__sh" aria-hidden="true"></i></div>
     <img class="foot__valley" src={u('img/valley.webp')} alt="" loading="lazy" width="2200" height="1238" />
   </div>
-  <p class="foot__fine">{footer.fine}</p>
 </footer>

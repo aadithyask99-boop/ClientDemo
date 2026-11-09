@@ -23,10 +23,10 @@ for s,n in hero.items():
     # chest thumbnail
     box=(int(w*.18),int(h*.40),int(w*.82),int(h*.40+w*.64))
     t=c.crop(box).resize((220,220),Image.LANCZOS); t.save(O+'thumb-'+n+'.webp','WEBP',quality=84)
-for n in ['pin-knit']+[f'acc-{x}' for x in 'scarf beanie gloves crew polo socks'.split()]+[f'col-{x}' for x in 'crew cardigan polo turtle oxzip fisher vest stripe'.split()]+['fig-sit','fig-lean','fig-jump']:
-    if os.path.exists(R+n+'.png'): cut(n,n,900)
+for n in ['pin-knit']+[f'acc-{x}' for x in 'scarf beanie gloves crew polo socks'.split()]+[f'col-{x}' for x in 'crew cardigan polo turtle oxzip fisher vest stripe'.split()]+['fig-sit','fig-lean','fig-jump','fig-lie']:
+    if os.path.exists(R+n+'.png'): cut(n,n,1200 if n=='fig-lie' else 900)
     else: print('missing',n)
-for n in 'ridge ridge-man night-peak porch-dusk valley'.split():
+for n in 'ridge ridge-man night-peak porch-dusk porch-day valley'.split():
     if os.path.exists(R+n+'.png'): save(Image.open(R+n+'.png').convert('RGB'),n,2200,80)
 for n in ['macro-cable','macro-fibre','macro-collar','macro-parcel','col-feature']+[f'look-{i}' for i in range(1,8)]:
     if os.path.exists(R+n+'.png'): save(Image.open(R+n+'.png').convert('RGB'),n,1100,82)

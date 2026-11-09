@@ -2,6 +2,7 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
+import { initSections } from './sections';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -106,18 +107,37 @@ menuBtn.addEventListener('click', () => {
 });
 
 /* ---------- hero: colourways ---------- */
-function makeFog() {
-  const c = document.createElement('canvas'); c.width = 1400; c.height = 800;
-  const x = c.getContext('2d');
-  for (let i = 0; i < 90; i++) {
-    const r = 80 + Math.random() * 190, px = Math.random() * 1400, py = 140 + Math.random() * 520;
-    const g = x.createRadialGradient(px, py, 0, px, py, r);
-    g.addColorStop(0, 'rgba(248,250,253,0.62)'); g.addColorStop(1, 'rgba(248,250,253,0)');
-    x.fillStyle = g; x.beginPath(); x.arc(px, py, r, 0, 7); x.fill();
+// two layers of fractal-noise mist, built once, so the swap clears like weather and not like a veil
+function cloud(seed) {
+  const W = 640, H = 360;
+  const acc = new Float32Array(W * H);
+  let rng = seed; const rand = () => (rng = (rng * 16807) % 2147483647) / 2147483647;
+  for (const [gw, gh, amp] of [[6, 4, 0.5], [12, 7, 0.28], [24, 14, 0.14], [48, 27, 0.08]]) {
+    const g = document.createElement('canvas'); g.width = gw; g.height = gh;
+    const gx = g.getContext('2d'); const id = gx.createImageData(gw, gh);
+    for (let i = 0; i < gw * gh; i++) { const v = rand() * 255; id.data[i * 4] = id.data[i * 4 + 1] = id.data[i * 4 + 2] = v; id.data[i * 4 + 3] = 255; }
+    gx.putImageData(id, 0, 0);
+    const t = document.createElement('canvas'); t.width = W; t.height = H;
+    const tx = t.getContext('2d'); tx.imageSmoothingEnabled = true; tx.imageSmoothingQuality = 'high'; tx.drawImage(g, 0, 0, W, H);
+    const d = tx.getImageData(0, 0, W, H).data;
+    for (let i = 0; i < W * H; i++) acc[i] += (d[i * 4] / 255) * amp;
   }
-  $('#fog').style.backgroundImage = `url(${c.toDataURL('image/png')})`;
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const x = c.getContext('2d'); const out = x.createImageData(W, H);
+  for (let i = 0; i < W * H; i++) {
+    const a = Math.min(1, Math.max(0, (acc[i] - 0.4) / 0.3)), sm = a * a * (3 - 2 * a);
+    out.data[i * 4] = 232; out.data[i * 4 + 1] = 240; out.data[i * 4 + 2] = 248; out.data[i * 4 + 3] = Math.round(sm * 238);
+  }
+  x.putImageData(out, 0, 0);
+  return c.toDataURL('image/png');
 }
-makeFog();
+let fogReady = false;
+function ensureFog() {
+  if (fogReady) return; fogReady = true;
+  $('#fog').style.backgroundImage = `url(${cloud(48271)})`;
+  $('#fog2').style.backgroundImage = `url(${cloud(69621)})`;
+}
+if ('requestIdleCallback' in window) requestIdleCallback(ensureFog, { timeout: 5000 }); else setTimeout(ensureFog, 3000);
 
 const hero = $('.hero');
 function applyCw(id) {
@@ -133,22 +153,23 @@ function applyCw(id) {
 function setCw(id, instant = false) {
   if (id === state.cw || state.busy) return;
   if (instant || reduce) { state.cw = id; applyCw(id); heroTitle.firstElementChild.textContent = CW[id].name; return; }
-  state.busy = true;
-  const fog = $('#fog');
-  const tl = gsap.timeline({ onComplete: () => { state.busy = false; } });
-  tl.set(fog, { opacity: 1, xPercent: -105 })
-    .to(fog, { xPercent: 0, duration: 0.36, ease: 'power2.in' })
-    .add(() => {
-      state.cw = id; applyCw(id);
-      const old = heroTitle.firstElementChild;
-      const nu = old.cloneNode(false); nu.textContent = CW[id].name;
-      heroTitle.append(nu);
-      gsap.fromTo(old, { yPercent: 0 }, { yPercent: -105, duration: 0.5, ease: 'power3.in', onComplete: () => old.remove() });
-      gsap.fromTo(nu, { yPercent: 105 }, { yPercent: 0, duration: 0.7, ease: 'power4.out', delay: 0.12 });
-      gsap.fromTo('#heroModels', { y: 26, scale: 0.985 }, { y: 0, scale: 1, duration: 1, ease: 'power3.out' });
-    })
-    .to(fog, { xPercent: 105, duration: 0.5, ease: 'power2.out' }, '>0.05')
-    .set(fog, { opacity: 0 });
+  state.busy = true; ensureFog();
+  const f1 = $('#fog'), f2 = $('#fog2');
+  gsap.set([f1, f2], { opacity: 0, scale: 1.2, xPercent: (i) => (i ? 7 : -7) });
+  const swap = () => {
+    state.cw = id; applyCw(id);
+    const old = heroTitle.firstElementChild;
+    const nu = old.cloneNode(false); nu.textContent = CW[id].name;
+    heroTitle.append(nu);
+    gsap.fromTo(old, { yPercent: 0 }, { yPercent: -105, duration: 0.32, ease: 'power3.in', onComplete: () => old.remove() });
+    gsap.fromTo(nu, { yPercent: 105 }, { yPercent: 0, duration: 0.55, ease: 'power4.out', delay: 0.1 });
+    gsap.fromTo('#heroModels', { y: 18, scale: 0.99 }, { y: 0, scale: 1, duration: 0.9, ease: 'power3.out' });
+  };
+  gsap.timeline({ onComplete: () => { state.busy = false; gsap.set([f1, f2], { opacity: 0 }); } })
+    .to([f1, f2], { opacity: 1, scale: 1, xPercent: 0, duration: 0.22, ease: 'power2.out', stagger: 0.03 })
+    .add(swap, '>-0.04')
+    .to(f1, { opacity: 0, scale: 1.07, xPercent: -6, duration: 0.6, ease: 'power1.inOut' }, '>0.05')
+    .to(f2, { opacity: 0, scale: 1.12, xPercent: 8, duration: 0.7, ease: 'power1.inOut' }, '<0.05');
 }
 picker.forEach((p) => p.addEventListener('click', () => setCw(p.dataset.id)));
 $$('.size').forEach((s) => s.addEventListener('click', () => {
@@ -364,70 +385,24 @@ addEventListener('pointerup', () => { down = false; rail.classList.remove('is-dr
 rail.addEventListener('click', (e) => { if (moved > 6) { e.preventDefault(); e.stopPropagation(); } }, true);
 rail.addEventListener('wheel', (e) => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) e.stopPropagation(); }, { passive: true });
 
-/* ---------- scroll motion ---------- */
-function splitChars(el) {
-  const chars = [];
-  $$('[data-line]', el).forEach((line) => {
-    const txt = line.textContent; line.textContent = ''; line.setAttribute('aria-hidden', 'true');
-    [...txt].forEach((ch) => { const s = document.createElement('span'); if (ch === ' ') { s.className = 'sp'; } else { s.className = 'ch'; s.textContent = ch; chars.push(s); } line.append(s); });
+/* ---------- the collection slides up over the pinned hero ---------- */
+if (!reduce) {
+  const mmh = gsap.matchMedia();
+  mmh.add('(min-width: 861px)', () => {
+    const rig = $('#heroModels'), word = $('#heroWord'), info = $('.hero__info');
+    ScrollTrigger.create({
+      trigger: '#collection', start: 'top bottom', end: 'top top', scrub: true,
+      onUpdate: (self) => {
+        const p = self.progress;
+        rig.style.translate = `0 ${(-p * 9).toFixed(2)}vh`; rig.style.scale = (1 + p * 0.07).toFixed(4);
+        word.style.translate = `0 ${(-p * 6).toFixed(2)}vh`;
+        info.style.translate = `0 ${(-p * 5).toFixed(2)}vh`;
+      },
+    });
+    return () => { rig.style.translate = ''; rig.style.scale = ''; word.style.translate = ''; info.style.translate = ''; };
   });
-  el.setAttribute('aria-label', $$('[data-line]', el).map((l) => [...l.children].map((c) => c.textContent || ' ').join('')).join('. '));
-  return chars;
 }
-function splitWords(el) {
-  const words = [];
-  $$('.line', el).forEach((line) => {
-    const txt = line.textContent; line.textContent = '';
-    txt.split(' ').forEach((w, i, a) => { const s = document.createElement('span'); s.className = 'w'; s.textContent = w + (i < a.length - 1 ? ' ' : ''); words.push(s); line.append(s); });
-  });
-  return words;
-}
-
-const mm = gsap.matchMedia();
-mm.add('(min-width: 861px) and (prefers-reduced-motion: no-preference)', () => {
-  /* weather: type scatters and assembles, photo curtain */
-  const chars = splitChars($('#wHead'));
-  const sc = () => ({ x: gsap.utils.random(-260, 260), y: gsap.utils.random(-220, 160), rotation: gsap.utils.random(-70, 70), opacity: 0 });
-  gsap.set(chars, sc());
-  const tw = gsap.timeline({ scrollTrigger: { trigger: '#weatherPin', start: 'top top', end: '+=300%', pin: true, scrub: 0.9, anticipatePin: 1 } });
-  tw.fromTo('.w-aside', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.12 }, 0)
-    .to(chars, { x: 0, y: 0, rotation: 0, opacity: 1, duration: 0.24, stagger: { each: 0.004, from: 'random' }, ease: 'power3.out' }, 0.02)
-    .to('.w-ridge', { yPercent: -7, duration: 1, ease: 'none' }, 0)
-    .to(chars, { ...sc(), duration: 0.16, stagger: { each: 0.003, from: 'random' }, ease: 'power2.in' }, 0.5)
-    .to('.w-aside', { opacity: 0, duration: 0.1 }, 0.5)
-    .fromTo('#wMan', { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.3, ease: 'power2.inOut' }, 0.56)
-    .fromTo('#wMan img', { scale: 1.18 }, { scale: 1, duration: 0.4, ease: 'none' }, 0.56)
-    .to(chars, { x: 0, y: 0, rotation: 0, opacity: 1, duration: 0.18, stagger: { each: 0.003, from: 'random' }, ease: 'power3.out' }, 0.82);
-
-  /* specs: words brighten, knit flies in and turns, tags, closing */
-  const words = splitWords($('#spHead'));
-  const ts = gsap.timeline({ scrollTrigger: { trigger: '#specsPin', start: 'top top', end: '+=260%', pin: true, scrub: 0.9, anticipatePin: 1 } });
-  ts.to(words, { opacity: 1, duration: 0.14, stagger: 0.06, ease: 'none' }, 0)
-    .fromTo('#spKnit', { y: 620, x: 360, rotation: 26, scale: 0.6, opacity: 0 }, { y: 0, x: 0, rotation: -6, scale: 1, opacity: 1, duration: 0.42, ease: 'power3.out' }, 0.02)
-    .to('#spKnit', { rotation: 7, scale: 1.1, duration: 0.5, ease: 'sine.inOut' }, 0.46)
-    .to('[data-tag]', { opacity: 1, y: 0, duration: 0.1, stagger: 0.15 }, 0.44)
-    .fromTo('#spClose span', { yPercent: 110 }, { yPercent: 0, duration: 0.14, stagger: 0.12, ease: 'power3.out' }, 0.72);
-  gsap.set('#spClose span', { yPercent: 110 });
-
-  /* lookbook columns drift at different speeds */
-  $$('.lb__col').forEach((col, i) => gsap.to(col, { y: [-70, 90, -40][i], ease: 'none', scrollTrigger: { trigger: '#lookbook', start: 'top bottom', end: 'bottom top', scrub: 0.8 } }));
-
-  /* log: the line climbs the peak, flags plant, rating counts */
-  setupLog(true);
-
-  /* footer rises over the drop */
-  gsap.from('#footWord', { yPercent: 28, ease: 'none', scrollTrigger: { trigger: '#footStage', start: 'top bottom', end: 'bottom bottom', scrub: 0.8 } });
-  gsap.from('.fig', { yPercent: 70, opacity: 0, rotation: (i) => [-14, 8, 16][i], stagger: 0.12, duration: 1.2, ease: 'back.out(1.5)', scrollTrigger: { trigger: '#footStage', start: 'top 70%' } });
-});
-mm.add('(max-width: 860px), (prefers-reduced-motion: reduce)', () => {
-  splitWords($('#spHead')).forEach((w) => (w.style.opacity = 1));
-  $$('[data-tag]').forEach((t) => gsap.set(t, { opacity: 1, y: 0 }));
-  $$('#weatherPin .line').forEach((l) => l.removeAttribute('data-line'));
-  if (!reduce) {
-    gsap.fromTo('#wMan', { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none', scrollTrigger: { trigger: '#weatherPin', start: 'top 20%', end: 'bottom 40%', scrub: true } });
-  }
-  setupLog(false);
-});
+initSections();
 
 /* reveals (all sizes) */
 if (!reduce) {
@@ -445,47 +420,5 @@ $$('[data-count]').forEach((b) => {
   if (reduce) { b.textContent = to.toFixed(dec); return; }
   ScrollTrigger.create({ trigger: b, start: 'top 88%', once: true, onEnter: run });
 });
-
-/* ---------- lodge log ---------- */
-function setupLog(pin) {
-  const stage = $('#logStage'), img = $('img', stage), flagsEl = $('#logFlags'), path = $('#logPath'), svg = $('#logLine');
-  const flags = JSON.parse(flagsEl.dataset.flags);
-  // profile of the peak in image coordinates (0..1)
-  const prof = [[0.3, 1.0], [0.4, 0.93], [0.46, 0.85], [0.52, 0.75], [0.58, 0.62], [0.64, 0.5], [0.69, 0.42], [0.727, 0.375]];
-  const NATW = 2200, NATH = 1238, OPX = 0.6, OPY = 0.5;
-  let pts = [];
-  function layout() {
-    const sw = stage.clientWidth, sh = stage.clientHeight, k = Math.max(sw / NATW, sh / NATH);
-    const dw = NATW * k, dh = NATH * k, ox = (sw - dw) * OPX, oy = (sh - dh) * OPY;
-    pts = prof.map(([nx, ny]) => [ox + nx * dw, oy + ny * dh]);
-    svg.setAttribute('viewBox', `0 0 ${sw} ${sh}`); svg.setAttribute('preserveAspectRatio', 'none');
-    path.setAttribute('d', 'M' + pts.map((p) => p.map((v) => v.toFixed(1)).join(',')).join(' L'));
-    const len = path.getTotalLength(); path.style.strokeDasharray = len; path.style.strokeDashoffset = pin ? len : 0;
-    flagsEl.innerHTML = '';
-    flags.forEach((f, i) => {
-      const p = path.getPointAtLength(len * f.at);
-      const d = document.createElement('div'); d.className = 'flag' + (i === flags.length - 1 ? ' is-hi' : ''); d.style.left = p.x + 'px'; d.style.top = p.y + 'px';
-      d.innerHTML = `<span class="flag__t">${f.text}<small>${f.alt}</small></span>`; flagsEl.append(d);
-      if (!pin) d.style.opacity = i === flags.length - 1 ? 1 : 0;
-    });
-    return len;
-  }
-  const num = $('#logNum'), to = Number(num.dataset.to), o = { v: pin ? 1.8 : to };
-  num.textContent = o.v.toFixed(1);
-  const build = () => {
-    const len = layout();
-    if (!pin) return;
-    ScrollTrigger.getById('log')?.kill(true);
-    const tl = gsap.timeline({ scrollTrigger: { id: 'log', trigger: '#logPin', start: 'top top', end: '+=240%', pin: true, scrub: 0.9, anticipatePin: 1, invalidateOnRefresh: true } });
-    tl.to(path, { strokeDashoffset: 0, duration: 1, ease: 'none' }, 0)
-      .to(o, { v: to, duration: 1, ease: 'none', onUpdate: () => (num.textContent = o.v.toFixed(1)) }, 0);
-    $$('.flag', flagsEl).forEach((d, i) => tl.fromTo(d, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.08, ease: 'power2.out' }, flags[i].at * 0.96));
-  };
-  build();
-  if (!pin) {
-    ScrollTrigger.create({ trigger: '#logStage', start: 'top 80%', once: true, onEnter: () => gsap.to($$('.flag', flagsEl), { opacity: 1, duration: 0.8, stagger: 0.12 }) });
-  }
-  let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { layout(); ScrollTrigger.refresh(); }, 200); });
-}
 
 addEventListener('load', () => ScrollTrigger.refresh());

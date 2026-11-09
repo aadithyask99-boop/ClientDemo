@@ -71,12 +71,13 @@ export const proof = {
     { img: 'img/macro-collar.webp', value: 2, prefix: '', unit: 'yr', label: 'Free repairs', text: 'Moth, snag or hole. We mend it.', dec: 0 },
     { img: 'img/macro-parcel.webp', value: 48, prefix: '', unit: 'h', label: 'To your door', text: 'Duties included, wrapped for snow.', dec: 0 },
   ],
-  note: 'Figures are illustrative for this concept.',
 };
 
 export const weather = {
-  lines: ['Knit for the cold', 'Made for the height', 'Stitched to last'],
-  aside: 'Two-ply merino that holds heat, carries the weight of the weather and keeps its shape through every winter.',
+  lines: ['Knit for cold', 'Made for height', 'Stitched to last'],
+  left: 'Alder & Vale was born in a lodge at 1,800 m, not as a trend, but as an answer.',
+  right: 'Every knit is worn on the slopes above 1,500 m before it is sold.',
+  two: { l: 'Made slowly', r: 'Kept for life' },
 };
 
 export const specs = {
@@ -113,15 +114,21 @@ export const log = {
   rating: 4.9,
   count: '1,141 reports from the lodge',
   flags: [
-    { at: 0.1, alt: '1,020 m', text: 'Fits like it was knit for me' },
-    { at: 0.28, alt: '1,260 m', text: 'Warmer than my old down' },
-    { at: 0.46, alt: '1,540 m', text: 'Still soft after a season' },
-    { at: 0.62, alt: '1,880 m', text: 'The stag gets noticed' },
-    { at: 0.8, alt: '2,210 m', text: 'Mended free, came back perfect' },
-    { at: 0.94, alt: '2,480 m', text: 'Best knit I own' },
+    { at: 0.12, alt: '1,020 m' },
+    { at: 0.3, alt: '1,260 m' },
+    { at: 0.47, alt: '1,540 m' },
+    { at: 0.63, alt: '1,880 m' },
+    { at: 0.81, alt: '2,210 m' },
+    { at: 0.97, alt: '2,480 m' },
   ],
-  quote: { text: 'Everyone at the lodge asked about the stag. I wore it from the first lift to the last fire.', name: 'Ines H.', where: 'Verbier, verified buyer' },
-  note: 'Reviews and ratings are illustrative for this concept.',
+  reviews: [
+    { text: 'Fits like it was knit for me. I stopped looking at other labels.', name: 'Marc D.', where: 'Zermatt, verified buyer' },
+    { text: 'Warmer than my old down, and nothing rustles on the lift.', name: 'Ines H.', where: 'Verbier, verified buyer' },
+    { text: 'Still soft after a full season of washing and wearing.', name: 'Tom R.', where: 'Chamonix, verified buyer' },
+    { text: 'Everyone at the lodge asked about the stag.', name: 'Sofia L.', where: 'St. Moritz, verified buyer' },
+    { text: 'A moth got to the cuff. They mended it free and it came back perfect.', name: 'Hugo B.', where: 'Gstaad, verified buyer' },
+    { text: 'The best knit I own. I wore it from the first lift to the last fire.', name: 'Anna K.', where: 'Lech, verified buyer' },
+  ],
 };
 
 export const drop = {
@@ -140,7 +147,6 @@ export const footer = {
     { h: 'Shop', links: ['Quarter-zips', 'Crew necks', 'Polos', 'Cardigans', 'Accessories'] },
     { h: 'Help', links: ['Shipping', 'Returns', 'Care and mending', 'Size guide', 'Contact'] },
   ],
-  fine: 'Alder & Vale is a fictional label. This is a concept website, not a shop.',
 };
 
 export const cartExtras = [

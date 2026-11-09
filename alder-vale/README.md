@@ -13,17 +13,17 @@ An ascent to a lodge. The intro counts 0 to 2,480 m, the weather section is snow
 | Reel | This page |
 | --- | --- |
 | Altitude counter intro, diagonal wipe | Counter 0 to 2,480 m, pale fade, a slanted band wipes up to reveal the hero |
-| Hero, giant graffiti wordmark behind the model, colourway picker with fog swap | Giant stencil "ALDER & VALE" behind a cut-out model, four colourways (Midnight, Snowfield, Pine, Hearth) swapped behind a fog cloud, title re-rolls |
+| Hero, giant graffiti wordmark behind the model, colourway picker with a mist swap | Giant stencil "ALDER & VALE" behind a cut-out model, four colourways (Midnight, Snowfield, Pine, Hearth) swapped inside a fractal-noise mist (about 0.3 s, the sweaters cross-fade inside it), title re-rolls. The hero stays pinned and the collection slides up over it like a curtain. |
 | Jacket flies to the bag, cart drawer with "pairs with" | Thumbnail flies to the bag, drawer slides in with an upsell and a free-shipping bar |
 | New Collection grid, hover quick-add | Feature card plus eight knits, hover lifts and opens size quick-add |
 | "Engineered, not styled" four stat cards | "Knitted, not styled", four macro photographs with counting figures |
-| Type that moves like weather | Headline letters scatter and assemble on scroll over a ridge, a curtain wipes up to the model |
-| Pinned 3D jacket with callouts | Pinned scene: words brighten, a floating knit flies in and sways, three callouts, closing line |
+| Type that moves like weather | Slate ground, a peak rising with white ice shards, headline letters scramble in; then a framed photo grows to full-bleed while a second headline scrambles in. The cursor blows letters aside and sways the shards. |
+| Pinned 3D jacket with callouts | Pinned scene: words brighten, the knit tumbles in 3D with cursor tilt, three tags anchored to the knit, the stag mark and closing line |
 | Cold Ops inventory shelf | Lodge Edit: dark shelf of accessories, drag to scroll, hover quick-buy |
 | Lookbook mosaic | Lookbook: three columns drifting at different speeds |
-| Summit Log, flags up a peak, rating counts up | Lodge Log: a line climbs a night peak, six reviews planted, rating counts 1.8 to 4.9 |
-| Drop countdown | Drop 02 over the lodge porch, live countdown to 20 Dec 2026 |
-| Giant footer word, figures, "footer climbs" | Footer sheet rises over the drop, giant word, three posed models, valley |
+| Summit Log, flags up a peak, rating counts up | Lodge Log plays itself when it enters: the rating counts 1.8 to 4.9, a glowing line climbs a night peak, six flags pop up and the review card changes with each |
+| Drop countdown | Drop 02 over a blue-hour lodge porch (a lighter scene than the log before it), live countdown to 20 Dec 2026 |
+| Giant footer word, figures, "footer climbs" | Footer sheet rises over the drop, giant word with three people placed on the letter tops by measuring the type (one stands, one sits, one lies), valley |
 | Cart to checkout in two clicks | Drawer, loading screen, checkout page (express pay, contact, delivery, summary) |
 
 ## Easter eggs
@@ -42,7 +42,7 @@ An ascent to a lodge. The intro counts 0 to 2,480 m, the weather section is snow
 
 - All photographs are generated (`scripts/jobs*.json` hold the prompts) and cut out with rembg (`scripts/process.py`). The model is one generated man and some generated people; none is a real person. Generated images usually cannot be copyrighted.
 - The stag on a sweater is a generated image, so it differs very slightly between colourways. The brand mark itself is the vector.
-- Invented and illustrative: all prices, ratings, review text, the 1,141 reports, the statistics on the proof cards (-30 C, 18.5 micron, 2 years, 48 hours) and the drop date. The page says so where they appear.
+- Invented: all prices, ratings, review text, the 1,141 reports, the statistics on the proof cards (-30 C, 18.5 micron, 2 years, 48 hours) and the drop date. The page carries no disclaimer, at the owner's request (it is a concept); this README is where that is recorded.
 - Checkout, pay buttons, search, saved and lodge-finder buttons, and all footer links do nothing. Nothing is charged or sent.
 
 ## Not verified

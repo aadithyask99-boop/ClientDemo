@@ -1,5 +1,6 @@
 ---
 import { specs, colourways } from '../data/site';
+import Stag from './Stag.astro';
 import { u } from '../lib';
 ---
 <section class="specs" id="specs" data-theme="dark">
@@ -7,10 +8,15 @@ import { u } from '../lib';
     <h2 class="display sp-head" id="spHead" aria-label={specs.heading.join(' ')}>{specs.heading.map((l) => <span class="line" aria-hidden="true">{l}</span>)}</h2>
     <p class="sp-tested">{specs.tested}</p>
     <div class="sp-stage" id="spStage">
-      <img class="sp-knit" id="spKnit" src={u('img/pin-knit.webp')} alt="A navy cable-knit quarter-zip with a cream stag, floating" loading="lazy" width="900" height="900" />
-      {specs.tags.map((t, i) => <span class={`tag t${i + 1}`} data-tag><i></i>{t}</span>)}
+      <div class="sp-shadow" id="spShadow" aria-hidden="true"></div>
+      <div class="sp-tilt" id="spTilt">
+        <div class="sp-3d" id="spKnit">
+          <img class="sp-knit" src={u('img/pin-knit.webp')} alt="A navy cable-knit quarter-zip with a cream stag, floating" loading="lazy" width="900" height="900" />
+          {specs.tags.map((t, i) => <span class={`tag t${i + 1}`} data-tag><i></i><b>{t}</b></span>)}
+        </div>
+      </div>
     </div>
-    <a class="pill sp-cta" href="#top">{specs.cta} ${colourways[0].price}<span class="go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a>
-    <p class="display sp-close" id="spClose">{specs.closing.map((l) => <span>{l}</span>)}</p>
+    <a class="pill sp-cta" id="spCta" href="#top">{specs.cta} ${colourways[0].price}<span class="go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a>
+    <div class="sp-close" id="spClose"><Stag class="sp-stag" /><p class="display">{specs.closing.map((l) => <span>{l}</span>)}</p></div>
   </div>
 </section>
