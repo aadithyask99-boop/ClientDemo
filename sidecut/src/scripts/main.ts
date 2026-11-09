@@ -124,7 +124,8 @@ function reveals() {
     gsap.from('.cut', { y: 40, opacity: 0, duration: 0.8, ease: 'power3.out', stagger: 0.08, scrollTrigger: { trigger: '.cuts__list', start: 'top 82%' } });
     gsap.from('.barber', { y: 60, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: '.crew__grid', start: 'top 85%' } });
     gsap.from('.plan', { y: 80, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.14, scrollTrigger: { trigger: '.club__plans', start: 'top 85%' } });
-    gsap.from('.shop', { y: 50, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.12, scrollTrigger: { trigger: '.shops__list', start: 'top 85%' } });
+    // each shop photograph drifts slower than its frame
+    $$('.shop').forEach((sh) => gsap.fromTo($('.shop__img', sh), { yPercent: -5 }, { yPercent: 5, ease: 'none', scrollTrigger: { trigger: sh, start: 'top bottom', end: 'bottom top', scrub: true } }));
     gsap.from('.gift__card', { y: 80, rotateY: -35, opacity: 0, duration: 1.2, ease: 'power3.out', scrollTrigger: { trigger: '.gift', start: 'top 70%' } });
     // the ghost wordmark drifts up slower than the page
     gsap.to('.hero__ghost', { yPercent: -18, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });

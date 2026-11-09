@@ -75,7 +75,7 @@ const data = { services, shops, barbers, giftAmounts, reviews };
     <section class="sec sec--dark why" data-why>
       <p class="why__text" data-reveal-words>{statement}</p>
       {props.map((p, i) => (
-        <img class={`prop prop--${p.id}`} data-prop style={`--w:${p.w}vw`} src={art + `prop-${p.id}.webp`} alt="" draggable="false" loading="lazy" />
+        <img class={`prop prop--${p.id}`} data-prop style={`--w:${p.w}vw`} src={art + `prop-${p.id}.webp`} alt="" draggable="false" />
       ))}
     </section>
 
@@ -167,8 +167,8 @@ const data = { services, shops, barbers, giftAmounts, reviews };
       <p class="reviews__note">612 Google reviews. Illustrative figures for a concept.</p>
     </section>
 
-    <!-- 8. Shops -->
-    <section class="sec sec--light shops" id="shops">
+    <!-- 8. Shops: three scenes, one per shop -->
+    <section class="sec sec--dark shops" id="shops">
       <h2 class="h2" data-reveal>
         <span class="ln"><span class="l">Three shops.</span></span>
         <span class="ln"><span class="b">One standard.</span></span>
@@ -176,18 +176,23 @@ const data = { services, shops, barbers, giftAmounts, reviews };
       <div class="shops__list">
         {shops.map((s) => (
           <article class="shop">
-            <h3>{s.name}</h3>
-            <p>{s.street}</p>
-            <p>{s.hours.join('. ')}</p>
-            <p><a href={`tel:${s.phone.replace(/\s/g, '')}`}>{s.phone}</a></p>
-            <button type="button" class="link" data-book={`shop:${s.id}`}>Book at {s.name} <span aria-hidden="true">↗</span></button>
+            <img class="shop__img" src={art + `shop-${s.id}.webp`} alt={`Inside the ${s.name} shop at night`} loading="lazy" width="1600" height="900" />
+            <div class="shop__in">
+              <h3>{s.name}</h3>
+              <div class="shop__meta">
+                <p>{s.street}</p>
+                <p>{s.hours.join('. ')}</p>
+                <p><a href={`tel:${s.phone.replace(/\s/g, '')}`}>{s.phone}</a></p>
+                <button type="button" class="pill pill--light" data-book={`shop:${s.id}`}>Book at {s.name} <span aria-hidden="true">↗</span></button>
+              </div>
+            </div>
           </article>
         ))}
       </div>
     </section>
 
     <!-- 9. FAQ and hiring -->
-    <section class="sec sec--dark faq">
+    <section class="sec sec--light faq">
       <h2 class="faq__title"><span class="l">Before</span> <span class="b">you book</span></h2>
       <div class="faq__list">
         {faq.map((f) => (
@@ -203,18 +208,17 @@ const data = { services, shops, barbers, giftAmounts, reviews };
       </div>
     </section>
 
-    <!-- 10. Booking -->
-    <section class="sec sec--light book" data-bookband>
+  </main>
+
+  <footer class="foot sec sec--dark" data-bookband>
+    <div class="foot__cta">
       <h2 class="h2" data-reveal>
         <span class="ln"><span class="l">Full booking.</span></span>
         <span class="ln"><span class="b">Under a minute.</span></span>
       </h2>
-      <p class="book__lead">Pick a cut, a barber and a time. A £10 deposit holds the chair and comes off your bill.</p>
-      <button type="button" class="pill pill--dark" data-book>Start booking <span aria-hidden="true">↗</span></button>
-    </section>
-  </main>
-
-  <footer class="foot sec sec--dark">
+      <p>Pick a cut, a barber and a time. A £10 deposit holds the chair and comes off your bill.</p>
+      <button type="button" class="pill pill--light" data-book>Start booking <span aria-hidden="true">↗</span></button>
+    </div>
     <p class="foot__word" data-word aria-label="sidecut">
       {'sidecut'.split('').map((c) => <span class="ch" aria-hidden="true">{c}</span>)}
       <img class="foot__clip" src={art + 'prop-clippers.webp'} alt="" aria-hidden="true" />
