@@ -332,3 +332,9 @@ I turned the owner's "looks cluttered, find a fine balance" (EVM) into "the page
 - Mistakes: GSAP versus a CSS percent transform (title hidden), a CSS transition fighting GSAP (portraits invisible), proxy flags missing for Node (401). All found by screenshots and a computed-style check, not by reading code.
 - Lesson: when a section looks empty in a screenshot, read its computed opacity and transform before touching layout.
 
+
+### Sidecut owner round 3 (2026-11-09): "you do not check before you make it"
+- Owner: the portrait lamp ("flashlight") is gimmicky and the hero light that follows the cursor too; the big generated shop photos look bad and are not relevant; hovering the price rows did nothing; props and the section after looked broken.
+- Real defects I had shipped and not seen: (1) the prop throw handler called a method that does not exist, so every drag threw an error and flung the tool to the edge; (2) the chair covered the middle of the wordmark so it read "sid  ut"; (3) the wordmark sat off centre at some sizes because GSAP read a CSS centring transform before the font loaded; (4) a regex clean-up deleted the rule that shows the back of the head on hover; (5) the stacked review card painted over its own buttons; (6) the row hover was a faint tint.
+- Cause: I looked at section layouts but never exercised the interactions. Lesson: after every build, run a script that hovers, clicks and drags every control, logs console errors and reads computed styles, and look at the result for each state, at 1280, 1440, 1920 and 390 wide. Never clean up CSS with a regex without re-checking the states that depended on it. Do not centre with a CSS transform on an element GSAP will animate.
+- Removed on request: lamps over portraits, the cursor-following beam, the shop photographs. Replaced with a shop chooser showing hours and an open-now status.
