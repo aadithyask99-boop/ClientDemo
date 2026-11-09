@@ -30,10 +30,15 @@ export const shelf = [
   { id: 'brush', name: 'Neck brush', price: 12 },
 ];
 
+const wk = (a: [string, string], sat: [string, string], sun: [string, string]) => [
+  ...['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((d) => [d, ...a]),
+  ['Sat', ...sat],
+  ['Sun', ...sun],
+];
 export const shops = [
-  { id: 'soho', look: 'one chair under pendant lamps', name: 'Soho', street: '12 Kingly Yard, London W1', phone: '020 7946 0301', hours: ['Mon to Sat 10 to 8pm', 'Sun 11 to 6pm'] },
-  { id: 'shoreditch', look: 'three chairs in front of old brick', name: 'Shoreditch', street: '27 Rivington Arch, London E1', phone: '020 7946 0302', hours: ['Mon to Sat 10 to 9pm', 'Sun 11 to 7pm'] },
-  { id: 'kings-cross', look: 'chairs under a railway arch', name: "King's Cross", street: '5 Goods Way Arch, London N1', phone: '020 7946 0303', hours: ['Mon to Fri 9 to 8pm', 'Sat and Sun 10 to 6pm'] },
+  { id: 'soho', look: 'one chair under pendant lamps', name: 'Soho', street: '12 Kingly Yard, London W1', phone: '020 7946 0301', hours: ['Mon to Sat 10 to 8pm', 'Sun 11 to 6pm'], week: wk(['10:00', '20:00'], ['10:00', '20:00'], ['11:00', '18:00']) },
+  { id: 'shoreditch', look: 'three chairs in front of old brick', name: 'Shoreditch', street: '27 Rivington Arch, London E1', phone: '020 7946 0302', hours: ['Mon to Sat 10 to 9pm', 'Sun 11 to 7pm'], week: wk(['10:00', '21:00'], ['10:00', '21:00'], ['11:00', '19:00']) },
+  { id: 'kings-cross', look: 'chairs under a railway arch', name: "King's Cross", street: '5 Goods Way Arch, London N1', phone: '020 7946 0303', hours: ['Mon to Fri 9 to 8pm', 'Sat and Sun 10 to 6pm'], week: wk(['09:00', '20:00'], ['10:00', '18:00'], ['10:00', '18:00']) },
 ];
 
 export const barbers = [

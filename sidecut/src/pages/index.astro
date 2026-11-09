@@ -51,12 +51,12 @@ const mark = 'M3 17 C9 5 17 4 25 7';
         <span class="ln"><span class="b">We do the rest.</span></span>
       </h1>
       <p class="hero__status" data-status><span class="dot" aria-hidden="true"></span> Open now &middot; next chair <b data-next>2:40 PM</b></p>
-      <div class="hero__beam" aria-hidden="true"></div>
+      <div class="hero__glow" aria-hidden="true"></div>
       <p class="hero__ghost" data-ghost aria-hidden="true">sidecut</p>
       <div class="hero__stage" data-stage>
         <canvas class="hero__chair" data-chair role="img" aria-label="A black leather barber chair that turns as you drag or scroll"></canvas>
       </div>
-      <p class="hero__hint">Drag the chair. Move the light.</p>
+      <p class="hero__hint">Drag the chair to turn it.</p>
       <button class="pill pill--light hero__cta" type="button" data-book>Book a chair <span aria-hidden="true">↗</span></button>
     </section>
 
@@ -69,12 +69,14 @@ const mark = 'M3 17 C9 5 17 4 25 7';
       <p class="lead">Prices include the wash, the hot towel on the neck and a line-up on the way out. No surprises at the chair.</p>
       <ol class="cuts__list">
         {services.map((s) => (
-          <li class="cut">
-            <span class="cut__n">#{s.n}</span>
-            <span class="cut__main"><strong>{s.name}</strong><small>{s.text}</small></span>
-            <span class="cut__min">{s.min} min</span>
-            <span class="cut__price">£{s.price}</span>
-            <button type="button" class="pill pill--ghost" data-book={`service:${s.n}`} aria-label={`Book ${s.name}`}>Book <span aria-hidden="true">↗</span></button>
+          <li>
+            <button type="button" class="cut" data-book={`service:${s.n}`} aria-label={`Book ${s.name}, ${s.min} minutes, £${s.price}`}>
+              <span class="cut__n">#{s.n}</span>
+              <span class="cut__main"><strong>{s.name}</strong><small>{s.text}</small></span>
+              <span class="cut__min">{s.min} min</span>
+              <span class="cut__price">£{s.price}</span>
+              <span class="cut__go">Book <i aria-hidden="true">↗</i></span>
+            </button>
           </li>
         ))}
       </ol>
@@ -96,7 +98,7 @@ const mark = 'M3 17 C9 5 17 4 25 7';
           <span class="ln"><span class="l">Four mirrors.</span></span>
           <span class="ln"><span class="b">Pick yours.</span></span>
         </h2>
-        <p class="lead">Each barber has their own station and their own diary. Pick a mirror to switch its lamp on.</p>
+        <p class="lead">Each barber has their own station and their own diary. Filter by shop, and hover a portrait to see the back of the head.</p>
       </div>
       <h2 class="h2 crew__sub" data-reveal>
         <span class="ln"><span class="l">See the back</span></span>
@@ -110,9 +112,8 @@ const mark = 'M3 17 C9 5 17 4 25 7';
         {barbers.map((b) => (
           <figure class="barber" data-shop={b.shop} tabindex="0">
             <div class="barber__ph">
-              <span class="barber__lamp" aria-hidden="true"></span>
-              <img class="barber__f" src={art + `barber-${b.id}-f.webp`} alt={`${b.name}, barber at ${b.shopName}`} loading="lazy" width="720" height="960" />
-              <img class="barber__b" src={art + `barber-${b.id}-b.webp`} alt={`${b.name}'s cut from behind: ${b.does.toLowerCase()}`} loading="lazy" width="720" height="960" />
+              <img class="barber__f" src={art + `barber-${b.id}-f.webp`} alt={`${b.name}, barber at ${b.shopName}`} decoding="async" width="720" height="960" />
+              <img class="barber__b" src={art + `barber-${b.id}-b.webp`} alt={`${b.name}'s cut from behind: ${b.does.toLowerCase()}`} decoding="async" width="720" height="960" />
               <span class="barber__tag">Hover for the back</span>
             </div>
             <figcaption>
@@ -199,27 +200,24 @@ const mark = 'M3 17 C9 5 17 4 25 7';
       <p class="reviews__note"><span class="stars" aria-hidden="true">★★★★★</span> 612 Google reviews. Illustrative figures for a concept.</p>
     </section>
 
-    <!-- 9. Shops -->
-    <section class="sec sec--light shops" id="shops">
+    <!-- 9. Shops: pick one, see its hours -->
+    <section class="sec sec--light shops" id="shops" data-shops>
       <h2 class="h2" data-reveal>
-        <span class="ln"><span class="l">Hours, map,</span></span>
-        <span class="ln"><span class="b">found on Google.</span></span>
+        <span class="ln"><span class="l">Three shops,</span></span>
+        <span class="ln"><span class="b">open late.</span></span>
       </h2>
-      <div class="shops__list">
-        {shops.map((s) => (
-          <article class="shop">
-            <img class="shop__img" src={art + `shop-${s.id}.webp`} alt={`${s.name}: ${s.look}`} loading="lazy" width="1600" height="900" />
-            <div class="shop__in">
-              <h3>{s.name}</h3>
-              <div class="shop__meta">
-                <p>{s.street}</p>
-                <p>{s.hours.join('. ')}</p>
-                <p><a href={`tel:${s.phone.replace(/\s/g, '')}`}>{s.phone}</a></p>
-                <button type="button" class="pill pill--light" data-book={`shop:${s.id}`}>Book at {s.name} <span aria-hidden="true">↗</span></button>
-              </div>
-            </div>
-          </article>
-        ))}
+      <div class="shops__tabs" role="group" aria-label="Choose a shop">
+        {shops.map((s, i) => <button type="button" class={`chip${i === 0 ? ' is-on' : ''}`} data-shop-tab={s.id} aria-pressed={i === 0 ? 'true' : 'false'}>{s.name}</button>)}
+      </div>
+      <div class="shops__panel" data-shoppanel>
+        <div class="shops__main">
+          <h3 data-s-name></h3>
+          <p data-s-addr></p>
+          <p><a data-s-phone href="#"></a></p>
+          <p class="shops__status" data-s-status></p>
+          <button type="button" class="pill pill--dark" data-s-book>Book here <span aria-hidden="true">↗</span></button>
+        </div>
+        <dl class="shops__hours" data-s-hours></dl>
       </div>
     </section>
 

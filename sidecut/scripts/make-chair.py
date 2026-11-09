@@ -33,9 +33,9 @@ for f in files:
     bg = ndi.binary_dilation(bg, iterations=1)
     alpha = ndi.gaussian_filter((~bg).astype(np.float32), 0.9)
     # cast removal on chrome and edges
-    cast = np.clip(sat * 2.2, 0, 1) * ((r > g) & (b > g))
+    cast = np.clip(sat * 3.0, 0, 1) * ((r > g) & (b > g))
     near = ndi.binary_dilation(bg, iterations=3)
-    k = np.where(near, np.maximum(cast, 0.85), cast * 0.75)
+    k = np.where(near, np.maximum(cast, 0.9), cast * 0.92)
     r2 = r - (r - g) * k
     b2 = b - (b - g) * k
     rgba = np.dstack([r2, g, b2, alpha * 255]).clip(0, 255).astype(np.uint8)

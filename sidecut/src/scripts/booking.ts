@@ -108,5 +108,6 @@ export function initBooking({ data, lenis, say, reduce }: Opts) {
   }
   $$('[data-book]').forEach((b) => b.addEventListener('click', () => open(b.dataset.book || undefined)));
   $$('[data-close]', drawer).forEach((b) => b.addEventListener('click', close));
+  document.addEventListener('book', (e) => open((e as CustomEvent<string>).detail));
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && drawer.classList.contains('is-open')) close(); });
 }
