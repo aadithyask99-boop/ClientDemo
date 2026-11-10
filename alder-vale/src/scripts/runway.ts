@@ -296,6 +296,9 @@ export function initRunway() {
     p.addEventListener('pointerout', (e) => { if (e.pointerType !== 'mouse') return; if (!e.relatedTarget || !e.relatedTarget.closest || !e.relatedTarget.closest('[data-rw-card]')) unhot(); });
   });
   const panelEl = $('.rw__panel', root);
+  panelEl.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') engage(); });
+  panelEl.addEventListener('touchstart', () => engage(), { passive: true });
+  panelEl.addEventListener('scroll', () => engage(), { capture: true, passive: true });
   panelEl.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') panelHover = true; });
   panelEl.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { panelHover = false; restartBar(); schedule(); } });
 

@@ -336,3 +336,7 @@ I turned the owner's "looks cluttered, find a fine balance" (EVM) into "the page
 - Critic: found pins floating on garment edges, small text, a blank band in the panel, the phone panel below the fold, and warned that the last-look glow could read as gold; the glow is now a faint rose.
 - Blocked: OpenRouter account credit fell to $0.80, below the service's $1 minimum, so two regenerations (a smaller stag on looks 2 and 6) could not run. Lesson: check `GET /api/v1/credits` (total minus usage), not the key limit, before planning more generation.
 - Lesson: when a reference ships as a long prompt, the numbers in it (slot scales, blur, easing) are worth keeping exactly; the work is in the hand-offs (hero vs body, ring vs line, sheet vs inline), and each needs a test that clicks it.
+
+## Alder & Vale: phone fixes (closing text, look product row)
+- Autoplay kept swapping the Try the look panel every 5 s on phones (only mouse hover paused it), which reset the swipeable product row. Any touch, pointerdown or scroll inside the panel now stops autoplay. Test with a CDP touch swipe with autoplay left on.
+- Pinned-knit closing line was small and tight under the CTA. Gave it heading scale (clamp 2.3rem/11.4vw/3.6rem), a top margin and bottom padding so the next section's rounded top does not crowd it. Checked at 360, 390 and 430.

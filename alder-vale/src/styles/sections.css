@@ -228,8 +228,10 @@ main > section:not(.hero) { position: relative; z-index: 2; }
   .specs__pin { height: auto; min-height: 0; padding: 64px var(--gut) 56px; display: grid; gap: 18px; }
   .sp-head, .sp-tested, .sp-cta, .sp-close { position: static; text-align: left; }
   .sp-cta { opacity: 1; justify-self: start; }
-  .sp-close { justify-content: flex-start; }
-  .sp-close p { text-align: left; }
+  .specs__pin { padding-bottom: 96px; gap: 22px; }
+  .sp-cta { margin-bottom: 18px; }
+  .sp-close { justify-content: flex-start; margin-top: 26px; width: 100%; }
+  .sp-close p { text-align: left; font-size: clamp(2.3rem, 11.4vw, 3.6rem); line-height: 1; }
   .sp-stage { position: relative; left: auto; top: auto; transform: none; width: 100%; margin: 6px 0; }
   .tag { opacity: 1; }
   .tag.t1 { left: 40%; } .tag.t2 { left: 30%; } .tag.t3 { left: 4%; }
