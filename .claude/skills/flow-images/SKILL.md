@@ -1,17 +1,17 @@
 ---
 name: flow-images
-description: How to generate images with the owner's Google Flow (Nano Banana) account. Use whenever a site, section or design needs generated imagery, before OpenRouter. The only supported way is the owner's own signed-in browser, driven through Claude's browser tools.
+description: How to generate images with the owner's Google Flow (Nano Banana) account. Use whenever a site, section or design needs generated imagery, before OpenRouter. Default route is the owner's own signed-in browser, driven through Claude's browser tools; a self-hosted server kit is the alternative.
 ---
 
 # Flow images
 
 Flow has no API. The one supported way to use it here is **the owner's own browser, already signed in to Google, driven by Claude's own browser tools**. That keeps images free and uncapped, uses their normal login and network, and needs no server.
 
-## The only way
+## Route 1: the owner's own browser
 
 1. Use whichever browser tool the session has, and read its skill first: Claude in Chrome (`mcp__claude-in-chrome__*`, skill `anthropic-skills:chrome-browser`), the desktop app's built-in browser (`mcp__Claude_Browser__*`, skill `anthropic-skills:built-in-browser`), or the same pane on the owner's computer from a cloud session (`mcp__remote-devices__Claude_Browser__*`; link it with `list_computer_folders` then `request_computer_folder`).
-2. No such tool in the session: say so plainly and ask the owner to open the Claude app or Chrome extension on their computer. Do not substitute silently.
-3. Never use a rented or hosted browser, never export or copy Google cookies or sessions, never hide that the browser is automated, never run a service that exposes a signed-in browser. Those were tried and are not allowed.
+2. No such tool in the session: say so plainly and ask the owner to open the Claude app or Chrome extension on their computer. Do not substitute silently; offer route 2 if they want it working with their computer off.
+3. Never export or copy Google cookies or sessions, never hide that the browser is automated, never run a service that exposes a signed-in browser. The harness blocks those, and they were not allowed in this project's setup.
 
 ## Procedure (the Flow screens below were verified on 2026-11-10; the owner's-browser route itself is untested until first use)
 
