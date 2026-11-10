@@ -1,0 +1,153 @@
+---
+import { runway } from '../data/site';
+import { u, money } from '../lib';
+const { looks, products, bundlePct } = runway;
+const total = (l) => l.pieces.reduce((s, id) => s + products[id].price, 0);
+const bundle = (l) => Math.round(total(l) * (100 - bundlePct)) / 100;
+const pad = (i) => String(i + 1).padStart(2, '0');
+const img = (i) => ({ src: u(`img/rw-${i + 1}-640.webp`), srcset: `${u(`img/rw-${i + 1}-640.webp`)} 640w, ${u(`img/rw-${i + 1}.webp`)} 1080w` });
+const arrow = 'M1 7h24M19 1l6 6-6 6';
+---
+<section class="rw" id="runway" data-theme="light" data-autoplay="true" data-speed="5000" data-bundle={bundlePct}>
+  <div class="rw__sticky">
+    <div class="rw__grid">
+      <div class="rw__left">
+        <div class="rw__head">
+          <div class="rw__intro">
+            <h2 class="display rw__title">{runway.title}</h2>
+            <p class="rw__sub">{runway.sub}</p>
+          </div>
+          <span class="rw__sr" aria-live="polite" aria-atomic="true" data-rw-live></span>
+        </div>
+
+        <div class="rw__stage" data-rw-stage tabindex="0" role="region" aria-roledescription="carousel" aria-label="Try the look. Use the arrow keys or swipe to change look">
+          <div class="rw__actors" data-rw-actors>
+            {looks.map((l, i) => (
+              <div class="rw__model" data-rw-model data-index={i} aria-hidden="true">
+                <span class="rw__shadow"></span>
+                <div class="rw__figure"><div class="rw__art">
+                  <img src={img(i).src} srcset={img(i).srcset} sizes="(min-width: 750px) 420px, 320px" alt={l.name} width="1080" height="1920" loading="eager" decoding="async" draggable="false" />
+                  <button class="rw__hit" data-rw-go={i} aria-label={`Look ${i + 1}: ${l.name}`} tabindex="-1"></button>
+                </div></div>
+              </div>
+            ))}
+          </div>
+          <div class="rw__heroes" data-rw-heroes>
+            {looks.map((l, i) => (
+              <div class={`rw__hero${i === 0 ? ' is-on' : ''}`} data-rw-hero data-index={i} data-name={l.name} data-alt={l.alt} aria-hidden={i === 0 ? 'false' : 'true'}>
+                <div class="rw__morph">
+                  <span class="rw__shadow"></span>
+                  <div class="rw__figure"><div class="rw__art">
+                    <img src={img(i).src} srcset={img(i).srcset} sizes="(min-width: 750px) 420px, 320px" alt={`${l.name}: ${l.pieces.map((id) => products[id].name).join(', ')}`} width="1080" height="1920" loading="eager" decoding="async" draggable="false" />
+                    <button class="rw__zoom" data-rw-zoom aria-label={`View look: ${l.name}`} tabindex={i === 0 ? 0 : -1}></button>
+                    <div class="rw__pins">
+                      {l.pieces.map((id, n) => (
+                        <button class="rw__pin" data-rw-pin={n + 1} data-tip={products[id].name} style={`left:${l.pins[n][0]}%; top:${l.pins[n][1]}%; --pi:${n + 1}`} aria-label={`${n + 1}: ${products[id].name}`} tabindex="-1"><span class="rw__pin-dot">{n + 1}</span></button>
+                      ))}
+                    </div>
+                  </div></div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <span class="rw__sweep"></span>
+          <span class="rw__walk"><span class="rw__walk-line"></span></span>
+        </div>
+
+        <div class="rw__controls">
+          <button class="rw__icon" data-rw-prev aria-label="Previous look"><svg width="26" height="14" viewBox="0 0 26 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M25 7H1M7 1L1 7l6 6" /></svg></button>
+          <div class="rw__ticks">
+            {looks.map((l, i) => (
+              <button class="rw__tick" data-rw-tick={i} aria-current={i === 0 ? 'true' : 'false'} aria-label={`Look ${i + 1}: ${l.name}, ${l.alt}`}>
+                <span class="rw__tick-bar"></span>
+                <span class="rw__tick-label">{pad(i)}<span class="rw__tick-name">&nbsp;&nbsp;{l.name} &middot; {l.alt}</span></span>
+              </button>
+            ))}
+          </div>
+          <button class="rw__icon rw__auto" data-rw-auto aria-pressed="false" aria-label="Autoplay">
+            <svg class="rw__i-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z" /></svg>
+            <svg class="rw__i-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.5 4.5h3.5v15H6.5zM14 4.5h3.5v15H14z" /></svg>
+          </button>
+          <button class="rw__icon" data-rw-next aria-label="Next look"><svg width="26" height="14" viewBox="0 0 26 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={arrow} /></svg></button>
+        </div>
+
+        <div class="rw__lb" data-rw-lb role="region" aria-label="View look" aria-hidden="true">
+          <div class="rw__lb-stage" data-rw-lb-stage></div>
+          <div class="rw__lb-top">
+            <p class="rw__lb-cap"><span class="rw__lb-kicker" data-rw-lb-kicker></span><span class="rw__lb-name" data-rw-lb-name></span></p>
+            <button class="rw__lb-close" data-rw-zoom-close aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" /></svg></button>
+          </div>
+          <p class="rw__lb-hint">Tap a dot to shop the piece</p>
+        </div>
+      </div>
+
+      <aside class="rw__panel" aria-label="In this look">
+        <div class="rw__panel-inner">
+          <div class="rw__panel-head">
+            <h3 class="rw__panel-title">In this look</h3>
+            <span class="rw__label" data-rw-pieces>3 pieces</span>
+          </div>
+          {looks.map((l, i) => (
+            <div class={`rw__look-panel${i === 0 ? ' is-in' : ''}`} data-rw-panel={i} hidden={i > 0}>
+              <div class="rw__mhead"><span class="rw__mhead-title">{l.name}</span><span class="rw__label">{l.pieces.length} pieces</span></div>
+              <ul class="rw__items" role="list">
+                {l.pieces.map((id, n) => {
+                  const p = products[id];
+                  const pid = `rwp-${i}-${n}`;
+                  return (
+                    <li class="rw__item" data-rw-card={n + 1} style={`--i:${n + 1}`} data-pid={id} data-title={p.name} data-price={p.price} data-img={p.img}>
+                      {p.tag && <span class="rw__tag"><span class="rw__tag-text">{p.tag}</span></span>}
+                      <div class="rw__media"><img src={u(p.img)} alt="" loading="lazy" decoding="async" width="400" height="500" /><span class="rw__num">{n + 1}</span></div>
+                      <div class="rw__info">
+                        <span class="rw__type">{p.type}</span>
+                        <span class="rw__name">{p.name}</span>
+                        <span class="rw__price"><span>{money(p.price)}</span></span>
+                      </div>
+                      <button class="rw__add" data-rw-add aria-expanded="false" aria-controls={pid} aria-label={`Add to bag: ${p.name}`}>
+                        <svg class="rw__i-plus" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M12 4v16M4 12h16" /></svg>
+                        <svg class="rw__i-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 7" /></svg>
+                        <svg class="rw__i-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M12 3a9 9 0 1 1-9 9" /></svg>
+                      </button>
+                      <div class="rw__picker" data-rw-picker id={pid} hidden>
+                        <div class="rw__picker-head">
+                          <img src={u(p.img)} alt="" width="160" height="200" loading="lazy" />
+                          <span class="rw__picker-title">{p.name}</span>
+                          <span class="rw__picker-price">{money(p.price)}</span>
+                          <button class="rw__picker-close" data-rw-pick-close aria-label="Close size picker"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" /></svg></button>
+                        </div>
+                        <fieldset class="rw__opt">
+                          <legend class="rw__opt-name">{p.legend}</legend>
+                          <div class="rw__values">
+                            {p.options.map((o) => (
+                              <label class="rw__pill"><input type="radio" name={`${pid}-o`} value={o} checked={o === p.pre} data-rw-option /><span class="rw__pill-label">{o}</span></label>
+                            ))}
+                          </div>
+                        </fieldset>
+                        <button class="rw__confirm" data-rw-confirm><span>Add to bag</span><span class="rw__sr"> {p.name}</span></button>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+              <div class="rw__bundle">
+                <p class="rw__msg" data-rw-msg role="status" aria-live="polite"></p>
+                <div class="rw__bundle-row">
+                  <div class="rw__bundle-copy"><span class="rw__bundle-title">Complete the look</span><span class="rw__bundle-note">Bundle all {l.pieces.length} and save {bundlePct}%</span></div>
+                  <div class="rw__bundle-price"><s>{money(total(l))}</s><strong>{money(bundle(l))}</strong></div>
+                </div>
+                <button class="rw__cta" data-rw-all data-save={Math.round(total(l) * bundlePct) / 100} data-total={bundle(l)}>
+                  <span class="rw__cta-add">Add full look to bag</span>
+                  <span class="rw__cta-m">Add full look &mdash; {money(bundle(l))}</span>
+                  <span class="rw__cta-done">Full look in your bag</span>
+                  <svg class="rw__cta-arrow" width="22" height="12" viewBox="0 0 26 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={arrow} /></svg>
+                  <svg class="rw__cta-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 3a9 9 0 1 1-9 9" /></svg>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </aside>
+    </div>
+  </div>
+  <button class="rw__scrim" data-rw-pick-close tabindex="-1" aria-hidden="true"></button>
+</section>

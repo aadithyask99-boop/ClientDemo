@@ -4,12 +4,13 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { initSections } from './sections';
 import { initCursor } from './cursor';
+import { initRunway } from './runway';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-const money = (n) => '$' + Math.round(n).toLocaleString('en-US');
+const money = (n) => (n < 0 ? '\u2212' : '') + '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const coarse = matchMedia('(pointer: coarse)').matches;
 
@@ -251,7 +252,9 @@ $('#closeCart').addEventListener('click', closeCart);
 scrim.addEventListener('click', closeCart);
 const total = () => cart.reduce((s, i) => s + i.price * i.qty, 0);
 function renderCart() {
-  const count = cart.reduce((s, i) => s + i.qty, 0);
+  // a bundle saving stays only while all of its pieces are in the bag
+  for (let i = cart.length - 1; i >= 0; i--) { const it = cart[i]; if (it.needs && !it.needs.every((k) => cart.some((c) => c.key === k))) cart.splice(i, 1); }
+  const count = cart.filter((i) => !i.fixed).reduce((s, i) => s + i.qty, 0);
   $('#cartN').textContent = `(${count})`;
   const bc = $('#bagCount'); bc.textContent = count; bc.classList.toggle('has', count > 0);
   const sub = total();
@@ -263,10 +266,12 @@ function renderCart() {
   lines.innerHTML = cart.length ? '' : '<p class="empty">Your bag is empty. Add a knit and it flies in.</p>';
   cart.forEach((it) => {
     const row = document.createElement('div'); row.className = 'cline';
-    row.innerHTML = `<div class="t"><img src="${it.img}" alt="" style="object-position:center 12%"></div><div><h3>${it.name}</h3><p>${it.sub}</p><div class="qty"><button aria-label="Fewer">&minus;</button><span>${it.qty}</span><button aria-label="More">+</button></div></div><div class="pr">${money(it.price * it.qty)}<button class="rm">Remove</button></div>`;
-    const [minus, plus] = $$('.qty button', row);
-    minus.onclick = () => { it.qty--; if (it.qty <= 0) cart.splice(cart.indexOf(it), 1); renderCart(); };
-    plus.onclick = () => { it.qty++; renderCart(); };
+    row.innerHTML = `<div class="t"><img src="${it.img}" alt="" style="object-position:center 12%"></div><div><h3>${it.name}</h3><p>${it.sub}</p>${it.fixed ? '' : `<div class="qty"><button aria-label="Fewer">&minus;</button><span>${it.qty}</span><button aria-label="More">+</button></div>`}</div><div class="pr">${money(it.price * it.qty)}<button class="rm">Remove</button></div>`;
+    if (!it.fixed) {
+      const [minus, plus] = $$('.qty button', row);
+      minus.onclick = () => { it.qty--; if (it.qty <= 0) cart.splice(cart.indexOf(it), 1); renderCart(); };
+      plus.onclick = () => { it.qty++; renderCart(); };
+    }
     $('.rm', row).onclick = () => { cart.splice(cart.indexOf(it), 1); renderCart(); };
     row.style.animation = it._new ? '' : 'none'; it._new = false;
     lines.append(row);
@@ -278,12 +283,22 @@ function renderCart() {
     $('.addbtn', row).onclick = () => { add({ key: 'x-' + e.id, name: e.name, sub: e.sub, price: e.price, img: e.img }); };
     pairs.append(row);
   });
+  document.dispatchEvent(new CustomEvent('av:cart', { detail: { keys: cart.map((c) => c.key) } }));
 }
 function add(item) {
   const hit = cart.find((c) => c.key === item.key);
-  if (hit) hit.qty++; else cart.push({ ...item, qty: 1, _new: true });
+  if (hit && item.fixed) { hit.price = item.price; hit.needs = item.needs; }
+  else if (hit) hit.qty++;
+  else cart.push({ ...item, qty: 1, _new: true });
   renderCart();
 }
+// the Try the look section adds pieces and bundle savings through this event
+document.addEventListener('av:add', (e) => {
+  const { items = [], discount } = e.detail;
+  items.forEach((it) => add(it));
+  if (discount) add(discount);
+  if (items.length) bump();
+});
 function bump() {
   const b = $('#bagCount'); b.classList.add('has');
   gsap.fromTo(bagBtn, { scale: 1 }, { scale: 1.22, duration: 0.18, yoyo: true, repeat: 1, ease: 'power2.out' });
@@ -434,6 +449,7 @@ if (!reduce) {
   });
 }
 initSections();
+initRunway();
 initCursor();
 
 /* reveals (all sizes) */

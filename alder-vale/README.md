@@ -20,6 +20,7 @@ An ascent to a lodge. The intro counts 0 to 2,480 m, the weather section is snow
 | Type that moves like weather | Slate ground, a peak rising with white ice shards, headline letters scramble in; then a framed photo grows to full-bleed while a second headline scrambles in. The cursor blows letters aside and sways the shards. |
 | Pinned 3D jacket with callouts | Pinned scene: words brighten, the knit tumbles in 3D with cursor tilt, three tags anchored to the knit, the stag mark and closing line |
 | Cold Ops inventory shelf | Lodge Edit: dark shelf of accessories, drag to scroll, hover quick-buy |
+| (new, not in the reel) Try the look | A turning 3D ring of six full-body people on a beige stage, autoplay every 5 s, drag or swipe, 01 to 06 progress ticks named after altitudes, a popup with numbered pins that grows from the ring, an "In this look" panel with size pickers and a bundle price (10% off, computed), phones get a diagonal line of people, a docked swipe row and a size sheet. Mechanics follow a Shopify runway section the owner supplied; every name, product, image and line of copy is ours. Pieces go into the same cart drawer, with a bundle saving line that disappears if a piece is removed. |
 | Lookbook mosaic | Lookbook: three columns drifting at different speeds |
 | Summit Log, flags up a peak, rating counts up | Lodge Log plays itself when it enters: the rating counts 1.8 to 4.9, a glowing line climbs a night peak, six flags pop up and the review card changes with each |
 | Drop countdown | Drop 02 over a blue-hour lodge porch (a lighter scene than the log before it), live countdown to 20 Dec 2026 |
@@ -27,6 +28,9 @@ An ascent to a lodge. The intro counts 0 to 2,480 m, the weather section is snow
 | Cart to checkout in two clicks | Drawer, loading screen, checkout page (express pay, contact, delivery, summary) |
 
 ## Easter eggs
+
+- **Last look glow:** on look 06 a faint rose light washes over the stage.
+- **Snow in the popup:** snow falls while a look is open.
 
 - **Cocoa:** type `cocoa` anywhere. Steam rises from the bag and a toast appears. (Desktop keyboard only.)
 - **Melt:** press and hold (or touch and hold) on the hero. A warm glow opens and the snow near it melts away.
@@ -40,6 +44,7 @@ An ascent to a lodge. The intro counts 0 to 2,480 m, the weather section is snow
 
 ## Placeholders and generated media
 
+- The six runway people are one generated set (`scripts/jobs8.json`), cut out and normalised by `scripts/process-rw.py`. The Heritage crew thumbnail shows a smaller stag than the person on look 02 wears; the regeneration was blocked when the image account's credit fell below the service minimum.
 - All photographs are generated (`scripts/jobs*.json` hold the prompts) and cut out with rembg (`scripts/process.py`). The model is one generated man and some generated people; none is a real person. Generated images usually cannot be copyrighted.
 - The stag on a sweater is a generated image, so it differs very slightly between colourways. The brand mark itself is the vector.
 - Invented: all prices, ratings, review text, the 1,141 reports, the statistics on the proof cards (-30 C, 18.5 micron, 2 years, 48 hours) and the drop date. The page carries no disclaimer, at the owner's request (it is a concept); this README is where that is recorded.

@@ -1,0 +1,20 @@
+[
+ {
+  "type": "image",
+  "name": "rw-2",
+  "aspect": "9:16",
+  "refs": [
+   "/home/user/ClientDemo/alder-vale/raw/fig-lean.png"
+  ],
+  "prompt": "The same woman from the reference with long brown hair wearing an ivory cable-knit crew neck sweater with ONE SMALL navy stag deer motif, only about 10 cm tall, centred on the chest, a navy Fair Isle wool scarf with a cream stag pattern worn around the neck, a cream cable-knit beanie with a ribbed cuff and a small navy stag deer motif, dark grey wool trousers and brown leather boots. Full-length fashion e-commerce photograph: the person stands straight facing the camera, arms relaxed at the sides, the whole body visible from the top of the head to the soles of the boots with space around, centred, on a plain seamless pale grey-white studio background, soft even light, sharp realistic knit texture, premium heritage campaign style, no text, no logo, nothing else in the frame."
+ },
+ {
+  "type": "image",
+  "name": "rw-6",
+  "aspect": "9:16",
+  "refs": [
+   "/home/user/ClientDemo/alder-vale/raw/fig-lean.png"
+  ],
+  "prompt": "The same woman from the reference with long brown hair wearing a navy knit polo sweater with a ribbed collar and ONE SMALL cream stag deer motif, only about 10 cm tall, centred on the chest, a navy Fair Isle wool scarf with a cream stag pattern worn around the neck worn loosely so the stag stays visible, forest-green wool gloves with leather palms, light grey wool trousers and brown leather boots. Full-length fashion e-commerce photograph: the person stands straight facing the camera, arms relaxed at the sides, the whole body visible from the top of the head to the soles of the boots with space around, centred, on a plain seamless pale grey-white studio background, soft even light, sharp realistic knit texture, premium heritage campaign style, no text, no logo, nothing else in the frame."
+ }
+]

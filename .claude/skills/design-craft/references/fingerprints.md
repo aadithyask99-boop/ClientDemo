@@ -29,4 +29,4 @@ One row per approved site. Before building a new site, read this table and requi
 If the next brief points at one of these, ask whether the owner wants it or whether another device would serve the client better.
 
 ## Accent log (add one row per site so the next site picks a different accent)
-Garden: gold thread (history; gold is now banned). DJ ESKA: gold (history). EVM and evm2: red `#d6111c`. Kerala: gold (history). Kerala 2: vermilion `#ee5a36` on paper and backwater green-black. Alder & Vale: oxblood `#8c2433` on navy and ivory. Add new sites here with their loud accent.
+Garden: gold thread (history; gold is now banned). DJ ESKA: gold (history). EVM and evm2: red `#d6111c`. Kerala: gold (history). Kerala 2: vermilion `#ee5a36` on paper and backwater green-black. Alder & Vale: oxblood `#8c2433` on navy and ivory. Its Try the look section adds a ring carousel (autoplay, drag, popup with pins) as a new interaction type. Add new sites here with their loud accent.

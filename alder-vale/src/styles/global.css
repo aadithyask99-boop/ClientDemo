@@ -309,3 +309,7 @@ html.has-cursor input, html.has-cursor textarea { cursor: text !important; }
   .swatch { padding: 8px 4px; min-height: 0; }
   .hero__models { height: calc(100svh - 156px); }
 }
+
+/* the runway's cursor ring is glass over the stage */
+.cur-r.is-glass.has-label::before { background: rgba(238, 235, 228, 0.42); border-color: rgba(15, 28, 51, 0.34); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.cur-r.is-glass .cur-r__t { color: var(--navy); }

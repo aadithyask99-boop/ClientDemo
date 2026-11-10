@@ -154,3 +154,30 @@ export const cartExtras = [
   { id: 'beanie', name: 'Stag beanie', sub: 'Cream, one size', price: 98, img: 'img/acc-beanie.webp' },
   { id: 'gloves', name: 'Pine wool gloves', sub: 'Forest, M', price: 128, img: 'img/acc-gloves.webp' },
 ];
+
+// Try the look: six outfits built from the line. Prices come from the products, the bundle is computed.
+export const runway = {
+  title: 'Try the look.',
+  sub: 'Six looks from the first lift to the lodge fire. Tap a person to see the pieces.',
+  bundlePct: 10,
+  products: {
+    stagzip: { name: 'Stag cable quarter-zip', type: 'Merino knitwear', price: 398, img: 'img/pin-knit.webp', legend: 'Size', options: ['S', 'M', 'L', 'XL'], pre: 'M' },
+    crew: { name: 'Heritage crew', type: 'Merino knitwear', price: 348, img: 'img/col-crew.webp', legend: 'Size', options: ['S', 'M', 'L', 'XL'], pre: 'M' },
+    oxzip: { name: 'Hearth quarter-zip', type: 'Merino knitwear', price: 428, img: 'img/col-oxzip.webp', legend: 'Size', options: ['S', 'M', 'L', 'XL'], pre: 'M', tag: 'New' },
+    cardigan: { name: 'Shawl cardigan', type: 'Merino knitwear', price: 468, img: 'img/col-cardigan.webp', legend: 'Size', options: ['S', 'M', 'L', 'XL'], pre: 'M' },
+    turtle: { name: 'Merino turtleneck', type: 'Merino knitwear', price: 298, img: 'img/col-turtle.webp', legend: 'Size', options: ['S', 'M', 'L', 'XL'], pre: 'M', tag: 'New' },
+    polo: { name: 'Knit polo', type: 'Merino knitwear', price: 328, img: 'img/col-polo.webp', legend: 'Size', options: ['S', 'M', 'L', 'XL'], pre: 'M' },
+    scarf: { name: 'Fair Isle scarf', type: 'Lodge accessories', price: 148, img: 'img/acc-scarf.webp', legend: 'Size', options: ['One size'], pre: 'One size' },
+    beanie: { name: 'Stag beanie', type: 'Lodge accessories', price: 98, img: 'img/acc-beanie.webp', legend: 'Size', options: ['One size'], pre: 'One size' },
+    gloves: { name: 'Pine wool gloves', type: 'Lodge accessories', price: 128, img: 'img/acc-gloves.webp', legend: 'Size', options: ['S/M', 'L/XL'], pre: 'S/M' },
+  } as Record<string, { name: string; type: string; price: number; img: string; legend: string; options: string[]; pre: string; tag?: string }>,
+  // pins: [left %, top %] of the figure box; pieces are listed in pin order
+  looks: [
+    { name: 'First Lift', alt: '1,020 m', pieces: ['stagzip', 'beanie', 'gloves'], pins: [[50, 33], [50, 9], [36, 52]] },
+    { name: 'Village Walk', alt: '1,260 m', pieces: ['crew', 'scarf', 'beanie'], pins: [[50, 36], [50, 21], [50, 9]] },
+    { name: 'Fireside', alt: '1,540 m', pieces: ['oxzip', 'scarf', 'gloves'], pins: [[50, 33], [50, 21], [36, 52]] },
+    { name: 'Pine Ridge', alt: '1,880 m', pieces: ['cardigan', 'beanie', 'gloves'], pins: [[43, 40], [50, 9], [36, 52]] },
+    { name: 'Cold Snap', alt: '2,210 m', pieces: ['turtle', 'scarf', 'beanie'], pins: [[41, 42], [50, 21], [50, 9]] },
+    { name: 'The Lodge', alt: '2,480 m', pieces: ['polo', 'scarf', 'gloves'], pins: [[63, 37], [50, 21], [36, 52]] },
+  ] as { name: string; alt: string; pieces: string[]; pins: number[][] }[],
+};

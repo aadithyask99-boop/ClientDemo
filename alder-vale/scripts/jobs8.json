@@ -1,0 +1,50 @@
+[
+ {
+  "type": "image",
+  "name": "rw-1",
+  "aspect": "9:16",
+  "prompt": "The same man from the reference wearing a deep navy cable-knit merino quarter-zip sweater with a large cream embroidered stag deer on the chest, a cream cable-knit beanie with a ribbed cuff and a small navy stag deer motif, forest-green wool gloves with leather palms, light grey wool trousers and brown leather boots. Full-length fashion e-commerce photograph: the person stands straight facing the camera, arms relaxed at the sides, the whole body visible from the top of the head to the soles of the boots with space around, centred, on a plain seamless pale grey-white studio background, soft even light, sharp realistic knit texture, premium heritage campaign style, no text, no logo, nothing else in the frame.",
+  "refs": [
+   "/home/user/ClientDemo/alder-vale/raw/deer-navy.png"
+  ]
+ },
+ {
+  "type": "image",
+  "name": "rw-2",
+  "aspect": "9:16",
+  "prompt": "The same woman from the reference with long brown hair wearing an ivory cable-knit crew neck sweater with a small navy stag deer on the chest, a navy Fair Isle wool scarf with a cream stag pattern worn around the neck, a cream cable-knit beanie with a ribbed cuff and a small navy stag deer motif, dark grey wool trousers and brown leather boots. Full-length fashion e-commerce photograph: the person stands straight facing the camera, arms relaxed at the sides, the whole body visible from the top of the head to the soles of the boots with space around, centred, on a plain seamless pale grey-white studio background, soft even light, sharp realistic knit texture, premium heritage campaign style, no text, no logo, nothing else in the frame.",
+  "refs": [
+   "/home/user/ClientDemo/alder-vale/raw/fig-lean.png"
+  ]
+ },
+ {
+  "type": "image",
+  "name": "rw-3",
+  "aspect": "9:16",
+  "prompt": "A tall man with short dark curly hair and a light beard wearing a deep oxblood burgundy cable-knit quarter-zip sweater with a cream stag deer on the chest, a navy Fair Isle wool scarf with a cream stag pattern worn around the neck, forest-green wool gloves with leather palms, charcoal wool trousers and dark brown leather boots. Full-length fashion e-commerce photograph: the person stands straight facing the camera, arms relaxed at the sides, the whole body visible from the top of the head to the soles of the boots with space around, centred, on a plain seamless pale grey-white studio background, soft even light, sharp realistic knit texture, premium heritage campaign style, no text, no logo, nothing else in the frame."
+ },
+ {
+  "type": "image",
+  "name": "rw-4",
+  "aspect": "9:16",
+  "prompt": "A woman with straight black hair in a low ponytail wearing a deep forest green shawl-collar cable-knit cardigan with leather buttons over a cream shirt, a cream cable-knit beanie with a ribbed cuff and a small navy stag deer motif, forest-green wool gloves with leather palms, black wool trousers and brown leather boots. Full-length fashion e-commerce photograph: the person stands straight facing the camera, arms relaxed at the sides, the whole body visible from the top of the head to the soles of the boots with space around, centred, on a plain seamless pale grey-white studio background, soft even light, sharp realistic knit texture, premium heritage campaign style, no text, no logo, nothing else in the frame."
+ },
+ {
+  "type": "image",
+  "name": "rw-5",
+  "aspect": "9:16",
+  "prompt": "The same man from the reference wearing an ivory merino turtleneck sweater, a navy Fair Isle wool scarf with a cream stag pattern worn around the neck draped over it, a cream cable-knit beanie with a ribbed cuff and a small navy stag deer motif, charcoal wool trousers and brown leather boots. Full-length fashion e-commerce photograph: the person stands straight facing the camera, arms relaxed at the sides, the whole body visible from the top of the head to the soles of the boots with space around, centred, on a plain seamless pale grey-white studio background, soft even light, sharp realistic knit texture, premium heritage campaign style, no text, no logo, nothing else in the frame.",
+  "refs": [
+   "/home/user/ClientDemo/alder-vale/raw/deer-navy.png"
+  ]
+ },
+ {
+  "type": "image",
+  "name": "rw-6",
+  "aspect": "9:16",
+  "prompt": "The same woman from the reference with long brown hair wearing a navy knit polo sweater with a ribbed collar and a small cream stag deer on the chest, a navy Fair Isle wool scarf with a cream stag pattern worn around the neck, forest-green wool gloves with leather palms, light grey wool trousers and brown leather boots. Full-length fashion e-commerce photograph: the person stands straight facing the camera, arms relaxed at the sides, the whole body visible from the top of the head to the soles of the boots with space around, centred, on a plain seamless pale grey-white studio background, soft even light, sharp realistic knit texture, premium heritage campaign style, no text, no logo, nothing else in the frame.",
+  "refs": [
+   "/home/user/ClientDemo/alder-vale/raw/fig-lean.png"
+  ]
+ }
+]

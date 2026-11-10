@@ -17,7 +17,7 @@ export function initCursor() {
 
   const label = ring.firstChild;
   let x = -100, y = -100, rx = -100, ry = -100, shown = false;
-  const SEL = 'a, button, [role="button"], .swatch, .size, .close, .stile, .card .tile, .feature, .scard, .pcard, .rail, input, label, .qa';
+  const SEL = '.rw__stage, .rw__lb-stage, a, button, [role="button"], .swatch, .size, .close, .stile, .card .tile, .feature, .scard, .pcard, .rail, input, label, .qa';
   const set = (cls, on) => ring.classList.toggle(cls, on);
 
   addEventListener('pointermove', (e) => {
@@ -32,13 +32,19 @@ export function initCursor() {
   document.addEventListener('pointerover', (e) => {
     const t = e.target.closest ? e.target.closest(SEL) : null;
     let text = '', link = !!t, hide = false;
+    let glass = false;
     if (t) {
       if (t.matches('input, textarea')) { hide = true; link = false; }
+      else if (t.closest('.rw__pin, .rw__hit, .rw__tick, .rw__icon, .rw__add, .rw__pill, .rw__confirm, .rw__cta, .rw__lb-close')) { /* stag over controls */ }
+      else if (t.closest('.rw__zoom')) { text = 'View'; glass = true; }
+      else if (t.closest('.rw__lb-model')) { link = false; }
+      else if (t.closest('.rw__lb-stage')) { text = 'Close'; glass = true; }
+      else if (t.closest('.rw__stage')) { text = 'Drag'; glass = true; }
       else if (t.closest('[data-add]') || t.matches('[data-add]')) text = 'Add';
       else if (t.closest('.rail, .scard')) text = 'Drag';
       else if (t.closest('.card .tile, .feature')) text = 'View';
     }
-    set('is-link', link && !text); set('has-label', !!text); label.textContent = text; needle.classList.toggle('is-link', link && !text);
+    set('is-glass', glass); set('is-link', link && !text); set('has-label', !!text); label.textContent = text; needle.classList.toggle('is-link', link && !text);
     needle.classList.toggle('is-hidden', hide || !!text); ring.classList.toggle('is-hidden', hide);
   });
 
