@@ -65,9 +65,12 @@ async function rpc(msg, env) {
 const safeEqual = (a, b) => { if (a.length !== b.length) return false; let d = 0; for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i); return d === 0; };
 
 export default {
-  async fetch(req, env) {
+  async fetch(req, baseEnv) {
     const url = new URL(req.url);
+    // Inside the site: the sign-in link uses the site's own address, and any other path is served by the site's static assets.
+    const env = Object.assign(Object.create(baseEnv), { PUBLIC_URL: baseEnv.PUBLIC_URL || url.origin });
     if (url.pathname === '/health') return new Response('ok');
+    if (!/^\/(signin|mcp)(\/|$)/.test(url.pathname) && baseEnv.ASSETS) return baseEnv.ASSETS.fetch(req);
     const si = url.pathname.match(/^\/signin\/([^/]+)(\/.*)?$/);
     if (si && env.MCP_SECRET) {
       if (!safeEqual(si[1], env.MCP_SECRET)) return new Response('Not found', { status: 404 });
