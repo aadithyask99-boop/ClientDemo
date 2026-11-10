@@ -4,7 +4,7 @@ How generated images and video are made, what they cost, and how the cap works.
 
 ## Flow first (images)
 
-Generate images with the `flow_generate_image` tool (the `flow-mcp` connector, `flow-mcp/`) before using OpenRouter: it runs Nano Banana in the owner's Google Flow account and is free against their plan. Use OpenRouter (`gen-media.mjs`, the `media-gen` MCP) for video, or when Flow reports it is signed out and the owner is not around to sign in again. Flow returns 1024 px images; check each at full size.
+Generate images with the `flow_generate_image` tool (the Flow connector served by `flow-server/`) before using OpenRouter: it runs Nano Banana in the owner's Google Flow account and is free against their plan. Use OpenRouter (`gen-media.mjs`, the `media-gen` MCP) for video, or when Flow reports it is signed out and the owner is not around to sign in again. Flow returns 1024 px images; check each at full size.
 
 ## Defaults
 

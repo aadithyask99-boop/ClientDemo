@@ -8,7 +8,8 @@ const baseOf = `(u) => u.replace(/=s\\d+(-rw)?$/, '')`;
 const IMAGES = `(() => { const b = ${baseOf}; return [...new Set([...document.querySelectorAll('img')].filter(i => i.naturalWidth > 100 && /\\/asb\\//.test(i.currentSrc || i.src)).map(i => b(i.currentSrc || i.src)))]; })()`;
 
 export async function signedIn(page) {
-  return page.eval(`(() => { const t = document.body.innerText; return location.host === 'flow.google.com' && /New project|Create with Google Flow/.test(t) && !/Sign in/.test(t.slice(0, 200)); })()`);
+  // The logged-out visitor is sent to /about, whose "Create with Google Flow" button must not count; only the dashboard has "New project".
+  return page.eval(`(() => location.host === 'flow.google.com' && !location.pathname.startsWith('/about') && /New project/i.test(document.body.innerText))()`);
 }
 
 async function dismissDialogs(page) {
