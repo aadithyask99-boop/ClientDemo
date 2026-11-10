@@ -27,7 +27,7 @@
 }
 
 /* sections stack like cards: a rounded top that overlaps the section above */
-.specs, .shelf, .lb, .log, .drop { border-radius: 28px 28px 0 0; margin-top: -28px; box-shadow: 0 -22px 46px -26px rgba(9, 19, 31, 0.55); }
+.specs, .shelf, .lb, .log { border-radius: 28px 28px 0 0; margin-top: -28px; box-shadow: 0 -22px 46px -26px rgba(9, 19, 31, 0.55); }
 /* sections slide over the pinned hero like a curtain (desktop) */
 main > section:not(.hero) { position: relative; z-index: 2; }
 
@@ -160,6 +160,10 @@ main > section:not(.hero) { position: relative; z-index: 2; }
 
 /* ------------------------------------------------------ drop: a lighter, blue hour */
 .drop { position: relative; min-height: 100vh; background: #2b3d58; color: var(--ivory); overflow: hidden; display: grid; align-items: end; }
+/* the night peak dawns into the lodge porch: no card edge, a long gradient from night into the photo */
+.drop { border-radius: 0; margin-top: 0; box-shadow: none; }
+.drop::before { content: ''; position: absolute; z-index: 1; left: 0; right: 0; top: 0; height: min(62%, 560px); pointer-events: none; opacity: var(--dawn, 1); background: linear-gradient(to bottom, var(--night) 0, rgba(9, 19, 31, 0.92) 10%, rgba(11, 22, 38, 0.66) 30%, rgba(17, 30, 50, 0.3) 58%, rgba(33, 50, 76, 0)); }
+.log__pin::after { content: ''; position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; height: 16%; pointer-events: none; background: linear-gradient(to bottom, rgba(9, 19, 31, 0), var(--night)); }
 .drop__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%; }
 .drop::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, rgba(33, 50, 76, 0.8), rgba(33, 50, 76, 0.06) 64%); pointer-events: none; }
 .drop__lit { position: absolute; z-index: 1; left: 0; top: 0; width: 44%; height: 54%; opacity: 0; background: radial-gradient(closest-side at 30% 36%, rgba(255, 190, 110, 0.7), rgba(255, 170, 90, 0)); transition: opacity 0.9s; pointer-events: none; mix-blend-mode: screen; }
@@ -263,6 +267,8 @@ main > section:not(.hero) { position: relative; z-index: 2; }
   .flag__alt { bottom: 28px; font-size: 0.8rem; }
 
   .drop { min-height: 100svh; }
+  .drop { border-radius: 0; margin-top: 0; }
+  .drop::before { height: min(46%, 380px); }
   .tail .drop { position: relative; }
   .drop__window { width: 40%; }
   .drop__img { object-position: 27% 50%; }
@@ -288,8 +294,8 @@ main > section:not(.hero) { position: relative; z-index: 2; }
 }
 
 @media (max-width: 860px) {
-  .specs, .shelf, .lb, .log, .drop, .foot { border-radius: 22px 22px 0 0; margin-top: -22px; }
-  .tail .drop { margin-top: -22px; }
+  .specs, .shelf, .lb, .log, .foot { border-radius: 22px 22px 0 0; margin-top: -22px; }
+  .tail .drop { margin-top: 0; border-radius: 0; }
 }
 
 /* reduced motion: the weather scene reads as two stacked blocks, no pin */

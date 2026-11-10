@@ -291,5 +291,10 @@ export function initSections() {
   mm.add('(max-width: 860px) and (prefers-reduced-motion: no-preference)', () => { initSpecsMobile(); });
   mm.add('(prefers-reduced-motion: reduce)', () => { initWeather(false); initSpecs(false); });
   initLog();
+  mm.add('(prefers-reduced-motion: no-preference)', () => {
+    const img = document.querySelector('.drop__img'); if (!img) return;
+    gsap.fromTo('.drop', { '--dawn': 1 }, { '--dawn': 0, ease: 'none', scrollTrigger: { trigger: '.drop', start: 'top 70%', end: 'top 4%', scrub: true } });
+    gsap.fromTo(img, { scale: 1.16, yPercent: -3 }, { scale: 1, yPercent: 0, ease: 'none', scrollTrigger: { trigger: '.drop', start: 'top bottom', end: 'top 15%', scrub: true } });
+  });
   initFooterFigs();
 }

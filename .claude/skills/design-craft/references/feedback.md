@@ -340,3 +340,6 @@ I turned the owner's "looks cluttered, find a fine balance" (EVM) into "the page
 ## Alder & Vale: phone fixes (closing text, look product row)
 - Autoplay kept swapping the Try the look panel every 5 s on phones (only mouse hover paused it), which reset the swipeable product row. Any touch, pointerdown or scroll inside the panel now stops autoplay. Test with a CDP touch swipe with autoplay left on.
 - Pinned-knit closing line was small and tight under the CTA. Gave it heading scale (clamp 2.3rem/11.4vw/3.6rem), a top margin and bottom padding so the next section's rounded top does not crowd it. Checked at 360, 390 and 430.
+
+## Alder & Vale: Lodge Log to Drop transition
+- A dark section butting a bright photo with a card edge reads as a hard cut. Fix: remove the rounded-card overlap on the incoming section, lay a night-to-transparent gradient over the top of the photo (tied to a scroll-scrubbed `--dawn` variable so it clears by the time the section is in view), and ease the image from scale 1.16 to 1. Put the gradient at z-index 1 (a z-index 0 pseudo-element sits under the later positioned img).
