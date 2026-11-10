@@ -1,16 +1,23 @@
 ---
 name: flow-images
-description: How to generate images with the owner's Google Flow (Nano Banana) account. Use whenever a site, section or design needs generated imagery, before OpenRouter. Default route is the owner's own signed-in browser, driven through Claude's browser tools; a self-hosted server kit is the alternative.
+description: How to generate images with the owner's Google Flow (Nano Banana) account. Use whenever a site, section or design needs generated imagery, before OpenRouter. Default route is the Flow MCP installed on the owner's laptop (see SETUP.md); the owner's own browser via Claude's browser tools, and a self-hosted server kit, are the alternatives.
 ---
 
 # Flow images
 
-Flow has no API. The one supported way to use it here is **the owner's own browser, already signed in to Google, driven by Claude's own browser tools**. That keeps images free and uncapped, uses their normal login and network, and needs no server.
+Flow has no API, so a browser signed in to Google has to run somewhere. Routes, in order of least headache:
 
-## Route 1: the owner's own browser
+1. **The Flow MCP on the owner's laptop** (`flow_*` tools from https://github.com/GTAI-1/flow-mcp; set-up steps for their Mac and Windows PC in `SETUP.md`). Free, no cap from our side, uses their own Chrome profile. If the `flow_*` tools are in the session, use them: `flow_status` first, then `flow_agent_images` for batches of stills (0 credits) or `flow_generate` for single images, then `flow_download`. Never start video or anything that spends credits unless the owner says so; keep `max_credits` low.
+2. **The owner's own browser through Claude's browser tools** (below), when the MCP is not installed.
+3. **The self-hosted kit in `flow-server/`**: a signed-in Chrome on a free always-on server plus an MCP server, so every chat works with every laptop off. About 30 minutes to set up, untested on a real server. See its README.
+4. Rented browsers (Cloudflare Browser Run, Browser Use) are capped or billed; the owner rejected both.
+
+The rest of this page is route 2.
+
+## Route 2: the owner's own browser
 
 1. Use whichever browser tool the session has, and read its skill first: Claude in Chrome (`mcp__claude-in-chrome__*`, skill `anthropic-skills:chrome-browser`), the desktop app's built-in browser (`mcp__Claude_Browser__*`, skill `anthropic-skills:built-in-browser`), or the same pane on the owner's computer from a cloud session (`mcp__remote-devices__Claude_Browser__*`; link it with `list_computer_folders` then `request_computer_folder`).
-2. No such tool in the session: say so plainly and ask the owner to open the Claude app or Chrome extension on their computer. Do not substitute silently; offer route 2 if they want it working with their computer off.
+2. No such tool in the session: say so plainly and ask the owner to open the Claude app or Chrome extension on their computer. Do not substitute silently; offer the server kit (route 3) if they want it working with their computer off.
 3. Never export or copy Google cookies or sessions, never hide that the browser is automated, never run a service that exposes a signed-in browser. The harness blocks those, and they were not allowed in this project's setup.
 
 ## Procedure (the Flow screens below were verified on 2026-11-10; the owner's-browser route itself is untested until first use)
