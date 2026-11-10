@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "media-gen": {
+      "command": "node",
+      "args": [".claude/mcp/media-gen/server.mjs"],
+      "env": { "NODE_USE_ENV_PROXY": "1" }
+    }
+  }
+}
