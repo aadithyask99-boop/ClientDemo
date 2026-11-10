@@ -1,0 +1,10 @@
+{
+  "name": "flow-mcp",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "vars": {
+    "FLOW_PROFILE_ID": "d4c3f542-4235-4b67-9f3e-f81a0b938508",
+    "FLOW_PROJECT_ID": "61b07694-c47d-4f9b-89eb-9f711bc5146f"
+  }
+}

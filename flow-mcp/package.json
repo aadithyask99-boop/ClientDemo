@@ -1,0 +1,7 @@
+{
+  "name": "flow-mcp",
+  "private": true,
+  "type": "module",
+  "scripts": { "deploy": "wrangler deploy", "test": "node test/run.mjs" },
+  "devDependencies": { "wrangler": "^4" }
+}
