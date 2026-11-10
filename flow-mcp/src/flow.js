@@ -1,5 +1,5 @@
 // Drives Google Flow's image agent in a signed-in cloud browser. Selectors are text-based because Flow's class names change.
-import { Page, sleep } from './cdp.js';
+import { sleep } from './util.js';
 
 const FLOW = 'https://flow.google.com/';
 const baseOf = `(u) => u.replace(/=s\\d+(-rw)?$/, '')`;
@@ -19,21 +19,28 @@ async function dismissDialogs(page) {
   }
 }
 
-// Open the working project. FLOW_PROJECT_ID pins one project; without it a new project is created and its id is returned.
+// Open the working project: FLOW_PROJECT_ID, else the one remembered in KV, else create a new project and remember it.
 export async function openProject(page, env) {
-  if (env.FLOW_PROJECT_ID) {
-    await page.goto(`${FLOW}project/${env.FLOW_PROJECT_ID}`);
-  } else {
+  const known = env.FLOW_PROJECT_ID || (await env.FLOW_STATE.get('flow-project'));
+  const onProject = async () => /flow\.google\.com\/project\//.test(await page.eval('location.href'));
+  if (known) {
+    await page.goto(`${FLOW}project/${known}`);
+    await sleep(2500);
+  }
+  if (!known || !(await onProject())) {
     await page.goto(FLOW);
+    await sleep(2000);
     if (!(await signedIn(page))) throw new SignedOut();
     const pos = await page.waitFor(() => page.eval(`(() => { const b = [...document.querySelectorAll('button,a,div[role=button]')].find(e => /new project/i.test(e.textContent) && e.textContent.length < 30); if (!b) return null; const r = b.getBoundingClientRect(); return [r.x + r.width / 2, r.y + r.height / 2]; })()`), 15000, 'New project button');
     await page.click(pos[0], pos[1]);
     await page.waitFor(() => page.eval(`/\\/project\\//.test(location.pathname)`), 20000, 'project page');
+    await sleep(2500);
   }
-  await sleep(2500);
-  if (!/flow\.google\.com\/project\//.test(await page.eval('location.href'))) throw new SignedOut();
+  if (!(await onProject())) throw new SignedOut();
   await dismissDialogs(page);
-  return page.eval(`location.pathname.split('/project/')[1]`);
+  const id = await page.eval(`location.pathname.split('/project/')[1]`);
+  if (id && id !== known) await env.FLOW_STATE.put('flow-project', id);
+  return id;
 }
 
 export class SignedOut extends Error {

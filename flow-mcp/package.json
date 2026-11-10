@@ -2,6 +2,14 @@
   "name": "flow-mcp",
   "private": true,
   "type": "module",
-  "scripts": { "deploy": "wrangler deploy", "test": "node test/run.mjs" },
-  "devDependencies": { "wrangler": "^4" }
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "test": "node test/run.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4"
+  },
+  "dependencies": {
+    "@cloudflare/puppeteer": "^2.0.0"
+  }
 }
