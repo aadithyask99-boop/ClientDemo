@@ -1,0 +1,10 @@
+{
+  "name": "flow-mcp",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "browser": { "binding": "BROWSER" },
+  "kv_namespaces": [{ "binding": "FLOW_STATE", "id": "41ceec34ddf6402da7de5530a441b2ed" }],
+  "vars": { "FLOW_PROJECT_ID": "", "PUBLIC_URL": "https://flow-mcp.projectatlas.workers.dev" }
+}
