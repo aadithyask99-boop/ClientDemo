@@ -20,11 +20,13 @@ export async function handleSignin(req, env, rest) {
   if (rest === '/start' && req.method === 'POST') {
     let cur = await current(env);
     if (!cur) {
-      const browser = await puppeteer.launch(env.BROWSER, { keep_alive: 600000 });
+      let browser;
+      try { browser = await puppeteer.launch(env.BROWSER, { keep_alive: 300000 }); }
+      catch (e) { return json({ ok: false, error: /429|rate limit/i.test(e.message) ? "Cloudflare's free browser time for today is used up (it resets at 00:00 UTC). Try again after that." : `Could not start the browser: ${e.message}` }, 503); }
       const page = await browser.newPage();
       await page.setViewport(VIEWPORT);
       await page.goto(SIGNIN_URL, { waitUntil: 'load', timeout: 30000 }).catch(() => {});
-      await env.FLOW_STATE.put(SID_KEY, browser.sessionId(), { expirationTtl: 600 });
+      await env.FLOW_STATE.put(SID_KEY, browser.sessionId(), { expirationTtl: 300 });
       cur = { browser };
     }
     cur.browser.disconnect();
