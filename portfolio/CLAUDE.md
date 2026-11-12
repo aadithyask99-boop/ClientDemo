@@ -4,7 +4,7 @@ Astro site, GSAP, Lenis, plain CSS. README.md describes the site; this file is t
 
 ## Recording the Work clips (`scripts/record-demo.mjs`)
 
-Re-records `public/work/<slug>.mp4` (60 fps, 720 px wide, no audio) and `<slug>.webp` (poster) for one project:
+Re-records `public/work/<slug>.mp4` (60 fps, 960 px wide, no audio), `<slug>-m.mp4` (640 px, for phones) and `<slug>.webp` (poster) for one project:
 
 ```
 node scripts/record-demo.mjs <slug> <url> [--length 18] [--start 6] [--scroll 4200] [--gate "click to open"] [--sync-video] [--fps 60]
@@ -20,7 +20,7 @@ Needs Playwright (set `PLAYWRIGHT_DIR` if it is not importable) and ffmpeg. Fram
 - A site whose intro is a `<video>` needs `--sync-video` (halcyon). Headless frame capture does not paint video layers and a video's own clock is not the paused one,
   so the script cuts the video into pictures with ffmpeg and shows one per frame in a canvas over the hidden video.
 - Settings used for the current clips: doves-uk `--start 3.5 --scroll 4800`; ileife `--start 4 --scroll 4800`; orra `--start 5 --scroll 5200`; more-coffee
-  `--start 4 --scroll 5200`; djeska `--start 4 --gate "click to open" --scroll 4800`; halcyon `--length 20 --start 8 --scroll 5200 --sync-video`; garden `--length 20 --start 3 --gate "I&T" --gate-wait 6 --scroll 5200` (its scroll is locked while the door opens); sidecut `--start 4 --scroll 4800`; alder-vale `--start 4 --scroll 5200`; smashlads and maledetta `--start 6 --scroll 4800`. These five were recorded from local builds served from `site/` (`node scripts/stage.mjs` in each site, then any static server), not the live URLs. The `-m.mp4` phone versions are made from the main clip: `ffmpeg -i x.mp4 -vf scale=480:300 -c:v libx264 -preset slow -crf 31 -r 60 -pix_fmt yuv420p -movflags +faststart -an x-m.mp4`.
+  `--start 4 --scroll 5200`; djeska `--start 4 --gate "click to open" --scroll 4800`; halcyon `--length 20 --start 8 --scroll 5200 --sync-video`; garden `--length 20 --start 3 --gate "I&T" --gate-wait 6 --scroll 5200` (its scroll is locked while the door opens); sidecut `--start 4 --scroll 4800`; alder-vale `--start 4 --scroll 5200`; smashlads and maledetta `--start 6 --scroll 4800`. These five were recorded from local builds served from `site/` (`node scripts/stage.mjs` in each site, then any static server), not the live URLs. The recorder now writes the `-m.mp4` phone version itself (640x400, crf 26; the desktop clip is 960 wide, crf 24). Clips were once 720 and 480 px at crf 28 and looked soft and blocky on retina screens and phones; re-encode from the raw frames in `/tmp/record-<slug>` if they are still there.
 - Look at a contact sheet of the result before committing it (a gap in the frame numbering once cut an encode down to one frame; the script now fills gaps).
 - Do not stop a recording with `pkill -f record-demo`: the pattern matches your own shell and kills it. Kill by PID.
 - The demo sites are at `https://clientdemo.maximusmediascape.workers.dev/<slug>/`.
@@ -39,6 +39,7 @@ Needs Playwright (set `PLAYWRIGHT_DIR` if it is not importable) and ffmpeg. Fram
 
 `node scripts/single-file.mjs <out.html>` bundles the site, its pictures and its clips into one HTML file (about 6 MB) for hosts that show one file.
 
+- The single file must stay under 16 MB. The live clips (960 px, 640 px for phones) are too big for it, so build it with smaller clips: `SMALL_CLIPS=<folder of the older 720 px and 480 px mp4 files> node scripts/single-file.mjs out.html` (those older versions can be rebuilt from the raw frames with a smaller scale and a higher crf).
 - A viewer's page may only allow `data:` images, not `blob:`: never load pictures through a `blob:` URL.
 - Test in Firefox and Safari terms too, not only Chromium: Chromium forgives invalid XML in an SVG image that other browsers reject (that once switched the
   portrait effect off silently).

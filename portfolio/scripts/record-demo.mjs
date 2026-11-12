@@ -1,4 +1,4 @@
-// Records the looping preview clip for a Work project at a true 60 frames per second, and writes <slug>.mp4 and <slug>.webp (the poster) into public/work/.
+// Records the looping preview clip for a Work project at a true 60 frames per second, and writes <slug>.mp4 (960 px wide), <slug>-m.mp4 (640 px, for phones) and <slug>.webp (the poster) into public/work/.
 //
 //   node scripts/record-demo.mjs <slug> <url> [options]
 //   node scripts/record-demo.mjs doves-uk https://example.com/doves-uk/ --length 18 --start 6 --scroll 4200
@@ -170,9 +170,10 @@ while (frame < total) await step();
 await Promise.race([browser.close(), new Promise((r) => setTimeout(r, 8000))]);
 console.log(`\r${slug}: ${frame} frames captured`);
 
-// 3. encode: 60 fps, 720 px wide, no audio; the poster is a frame from the finished first screen
+// 3. encode: 60 fps, 960 px wide (and a 640 px one for phones), no audio; the poster is a frame from the finished first screen
 const ff = (a) => { const r = spawnSync('ffmpeg', ['-v', 'error', '-y', ...a], { stdio: 'inherit' }); if (r.status) process.exit(r.status); };
-ff(['-framerate', String(fps), '-i', `${raw}/%05d.jpg`, '-vf', 'scale=720:-2:flags=lanczos', '-c:v', 'libx264', '-crf', '28', '-preset', 'slow', '-pix_fmt', 'yuv420p', '-r', String(fps), '-g', String(fps * 2), '-movflags', '+faststart', '-an', `${out}/${slug}.mp4`]);
+ff(['-framerate', String(fps), '-i', `${raw}/%05d.jpg`, '-vf', 'scale=960:-2:flags=lanczos', '-c:v', 'libx264', '-crf', '24', '-preset', 'slow', '-pix_fmt', 'yuv420p', '-r', String(fps), '-g', String(fps * 2), '-movflags', '+faststart', '-an', `${out}/${slug}.mp4`]);
+ff(['-framerate', String(fps), '-i', `${raw}/%05d.jpg`, '-vf', 'scale=640:400:flags=lanczos', '-c:v', 'libx264', '-crf', '26', '-preset', 'slow', '-pix_fmt', 'yuv420p', '-r', String(fps), '-g', String(fps * 2), '-movflags', '+faststart', '-an', `${out}/${slug}-m.mp4`]); // the phone version
 ff(['-i', `${raw}/${String(Math.min(posterFrame, frame - 1)).padStart(5, '0')}.jpg`, '-vf', 'scale=960:-2:flags=lanczos', '-c:v', 'libwebp', '-quality', '72', `${out}/${slug}.webp`]);
 console.log(`Wrote public/work/${slug}.mp4 and ${slug}.webp (frames kept in ${raw}: ${readdirSync(raw).length} files)`);
 process.exit(0);

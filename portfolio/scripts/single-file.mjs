@@ -8,7 +8,7 @@
 // the file in their own document. Only latin font subsets are kept. Everything else is the real site: same markup, same scripts.
 import { spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 import { build } from 'esbuild';
 import { loadEnv } from 'vite';
 
@@ -41,7 +41,9 @@ const headScripts = [...head.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) 
 
 // 4. images and the Work videos (and a portrait, if there is one) become data URIs
 body = body.replace(/(data-src|data-video-m|data-video|src)="\/([^"]+\.(?:webp|png|jpe?g|avif|svg|mp4))"/g, (whole, attr, path) => {
-  const file = join(dist, path);
+  let file = join(dist, path);
+  // the single file has a 16 MB ceiling, so it can carry smaller Work clips: SMALL_CLIPS=<folder holding same-named mp4 files> swaps them in
+  if (process.env.SMALL_CLIPS && path.endsWith('.mp4') && existsSync(join(process.env.SMALL_CLIPS, basename(path)))) file = join(process.env.SMALL_CLIPS, basename(path));
   return existsSync(file) ? `${attr}="${dataUri(file, mimeOf(path))}"` : whole;
 });
 // the no-JavaScript image copies are not needed in a single file that already carries its pictures
