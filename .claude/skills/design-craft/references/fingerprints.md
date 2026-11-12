@@ -25,9 +25,10 @@ One row per approved site. Before building a new site, read this table and requi
 - **A loader or gate before the page:** Brew More, Garden, ILE IFE, DJ ESKA, Doves (demo), Portfolio.
 - **Dark section after a light hero with a colour-changing sky or tone:** Halcyon, ILE IFE, Orra.
 
+| Alder & Vale | Anton, Big Shoulders Stencil, Manrope | navy, ivory, oxblood accent (hero grounds per colourway) | embroidered stag on a cable-knit quarter-zip, ascent to a lodge | giant stencil wordmark behind a cut-out model, colourway fog swap | counter intro and diagonal wipe, scattering type, pinned floating knit, flags up a peak | replicate of a reel |
 If the next brief points at one of these, ask whether the owner wants it or whether another device would serve the client better.
 
 ## Accent log (add one row per site so the next site picks a different accent)
-Garden: gold thread (history; gold is now banned). DJ ESKA: gold (history). EVM and evm2: red `#d6111c`. Kerala: gold (history). Kerala 2: vermilion `#ee5a36` on paper and backwater green-black. Add new sites here with their loud accent.
+Garden: gold thread (history; gold is now banned). DJ ESKA: gold (history). EVM and evm2: red `#d6111c`. Kerala: gold (history). Kerala 2: vermilion `#ee5a36` on paper and backwater green-black. Alder & Vale: oxblood `#8c2433` on navy and ivory. Its Try the look section adds a ring carousel (autoplay, drag, popup with pins) as a new interaction type. Add new sites here with their loud accent.
 Maledetta (replica, owner-approved reference language): Oswald 700 + Merriweather 300, cream ground with one rotating pale/dark pair (green, red, Tube blue, plum, tangerine), giant rough wordmark behind a woodcut mascot, one sticker that travels with GSAP Flip. This is the reference's fingerprint, not ours; do not reuse it for an unrelated client.
 Sidecut (replica of a barbershop reel): no accent, black and off-white only; Unbounded 200 to 800 plus Hanken Grotesk and JetBrains Mono; hero is a generated 360 degree chair turn played as 73 canvas frames with a cursor lamp; thin lowercase giant wordmark; rounded sections sliding over each other; right-hand booking drawer. This is the reel's fingerprint, not a house one.

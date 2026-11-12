@@ -1,0 +1,15 @@
+---
+import { drop } from '../data/site';
+import { u } from '../lib';
+---
+<section class="drop" id="drop" data-theme="dark">
+  <img class="drop__img" src={u('img/porch-day.webp')} alt="The model on the steps of a timber lodge at early dusk, holding a mug, snow falling" loading="lazy" width="2560" height="1440" />
+  <div class="drop__lit" id="dropLit" aria-hidden="true"></div>
+  <button class="drop__window" id="dropWindow" aria-label="Light the lodge window" aria-pressed="false"></button>
+  <div class="drop__in">
+    <h2 class="display h2" data-reveal>{drop.title.map((l) => <span>{l}</span>)}</h2>
+    <div class="cd" id="countdown" data-to={drop.closes} role="timer" aria-label="Time until the drop"><div><b id="cdD">00</b><small>Days</small></div><div><b id="cdH">00</b><small>Hours</small></div><div><b id="cdM">00</b><small>Mins</small></div><div><b id="cdS">00</b><small>Secs</small></div></div>
+    <p class="drop__text" id="dropText">{drop.text}</p>
+    <form class="drop__form" id="dropForm"><label class="sr" for="dropEmail">Email</label><input id="dropEmail" type="email" placeholder={drop.placeholder} required autocomplete="email" /><button class="pill pill--ox" type="submit">{drop.cta}<span class="go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></button></form>
+  </div>
+</section>

@@ -1,0 +1,233 @@
+[
+ {
+  "type": "image",
+  "name": "pin-knit",
+  "aspect": "1:1",
+  "prompt": "Ghost mannequin product photograph of a deep navy cable-knit merino quarter-zip sweater with a large cream embroidered stag deer on the chest and a ribbed collar, three-quarter front view, floating, on a plain seamless light grey background, soft shadow, crisp stitch detail. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "macro-cable",
+  "aspect": "3:4",
+  "prompt": "Extreme macro photograph of deep navy chunky cable-knit merino wool stitches with a dusting of frost crystals, shallow depth of field. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "macro-fibre",
+  "aspect": "3:4",
+  "prompt": "Extreme macro photograph of soft ivory merino wool fibres and yarn, a few snowflakes resting on them, shallow depth of field. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "macro-collar",
+  "aspect": "3:4",
+  "prompt": "Close-up photograph of a navy knit quarter-zip ribbed collar and silver zip pull, falling snow, shallow depth of field. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "macro-parcel",
+  "aspect": "3:4",
+  "prompt": "A parcel wrapped in plain kraft paper with a navy ribbon sitting in fresh snow in front of a wooden lodge door, soft light. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "ridge",
+  "aspect": "16:9",
+  "prompt": "Wide cinematic photograph of a high alpine snow ridge at dawn, wind blowing snow plumes off the peak, layered blue-grey mountains, vast empty sky, no people. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "ridge-man",
+  "aspect": "16:9",
+  "prompt": "Wide cinematic photograph of the same man from the reference standing on a snowy alpine ridge, wearing a navy cable-knit quarter-zip with a cream stag motif on the chest, seen from the waist up in the left third of the frame, big blue-grey mountains behind him, calm. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark.",
+  "refs": [
+   "/home/user/ClientDemo/alder-vale/raw/deer-navy.png"
+  ]
+ },
+ {
+  "type": "image",
+  "name": "night-peak",
+  "aspect": "16:9",
+  "prompt": "Dark moody photograph of a single snow-covered alpine peak at night under deep navy sky, moonlit snow, lit from the right, large empty dark sky on the left, no people. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "porch-dusk",
+  "aspect": "16:9",
+  "prompt": "Cinematic dusk photograph of a luxury timber ski lodge porch with warm lit windows, snow falling, the same man from the reference seated on the steps in an oxblood cable-knit sweater holding a mug, deep blue twilight, dark lodge on the left. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark.",
+  "refs": [
+   "/home/user/ClientDemo/alder-vale/raw/deer-navy.png"
+  ]
+ },
+ {
+  "type": "image",
+  "name": "valley",
+  "aspect": "16:9",
+  "prompt": "Wide misty snowy alpine valley panorama with layered blue-grey ridges fading into haze, pale sky, empty, soft and calm, no people. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "look-1",
+  "aspect": "3:4",
+  "prompt": "The same man from the reference in an ivory cable-knit quarter-zip with a navy stag motif, standing by a frosted lodge window, warm light inside. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark.",
+  "refs": [
+   "/home/user/ClientDemo/alder-vale/raw/deer-navy.png"
+  ]
+ },
+ {
+  "type": "image",
+  "name": "look-2",
+  "aspect": "1:1",
+  "prompt": "A woman with auburn hair in a deep forest green cable-knit sweater laughing in falling snow on a ski slope, chairlift behind her. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "look-3",
+  "aspect": "3:4",
+  "prompt": "The same man from the reference in a navy quarter-zip walking through deep snow with a leather satchel, pine trees behind. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark.",
+  "refs": [
+   "/home/user/ClientDemo/alder-vale/raw/deer-navy.png"
+  ]
+ },
+ {
+  "type": "image",
+  "name": "look-4",
+  "aspect": "4:5",
+  "prompt": "A woman in a cream cable-knit turtleneck and a navy Fair Isle scarf by a stone fireplace in a timber lodge, holding a ceramic mug. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "look-5",
+  "aspect": "1:1",
+  "prompt": "Detail photograph of hands holding a ceramic mug of cocoa wearing the cuffs of an oxblood cable-knit sweater, snowy window behind. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "look-6",
+  "aspect": "3:4",
+  "prompt": "The same man from the reference in an oxblood crew neck sweater over a white collar shirt on the terrace of an alpine cafe, snow peaks behind. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark.",
+  "refs": [
+   "/home/user/ClientDemo/alder-vale/raw/deer-navy.png"
+  ]
+ },
+ {
+  "type": "image",
+  "name": "look-7",
+  "aspect": "4:5",
+  "prompt": "Two friends in navy and forest green knitwear sitting side by side on a wooden bench outside a ski lodge, snow falling, seen from behind. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "acc-scarf",
+  "aspect": "1:1",
+  "prompt": "A navy Fair Isle wool scarf with cream Nordic stag pattern, loosely folded, product photograph on a plain seamless warm light grey background, soft shadow, crisp detail. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "acc-beanie",
+  "aspect": "1:1",
+  "prompt": "A cream cable-knit beanie with a small navy embroidered stag and a ribbed cuff, product photograph on a plain seamless warm light grey background, soft shadow, crisp detail. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "acc-gloves",
+  "aspect": "1:1",
+  "prompt": "A pair of forest green wool gloves with leather palms, laid together, product photograph on a plain seamless warm light grey background, soft shadow, crisp detail. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "acc-crew",
+  "aspect": "1:1",
+  "prompt": "A folded oxblood cable-knit crew neck sweater with a ribbed collar, product photograph on a plain seamless warm light grey background, soft shadow, crisp detail. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "acc-polo",
+  "aspect": "1:1",
+  "prompt": "A folded navy long sleeve knit polo shirt with a ribbed collar and buttons, product photograph on a plain seamless warm light grey background, soft shadow, crisp detail. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "acc-socks",
+  "aspect": "1:1",
+  "prompt": "A pair of cream and navy Nordic pattern wool socks, standing upright, product photograph on a plain seamless warm light grey background, soft shadow, crisp detail. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "col-crew",
+  "aspect": "3:4",
+  "prompt": "Ghost mannequin product photograph of A cream cable-knit crew neck sweater with a small navy stag on the chest, front view, floating, on a plain seamless pale grey-blue background, soft shadow. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "col-cardigan",
+  "aspect": "3:4",
+  "prompt": "Ghost mannequin product photograph of A deep forest green shawl collar cable cardigan with leather buttons, front view, floating, on a plain seamless pale grey-blue background, soft shadow. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "col-polo",
+  "aspect": "3:4",
+  "prompt": "Ghost mannequin product photograph of A navy knit polo sweater with a cream stag on the chest, front view, floating, on a plain seamless pale grey-blue background, soft shadow. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "col-turtle",
+  "aspect": "3:4",
+  "prompt": "Ghost mannequin product photograph of An ivory merino turtleneck sweater, front view, floating, on a plain seamless pale grey-blue background, soft shadow. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "col-oxzip",
+  "aspect": "3:4",
+  "prompt": "Ghost mannequin product photograph of An oxblood cable-knit quarter-zip sweater with a cream stag on the chest, front view, floating, on a plain seamless pale grey-blue background, soft shadow. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "col-fisher",
+  "aspect": "3:4",
+  "prompt": "Ghost mannequin product photograph of A navy fisherman rib knit sweater, front view, floating, on a plain seamless pale grey-blue background, soft shadow. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "col-vest",
+  "aspect": "3:4",
+  "prompt": "Ghost mannequin product photograph of A heather grey cable-knit vest, front view, floating, on a plain seamless pale grey-blue background, soft shadow. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "col-stripe",
+  "aspect": "3:4",
+  "prompt": "Ghost mannequin product photograph of A navy and cream striped crew neck sweater, front view, floating, on a plain seamless pale grey-blue background, soft shadow. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "col-feature",
+  "aspect": "3:4",
+  "prompt": "A woman with dark hair in an ivory cable-knit sweater with a navy stag motif on the chest, three-quarter portrait in falling snow, pale misty blue background. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "fig-sit",
+  "aspect": "3:4",
+  "prompt": "The same man from the reference sitting cross-legged on snow in an ivory cable-knit quarter-zip with a navy stag, full body, facing the camera, plain pale snow background. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark.",
+  "refs": [
+   "/home/user/ClientDemo/alder-vale/raw/deer-navy.png"
+  ]
+ },
+ {
+  "type": "image",
+  "name": "fig-lean",
+  "aspect": "3:4",
+  "prompt": "A woman in a deep forest green cable-knit quarter-zip with a cream stag, full body, leaning casually with one hand in a pocket, plain pale snow background. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark."
+ },
+ {
+  "type": "image",
+  "name": "fig-jump",
+  "aspect": "3:4",
+  "prompt": "The same man from the reference in an oxblood cable-knit sweater with a cream stag, full body caught mid-jump with arms out in joy, plain pale snow background. Premium heritage knitwear campaign photography, soft overcast alpine light, cool slate-blue and navy palette, sharp realistic textile detail, no text, no watermark.",
+  "refs": [
+   "/home/user/ClientDemo/alder-vale/raw/deer-navy.png"
+  ]
+ }
+]

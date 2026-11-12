@@ -1,0 +1,33 @@
+---
+import { brand, colourways, product } from '../data/site';
+import { u, money } from '../lib';
+const c0 = colourways[0];
+const faces = ['look-2', 'look-4', 'look-5'];
+---
+<section class="hero" id="top" data-theme="hero" style={`--hg:${c0.ground};--hw:${c0.word};--hi:${c0.ink}`}>
+  <div class="hero__word" aria-hidden="true" id="heroWord">{brand.short}</div>
+  <div class="hero__models" id="heroModels">
+    {colourways.map((c, i) => <img src={u(c.hero)} alt={i === 0 ? `Model wearing the ${c.name} ${product.title} with a cream embroidered stag on the chest` : ''} data-id={c.id} class={i === 0 ? 'is-on' : ''} width="900" height="1500" fetchpriority={i === 0 ? 'high' : 'low'} decoding="async" />)}
+  </div>
+  <canvas class="snow" id="snow" aria-hidden="true"></canvas>
+  <div class="warm" id="warm" aria-hidden="true"></div>
+  <div class="hero__info">
+    <p class="hero__crumb">{product.crumb}</p>
+    <h1 class="display hero__title" id="heroTitle" aria-live="polite"><span>{c0.name}</span></h1>
+    <div class="sizes" role="group" aria-label="Size"><b>Size</b>{product.sizes.map((s, i) => <button class={`size${i === 1 ? ' is-on' : ''}`} data-size={s} aria-pressed={i === 1}>{s}</button>)}</div>
+    <button class="pill add" id="addBtn" data-id="stag"><span>Add to bag <span class="price" id="heroPrice">{money(c0.price)}</span></span><span class="go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></button>
+    <div class="rating"><span class="faces" aria-hidden="true">{faces.map((f) => <i style={`background-image:url(${u(`img/${f}.webp`)})`}></i>)}</span><span>{product.rating} &#9733; &nbsp;{product.reports} lodge reports</span></div>
+  </div>
+  <div class="picker" role="group" aria-label="Colourway">
+    {colourways.map((c, i) => (
+      <button class={`swatch${i === 0 ? ' is-on' : ''}`} data-id={c.id} aria-pressed={i === 0}>
+        <span class="t"><img src={u(c.thumb)} alt="" width="110" height="110" loading="lazy" /></span>
+        <span><strong>{c.name}</strong><span>{money(c.price)}</span></span>
+      </button>
+    ))}
+  </div>
+  <p class="hero__note">{product.note}</p>
+  <div class="hero__idx" aria-hidden="true"><span id="heroIdx">01</span> <small>/ 04</small></div>
+  <div class="fog" id="fog" aria-hidden="true"></div>
+  <div class="fog fog--2" id="fog2" aria-hidden="true"></div>
+</section>

@@ -1,0 +1,5 @@
+[
+{"type":"image","name":"night-peak","aspect":"16:9","prompt":"Dark moody cinematic landscape photograph of a single snow-covered alpine peak at night under a deep navy sky, moonlit snow and rock on the right, large empty dark navy sky on the left, thin clouds near the summit. Pure landscape only: no clothing, no fabric, no people, no objects, no text."},
+{"type":"image","name":"valley","aspect":"16:9","prompt":"Wide misty snowy alpine valley panorama, layered blue-grey ridges fading into haze, pale overcast sky, untouched snow in the foreground. Pure landscape only: no clothing, no fabric, no blankets, no people, no objects, no text."},
+{"type":"image","name":"col-fisher","aspect":"3:4","prompt":"Ghost mannequin product photograph of a navy fisherman rib knit sweater with a crew neck, front view, floating, neat straight ribbed hem and cuffs, on a plain seamless pale grey-blue background, soft shadow, no text."}
+]

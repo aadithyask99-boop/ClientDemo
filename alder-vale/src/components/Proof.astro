@@ -1,0 +1,19 @@
+---
+import { proof } from '../data/site';
+import { u } from '../lib';
+---
+<section class="proof" id="proof" data-theme="light">
+  <div class="sec-head"><h2 class="display h2" data-reveal>{proof.title}</h2></div>
+  <div class="proof__row">
+    {proof.cards.map((c) => (
+      <article class="pcard" data-pcard>
+        <img src={u(c.img)} alt="" loading="lazy" width="1100" height="1467" />
+        <div class="pcard__in">
+          <div class="num display"><span>{c.prefix}</span><b data-count={c.value} data-dec={c.dec}>{c.value}</b><small>{c.unit}</small></div>
+          <h3>{c.label}</h3>
+          <p>{c.text}</p>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>

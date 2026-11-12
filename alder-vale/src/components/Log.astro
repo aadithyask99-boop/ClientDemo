@@ -1,0 +1,20 @@
+---
+import { log } from '../data/site';
+import { u } from '../lib';
+---
+<section class="log" id="log" data-theme="dark">
+  <div class="log__pin" id="logPin">
+    <div class="log__glow" aria-hidden="true"></div>
+    <div class="log__stage" id="logStage">
+      <img src={u('img/night-peak.webp')} alt="A lone snow peak under a moonlit navy sky" loading="lazy" width="2200" height="1238" />
+      <svg class="log__line" id="logLine" aria-hidden="true"><path id="logGlow" fill="none" stroke="#f1ede4" stroke-opacity="0.22" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" /><path id="logPath" fill="none" stroke="#f1ede4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" /><circle id="logHead" r="5" fill="#fff" opacity="0" /></svg>
+      <div id="logFlags" class="log__flags" data-flags={JSON.stringify(log.flags)}></div>
+    </div>
+    <div class="log__left">
+      <h2 class="display log__title">{log.title.map((l) => <span>{l}</span>)}</h2>
+      <div class="log__rate"><b class="display" id="logNum" data-to={log.rating}>1.8</b><span class="stars" aria-label="4.9 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</span></div>
+      <p class="log__count">{log.count}</p>
+      <figure class="log__quote" id="logQuote" data-reviews={JSON.stringify(log.reviews)}><blockquote id="logQ">{log.reviews[0].text}</blockquote><figcaption><i id="logFace" style={`background-image:url(${u('img/look-2.webp')})`}></i><span><b id="logName">{log.reviews[0].name}</b><em id="logWhere">{log.reviews[0].where}</em></span></figcaption></figure>
+    </div>
+  </div>
+</section>

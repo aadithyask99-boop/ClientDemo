@@ -1,0 +1,46 @@
+---
+import { cartExtras, colourways, product, brand } from '../data/site';
+import { u, money } from '../lib';
+import Stag from './Stag.astro';
+---
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="Your bag">
+  <div class="drawer__head"><h2 class="display">Your bag <small id="cartN">(0)</small></h2><button class="close" id="closeCart" aria-label="Close bag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+  <div class="ship"><span id="shipTxt">Free express shipping unlocked</span><i><b id="shipBar"></b></i></div>
+  <div class="drawer__body">
+    <div id="lines"></div>
+    <div class="pairs"><h3>Pairs with</h3><div id="pairs" data-extras={JSON.stringify(cartExtras.map((e) => ({ ...e, img: u(e.img) })))}></div></div>
+  </div>
+  <div class="drawer__foot">
+    <div class="sub"><span>Subtotal</span><span id="subtotal">$0</span></div>
+    <p class="fine-t">Shipping and duties included. Mended free for two years.</p>
+    <button class="pill pill--dark" id="checkoutBtn">Checkout<span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></button>
+  </div>
+</aside>
+
+<div class="checkout-load" id="checkoutLoad"><div><Stag /><span class="spin"></span></div></div>
+<section class="checkout" id="checkout" aria-hidden="true" aria-label="Checkout">
+  <div class="checkout__bar"><button class="back" id="backBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg><span class="back__t">Back to shop</span><span class="back__s">Back</span></button><span class="logo"><Stag /><span class="wordmark">{brand.short}</span></span><span></span></div>
+  <div class="checkout__wrap">
+    <div class="form">
+      <h1 class="display">Checkout</h1>
+      <div class="express"><button>Apple Pay</button><button>Google Pay</button><button>PayPal</button></div>
+      <p class="or">or pay by card</p>
+      <h2>Contact</h2>
+      <label class="field"><span class="sr">Email</span><input type="email" placeholder="Email" autocomplete="email" /></label>
+      <h2>Delivery</h2>
+      <div class="row2"><label class="field"><span class="sr">First name</span><input placeholder="First name" autocomplete="given-name" /></label><label class="field"><span class="sr">Last name</span><input placeholder="Last name" autocomplete="family-name" /></label></div>
+      <label class="field"><span class="sr">Address</span><input placeholder="Address" autocomplete="street-address" /></label>
+      <div class="row2"><label class="field"><span class="sr">City</span><input placeholder="City" autocomplete="address-level2" /></label><label class="field"><span class="sr">Postcode</span><input placeholder="Postcode" autocomplete="postal-code" /></label></div>
+    </div>
+    <aside class="summary" id="summary">
+      <h2 class="display">Your order</h2>
+      <div class="shot"><img id="sumImg" src={u(colourways[0].hero)} alt="" /></div>
+      <div id="sumLines"></div>
+      <div class="sline"><span>Shipping</span><span>Free</span></div>
+      <div class="sline tot"><span>Total</span><span id="sumTotal">$0</span></div>
+      <button class="pill pill--ox" id="payBtn">Pay now<span class="go"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></button>
+      <p class="done" id="sumDone">Thank you. Your order is confirmed.</p>
+    </aside>
+  </div>
+</section>

@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import Chrome from '../components/Chrome.astro';
+import Hero from '../components/Hero.astro';
+import Collection from '../components/Collection.astro';
+import Proof from '../components/Proof.astro';
+import Weather from '../components/Weather.astro';
+import Runway from '../components/Runway.astro';
+import Specs from '../components/Specs.astro';
+import Shelf from '../components/Shelf.astro';
+import Lookbook from '../components/Lookbook.astro';
+import Log from '../components/Log.astro';
+import Drop from '../components/Drop.astro';
+import Footer from '../components/Footer.astro';
+import Cart from '../components/Cart.astro';
+---
+<Base title="Alder & Vale" description="Alder & Vale: heritage cable-knit quarter-zips, crew necks and polos, with a stag on the chest.">
+  <Chrome />
+  <main>
+    <Hero />
+    <Collection />
+    <Proof />
+    <Runway />
+    <Weather />
+    <Specs />
+    <Shelf />
+    <Lookbook />
+    <Log />
+  </main>
+  <div class="tail">
+    <Drop />
+    <Footer />
+  </div>
+  <Cart />
+  <script>import '../scripts/main.ts';</script>
+</Base>
