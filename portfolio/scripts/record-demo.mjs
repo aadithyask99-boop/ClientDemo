@@ -8,6 +8,8 @@
 //   --scroll   pixels to scroll through the page (default 4200, capped at the page's height)
 //   --gate     text on an "enter" button to click once the loader is done (default: none)
 //   --gate-wait seconds to wait after clicking the gate before the scroll starts (default 2.4; garden's door needs 6 because its scroll is locked while it opens)
+//   --script   a file that choreographs the clip after the intro instead of the plain scroll: it exports a default async function that is handed helpers
+//              (wait, scroll, move, click, rect, eval, until, time) so a clip can hover, click and show a site's interactions (scripts/recordings/*.mjs)
 //   --fps      frames per second (default 60)
 //   --sync-video  for sites whose intro is a <video> (halcyon): video playback runs in real time, not in the paused browser clock, so it would be
 //              over before the first frame; this holds each video and sets its position every frame, so the intro is captured from its first frame
@@ -33,6 +35,7 @@ const startAt = Number(opt('start', 6));
 const scrollPx = Number(opt('scroll', 4200));
 const gate = opt('gate', '');
 const gateWait = Number(opt('gate-wait', 2.4));
+const scriptFile = opt('script', '');
 const fps = Number(opt('fps', 60));
 const syncVideo = args.includes('--sync-video');
 
@@ -159,11 +162,36 @@ const distance = Math.min(scrollPx, room);
 const hold = Math.round(0.8 * fps);
 const scrollFrames = Math.max(1, total - frame - hold - Math.round(0.8 * fps));
 const posterFrame = frame + Math.round(0.3 * fps); // the first screen once the intro is done: the picture shown before the clip plays
-for (let i = 0; i < hold; i++) await step();
 const ease = (t) => t * t * t * (t * (6 * t - 15) + 10); // smootherstep
-for (let i = 0; i < scrollFrames; i++) {
-  await wheel(distance * (ease((i + 1) / scrollFrames) - ease(i / scrollFrames))); // also steps one frame
-  if (frame % 120 === 0) process.stdout.write(`\r${slug}: ${frame}/${total} frames`);
+if (scriptFile) {
+  // a choreographed clip: the file drives the mouse, the wheel and the clock, one frame at a time
+  let mx = W / 2;
+  let my = H / 2;
+  const tick = () => { if (frame % 120 === 0) process.stdout.write(`\r${slug}: ${frame}/${total} frames`); };
+  const helpers = {
+    W, H, fps,
+    time: () => frame / fps,
+    eval: evaluate,
+    wait: async (sec) => { for (let i = 0, n = Math.round(sec * fps); i < n; i++) { await step(); tick(); } },
+    until: async (sec) => { while (frame < Math.min(total, Math.round(sec * fps))) { await step(); tick(); } },
+    // an eased wheel scroll of `px` pixels (negative scrolls up) spread over `sec` seconds
+    scroll: async (px, sec) => { const n = Math.max(1, Math.round(sec * fps)); for (let i = 0; i < n; i++) { await wheel(px * (ease((i + 1) / n) - ease(i / n))); tick(); } },
+    // an eased mouse move to (x, y) over `sec` seconds
+    move: async (x, y, sec = 0.6) => { const n = Math.max(1, Math.round(sec * fps)); const x0 = mx, y0 = my; for (let i = 0; i < n; i++) { const k = ease((i + 1) / n); mx = x0 + (x - x0) * k; my = y0 + (y - y0) * k; await withFrame({ type: 'mouseMoved', x: mx, y: my }); tick(); } },
+    click: async () => { await withFrame({ type: 'mousePressed', x: mx, y: my, button: 'left', clickCount: 1 }); await step(); await step(); await withFrame({ type: 'mouseReleased', x: mx, y: my, button: 'left', clickCount: 1 }); },
+    // the centre of the first element matching a selector, in viewport pixels (null if there is none or it is off the screen)
+    rect: (sel) => evaluate(`(() => { const e = document.querySelector(${JSON.stringify(sel)}); if (!e) return null; const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, w: r.width, h: r.height, top: r.top, bottom: r.bottom }; })()`),
+    // scroll (by wheel, so smooth-scroll libraries follow) until the element's top sits `at` pixels from the top of the window
+    scrollTo: async (sel, sec = 1.2, at = 0) => { const r = await helpers.rect(sel); if (r) await helpers.scroll(r.top - at, sec); },
+  };
+  await withFrame({ type: 'mouseMoved', x: mx, y: my });
+  await (await import(resolve(scriptFile))).default(helpers);
+} else {
+  for (let i = 0; i < hold; i++) await step();
+  for (let i = 0; i < scrollFrames; i++) {
+    await wheel(distance * (ease((i + 1) / scrollFrames) - ease(i / scrollFrames))); // also steps one frame
+    if (frame % 120 === 0) process.stdout.write(`\r${slug}: ${frame}/${total} frames`);
+  }
 }
 while (frame < total) await step();
 // the browser can refuse to close while its clock is paused: give it a few seconds, then carry on to the encode regardless
