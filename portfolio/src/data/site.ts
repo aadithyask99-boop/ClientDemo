@@ -31,12 +31,17 @@ export const site = {
 export const description = `${site.short} builds cool, SEO-friendly websites: design, development, SEO and marketing in one place.`;
 
 /* The Work list. Every project is a concept build: made to show how I work, whether or not a real business was in mind. */
-/* In the order they are shown. `tint` is the colour of the project's tile in the footer stack. */
+/* In the order they are shown (Doves UK last). `tint` is the colour of the project's card in the footer stack before its picture loads. */
 export const projects = [
   { name: 'Halcyon', slug: 'halcyon', kind: 'Concept build', blurb: 'A cyber security landing page', path: '/halcyon/', tint: '#2b6cd9' },
   { name: 'Brew More', slug: 'more-coffee', kind: 'Concept build', blurb: 'Protein iced coffee, a motion study', path: '/more-coffee/', tint: '#c9a27a' },
   { name: 'Orra', slug: 'orra', kind: 'Concept build', blurb: 'Architectural residences, driven by scroll', path: '/orra/', tint: '#8fa1b3' },
   { name: 'ILÉ IFÉ', slug: 'ileife', kind: 'Concept build', blurb: 'A facials studio in South London', path: '/ileife/', tint: '#7a4a2b' },
   { name: 'DJ ESKA', slug: 'djeska', kind: 'Concept build', blurb: 'DJ and events in Hampshire', path: '/djeska/', tint: '#d9a82e' },
+  { name: 'The Garden', slug: 'garden', kind: 'Concept build', blurb: 'A wedding invitation that opens like a door', path: '/garden/', tint: '#8fa58a' },
+  { name: 'Alder & Vale', slug: 'alder-vale', kind: 'Concept build', blurb: 'A heritage knitwear label, set on a mountain climb', path: '/alder-vale/', tint: '#aab8cf' },
+  { name: 'Sidecut', slug: 'sidecut', kind: 'Concept build', blurb: 'A London barbershop group with a four-step booking drawer', path: '/sidecut/', tint: '#161616' },
+  { name: "Smashley's", slug: 'smashlads', kind: 'Concept build', blurb: 'A smash-burger group in cream and cobalt', path: '/smashlads/', tint: '#1f3fd1' },
+  { name: 'Maledetta', slug: 'maledetta', kind: 'Concept build', blurb: 'A London pizzeria group, one colour for every neighbourhood', path: '/maledetta/', tint: '#0b3b2a' },
   { name: 'Doves UK', slug: 'doves-uk', kind: 'Concept build', blurb: 'Funeral and repatriation cover, one page', path: '/doves-uk/', tint: '#1b4b8f' },
 ] as const;

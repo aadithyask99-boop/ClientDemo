@@ -20,7 +20,7 @@ Needs Playwright (set `PLAYWRIGHT_DIR` if it is not importable) and ffmpeg. Fram
 - A site whose intro is a `<video>` needs `--sync-video` (halcyon). Headless frame capture does not paint video layers and a video's own clock is not the paused one,
   so the script cuts the video into pictures with ffmpeg and shows one per frame in a canvas over the hidden video.
 - Settings used for the current clips: doves-uk `--start 3.5 --scroll 4800`; ileife `--start 4 --scroll 4800`; orra `--start 5 --scroll 5200`; more-coffee
-  `--start 4 --scroll 5200`; djeska `--start 4 --gate "click to open" --scroll 4800`; halcyon `--length 20 --start 8 --scroll 5200 --sync-video`.
+  `--start 4 --scroll 5200`; djeska `--start 4 --gate "click to open" --scroll 4800`; halcyon `--length 20 --start 8 --scroll 5200 --sync-video`; garden `--length 20 --start 3 --gate "I&T" --gate-wait 6 --scroll 5200` (its scroll is locked while the door opens); sidecut `--start 4 --scroll 4800`; alder-vale `--start 4 --scroll 5200`; smashlads and maledetta `--start 6 --scroll 4800`. These five were recorded from local builds served from `site/` (`node scripts/stage.mjs` in each site, then any static server), not the live URLs. The `-m.mp4` phone versions are made from the main clip: `ffmpeg -i x.mp4 -vf scale=480:300 -c:v libx264 -preset slow -crf 31 -r 60 -pix_fmt yuv420p -movflags +faststart -an x-m.mp4`.
 - Look at a contact sheet of the result before committing it (a gap in the frame numbering once cut an encode down to one frame; the script now fills gaps).
 - Do not stop a recording with `pkill -f record-demo`: the pattern matches your own shell and kills it. Kill by PID.
 - The demo sites are at `https://clientdemo.maximusmediascape.workers.dev/<slug>/`.

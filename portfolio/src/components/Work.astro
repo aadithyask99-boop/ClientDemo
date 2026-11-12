@@ -14,14 +14,12 @@ const arrow = 'M110 47.42 66.064 95 54.92 83.702l26.108-27.848H0V38.987h81.028L5
 
   <ol class="work__list" data-work-list>
     {
-      projects.map((p, i) => (
+      projects.map((p) => (
         <li class="wi" data-wi>
           <a class="wi__link" href={`${site.demosUrl}${p.path}`} target="_blank" rel="noopener" data-cursor="View" aria-label={`${p.name}: ${p.kind}. Opens the full site.`}>
             <div class="wi__name" data-wi-heading>
-              <span class="wi__n" data-wi-small>{String(i + 1).padStart(2, '0')}</span>
               <h3 data-wi-title>{p.name}</h3>
               <p class="wi__blurb" data-wi-small>{p.blurb}</p>
-              <span class="wi__tag" data-wi-small>{p.kind}</span>
             </div>
 
             <div class="wi__frame" data-frame>

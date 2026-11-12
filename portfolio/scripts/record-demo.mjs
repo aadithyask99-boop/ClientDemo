@@ -7,6 +7,7 @@
 //   --start    seconds of the clip given to the site's own loader / intro before the scroll begins (default 6)
 //   --scroll   pixels to scroll through the page (default 4200, capped at the page's height)
 //   --gate     text on an "enter" button to click once the loader is done (default: none)
+//   --gate-wait seconds to wait after clicking the gate before the scroll starts (default 2.4; garden's door needs 6 because its scroll is locked while it opens)
 //   --fps      frames per second (default 60)
 //   --sync-video  for sites whose intro is a <video> (halcyon): video playback runs in real time, not in the paused browser clock, so it would be
 //              over before the first frame; this holds each video and sets its position every frame, so the intro is captured from its first frame
@@ -31,6 +32,7 @@ const length = Number(opt('length', 18));
 const startAt = Number(opt('start', 6));
 const scrollPx = Number(opt('scroll', 4200));
 const gate = opt('gate', '');
+const gateWait = Number(opt('gate-wait', 2.4));
 const fps = Number(opt('fps', 60));
 const syncVideo = args.includes('--sync-video');
 
@@ -147,7 +149,7 @@ const startFrame = Math.round(startAt * fps);
 for (let i = 0; i < startFrame; i++) await step();
 if (gate) {
   const pos = await evaluate(`(() => { const el = [...document.querySelectorAll('button, a, div, span')].filter((e) => e.children.length < 3 && new RegExp(${JSON.stringify(gate)}, 'i').test(e.textContent || '')).pop(); if (!el) return null; const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; })()`);
-  if (pos) { await click(pos.x, pos.y); for (let i = 0; i < Math.round(2.4 * fps); i++) await step(); }
+  if (pos) { await click(pos.x, pos.y); for (let i = 0; i < Math.round(gateWait * fps); i++) await step(); }
 }
 await withFrame({ type: 'mouseMoved', x: W / 2, y: H / 2 });
 

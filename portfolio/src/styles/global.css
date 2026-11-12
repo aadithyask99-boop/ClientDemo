@@ -1178,11 +1178,6 @@ html:not(.fx) .hint--touch {
   justify-items: start;
   align-content: center;
 }
-.wi__n {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--muted);
-}
 .wi__name h3 {
   font-size: clamp(2rem, 0.9rem + 3.6vw, 4.6rem);
   font-weight: 600;
@@ -1197,15 +1192,6 @@ html:not(.fx) .hint--touch {
   max-width: 16rem;
   font-size: 0.9375rem;
   color: var(--muted);
-}
-.wi__tag {
-  padding: 0.12rem 0.55rem;
-  border-radius: 0.4rem;
-  box-shadow: inset 0 0 0 1px var(--line);
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
 }
 /* just the picture: no matte, no border */
 .wi__frame {
