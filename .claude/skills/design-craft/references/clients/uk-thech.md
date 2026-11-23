@@ -39,7 +39,10 @@ Paperwork shown in slot 5 has no legible text: documents are out of focus, blank
 ## Generation budget and consistency
 One master style and light for every generated frame: warm late-afternoon low sun entering from camera left, a soft beam across a desk or floor, muted laminate and pale wood, navy and off-white objects, shallow depth, no people, no logos, no legible text. Frame budget: 4 hero first frames and 4 hero clips (6 s each), 8 object stills (Chromebook stack, trolley, tablet box, parcel, in-tray, floating objects for the cloud), 1 scene for the promise slot, 1 clip for the pinned parcel scene (scrubbed as a video encoded with a keyframe on every frame, not 100 stills), 1 van still for the egg. About 5 clips and 15 stills, capped at 20 stills; any frame that breaks the master look is regenerated or dropped.
 
-## Palettes (two quiet colours plus one loud accent; no gold)
+## Palette chosen by the owner: C, graphite and blue (owner's words: "graphite one is better", with a white label inside the button)
+Ground #16181b, paper #f2f0eb, accent blue **#4663ff** (nudged from #3d5afe so the white label stays above 4.5:1: white on blue 4.68, blue on graphite 3.8, blue on paper 4.11). Rule: the blue is a fill and big-type colour; small text on dark uses paper, and a lighter tint of the same blue (#9db0ff, 8.5:1 on graphite) only for links. Button: blue fill, white label. If the owner meant a white button instead: white fill with a graphite label (17.8:1) and an outline on the light side.
+
+## Palettes considered (two quiet colours plus one loud accent; no gold)
 | | Ground | Paper | Accent | Contrast |
 |---|---|---|---|---|
 | **A. Stage and lime** (108's own) | #000000 | #eff1f0 | #dcff02 | paper on ground 18.5, black on accent 18.4; lime is a fill only (1.01 on paper); closer to 108, more "tech startup" |
