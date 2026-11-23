@@ -42,6 +42,9 @@ One master style and light for every generated frame: warm late-afternoon low su
 ## Palette chosen by the owner: C, graphite and blue (owner's words: "graphite one is better", with a white label inside the button)
 Ground #16181b, paper #f2f0eb, accent blue **#4663ff** (nudged from #3d5afe so the white label stays above 4.5:1: white on blue 4.68, blue on graphite 3.8, blue on paper 4.11). Rule: the blue is a fill and big-type colour; small text on dark uses paper, and a lighter tint of the same blue (#9db0ff, 8.5:1 on graphite) only for links. Button: blue fill, white label. If the owner meant a white button instead: white fill with a graphite label (17.8:1) and an outline on the light side.
 
+## Type chosen by the owner: Host Grotesk (owner picked option 1 of five)
+One family only, as on 108: Host Grotesk, headlines weight 400 with tight tracking (about -0.035em) and the second line dimmed, buttons weight 500, body weight 400. No mono labels, no italics. Self-hosted (fontsource, OFL), not loaded from Google: faster, and no visitor addresses sent to a third party (the client advertises UK GDPR compliance). To check before locking: numerals for the phone number, the pound sign, and the phone rendering. Considered and not chosen: Funnel Display (more character, less quiet), Inter Tight (safest but generic), Red Hat Display and Onest (more consumer).
+
 ## Palettes considered (two quiet colours plus one loud accent; no gold)
 | | Ground | Paper | Accent | Contrast |
 |---|---|---|---|---|
