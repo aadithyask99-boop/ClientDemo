@@ -1,4 +1,90 @@
 ---
-// STUB: replace with the real Footer component
+// Footer: the named contact set very large beside a giant wordmark that the cursor lights, as on primeasialeather.com.
+// The van strip at the bottom is reserved for the push-at-the-bottom easter egg.
+import { site } from '../data/site';
+const c = site.contact;
+const f = site.footer;
+const ui = site.uiC;
+const tel = c.phone.replace(/[^\d+]/g, '');
 ---
-<footer data-footer class="stub"><p style="padding:40px">Footer stub</p></footer>
+<footer class="stage stage--dark foot" data-footer>
+  <div class="foot-glow" aria-hidden="true"></div>
+  <div class="foot-top pad">
+    <div class="foot-contact">
+      <p class="foot-person">{c.person}</p>
+      <div class="foot-phone-row">
+        <a class="foot-phone" href={`tel:${tel}`} data-phone aria-label={c.phone}>
+          <span class="ph-ghost" aria-hidden="true">{c.phone}</span><span class="ph-type" data-ph-type aria-hidden="true">{c.phone}</span>
+        </a>
+        <span class="foot-ping" data-ping aria-hidden="true"></span>
+      </div>
+      <a class="foot-mail" href={`mailto:${c.email}`}>{c.email}</a>
+      <p class="foot-ph">{ui.placeholder}</p>
+      <button type="button" class="btn foot-quote" data-open-quote>{ui.footerQuote}</button>
+    </div>
+    <nav class="foot-nav" aria-label="Footer">
+      <ul class="foot-list">
+        {f.sectors.map((s) => <li><a href="#">{s}</a></li>)}
+      </ul>
+      <ul class="foot-list">
+        {f.links.map((s) => <li><a href="#">{s}</a></li>)}
+      </ul>
+    </nav>
+  </div>
+  <div class="foot-mark" data-foot-mark>
+    <p class="fm"><span class="sr">{site.brand.name}</span><span class="fm-base" aria-hidden="true">{site.brand.name}</span><span class="fm-lit" aria-hidden="true">{site.brand.name}</span></p>
+  </div>
+  <div class="foot-meta pad">
+    <p>{c.address}</p>
+    <p>{c.company}</p>
+  </div>
+  <div class="foot-van" data-van aria-hidden="true"></div>
+</footer>
+
+<style is:global>
+  .foot { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: space-between; gap: clamp(28px, 5vh, 56px); overflow: clip; padding-top: clamp(72px, 12vh, 140px); --mx: 50%; --my: 60%; }
+  .foot-glow { position: absolute; inset: 0; pointer-events: none; z-index: 0; mix-blend-mode: screen;
+    background: radial-gradient(circle 560px at var(--mx) var(--my), rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0) 70%); opacity: 0; transition: opacity 0.8s var(--ease); }
+  .foot.is-lit .foot-glow { opacity: 1; }
+  .foot-top { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: start; }
+  .foot-contact { container-type: inline-size; display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+  .foot-person { font-size: var(--f48); line-height: 1.04; letter-spacing: -0.03em; color: var(--p); }
+  .foot-phone-row { position: relative; display: inline-block; margin-top: clamp(4px, 1vh, 12px); max-width: 100%; }
+  .foot-phone { position: relative; display: inline-block; font-size: min(13.6cqw, 132px); line-height: 1; letter-spacing: -0.04em; font-weight: 400; color: var(--p); white-space: nowrap; transition: color var(--t) var(--ease); }
+  .foot-phone:hover { color: var(--w); }
+  .ph-ghost { visibility: hidden; }
+  .ph-type { position: absolute; left: 0; top: 0; }
+  .foot-ping { position: absolute; right: -0.42em; top: 0.12em; width: 14px; height: 14px; border-radius: 50%; background: var(--b); opacity: 0; pointer-events: none; }
+  .foot-ping.is-on { animation: foot-ping 1.8s var(--ease) infinite; opacity: 1; }
+  @keyframes foot-ping { 0% { box-shadow: 0 0 0 0 rgba(70, 99, 255, 0.55); transform: scale(0.9); } 70% { box-shadow: 0 0 0 16px rgba(70, 99, 255, 0); transform: scale(1); } 100% { box-shadow: 0 0 0 0 rgba(70, 99, 255, 0); transform: scale(0.9); } }
+  .foot-mail { margin-top: clamp(8px, 1.6vh, 18px); font-size: var(--f35); letter-spacing: -0.02em; line-height: 1.15; color: var(--bt); transition: color var(--t) var(--ease); }
+  .foot-mail:hover { color: var(--w); }
+  .foot-ph { margin-top: 10px; font-size: var(--f20); color: rgba(242, 240, 235, 0.5); }
+  .foot-quote { margin-top: clamp(22px, 3.6vh, 40px); }
+  .foot-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(20px, 3vw, 48px); padding-top: clamp(8px, 1.4vh, 20px); }
+  .foot-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.2em; }
+  .foot-list a { display: inline-block; font-size: var(--f35); line-height: 1.2; letter-spacing: -0.02em; color: var(--p); transition: color var(--t) var(--ease), transform var(--t) var(--ease); }
+  .foot-list a:hover { color: var(--bt); transform: translateX(6px); }
+
+  .foot-mark { position: relative; z-index: 1; container-type: inline-size; padding-inline: var(--gutter); margin-top: auto; }
+  .fm { position: relative; margin: 0; font-size: 23.2cqw; line-height: 0.82; letter-spacing: -0.055em; font-weight: 400; white-space: nowrap; user-select: none; padding-bottom: 0.04em; }
+  .fm-base { color: rgba(242, 240, 235, 0.38); }
+  .fm-lit { position: absolute; left: 0; top: 0; color: var(--p);
+    -webkit-mask-image: radial-gradient(circle var(--lr, 4000px) at var(--lx, 50%) var(--ly, 50%), #000 0%, rgba(0, 0, 0, 0) 100%);
+    mask-image: radial-gradient(circle var(--lr, 4000px) at var(--lx, 50%) var(--ly, 50%), #000 0%, rgba(0, 0, 0, 0) 100%); }
+  .foot-meta { position: relative; z-index: 2; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 32px; padding-bottom: clamp(20px, 3.6vh, 36px); font-size: var(--f20); color: rgba(242, 240, 235, 0.72); }
+  .foot-van { position: absolute; left: 0; right: 0; bottom: 0; height: clamp(120px, 16vw, 240px); z-index: 3; pointer-events: none; }
+
+  @media (max-width: 899px) {
+    .foot { min-height: 0; padding-top: 88px; }
+    .foot-top { grid-template-columns: 1fr; gap: 40px; }
+    .foot-phone { font-size: min(13.6cqw, 80px); }
+    .foot-mark { padding-inline: 14px; margin-top: 24px; }
+    .fm { font-size: 23.2cqw; }
+    .foot-meta { flex-direction: column; }
+    .foot-van { height: 130px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .foot-ping.is-on { animation: none; }
+  }
+</style>

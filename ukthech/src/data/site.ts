@@ -25,9 +25,9 @@ export const site = {
     lead: 'Tech for',
     scenes: [
       { word: 'Schools', image: 'hero-school', alt: 'An empty school corridor at dusk with a charging trolley of laptops in warm low sun' },
-      { word: 'Hospitals', image: 'hero-ward', alt: 'A quiet reception desk at night with a closed laptop and a lamp' },
+      { word: 'Hospitals', image: 'hero-ward', alt: 'A curved wooden reception counter in a quiet health building at night' },
       { word: 'Councils', image: 'hero-council', alt: 'A council service counter in late afternoon light with a laptop and folders' },
-      { word: 'Hotels', image: 'hero-hotel', alt: 'A hotel front desk in the evening with a closed laptop and a lamp' },
+      { word: 'Hotels', image: 'hero-hotel', alt: 'A dark timber hotel front desk with a stool in the evening glow' },
     ],
     interval: 5300,
     cta: 'Get a quote',
@@ -39,8 +39,8 @@ export const site = {
   },
   schools: {
     title: 'What schools buy first',
-    lead: { name: 'Chromebooks', line: 'The classroom workhorse, sourced new and boxed with full warranty.', image: 'obj-chromebooks', closeup: 'hero-school-alt' },
-    sideA: { name: 'Charging trolleys', line: 'Stored, charged and wheeled between rooms.', image: 'obj-trolley', closeup: 'obj-trolley-front' },
+    lead: { name: 'Chromebooks', line: 'The classroom workhorse, sourced new and boxed with full warranty.', image: 'obj-chromebooks', closeup: 'hero-hotel-alt' },
+    sideA: { name: 'Charging trolleys', line: 'Stored, charged and wheeled between rooms.', image: 'obj-trolley', closeup: 'hero-school-alt' },
     sideB: { name: 'Tablets', line: 'For younger year groups and support staff.', image: 'obj-tablets', closeup: 'hero-council-alt' },
   },
   quote: {
@@ -50,7 +50,7 @@ export const site = {
     whens: ['this month', 'next month', 'before September', 'later this year'],
     defaults: { product: 'Chromebooks', quantity: '30', when: 'before September' },
     confirm: 'Thank you. This is a concept, so nothing was sent, but this is the quote you asked for:',
-    objects: ['obj-chromebooks', 'obj-trolley', 'obj-tablets', 'obj-parcel', 'obj-van'],
+    objects: ['obj-chromebooks-b', 'obj-trolley-front', 'obj-tablets-b', 'obj-parcel-b', 'obj-van-b'],
   },
   order: {
     title: 'Every order arrives with its paperwork',
@@ -72,6 +72,16 @@ export const site = {
     sectors: ['Education', 'Public sector', 'Hospitality', 'Property and business'],
     links: ['How it works', 'Sustainability and recycling', 'Privacy and GDPR', 'Contact'],
     van: 'obj-van',
+  },
+  // Builder C (order, promise, footer, easter eggs): interface copy only, no new facts
+  uiC: {
+    orderAlt: 'A cardboard parcel opening on a table, with a pack of blank paper lifting out of it',
+    promiseAlt: 'A wooden desk beside a sash window with a wire in-tray of papers, a closed laptop, a mug and an angled lamp',
+    promiseFile: 'Choose the quote you hold',
+    promiseName: 'File chosen:',
+    placeholder: 'Placeholder, to confirm with the client',
+    footerQuote: 'Get a quote',
+    stamp: 'Received',
   },
 };
 export type Site = typeof site;

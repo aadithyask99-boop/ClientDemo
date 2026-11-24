@@ -1,4 +1,78 @@
 ---
-// STUB: replace with the real Promise component
+// Promise: a dusk desk. The in-tray in the photograph is the real drop zone (a file input under an invisible hit area).
+// As a file or the pointer nears the tray or the lamp, the lamp warms and its light spills across the desk.
+import { site } from '../data/site';
+const p = site.promise;
+const ui = site.uiC;
+const base = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
+const img = `${base}media/${p.image}.webp`;
 ---
-<section data-promise class="stub"><p style="padding:40px">Promise stub</p></section>
+<section class="stage stage--dark promise" data-promise id="promise" aria-labelledby="promise-title">
+  <div class="p-scene" data-p-scene>
+    <div class="p-wrap" data-p-wrap>
+      <img class="p-img" src={img} alt={ui.promiseAlt} width="1376" height="768" loading="lazy" decoding="async" />
+      <!-- Light only: the lamp warming, its spill on the wall and across the desk (screen blended, driven by --lit) -->
+      <i class="p-glow p-glow--wall" aria-hidden="true"></i>
+      <i class="p-glow p-glow--desk" aria-hidden="true"></i>
+      <i class="p-glow p-glow--bulb" aria-hidden="true"></i>
+      <label class="p-tray" data-p-tray>
+        <span class="sr">{ui.promiseFile}</span>
+        <input class="p-file" type="file" data-p-file aria-label={`${p.drop}. ${ui.promiseFile}`} />
+        <span class="p-tip" aria-hidden="true">{p.drop}</span>
+      </label>
+      <p class="p-after" data-p-after role="status" aria-live="polite" hidden>{p.after}</p>
+    </div>
+    <i class="p-wash" aria-hidden="true"></i>
+  </div>
+  <div class="p-copy pad">
+    <h2 id="promise-title" class="display p-line"><span>{p.line1}</span> <span class="dim">{p.line2}</span></h2>
+    <span class="sr" data-p-name aria-live="polite"></span>
+  </div>
+</section>
+
+<style is:global>
+  .promise { position: relative; background: var(--g); color: var(--p); overflow: clip; --lit: 0; }
+  .p-scene { position: relative; height: clamp(420px, calc(100svh - 232px), 60vw); overflow: hidden; container-type: size;
+    -webkit-mask-image: linear-gradient(#000 88%, transparent); mask-image: linear-gradient(#000 88%, transparent); }
+  .p-wrap { --ww: max(102cqw, 190cqh); position: absolute; width: var(--ww); aspect-ratio: 1376 / 768; left: calc(50cqw - var(--ww) / 2); bottom: calc(var(--ww) * -0.0167); will-change: transform; }
+  .p-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .p-glow { position: absolute; pointer-events: none; mix-blend-mode: screen; border-radius: 50%; }
+  /* the lamp bulb and shade */
+  .p-glow--bulb { left: 74.2%; top: 17%; width: 8.4%; aspect-ratio: 1; background: radial-gradient(circle, rgba(255, 196, 110, 0.95) 0%, rgba(255, 150, 60, 0.45) 38%, rgba(255, 120, 30, 0) 70%); opacity: calc(var(--lit) * 0.95); }
+  /* warm wash on the wall behind the lamp */
+  .p-glow--wall { left: 56%; top: -6%; width: 52%; aspect-ratio: 1.15; background: radial-gradient(closest-side, rgba(255, 168, 82, 0.42), rgba(255, 140, 60, 0.16) 55%, rgba(255, 120, 40, 0) 100%); opacity: calc(var(--lit) * 0.85); }
+  /* the light spilling over the desk towards the tray */
+  .p-glow--desk { left: 40%; top: 55%; width: 50%; aspect-ratio: 3.2; background: radial-gradient(closest-side, rgba(255, 176, 92, 0.62), rgba(255, 150, 70, 0.22) 60%, rgba(255, 130, 50, 0) 100%); opacity: calc(var(--lit) * 0.8); }
+  .p-wash { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; background: rgba(255, 150, 60, 1); opacity: calc(var(--lit) * 0.06); }
+
+  .p-tray { position: absolute; left: 14.2%; top: 64.5%; width: 38.5%; height: 30%; border-radius: 28px; display: block; cursor: pointer; }
+  .p-file { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 0; }
+  .p-tray:has(.p-file:focus-visible) { outline: 3px solid var(--bt); outline-offset: 4px; }
+  .p-tip, .p-after {
+    position: absolute; left: 50%; top: -10%; transform: translate(-50%, 8px); white-space: nowrap; pointer-events: none;
+    padding: 0.62em 1.3em; border-radius: var(--pill); font-size: var(--f20); line-height: 1; color: var(--p);
+    background: rgba(22, 24, 27, 0.42); -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3);
+    opacity: 0; transition: opacity var(--t) var(--ease), transform var(--t) var(--ease);
+  }
+  .p-tray:hover .p-tip, .p-tray:focus-within .p-tip, .promise.is-drag .p-tip { opacity: 1; transform: translate(-50%, 0); }
+  .promise.has-file .p-tip { opacity: 0 !important; }
+  .p-after { left: 33.4%; top: 55%; transform: translate(-50%, 10px) scale(0.96); font-size: var(--f20); }
+  .p-after:not([hidden]) { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  .p-after[hidden] { display: block; }
+
+  .p-copy { position: relative; padding-top: 6px; padding-bottom: clamp(26px, 4.5vh, 48px); }
+  .p-line { font-weight: 400; max-width: 20em; }
+  .p-line span { display: block; }
+
+  @media (hover: none) { .p-tip { opacity: 1; transform: translate(-50%, 0); } }
+  @media (max-width: 899px) {
+    .p-scene { height: 86vw; min-height: 0; }
+    .p-wrap { --ww: 150cqw; left: -21cqw; bottom: 0; }
+    .p-tray { border-radius: 18px; }
+    .p-tip, .p-after { font-size: var(--f16); }
+    .p-line { font-size: var(--f48); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .p-tip, .p-after { transition: none; }
+  }
+</style>

@@ -24,6 +24,7 @@ async function boot() {
       try { (await load()).default(); } catch (e) { console.warn('section script failed', sel, e); }
     }
   }
+  import('./reveals').then((m) => m.default()).catch(() => {});
   // Easter eggs load last and lazily
   import('./eggs').then((m) => m.default()).catch(() => {});
   requestAnimationFrame(() => ScrollTrigger.refresh());
