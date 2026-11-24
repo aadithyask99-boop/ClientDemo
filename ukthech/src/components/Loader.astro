@@ -1,4 +1,31 @@
 ---
-// STUB: replace with the real Loader component
+// Loader: the wordmark on graphite for about a second. Skippable, skipped on repeat visits in a session,
+// never shown without JavaScript or with reduced motion, and it can never trap the page (4.5 s failsafe).
+import { site } from '../data/site';
+const chars = [...site.brand.name];
 ---
-<section data-loader class="stub"><p style="padding:40px">Loader stub</p></section>
+<script is:inline>
+  (function () {
+    var h = document.documentElement;
+    try {
+      if (sessionStorage.getItem('ukt-loader')) h.classList.add('no-loader');
+      else sessionStorage.setItem('ukt-loader', '1');
+    } catch (e) {}
+    setTimeout(function () { h.classList.add('no-loader'); }, 4500);
+  })();
+</script>
+<div data-loader class="loader" aria-hidden="true">
+  <p class="loader-mark">
+    {chars.map((c) => <span class="loader-ch">{c}</span>)}
+  </p>
+</div>
+
+<style is:global>
+  .loader { position: fixed; inset: 0; z-index: 300; background: var(--g); color: var(--p); display: none; place-items: center; }
+  .js .loader { display: grid; }
+  .no-loader .loader { display: none !important; }
+  .loader-mark { display: flex; font-size: clamp(56px, 11vw, 160px); font-weight: 500; letter-spacing: -0.045em; line-height: 1.05; white-space: pre; overflow: hidden; padding: 0 0.04em 0.08em; }
+  .loader-ch { display: inline-block; }
+  .js .loader:not(.is-run) .loader-ch { transform: translateY(115%); }
+  @media (prefers-reduced-motion: reduce) { .loader { display: none !important; } }
+</style>

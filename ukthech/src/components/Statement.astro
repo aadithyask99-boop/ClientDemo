@@ -1,4 +1,41 @@
 ---
-// STUB: replace with the real Statement component
+// The statement: one huge sentence on paper. The four sectors in [brackets] are set inline with a blue underline.
+// Words are split on the server so the text is complete without JavaScript; statement.ts brightens them with scroll.
+import { site } from '../data/site';
+
+const tokens = site.statement.text.split(/\s+/).filter(Boolean).map((t) => {
+  const m = t.match(/^(.*?)\[(.+?)\](.*)$/);
+  return m ? { pre: m[1], sec: m[2], post: m[3] } : { pre: t, sec: '', post: '' };
+});
 ---
-<section data-statement class="stub"><p style="padding:40px">Statement stub</p></section>
+<section class="stage stage--paper st" data-statement aria-label="What we do">
+  <div class="st-stick pad">
+    <p class="st-text display">
+      {tokens.map((w) => (
+        <>
+          <span class="st-w" data-w>{w.pre}{w.sec && <span class="st-sec">{w.sec}</span>}{w.post}</span>{' '}
+        </>
+      ))}
+    </p>
+  </div>
+</section>
+
+<style is:global>
+  .st { min-height: 140vh; }
+  .st-stick {
+    position: sticky; top: 0; min-height: 100svh;
+    display: flex; align-items: center;
+    padding-block: 22vh;
+  }
+  .st-text { font-size: var(--f86); line-height: 1.02; max-width: 17.5em; text-wrap: pretty; }
+  .st-w { color: var(--ink); }
+  .st-sec {
+    text-decoration-line: underline; text-decoration-color: var(--b);
+    text-decoration-thickness: 0.08em; text-underline-offset: 0.12em; text-decoration-skip-ink: none;
+  }
+  @media (max-width: 899px) {
+    .st { min-height: 120vh; }
+    .st-stick { padding-block: 16vh; }
+    .st-text { line-height: 1.04; }
+  }
+</style>

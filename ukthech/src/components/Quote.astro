@@ -1,4 +1,100 @@
 ---
-// STUB: replace with the real Quote component
+// The quote centrepiece: the sentence is the biggest thing on the page. Studio stills of what we supply float round it,
+// blended into the paper, each on its own drift. The heading is for assistive technology only.
+import { site } from '../data/site';
+import QuoteSentence from './QuoteSentence.astro';
+
+const base = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
+const media = (n: string) => `${base}media/${n}.webp`;
+const names = site.quote.objects;
+
+// Where each still sits (desktop). Width in vw, offsets in vw/vh, depth drives the pointer and scroll movement.
+const spots = [
+  { w: 27, x: 'left:-3vw', y: 'top:0svh', rot: -3, depth: 1.0, speed: 1.0, mob: true },     // chromebooks
+  { w: 24, x: 'right:-2vw', y: 'top:1svh', rot: 2, depth: 0.7, speed: 0.7, mob: true },     // trolley
+  { w: 23, x: 'left:-2vw', y: 'bottom:0svh', rot: 2, depth: 0.6, speed: 0.55, mob: true },  // tablets
+  { w: 22, x: 'right:0vw', y: 'bottom:0svh', rot: -2, depth: 0.9, speed: 1.15, mob: true }, // parcel
+  { w: 20, x: 'left:-1vw', y: 'top:36svh', rot: 1, depth: 0.5, speed: 0.4, mob: false },    // van
+];
+const objects = names.map((n, i) => ({ name: n, ...spots[i % spots.length], i }));
+
+// Dust motes: seeded so the page is the same every time
+let seed = 7;
+const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+const motes = Array.from({ length: 16 }, (_, i) => ({
+  left: (rnd() * 100).toFixed(1), top: (rnd() * 100).toFixed(1),
+  size: (3 + rnd() * 4).toFixed(1), depth: (0.4 + rnd() * 1.4).toFixed(2), a: (0.1 + rnd() * 0.16).toFixed(2), i,
+}));
 ---
-<section data-quote class="stub"><p style="padding:40px">Quote stub</p></section>
+<section class="stage stage--paper qt" data-quote id="quote" aria-labelledby="qt-heading">
+  <h2 class="sr" id="qt-heading">{site.quote.heading}</h2>
+  <div class="qt-stage">
+    <div class="qt-motes" aria-hidden="true">
+      {motes.map((m) => (
+        <span class="qt-mote" data-mote data-depth={m.depth} style={`left:${m.left}%;top:${m.top}%;width:${m.size}px;height:${m.size}px;opacity:${m.a}`}></span>
+      ))}
+    </div>
+    <div class="qt-objs" aria-hidden="true">
+      {objects.map((o) => (
+        <div class={`qo${o.mob ? '' : ' qo--nomob'}`} data-qo data-depth={o.depth} data-speed={o.speed} data-rot={o.rot} style={`width:${o.w}vw;${o.x};${o.y}`}>
+          <div class="qo-s" data-qo-s>
+            <span class="qo-shadow" data-shadow></span>
+            <img class="qo-img" data-qo-img src={media(o.name)} alt="" loading="lazy" decoding="async" style={`transform:rotate(${o.rot}deg)`} />
+          </div>
+        </div>
+      ))}
+    </div>
+    <div class="qt-core pad">
+      <QuoteSentence />
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .qt { min-height: 130vh; overflow: clip; }
+  .qt-stage {
+    position: sticky; top: 0; height: 100svh; min-height: 640px;
+    display: grid; place-items: center; overflow: hidden;
+    --qs-size: clamp(40px, 6.4vw, 96px); --qs-fg: var(--ink); --qs-field: var(--ink); --qs-bg: #ffffff;
+  }
+  .qt-core { position: relative; z-index: 3; width: 100%; max-width: 1240px; text-align: center; }
+  .qt .qs-sentence { justify-content: center; }
+  .qt .qs-send { justify-content: center; }
+  .qt .qs-reply input { text-align: left; min-width: min(470px, 84vw); }
+  .qt .qs-done { margin-inline: auto; }
+  .qt .qs-done-sentence { font-size: var(--f48); }
+
+  .qt-objs, .qt-motes { position: absolute; inset: 0; pointer-events: none; }
+  .qt-objs { z-index: 1; }
+  .qt-motes { z-index: 0; }
+  .qo { position: absolute; pointer-events: none; will-change: transform; }
+  .qo-s { position: relative; }
+  .qo-img {
+    display: block; width: 100%; height: auto; aspect-ratio: 5 / 4; object-fit: cover; mix-blend-mode: multiply; pointer-events: none; user-select: none;
+    -webkit-mask-image: radial-gradient(ellipse closest-side at 50% 50%, #000 62%, transparent 100%);
+    mask-image: radial-gradient(ellipse closest-side at 50% 50%, #000 62%, transparent 100%);
+  }
+  /* A soft contact shadow under each still: pre-blurred, only its scale and opacity move */
+  .qo-shadow {
+    position: absolute; left: 22%; right: 22%; bottom: 14%; height: 5%; border-radius: 50%;
+    background: rgba(22,24,27,0.5); box-shadow: 0 0 28px 14px rgba(22,24,27,0.5); opacity: 0.22;
+  }
+  .qo:nth-child(5) .qo-img { filter: brightness(1.1); }
+  .qt-mote { position: absolute; border-radius: 50%; background: #16181b; box-shadow: 0 0 6px rgba(22,24,27,0.35); will-change: transform; }
+
+  @media (max-width: 899px) {
+    .qt { min-height: 118vh; }
+    .qt-stage { --qs-size: var(--f56); min-height: 700px; }
+    .qt .qs-sentence { gap: 0.1em 0.22em; }
+    .qt .qs-reply { width: 100%; }
+    .qt .qs-reply input { width: 100%; min-width: 0; font-size: 17px; padding-inline: 1.2em; }
+    .qt .qs-send .btn { width: 100%; padding-block: 1.05em; }
+    .qo--nomob { display: none; }
+    .qo { width: 56vw !important; }
+    .qo:nth-child(1) { left: -14vw !important; top: 6svh !important; }
+    .qo:nth-child(2) { right: -14vw !important; top: 12svh !important; }
+    .qo:nth-child(3) { left: -12vw !important; bottom: 4svh !important; }
+    .qo:nth-child(4) { right: -14vw !important; bottom: 1svh !important; }
+    .qt-mote:nth-child(n+9) { display: none; }
+  }
+</style>

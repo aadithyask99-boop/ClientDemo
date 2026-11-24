@@ -1,4 +1,132 @@
 ---
-// STUB: replace with the real Nav component
+// Floating pill nav: logo pill, five links in one pill group, the direct number, a blue Get a quote pill.
+// Hovering or focusing a link opens a frosted mega-menu (list left, live preview right). On phones: logo, Menu, Get a quote.
+import { site } from '../data/site';
+const { links } = site.nav;
+const name = site.brand.name;
+const tel = 'tel:' + site.contact.phone.replace(/\s+/g, '');
+// Where each link lands; if a target is missing the script opens the quote sheet instead.
+const hrefs: Record<string, string> = { education: '#schools', public: '#quote', hospitality: '#quote', property: '#quote', how: '#order' };
 ---
-<nav data-nav class="stub"><p style="padding:40px">Nav stub</p></nav>
+<header data-nav class="nav">
+  <div class="nav-bar" data-bar>
+    <a class="pill nav-logo" href="#top" aria-label={`${name}, back to the top`}>{name}</a>
+    <nav class="pill nav-group" aria-label="Main">
+      {links.map((l, i) => (
+        <a class="nav-link" href={hrefs[l.id] ?? '#quote'} data-i={i} data-image={l.image} aria-haspopup="true" aria-expanded="false" aria-controls="mega">{l.label}</a>
+      ))}
+    </nav>
+    <a class="pill nav-tel" href={tel}>{site.contact.phone}</a>
+    <button class="pill nav-menu-btn" type="button" aria-expanded="false" aria-controls="nav-sheet" data-menu-btn>Menu</button>
+    <a class="pill btn nav-cta" href="#quote" data-open-quote>{site.hero.cta}</a>
+
+    <div class="mega" id="mega" data-mega>
+      <div class="mega-panel">
+        <div class="mega-lists">
+          {links.map((l, i) => (
+            <ul class="mega-list" data-list={i} hidden>
+              {l.items.map((it, j) => (
+                <li><a href="#quote" data-open-quote data-j={j} tabindex="-1">{it}</a></li>
+              ))}
+            </ul>
+          ))}
+        </div>
+        <div class="mega-media" aria-hidden="true">
+          <img data-a alt="" decoding="async" />
+          <img data-b alt="" decoding="async" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-sheet" id="nav-sheet" data-msheet inert>
+    <ul class="nav-sheet-list">
+      {links.map((l, i) => (
+        <li><a class="d56" href={hrefs[l.id] ?? '#quote'} data-i={i}>{l.label}</a></li>
+      ))}
+    </ul>
+    <a class="nav-sheet-tel d35" href={tel}>{site.contact.phone}</a>
+  </div>
+</header>
+
+<style is:global>
+  .nav {
+    position: fixed; top: 20px; left: 0; right: 0; z-index: 60; display: flex; justify-content: center; pointer-events: none;
+    --pb: rgba(24, 26, 29, 0.64); --pf: var(--p); --ph: #fff; --phf: var(--ink);
+    --mb: rgba(30, 32, 36, 0.66); --mf: var(--p); --mh: rgba(255, 255, 255, 0.1);
+  }
+  .nav.is-light:not(.is-menu) {
+    --pb: rgba(242, 240, 235, 0.74); --pf: var(--ink); --ph: var(--ink); --phf: #fff;
+    --mb: rgba(242, 240, 235, 0.8); --mf: var(--ink); --mh: rgba(22, 24, 27, 0.07);
+  }
+  .nav-bar { position: relative; display: flex; gap: 4px; align-items: center; pointer-events: auto; z-index: 1; }
+
+  .nav .pill {
+    height: 43px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: var(--pill);
+    background: var(--pb); color: var(--pf); -webkit-backdrop-filter: blur(16px) saturate(1.25); backdrop-filter: blur(16px) saturate(1.25);
+    font-size: 16px; font-weight: 400; letter-spacing: -0.01em; line-height: 1; white-space: nowrap;
+    transition: background-color var(--t) var(--ease), color var(--t) var(--ease), transform var(--t) var(--ease);
+  }
+  .nav .nav-logo { font-weight: 600; font-size: 20px; letter-spacing: -0.04em; padding: 0 20px; }
+  .nav .nav-group { padding: 4px; gap: 0; }
+  .nav-link {
+    height: 35px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: var(--pill);
+    transition: background-color var(--t) var(--ease), color var(--t) var(--ease);
+  }
+  .nav-link:hover, .nav-link.is-open, .nav-link:focus-visible { background: var(--ph); color: var(--phf); }
+  .nav-link:focus-visible { outline-offset: 2px; }
+  .nav .nav-tel:hover { background: var(--ph); color: var(--phf); }
+  .nav .nav-cta { background: var(--b); color: var(--w); font-weight: 500; padding: 0 20px; backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .nav .nav-cta:hover { background: #5a75ff; transform: translateY(-1px); }
+  .nav-menu-btn { display: none !important; }
+
+  /* Mega-menu: frosted panel under the pill group, as wide as the whole bar */
+  .mega {
+    position: absolute; left: 0; right: 0; top: 100%; padding-top: 8px; opacity: 0; visibility: hidden; transform: translateY(-6px);
+    transition: opacity var(--t) var(--ease), transform var(--t) var(--ease), visibility 0s var(--t);
+  }
+  .mega.is-open { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+  .mega-panel {
+    display: grid; grid-template-columns: 5fr 7fr; gap: 12px; padding: 12px; border-radius: 28px;
+    background: var(--mb); color: var(--mf); -webkit-backdrop-filter: blur(30px) saturate(1.3); backdrop-filter: blur(30px) saturate(1.3);
+    transition: background-color var(--t) var(--ease), color var(--t) var(--ease);
+  }
+  .mega-lists { padding: 4px 0; align-self: center; }
+  .mega-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .mega-list[hidden] { display: none; }
+  .mega-list a {
+    display: block; padding: 13px 18px; border-radius: 16px; font-size: var(--f20); letter-spacing: -0.02em; line-height: 1.2;
+    transition: background-color var(--t) var(--ease);
+  }
+  .mega-list a:hover, .mega-list a:focus-visible, .mega-list a.is-active { background: var(--mh); }
+  .mega-list a:focus-visible { outline-offset: -3px; }
+  .mega-media { position: relative; border-radius: 18px; overflow: hidden; min-height: 280px; background: rgba(0, 0, 0, 0.3); }
+  .mega-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.45s var(--ease); }
+  .mega-media img.is-on { opacity: 1; }
+
+  /* Phone sheet */
+  .nav-sheet { display: none; }
+
+  @media (max-width: 899px) {
+    .nav { top: 12px; --pb: rgba(24, 26, 29, 0.7); }
+    .nav-bar { gap: 6px; }
+    .nav .nav-group, .nav .nav-tel, .mega { display: none; }
+    .nav .nav-logo { order: 1; padding: 0 16px; }
+    .nav .nav-menu-btn { display: inline-flex !important; order: 2; }
+    .nav .nav-cta { order: 3; padding: 0 16px; }
+    .nav-sheet {
+      display: flex; flex-direction: column; justify-content: space-between; position: fixed; inset: 0; z-index: 0; background: var(--g); color: var(--p);
+      padding: 96px var(--gutter) 40px; overflow-y: auto; opacity: 0; visibility: hidden; pointer-events: auto;
+      transition: opacity var(--t) var(--ease), visibility 0s var(--t);
+    }
+    .nav.is-menu .nav-sheet { opacity: 1; visibility: visible; transition-delay: 0s; }
+    .nav-sheet-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+    .nav-sheet-list a { display: block; padding: 8px 0; }
+    .nav-sheet-tel { color: var(--bt); }
+  }
+  @media (min-width: 900px) and (max-width: 1099px) {
+    .nav .nav-link { padding: 0 10px; font-size: 15px; }
+    .nav .nav-tel, .nav .nav-cta { padding: 0 14px; font-size: 15px; }
+    .nav .nav-logo { padding: 0 14px; }
+  }
+</style>

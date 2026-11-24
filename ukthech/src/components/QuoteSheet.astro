@@ -1,4 +1,46 @@
 ---
-// STUB: replace with the real QuoteSheet component
+// The quote sheet: a frosted bottom sheet holding the quote sentence. Anything with [data-open-quote] opens it from any screen.
+import QuoteSentence from './QuoteSentence.astro';
+import { site } from '../data/site';
 ---
-<section data-sheet class="stub"><p style="padding:40px">QuoteSheet stub</p></section>
+<div data-sheet class="sheet" inert>
+  <div class="sheet-backdrop" data-sheet-close></div>
+  <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sheet-title" data-panel>
+    <div class="sheet-in">
+      <div class="sheet-head">
+        <h2 id="sheet-title" class="d35 sheet-title">{site.quote.heading}</h2>
+        <button type="button" class="btn btn--ghost sheet-close" data-sheet-close>Close</button>
+      </div>
+      <QuoteSentence />
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  .sheet {
+    position: fixed; inset: 0; z-index: 200; visibility: hidden; transition: visibility 0s 0.55s;
+    --qs-fg: var(--p); --qs-field: var(--p); --qs-field-bg: rgba(255, 255, 255, 0.1); --qs-bg: var(--p);
+    --qs-link: var(--bt); --qs-err: #ff9d8a; --qs-size: var(--f48);
+  }
+  .sheet.is-open { visibility: visible; transition-delay: 0s; }
+  .sheet-backdrop { position: absolute; inset: 0; background: rgba(10, 11, 13, 0.5); opacity: 0; transition: opacity 0.5s var(--ease); }
+  .sheet.is-open .sheet-backdrop { opacity: 1; }
+  .sheet-panel {
+    position: absolute; left: 0; right: 0; bottom: 0; max-height: 92svh; min-height: min(780px, 90svh); overflow-y: auto; overscroll-behavior: contain;
+    background: rgba(26, 28, 32, 0.74); color: var(--p); -webkit-backdrop-filter: blur(32px) saturate(1.3); backdrop-filter: blur(32px) saturate(1.3);
+    border-radius: var(--r) var(--r) 0 0; padding: clamp(20px, 3vw, 44px) var(--gutter) clamp(40px, 6vw, 88px);
+    transform: translateY(102%); transition: transform 0.5s var(--ease);
+  }
+  .sheet.is-open .sheet-panel { transform: none; }
+  .sheet-in { max-width: 1240px; margin: 0 auto; }
+  .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: clamp(28px, 4vw, 56px); }
+  .sheet-title { opacity: 0.6; font-weight: 400; }
+  .sheet-close { font-size: var(--f16); padding: 0.8em 1.4em; flex: none; }
+  @media (max-width: 899px) {
+    .sheet-panel { min-height: min(560px, 90svh); }
+    .sheet-head { margin-bottom: 28px; }
+    .sheet-in .qs-reply input { min-width: 0; width: 100%; }
+    .sheet-in .qs-reply { flex: 1 1 100%; }
+    .sheet-in .qs-send .btn { width: 100%; }
+  }
+</style>
