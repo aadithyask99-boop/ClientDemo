@@ -1,0 +1,69 @@
+---
+// The quote as one sentence: "I need [Chromebooks] [30] by [before September]". Used in the sheet and the centrepiece.
+// Colours come from CSS variables set by the parent: --qs-fg (sentence), --qs-field (input text), --qs-bg (menu).
+import { site } from '../data/site';
+const q = site.quote;
+const data = JSON.stringify({ products: q.products, quantities: q.quantities, whens: q.whens, defaults: q.defaults });
+---
+<form class="qs" data-qs data-qs-data={data} novalidate>
+  <p class="qs-sentence">
+    <span>I need</span>
+    <button type="button" class="qs-chip" data-field="product" aria-haspopup="listbox" aria-expanded="false"><span data-val>{q.defaults.product}</span></button>
+    <button type="button" class="qs-chip qs-chip--qty" data-field="quantity" aria-haspopup="listbox" aria-expanded="false"><span data-val>{q.defaults.quantity}</span></button>
+    <span>by</span>
+    <button type="button" class="qs-chip" data-field="when" aria-haspopup="listbox" aria-expanded="false"><span data-val>{q.defaults.when}</span></button>
+  </p>
+  <div class="qs-menu" role="listbox" hidden data-menu></div>
+  <div class="qs-send">
+    <label class="qs-reply">
+      <span class="sr">Where should we reply, an email or a phone number</span>
+      <input type="text" name="reply" placeholder="Where should we reply? Email or phone" autocomplete="email" data-reply />
+    </label>
+    <button type="submit" class="btn" data-send>Send my quote request</button>
+  </div>
+  <p class="qs-error" role="alert" hidden data-error>Tell us where to reply and we will take it from there.</p>
+  <div class="qs-done" hidden data-done tabindex="-1" aria-live="polite">
+    <p class="qs-done-title" data-done-title></p>
+    <p class="qs-done-sentence" data-done-sentence></p>
+    <a class="qs-mail" data-mail href="#">Open it as an email instead</a>
+  </div>
+</form>
+
+<style is:global>
+  .qs { position: relative; color: var(--qs-fg, currentColor); }
+  .qs-sentence { font-size: var(--qs-size, var(--f56)); line-height: 1.12; letter-spacing: -0.03em; display: flex; flex-wrap: wrap; align-items: center; gap: 0.18em 0.3em; }
+  .qs-chip {
+    display: inline-flex; align-items: center; padding: 0.02em 0.42em 0.06em; border: 0.07em solid var(--b); border-radius: var(--pill);
+    color: inherit; line-height: 1.1; letter-spacing: inherit; font-weight: 400;
+    transition: background-color var(--t) var(--ease), color var(--t) var(--ease), transform var(--t) var(--ease);
+  }
+  .qs-chip:hover, .qs-chip[aria-expanded="true"] { background: var(--b); color: var(--w); }
+  .qs-chip:active { transform: scale(0.97); }
+  .qs-chip.is-set { animation: qs-pop 0.5s var(--ease); }
+  @keyframes qs-pop { 0% { transform: scale(1); } 40% { transform: scale(1.06); } 100% { transform: scale(1); } }
+  .qs-menu {
+    position: absolute; z-index: 20; background: var(--qs-bg, var(--w)); color: var(--ink); border-radius: var(--r);
+    padding: 12px; display: grid; gap: 4px; min-width: min(320px, 86vw); max-width: 92vw; box-shadow: 0 30px 60px -20px rgba(0,0,0,0.45);
+  }
+  .qs-menu[hidden] { display: none; }
+  .qs-opt { text-align: left; padding: 12px 18px; border-radius: var(--pill); font-size: var(--f35); letter-spacing: -0.02em; line-height: 1.1; transition: background-color var(--t) var(--ease), color var(--t) var(--ease); }
+  .qs-opt:hover, .qs-opt:focus-visible { background: rgba(70,99,255,0.12); outline: none; }
+  .qs-opt[aria-selected="true"] { background: var(--b); color: var(--w); }
+  .qs-own { margin-top: 6px; padding: 6px 8px 2px; }
+  .qs-own input { width: 100%; font: inherit; font-size: var(--f20); padding: 12px 18px; border-radius: var(--pill); border: 2px solid rgba(22,24,27,0.18); background: transparent; color: var(--ink); }
+  .qs-own input:focus { outline: none; border-color: var(--b); }
+  .qs-send { margin-top: clamp(20px, 3vw, 40px); display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  .qs-reply input {
+    font: inherit; font-size: var(--f20); min-width: min(380px, 80vw); padding: 0.85em 1.4em; border-radius: var(--pill);
+    background: var(--qs-field-bg, rgba(22,24,27,0.07)); color: var(--qs-field, inherit); border: 2px solid transparent;
+    transition: border-color var(--t) var(--ease);
+  }
+  .qs-reply input::placeholder { color: inherit; opacity: 0.55; }
+  .qs-reply input:focus { outline: none; border-color: var(--b); }
+  .qs-error { margin-top: 12px; font-size: var(--f16); color: var(--qs-err, #c2310f); }
+  .qs-done { margin-top: clamp(20px, 3vw, 32px); }
+  .qs-done-title { font-size: var(--f20); opacity: 0.7; }
+  .qs-done-sentence { font-size: var(--f35); letter-spacing: -0.02em; line-height: 1.12; margin: 10px 0 14px; }
+  .qs-mail { color: var(--qs-link, var(--b)); text-underline-offset: 4px; text-decoration: underline; font-size: var(--f16); }
+  .qs.is-sent .qs-send, .qs.is-sent .qs-menu { display: none; }
+</style>

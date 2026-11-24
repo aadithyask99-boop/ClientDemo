@@ -1,0 +1,76 @@
+@import '@fontsource-variable/host-grotesk';
+
+:root {
+  --g: #16181b;      /* graphite ground */
+  --g2: #1f2226;     /* a step up for panels on graphite */
+  --p: #f2f0eb;      /* paper */
+  --b: #4663ff;      /* blue: fills and big type; white label on it */
+  --bt: #9db0ff;     /* blue tint for small links on dark */
+  --w: #ffffff;
+  --ink: #16181b;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --frame: 8px;      /* the inset around the hero film, as on 108 */
+  --r: 24px;         /* panel radius */
+  --pill: 999px;
+  --t: 0.3s;
+  --gutter: clamp(20px, 3.2vw, 48px);
+  --f86: clamp(48px, 6vw, 86px);
+  --f56: clamp(36px, 4vw, 56px);
+  --f48: clamp(32px, 3.4vw, 48px);
+  --f35: clamp(26px, 2.5vw, 35px);
+  --f20: clamp(17px, 1.4vw, 20px);
+  --f16: 16px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; background: var(--g); }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+body {
+  margin: 0; background: var(--g); color: var(--p);
+  font-family: 'Host Grotesk Variable', 'Host Grotesk', system-ui, sans-serif;
+  font-weight: 400; font-size: var(--f20); line-height: 1.4; letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+img, video, canvas { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+h1, h2, h3, p { margin: 0; }
+:focus-visible { outline: 3px solid var(--bt); outline-offset: 3px; border-radius: 8px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Display type: weight 400, tight tracking, the second line dimmed (108's headline pattern) */
+.display { font-size: var(--f86); line-height: 0.98; letter-spacing: -0.035em; font-weight: 400; }
+.display .dim { opacity: 0.5; }
+.d56 { font-size: var(--f56); line-height: 1.02; letter-spacing: -0.03em; }
+.d48 { font-size: var(--f48); line-height: 1.04; letter-spacing: -0.03em; }
+.d35 { font-size: var(--f35); line-height: 1.1; letter-spacing: -0.02em; }
+
+/* Stages: the page alternates graphite and paper */
+.stage { position: relative; }
+.stage--dark { background: var(--g); color: var(--p); }
+.stage--paper { background: var(--p); color: var(--ink); }
+.pad { padding-inline: var(--gutter); }
+
+/* Panels float on the stage, as on 108 */
+.panel { background: var(--w); color: var(--ink); border-radius: var(--r); overflow: hidden; }
+
+/* Buttons: blue fill with a white label; ghost on dark; no outlines elsewhere */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 0.85em 1.7em; border-radius: var(--pill); background: var(--b); color: var(--w);
+  font-weight: 500; font-size: var(--f20); letter-spacing: -0.01em; line-height: 1;
+  transition: transform var(--t) var(--ease), background-color var(--t) var(--ease);
+}
+.btn:hover { transform: translateY(-2px); background: #5a75ff; }
+.btn:active { transform: translateY(0) scale(0.98); }
+.btn--ghost { background: rgba(255,255,255,0.12); color: var(--p); backdrop-filter: blur(14px); }
+.btn--ghost:hover { background: rgba(255,255,255,0.2); }
+
+/* Reveal helper: scripts set the end state; without JS everything is visible */
+.js .rv { opacity: 0; transform: translateY(24px); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+  .js .rv { opacity: 1; transform: none; }
+}
