@@ -56,10 +56,10 @@ const focus: Record<string, string> = { 'hero-school': '68% 50%', 'hero-ward': '
   /* Real light: a warm glow that follows the cursor (fine pointers only) */
   .hero-glow {
     position: absolute; left: 0; top: 0; width: 560px; height: 560px; margin: -280px 0 0 -280px; border-radius: 50%; pointer-events: none; z-index: 1;
-    background: radial-gradient(closest-side, rgba(255, 214, 160, 0.3), rgba(255, 214, 160, 0.1) 55%, rgba(255, 214, 160, 0) 100%);
+    background: radial-gradient(closest-side, rgba(255, 214, 160, 0.42), rgba(255, 214, 160, 0.14) 55%, rgba(255, 214, 160, 0) 100%);
     opacity: 0; transition: opacity 0.6s var(--ease); will-change: transform;
   }
-  .hero-glow.is-on { opacity: 0.55; }
+  .hero-glow.is-on { opacity: 0.75; }
   /* A soft dark scrim for the headline: strongest bottom left, gone by the middle */
   .hero-scrim { position: absolute; inset: 0; pointer-events: none; z-index: 2; background: radial-gradient(110% 85% at 0% 100%, rgba(14, 15, 17, 0.82) 0%, rgba(14, 15, 17, 0.52) 36%, rgba(14, 15, 17, 0) 68%); }
 
