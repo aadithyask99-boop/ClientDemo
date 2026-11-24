@@ -1,7 +1,9 @@
 ---
 // Order arrives: the page's only pinned scene. A parcel arrives, opens, and the pack of paper lifts out and settles at the front.
-// The scene is built from the real parcel photograph (cut out and hinged into flaps) plus a drawn pack of blank sheets with soft shadows.
-// Final state is what you see with no JavaScript or with reduced motion.
+// The scene is the real parcel photograph with a drawn open box on top of it: two hinged flaps with thickness and cast shadows,
+// a dark interior with lit inner walls, and a pack of four warm paper sheets with a blue band and a blank tag.
+// Everything is placed with a small 3D model (camera 25 degrees above, light from the left) so the shadows and shading follow the hinge.
+// Final state is what you see with no JavaScript, on phones, and with reduced motion. The same maths lives in src/scripts/order.ts.
 import { site } from '../data/site';
 const o = site.order;
 const ui = site.uiC;
@@ -9,158 +11,293 @@ const base = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
 const img = `${base}media/obj-parcel.webp`;
 
 type P = [number, number];
+type V = [number, number, number];
+const f1 = (n: number) => +n.toFixed(1);
+const pts = (...p: P[]) => p.map((q) => `${f1(q[0])},${f1(q[1])}`).join(' ');
+const add = (p: P, q: P): P => [p[0] + q[0], p[1] + q[1]];
+const mid = (p: P, q: P, t = 0.5): P => [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
+
+// ---- camera and light (identical to order.ts) ----
+const RAD = Math.PI / 180, sE = Math.sin(16 * RAD), cE = Math.cos(16 * RAD);
+const proj = (w: V): P => [w[0], -(w[1] * sE + w[2] * cE)];
+const grd = (p: P): V => [p[0], -p[1] / sE, 0];
+const crs = (a: V, b: V): V => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+const dt = (a: V, b: V) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+const unit = (a: V): V => { const l = Math.hypot(a[0], a[1], a[2]); return [a[0] / l, a[1] / l, a[2] / l]; };
+const rotv = (v: V, a: V, r: number): V => { const c = Math.cos(r), s = Math.sin(r), x = crs(a, v), d = dt(a, v) * (1 - c); return [v[0] * c + x[0] * s + a[0] * d, v[1] * c + x[1] * s + a[1] * d, v[2] * c + x[2] * s + a[2] * d]; };
+const CAM: V = [0, -cE, sE];
+const SUN = unit([-0.9, 0.25, 1]);
+const LX = 0.9, LY = -0.25, TH = 9;
+const clamp = (x: number, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const mstr = (m: number[]) => `matrix(${m.map((x) => +x.toFixed(4)).join(",")})`;
+const mix3 = (a: number[], b: number[], t: number) => a.map((x, i) => x + (b[i] - x) * t);
+const rgb = (c: number[]) => `rgb(${c.map((x) => Math.round(x)).join(',')})`;
+const SHADED = [138, 101, 64], LIT = [201, 162, 115];
+const EDGE_S = [150, 114, 72], EDGE_L = [238, 218, 176];
+
 // Top face of the parcel in the 1376 x 768 photograph (A back-left, B back-right, C front-right, D front-left)
 const A: P = [303, 233], B: P = [785, 145], C: P = [1072, 236], D: P = [556, 347];
-const mid = (p: P, q: P, t = 0.5): P => [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
-const f = (n: number) => +n.toFixed(1);
-const pts = (...p: P[]) => p.map((q) => `${f(q[0])},${f(q[1])}`).join(' ');
+const bil = (s: number, t: number): P => [(1 - t) * ((1 - s) * A[0] + s * B[0]) + t * ((1 - s) * D[0] + s * C[0]), (1 - t) * ((1 - s) * A[1] + s * B[1]) + t * ((1 - s) * D[1] + s * C[1])];
 const MA = mid(A, D), MB = mid(B, C);
-const backFlap = pts(A, B, mid(B, C, 0.515), mid(A, D, 0.515));
-const frontFlap = pts(D, C, MB, MA);
-// Open box: the cavity is the top face shrunk a little around its centre, so the cardboard rim stays visible
-const cen: P = [(A[0] + B[0] + C[0] + D[0]) / 4, (A[1] + B[1] + C[1] + D[1]) / 4];
-const shrink = (p: P, k = 0.96): P => [cen[0] + (p[0] - cen[0]) * k, cen[1] + (p[1] - cen[1]) * k];
-const [a2, b2, c2, d2] = [A, B, C, D].map((p) => shrink(p)) as P[];
-const h = 34; // visible depth of the inner back and right walls
-const dn = (p: P, n = h): P => [p[0], p[1] + n];
-const cavity = pts(a2, b2, c2, d2);
-const cs = [a2, b2, c2, d2].map((p) => [cen[0] + (p[0] - cen[0]) * 0.8, cen[1] + (p[1] - cen[1]) * 0.8 + 26] as P);
-const cavShadow = pts(cs[0], cs[1], cs[2], cs[3]);
-const wallBack = pts(a2, b2, dn(b2), dn(a2));
-const wallRight = pts(b2, c2, dn(c2), dn(b2));
-// Region above the front rim (the pack sits behind the front walls until it lifts)
-const inbox = `0,0 1376,0 1376,${f(c2[1])} ${pts(c2, d2, a2)} 0,${f(a2[1])}`;
+// each flap is a parallelogram whose side edges follow the right edge of the top face, so both of its far corners stay inside the photographed lid
+const bF1 = mid(B, C, 0.47), fF1 = mid(C, B, 0.47);
+const backPoly: P[] = [A, B, bF1, [A[0] + bF1[0] - B[0], A[1] + bF1[1] - B[1]]];
+const frontPoly: P[] = [D, C, fF1, [D[0] + fF1[0] - C[0], D[1] + fF1[1] - C[1]]];
 
-// The pack of blank sheets lies in the table plane: U along the long edge of the parcel, V along the short edge
-const U: P = [0.984, -0.18], V: P = [0.912, 0.411];
-const lenU = 390, lenV = 200, PC: P = [820, 650];
-const O: P = [PC[0] - 0.5 * (lenU * U[0] + lenV * V[0]), PC[1] - 0.5 * (lenU * U[1] + lenV * V[1])];
-const mtx = `matrix(${U[0]} ${U[1]} ${V[0]} ${V[1]} ${f(O[0])} ${f(O[1])})`;
-const at = (u: number, v: number): P => [O[0] + u * U[0] + v * V[0], O[1] + u * U[1] + v * V[1]];
-const sheets = [0, 1, 2, 3].map((i) => ({ i, rise: -3 * i, rot: [0.4, -0.6, 0.8, -0.3][i] }));
-const T = 3; // thickness of one sheet in px
-const u0 = lenU * 0.78, bw = 16; // rubber band
-const frontEdge = (rise: number) => pts(at(0, lenV), at(lenU, lenV), [at(lenU, lenV)[0], at(lenU, lenV)[1] + T], [at(0, lenV)[0], at(0, lenV)[1] + T]);
-const leftEdge = (rise: number) => pts(at(0, 0), at(0, lenV), [at(0, lenV)[0], at(0, lenV)[1] + T], [at(0, 0)[0], at(0, 0)[1] + T]);
-const bandFront = pts(at(u0, lenV + 2), at(u0 + bw, lenV + 2), [at(u0 + bw, lenV + 2)[0], at(u0 + bw, lenV + 2)[1] + 13], [at(u0, lenV + 2)[0], at(u0, lenV + 2)[1] + 13]);
-const tag = { x: u0 - 108, y: 56, w: 76, h: 100 };
-const geo = JSON.stringify({ A, B, C, D, PC });
+interface Flap { h0: P; h1: P; f0: P; f1: P; a: V; sg: number; w0: V; dl: P }
+const mkFlap = (h0: P, h1: P, f0: P, f1: P): Flap => {
+  // the side edge of a flap is perpendicular to its hinge in the world; dl corrects the photographed (perspective) edge back to that ideal
+  const a = unit(grd([h1[0] - h0[0], h1[1] - h0[1]])), bw = grd([f0[0] - h0[0], f0[1] - h0[1]]);
+  let pp: V = [-a[1], a[0], 0]; if (dt(pp, bw) < 0) pp = [-pp[0], -pp[1], 0];
+  const L = Math.hypot(bw[0], bw[1]), w0: V = [pp[0] * L, pp[1] * L, 0], pw = proj(w0);
+  return { h0, h1, f0, f1, a, w0, dl: [f0[0] - h0[0] - pw[0], f0[1] - h0[1] - pw[1]], sg: crs(a, w0)[2] < 0 ? -1 : 1 };
+};
+const back = mkFlap(A, B, backPoly[3], backPoly[2]);
+const front = mkFlap(D, C, frontPoly[3], frontPoly[2]);
+
+// pose of a flap at hinge angle th (degrees): matrices, tones and visibility of each part
+function pose(F: Flap, th: number, outerBase: number[], innerBase: number[]) {
+  const r = F.sg * th * RAD;
+  const vr = rotv(F.w0, F.a, r), nr = rotv([0, 0, 1], F.a, r);
+  const [ox, oy] = F.h0;
+  const bx = F.h1[0] - ox, by = F.h1[1] - oy, vx = F.f0[0] - ox, vy = F.f0[1] - oy;
+  const pv = proj(vr), cs = Math.cos(th * RAD), e2: P = [pv[0] + F.dl[0] * cs, pv[1] + F.dl[1] * cs], det = bx * vy - vx * by;
+  const a = (bx * vy - e2[0] * by) / det, c = (-bx * vx + e2[0] * bx) / det, b = (by * vy - e2[1] * by) / det, d = (-by * vx + e2[1] * bx) / det;
+  const e = ox - (a * ox + c * oy), f = oy - (b * ox + d * oy);
+  const tv = proj([-nr[0] * TH, -nr[1] * TH, -nr[2] * TH]);
+  const apply = (p: P): P => [a * p[0] + c * p[1] + e, b * p[0] + d * p[1] + f];
+  const q0 = apply(F.f0), q1 = apply(F.f1);
+  const visOut = dt(nr, CAM) > 0;
+  const kOut = Math.max(0, dt(nr, SUN)), kIn = Math.max(0, -dt(nr, SUN));
+  const tone = (k: number, baseC: number[]) => {
+    const t = mix3(SHADED, LIT, clamp(0.3 + 0.85 * k));
+    const lt = (t[0] + t[1] + t[2]) / 3, lb = (baseC[0] + baseC[1] + baseC[2]) / 3;
+    return lt < lb ? { fill: 'rgb(34,20,9)', op: clamp(1 - lt / lb, 0, 0.9) } : { fill: 'rgb(255,234,196)', op: clamp((lt - lb) / (255 - lb), 0, 0.9) };
+  };
+  let ef = crs(nr, F.a); if (dt(ef, vr) < 0) ef = [-ef[0], -ef[1], -ef[2]];
+  const edge = (k: number) => rgb(mix3(EDGE_S, EDGE_L, clamp(0.35 + 0.95 * k)));
+  return {
+    outer: [a, b, c, d, e, f], inner: [a, b, c, d, e + tv[0], f + tv[1]], visOut,
+    shOut: tone(kOut, outerBase), shIn: tone(kIn, innerBase),
+    free: { m: [q1[0] - q0[0], q1[1] - q0[1], tv[0], tv[1], q0[0], q0[1]], vis: dt(ef, CAM) > 0.02, fill: edge(Math.max(0, dt(ef, SUN))) },
+    sl: { m: [q0[0] - ox, q0[1] - oy, tv[0], tv[1], ox, oy], vis: -dt(F.a, CAM) > 0.02, fill: edge(Math.max(0, -dt(F.a, SUN))) },
+    sr: { m: [q1[0] - F.h1[0], q1[1] - F.h1[1], tv[0], tv[1], F.h1[0], F.h1[1]], vis: dt(F.a, CAM) > 0.02, fill: edge(Math.max(0, dt(F.a, SUN))) },
+  };
+}
+// shadow of a hinged flap on the horizontal plane z = zp
+function shadow(F: Flap, th: number, zp: number) {
+  const r = F.sg * th * RAD, vr = rotv(F.w0, F.a, r), o = grd(F.h0);
+  const q0 = proj([o[0] - LX * zp, o[1] - LY * zp, zp]);
+  const e2 = proj([vr[0] + LX * vr[2], vr[1] + LY * vr[2], 0]);
+  return [F.h1[0] - F.h0[0], F.h1[1] - F.h0[1], e2[0], e2[1], q0[0], q0[1]];
+}
+const OUT_BASE = [209, 172, 130], IN_BASE = [128, 86, 48];
+const FINAL = { back: 135, front: 266 };
+const pb = pose(back, FINAL.back, OUT_BASE, IN_BASE), pf = pose(front, FINAL.front, OUT_BASE, IN_BASE);
+const HB = 316, ZI = -40; // box height and depth of the contents (world px)
+const sdBackG = shadow(back, FINAL.back, -HB), sdFrontG = shadow(front, FINAL.front, -HB), sdBackI = shadow(back, FINAL.back, ZI);
+
+// ---- opening, interior ----
+const [a2, b2, c2, d2] = [bil(0.016, 0.034), bil(0.984, 0.034), bil(0.984, 0.966), bil(0.016, 0.966)];
+const DC = 46; // visible depth of the inner back and right walls above the contents
+const dn = (p: P, n: number): P => [p[0], p[1] + n];
+const cavity = pts(a2, b2, c2, d2);
+const wallBack = pts(a2, b2, dn(b2, 320), dn(a2, 320));
+const wallRight = pts(b2, c2, dn(c2, 320), dn(b2, 320));
+const contents = pts(dn(a2, DC), dn(b2, DC), dn(c2, DC), dn(d2, DC));
+const leftShade = pts(a2, mid(a2, b2, 0.2), mid(d2, c2, 0.34), d2);
+const inbox = `0,0 1376,0 1376,${f1(c2[1])} ${pts(c2, d2, a2)} 0,${f1(a2[1])}`;
+const boxSil = pts([303, 233], [788, 144], [1071, 233], [1072, 508], [1061, 516], [556, 650], [307, 513]);
+const frontWallPoly = pts([556, 347], [1072, 236], [1072, 508], [556, 650]);
+const frontFlapCover = pts(D, C, [1072, 236 + 190], [556, 347 + 190]);
+
+// ---- the pack of sheets lies in the table plane: U along the long edge of the parcel, V along the short edge ----
+const U: P = [0.984, -0.18], V2: P = [0.912, 0.411];
+const lenU = 330, lenV = 190, PC: P = [820, 648];
+const O: P = [PC[0] - 0.5 * (lenU * U[0] + lenV * V2[0]), PC[1] - 0.5 * (lenU * U[1] + lenV * V2[1])];
+const mtx = `matrix(${U[0]} ${U[1]} ${V2[0]} ${V2[1]} ${f1(O[0])} ${f1(O[1])})`;
+const inPos: P = [(A[0] + B[0] + C[0] + D[0]) / 4, (A[1] + B[1] + C[1] + D[1]) / 4 + 30];
+const T = 3.4; // thickness of one sheet in screen px
+const detM = U[0] * V2[1] - V2[0] * U[1];
+const du = (-V2[0] * T) / detM, dv = (U[0] * T) / detM; // a screen drop of T expressed in plane coordinates
+const sheets = [0, 1, 2, 3].map((i) => ({ i, rise: -T * i, rot: [1.3, -1.9, 1.6, -1.0][i], ox: [0, 6, -5, 3][i], oy: [0, 1.5, -2, 1][i] }));
+const u0 = lenU * 0.74, bw = 15;
+const tag = { x: u0 - 96, y: 52, w: 64, h: 86 };
+const geo = JSON.stringify({ A, B, C, D, PC, back: [A, B, backPoly[2], backPoly[3]], front: [D, C, frontPoly[2], frontPoly[3]], lenU, lenV, FINAL });
+const frontEdgeP = (k: number) => `0,${lenV} ${lenU},${lenV} ${lenU + du},${lenV + dv} ${du},${lenV + dv}`;
+const leftEdgeP = `0,0 0,${lenV} ${du},${lenV + dv} ${du},${dv}`;
+// a soft shadow without a filter: stacked rounded rectangles of growing size, each faint (cheap to repaint every frame)
+const soft = (x: number, y: number, w: number, h: number, blur: number, n = 6) => Array.from({ length: n }, (_, k) => { const g = blur * ((k + 0.5) / n - 0.5); return { x: f1(x - g), y: f1(y - g), width: f1(w + 2 * g), height: f1(h + 2 * g), rx: f1(Math.max(0, Math.abs(g))) }; });
+// the same idea in unit space, for shadows drawn as a transformed unit square
+const ush = (blur: number, n: number) => Array.from({ length: n }, (_, k) => { const g = blur * ((k + 0.5) / n - 0.5); return { x: +(-g).toFixed(4), y: +(-g).toFixed(4), width: +(1 + 2 * g).toFixed(4), height: +(1 + 2 * g).toFixed(4) }; });
+const style = (m: number[]) => `transform:${mstr(m)}`;
+const rotAbout = (deg: number, cx: number, cy: number) => { const r = deg * RAD, c = Math.cos(r), sn = Math.sin(r); return [c, sn, -sn, c, cx - (c * cx - sn * cy), cy - (sn * cx + c * cy)]; };
 ---
 <section class="stage stage--dark order" data-order id="order" data-geo={geo} aria-labelledby="order-title">
   <div class="order-pin" data-o-pin>
     <h2 id="order-title" class="d56 order-title" data-o-title>{o.title}</h2>
     <div class="panel order-panel" data-o-panel>
       <div class="o-scene" data-o-scene role="img" aria-label={ui.orderAlt}>
-        <div class="o-lights" aria-hidden="true"><i data-o-light></i><i data-o-light></i><i data-o-light></i></div>
         <div class="o-stage" data-o-stage aria-hidden="true">
           <div class="o-photo" data-o-photo>
-            <!-- soft ground shadow, light from the left so it falls to the right -->
-            <svg class="o-svg" viewBox="0 0 1376 768" focusable="false">
-              <defs>
-                <filter id="o-b24" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="24" /></filter>
-                <filter id="o-b10" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="9" /></filter>
-                <filter id="o-b5" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4.5" /></filter>
-                <filter id="o-b3" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4" /></filter>
-              </defs>
-              <polygon points="520,664 1070,528 1330,452 1296,586 930,716 560,700" fill="rgba(74,52,30,0.30)" filter="url(#o-b24)" data-o-ground></polygon>
-              <polygon points="300,515 556,656 1070,524 1070,510 556,640 300,503" fill="rgba(60,42,24,0.42)" filter="url(#o-b5)"></polygon>
-            </svg>
             <img class="o-img" src={img} alt="" width="1376" height="768" decoding="async" />
-            <!-- cavity, inner walls and the back flap -->
+
+            <!-- ground: contact shadow of the parcel and the shadows of the flaps (outside the parcel only) -->
             <svg class="o-svg" viewBox="0 0 1376 768" focusable="false">
               <defs>
-                <clipPath id="o-clip-back"><polygon points={backFlap}></polygon></clipPath>
-                <clipPath id="o-clip-cav"><polygon points={cavity}></polygon></clipPath>
-                <linearGradient id="o-cav" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7a5732"></stop><stop offset="0.55" stop-color="#54391f"></stop><stop offset="1" stop-color="#2f200f"></stop></linearGradient>
-                <linearGradient id="o-cav-front" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(18,10,3,0)"></stop><stop offset="1" stop-color="rgba(18,10,3,0.6)"></stop></linearGradient>
-                <clipPath id="o-clip-front"><polygon points={frontFlap}></polygon></clipPath>
-                <linearGradient id="o-wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b48a58"></stop><stop offset="1" stop-color="#5f4326"></stop></linearGradient>
-                <linearGradient id="o-wall-r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a7448"></stop><stop offset="1" stop-color="#4f361e"></stop></linearGradient>
-                <linearGradient id="o-under" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#cfae82"></stop><stop offset="1" stop-color="#a8855a"></stop></linearGradient>
+                <filter id="o-b3" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4" /></filter>
+                <filter id="o-b5" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4.5" /></filter>
+                <filter id="o-b10" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="9" /></filter>
+                <filter id="o-b16" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="16" /></filter>
+                <filter id="o-b24" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="24" /></filter>
+                <clipPath id="o-floor"><path clip-rule="evenodd" d={`M-300 -300H1700V1100H-300Z M${boxSil.replace(/ /g, ' L')}Z`}></path></clipPath>
+                <pattern id="o-tex" patternUnits="userSpaceOnUse" width="280" height="200"><image href="data:image/jpeg;base64,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" width="280" height="200"></image></pattern>
+                <linearGradient id="o-sd-flap" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(62,42,24,0.11)"></stop><stop offset="1" stop-color="rgba(62,42,24,0.02)"></stop></linearGradient>
+                <linearGradient id="o-sd-flap-i" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(8,4,1,0.2)"></stop><stop offset="1" stop-color="rgba(8,4,1,0)"></stop></linearGradient>
+                <clipPath id="o-wallclip"><polygon points={frontWallPoly}></polygon></clipPath>
               </defs>
-              <g data-o-cavity>
-                <polygon points={cavity} fill="url(#o-cav)"></polygon>
-                <polygon points={cavity} fill="url(#o-cav-front)"></polygon>
-                <g clip-path="url(#o-clip-cav)"><polygon points={cavShadow} fill="rgba(18,10,3,0.8)" filter="url(#o-b10)" data-cav-shadow opacity="0"></polygon></g>
-                <polygon points={wallBack} fill="url(#o-wall)"></polygon>
-                <polygon points={wallRight} fill="url(#o-wall-r)"></polygon>
-              </g>
-              <g class="o-flap" data-flap="back">
-                <g class="o-in"><polygon points={backFlap} fill="url(#o-under)"></polygon></g>
-                <g class="o-out" clip-path="url(#o-clip-back)"><image href={img} width="1376" height="768"></image></g>
+              <g clip-path="url(#o-floor)">
+                <g filter="url(#o-b24)"><polygon points="520,664 1070,528 1330,452 1296,586 930,716 560,700" fill="rgba(74,52,30,0.16)" data-o-ground></polygon></g>
+                <g filter="url(#o-b5)"><polygon points="304,517 556,656 1064,520 1064,506 556,640 304,503" fill="rgba(60,40,22,0.34)" data-o-contact></polygon></g>
               </g>
             </svg>
+            <svg class="o-svg" viewBox="0 0 1376 768" focusable="false">
+              <g clip-path="url(#o-floor)">
+                <g style={style(sdBackG)} data-fl-gsd="back">{ush(0.07, 5).map((r) => <rect {...r} fill="url(#o-sd-flap)"></rect>)}</g>
+                <g style={style(sdFrontG)} data-fl-gsd="front">{ush(0.07, 5).map((r) => <rect {...r} fill="url(#o-sd-flap)"></rect>)}</g>
+              </g>
+            </svg>
+
+            <!-- the opening: inner walls lit from the left, dark contents, soft shadows, a corrugated rim -->
+            <svg class="o-svg" viewBox="0 0 1376 768" focusable="false">
+              <defs>
+                <clipPath id="o-clip-cav"><polygon points={cavity}></polygon></clipPath>
+                                                <linearGradient id="o-g-wb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(255,226,180,0.1)"></stop><stop offset="0.55" stop-color="rgba(40,22,8,0.18)"></stop><stop offset="0.85" stop-color="rgba(20,10,4,0.55)"></stop><stop offset="1" stop-color="rgba(14,7,3,0.7)"></stop></linearGradient>
+                <linearGradient id="o-g-wr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(244,196,128,0.6)"></stop><stop offset="0.6" stop-color="rgba(238,184,112,0.5)"></stop><stop offset="0.92" stop-color="rgba(120,72,30,0.3)"></stop><stop offset="1" stop-color="rgba(30,16,6,0.5)"></stop></linearGradient>
+                <linearGradient id="o-g-ct" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0" stop-color="rgba(50,40,30,0.72)"></stop><stop offset="1" stop-color="rgba(70,56,40,0.6)"></stop></linearGradient>
+                <linearGradient id="o-g-ls" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="rgba(10,5,2,0.6)"></stop><stop offset="1" stop-color="rgba(10,5,2,0)"></stop></linearGradient>
+                <linearGradient id="o-g-depth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(10,5,2,0.4)"></stop><stop offset="0.35" stop-color="rgba(10,5,2,0)"></stop><stop offset="1" stop-color="rgba(10,5,2,0.1)"></stop></linearGradient>
+                              </defs>
+              <g clip-path="url(#o-clip-cav)">
+                <g data-in="back"><polygon points={wallBack} fill="url(#o-tex)"></polygon><polygon points={wallBack} fill="url(#o-g-wb)"></polygon></g>
+                <g data-in="right"><polygon points={wallRight} fill="url(#o-tex)"></polygon><polygon points={wallRight} fill="url(#o-g-wr)"></polygon></g>
+                <g data-in="floor"><polygon points={contents} fill="url(#o-tex)"></polygon><polygon points={contents} fill="url(#o-g-ct)"></polygon></g>
+                <polygon points={contents} fill="url(#o-g-depth)" data-in="depth"></polygon>
+                <rect x={f1(a2[0] - 4)} y={f1(a2[1] - 20)} width="200" height="340" fill="url(#o-g-ls)" data-in="left"></rect>
+                <g style={style(sdBackI)} data-fl-isd>{ush(0.06, 4).map((r) => <rect {...r} fill="url(#o-sd-flap-i)"></rect>)}</g>
+                <g data-cav-shadow fill="rgba(12,6,2,0.12)"><g transform={`translate(${f1(inPos[0] - PC[0] + 12)} ${f1(inPos[1] - PC[1] + 9)}) ${mtx}`}>{soft(0, 0, lenU, lenV, 26, 8).map((r) => <rect {...r}></rect>)}</g></g>
+              </g>
+              <polygon points={cavity} fill="none" stroke="#dcc296" stroke-width="3.6" stroke-linejoin="round" opacity="0.85" data-in="rim"></polygon>
+              <polygon points={cavity} fill="none" stroke="rgba(110,80,44,0.3)" stroke-width="3.6" stroke-dasharray="1.3 2.9" stroke-linejoin="round" data-in="rimflutes"></polygon>
+            </svg>
+
+            <!-- the back flap, rising behind the parcel -->
+            <svg class="o-svg" viewBox="0 0 1376 768" focusable="false">
+              <defs>
+                <clipPath id="o-clip-back"><polygon points={pts(...backPoly)}></polygon></clipPath>
+                <clipPath id="o-clip-front"><polygon points={pts(...frontPoly)}></polygon></clipPath>
+                <linearGradient id="o-flute" x1="0" y1="0" x2="0.011" y2="0" spreadMethod="repeat"><stop offset="0" stop-color="rgba(86,58,28,0.0)"></stop><stop offset="0.5" stop-color="rgba(86,58,28,0.2)"></stop><stop offset="1" stop-color="rgba(86,58,28,0.0)"></stop></linearGradient>
+                <linearGradient id="o-flute-s" x1="0" y1="0" x2="0.03" y2="0" spreadMethod="repeat"><stop offset="0" stop-color="rgba(86,58,28,0.0)"></stop><stop offset="0.5" stop-color="rgba(86,58,28,0.16)"></stop><stop offset="1" stop-color="rgba(86,58,28,0.0)"></stop></linearGradient>
+              </defs>
+              <g class="o-flap" data-flap="back">
+                <g data-fp="sl" style={style(pb.sl.m)} display={pb.sl.vis ? 'inline' : 'none'}><rect width="1" height="1" fill={pb.sl.fill}></rect><rect width="1" height="1" fill="url(#o-flute-s)"></rect></g>
+                <g data-fp="sr" style={style(pb.sr.m)} display={pb.sr.vis ? 'inline' : 'none'}><rect width="1" height="1" fill={pb.sr.fill}></rect><rect width="1" height="1" fill="url(#o-flute-s)"></rect></g>
+                <g data-fp="ed" style={style(pb.free.m)} display={pb.free.vis ? 'inline' : 'none'}><rect width="1" height="1" fill={pb.free.fill}></rect><rect width="1" height="1" fill="url(#o-flute)"></rect></g>
+                <g data-fp="in" style={style(pb.inner)} display={pb.visOut ? 'none' : 'inline'}><polygon points={pts(...backPoly)} fill="url(#o-tex)"></polygon><polygon points={pts(...backPoly)} fill={pb.shIn.fill} fill-opacity={f1(pb.shIn.op * 100) / 100} data-fp="ins"></polygon></g>
+                <g data-fp="out" style={style(pb.outer)} display={pb.visOut ? 'inline' : 'none'}><g clip-path="url(#o-clip-back)"><image href={img} width="1376" height="768"></image></g><polygon points={pts(...backPoly)} fill={pb.shOut.fill} fill-opacity={f1(pb.shOut.op * 100) / 100} data-fp="outs"></polygon></g>
+              </g>
+            </svg>
+
             <!-- the pack of blank sheets -->
-            <svg class="o-svg o-svg--pack" viewBox="0 0 1376 768" focusable="false">
-              <g class="o-pk-shadow" data-pk-shadow>
-                <g transform={mtx}>
-                  <rect x="26" y="20" width={lenU} height={lenV} fill="rgba(70,50,30,0.34)" filter="url(#o-b10)"></rect>
-                  <rect x="8" y="6" width={lenU} height={lenV} fill="rgba(60,42,24,0.4)" filter="url(#o-b5)"></rect>
-                </g>
+            <svg class="o-svg o-svg--pack" viewBox="0 0 1376 768" focusable="false" data-pk-svg>
+              <defs>
+                <clipPath id="o-inbox"><polygon points={inbox}></polygon></clipPath>
+                <linearGradient id="o-paper" x1="0" y1="0" x2="1" y2="0.3"><stop offset="0" stop-color="#f6f3ec"></stop><stop offset="0.55" stop-color="#f1eee6"></stop><stop offset="1" stop-color="#dcd7cc"></stop></linearGradient>
+                <linearGradient id="o-hl-l" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="rgba(255,255,255,0.95)"></stop><stop offset="1" stop-color="rgba(255,255,255,0)"></stop></linearGradient>
+                <linearGradient id="o-hl-t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(255,255,255,0.85)"></stop><stop offset="1" stop-color="rgba(255,255,255,0)"></stop></linearGradient>
+                <linearGradient id="o-pkshade" x1="0" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="rgba(112,64,24,0.9)"></stop><stop offset="0.5" stop-color="rgba(112,64,24,0.6)"></stop><stop offset="1" stop-color="rgba(112,64,24,0.3)"></stop></linearGradient>
+                <linearGradient id="o-curl" x1="0" y1="0" x2="1" y2="1"><stop offset="0.6" stop-color="rgba(120,108,88,0)"></stop><stop offset="1" stop-color="rgba(120,108,88,0.2)"></stop></linearGradient>
+                <linearGradient id="o-band" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5a74ff"></stop><stop offset="0.35" stop-color="#4663ff"></stop><stop offset="1" stop-color="#3550e0"></stop></linearGradient>
+                <linearGradient id="o-bandwrap" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a55ea"></stop><stop offset="1" stop-color="#2a3fb4"></stop></linearGradient>
+              </defs>
+              <g class="o-pk-shadow">
+                <g data-pk-sd="far" fill="rgba(70,50,30,0.075)"><g transform={mtx}>{soft(34, 26, lenU, lenV, 40, 8).map((r) => <rect {...r}></rect>)}</g></g>
+                <g data-pk-sd="near" fill="rgba(52,36,20,0.14)"><g transform={mtx}>{soft(10, 9, lenU, lenV, 10, 5).map((r) => <rect {...r}></rect>)}</g></g>
               </g>
               <g data-pk-clip>
                 <g class="o-pack" data-pack>
                   {sheets.map((s) => (
                     <g class="o-sheet" data-o-sheet={s.i}>
-                      <g transform={`translate(0 ${s.rise})`}>
-                        <polygon points={leftEdge(s.rise)} fill={s.i % 2 ? '#e6e2da' : '#d9d5cb'}></polygon>
-                        <polygon points={frontEdge(s.rise)} fill={s.i % 2 ? '#f1eee8' : '#e4e0d7'}></polygon>
+                      <g transform={`translate(${s.ox} ${s.rise + s.oy})`}>
                         <g transform={mtx}>
-                          <g class="o-rot" data-rot>
-                            <rect x="7" y="5" width={lenU} height={lenV} rx="2" fill="rgba(70,50,30,0.26)" filter="url(#o-b3)"></rect>
-                            <g transform={`rotate(${s.rot} ${lenU / 2} ${lenV / 2})`}>
-                              <rect width={lenU} height={lenV} rx="2" fill="url(#o-paper)"></rect>
-                            </g>
+                          <g data-sh-rot={s.i} data-r0={s.rot} style={style(rotAbout(s.rot, lenU / 2, lenV / 2))}>
+                            <g data-sh-sd={s.i} fill={s.i === 0 ? 'rgba(52,36,20,0.12)' : 'rgba(80,66,46,0.15)'}>{soft(5, 6, lenU, lenV, 5, 4).map((r) => <rect {...r}></rect>)}</g>
+                            <polygon points={leftEdgeP} fill={s.i % 2 ? '#e4dfd4' : '#d3cec2'}></polygon>
+                            <polygon points={frontEdgeP(0)} fill={s.i % 2 ? '#d9d4c8' : '#ece8de'}></polygon>
+                            <rect width={lenU} height={lenV} rx="1.5" fill="url(#o-paper)"></rect>
+                            <rect width={lenU} height={lenV} rx="1.5" fill="url(#o-curl)" data-sh-shade={s.i} opacity={0.5 + s.i * 0.1}></rect>
+                            <rect x="0" y="0" width="3" height={lenV} fill="url(#o-hl-l)"></rect>
+                            <rect x="0" y="0" width={lenU} height="2.4" fill="url(#o-hl-t)"></rect>
                           </g>
                         </g>
                       </g>
                     </g>
                   ))}
+                  <g transform={`translate(0 ${-T * 3})`}>
+                    <g transform={mtx} opacity="1"><rect width={lenU} height={lenV} fill="url(#o-pkshade)" data-pk-shade opacity="0" rx="1.5"></rect></g>
+                  </g>
                   <g class="o-band" data-band>
-                    <g transform={`translate(0 ${-3 * 3 - 1})`}>
+                    <g transform={`translate(0 ${-T * 3 - 0.8})`}>
+                      <g data-band-sd fill="rgba(30,34,70,0.11)"><g transform={mtx}>{soft(u0 + 4, 2, bw + 5, lenV + 3, 6, 3).map((r) => <rect {...r}></rect>)}</g></g>
                       <g transform={mtx}>
-                        <rect x={u0 + 4} y="2" width={bw} height={lenV + 2} fill="rgba(40,30,20,0.3)" filter="url(#o-b3)"></rect>
-                        <rect x={u0} y="-2" width={bw} height={lenV + 4} rx="4" fill="#3d54d4"></rect>
-                        <rect x={u0 + 2} y="-2" width="4" height={lenV + 4} rx="2" fill="#7b8fff" opacity="0.7"></rect>
+                        <rect x={u0} y="-0.5" width={bw} height={lenV + 1} fill="url(#o-band)"></rect>
+                        <rect x={u0 + 1.5} y="-0.5" width="2.4" height={lenV + 1} fill="rgba(190,205,255,0.55)"></rect>
+                        <polygon points={`${u0},${lenV + 0.5} ${u0 + bw},${lenV + 0.5} ${u0 + bw + du * 4},${lenV + 0.5 + dv * 4} ${u0 + du * 4},${lenV + 0.5 + dv * 4}`} fill="url(#o-bandwrap)" data-band-wrap></polygon>
                       </g>
-                      <polygon points={bandFront} fill="#2b3fae"></polygon>
                     </g>
                   </g>
                   <g class="o-tag" data-tag>
-                    <g transform={`translate(0 ${-3 * 3 - 2})`}>
+                    <g transform={`translate(0 ${-T * 3 - 1.4})`}>
                       <g transform={mtx}>
-                        <path d={`M ${u0 + 8} 64 C ${u0 - 6} 36 ${tag.x + 52} ${tag.y - 12} ${tag.x + tag.w / 2} ${tag.y + 14}`} fill="none" stroke="#cdc5b2" stroke-width="2.4" stroke-linecap="round"></path>
-                        <g transform={`rotate(-9 ${tag.x + tag.w / 2} ${tag.y + tag.h / 2})`}>
-                          <rect x={tag.x + 5} y={tag.y + 5} width={tag.w} height={tag.h} rx="9" fill="rgba(70,50,30,0.28)" filter="url(#o-b3)"></rect>
-                          <rect x={tag.x} y={tag.y} width={tag.w} height={tag.h} rx="9" fill="#f6f2e7"></rect>
-                          <circle cx={tag.x + tag.w / 2} cy={tag.y + 15} r="6.5" fill="#cbc4b2"></circle>
-                          <circle cx={tag.x + tag.w / 2 - 0.8} cy={tag.y + 14.4} r="5" fill="#8f8a7d"></circle>
+                        <g data-tag-str><path d={`M ${u0 + 4} ${lenV * 0.32} C ${u0 - 18} ${lenV * 0.2} ${tag.x + 70} ${tag.y - 4} ${tag.x + tag.w / 2 + 2} ${tag.y + 12}`} fill="none" stroke="#6f6a5e" stroke-width="1.8" stroke-linecap="round"></path></g>
+                        <g data-tag-sd fill="rgba(60,44,26,0.12)" transform={`rotate(-8 ${tag.x + tag.w / 2} ${tag.y + tag.h / 2})`}>{soft(tag.x + 4, tag.y + 5, tag.w, tag.h, 6, 3).map((r) => <rect {...r}></rect>)}</g>
+                        <g data-tag-body transform={`rotate(-8 ${tag.x + tag.w / 2} ${tag.y + tag.h / 2})`}>
+                          <rect x={tag.x} y={tag.y} width={tag.w} height={tag.h} rx="6" fill="#f3efe5"></rect>
+                          <rect x={tag.x} y={tag.y} width="2.6" height={tag.h} rx="1.3" fill="url(#o-hl-l)"></rect>
+                          <circle cx={tag.x + tag.w / 2} cy={tag.y + 11} r="4.2" fill="#b9b3a4"></circle>
+                          <circle cx={tag.x + tag.w / 2 - 0.5} cy={tag.y + 10.6} r="2.8" fill="#8a8579"></circle>
                         </g>
                       </g>
                     </g>
                   </g>
                 </g>
               </g>
-              <defs>
-                <clipPath id="o-inbox"><polygon points={inbox}></polygon></clipPath>
-                <linearGradient id="o-paper" x1="0" y1="0" x2="1" y2="0.35"><stop offset="0" stop-color="#ffffff"></stop><stop offset="0.6" stop-color="#fbfaf7"></stop><stop offset="1" stop-color="#ebe8e1"></stop></linearGradient>
-              </defs>
             </svg>
-            <!-- the front flap hangs in front of everything while it opens -->
-            <svg class="o-svg" viewBox="0 0 1376 768" focusable="false">
+
+            <!-- the front flap folds down in front of the parcel -->
+            <svg class="o-svg o-svg--front" viewBox="0 0 1376 768" focusable="false">
+              <defs>
+                <filter id="o-b6" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" /></filter>
+                <linearGradient id="o-wallshade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(12,6,2,0.55)"></stop><stop offset="1" stop-color="rgba(12,6,2,0.0)"></stop></linearGradient>
+              </defs>
+              <g clip-path="url(#o-wallclip)"><g data-fl-wsd style={style([pf.outer[0], pf.outer[1], pf.outer[2], pf.outer[3], pf.outer[4] + 10, pf.outer[5] + 12])}>{[14, 9, 4, 0].map((w) => <polygon points={pts(...frontPoly)} fill="rgba(12,6,2,0.1)" stroke="rgba(12,6,2,0.1)" stroke-width={w} stroke-linejoin="round"></polygon>)}</g></g>
               <g class="o-flap" data-flap="front">
-                <g class="o-in"><polygon points={frontFlap} fill="url(#o-under)"></polygon></g>
-                <g class="o-out" clip-path="url(#o-clip-front)"><image href={img} width="1376" height="768"></image></g>
+                <g data-fp="sl" style={style(pf.sl.m)} display={pf.sl.vis ? 'inline' : 'none'}><rect width="1" height="1" fill={pf.sl.fill}></rect><rect width="1" height="1" fill="url(#o-flute-s)"></rect></g>
+                <g data-fp="sr" style={style(pf.sr.m)} display={pf.sr.vis ? 'inline' : 'none'}><rect width="1" height="1" fill={pf.sr.fill}></rect><rect width="1" height="1" fill="url(#o-flute-s)"></rect></g>
+                <g data-fp="ed" style={style(pf.free.m)} display={pf.free.vis ? 'inline' : 'none'}><rect width="1" height="1" fill={pf.free.fill}></rect><rect width="1" height="1" fill="url(#o-flute)"></rect></g>
+                <g data-fp="in" style={style(pf.inner)} display={pf.visOut ? 'none' : 'inline'}><polygon points={pts(...frontPoly)} fill="url(#o-tex)"></polygon><polygon points={pts(...frontPoly)} fill={pf.shIn.fill} fill-opacity={f1(pf.shIn.op * 100) / 100} data-fp="ins"></polygon></g>
+                <g data-fp="out" style={style(pf.outer)} display={pf.visOut ? 'inline' : 'none'}><g clip-path="url(#o-clip-front)"><image href={img} width="1376" height="768"></image></g><polygon points={pts(...frontPoly)} fill={pf.shOut.fill} fill-opacity={f1(pf.shOut.op * 100) / 100} data-fp="outs"></polygon></g>
               </g>
             </svg>
           </div>
         </div>
+        <div class="o-lights" aria-hidden="true"><i data-o-light></i></div>
       </div>
       <div class="o-side">
         <ol class="o-steps">
           {o.steps.map((s) => (
-            <li class="o-step rv" data-step>
-              <h3 class="d35" data-s-title>{s.title}</h3>
+            <li class="o-step" data-step>
+              <h3 data-s-title>{s.title}</h3>
               <p class="o-line" data-s-line>{s.line}</p>
             </li>
           ))}
@@ -173,37 +310,29 @@ const geo = JSON.stringify({ A, B, C, D, PC });
 
 <style is:global>
   .order { overflow: clip; }
-  .order-pin { position: relative; min-height: 100svh; display: flex; flex-direction: column; gap: clamp(14px, 2.2vh, 26px); padding: clamp(84px, 11vh, 108px) var(--gutter) clamp(16px, 2.4vh, 28px); }
+  .order-pin { position: relative; min-height: 100svh; display: flex; flex-direction: column; gap: clamp(14px, 2.2vh, 24px); padding: 110px var(--gutter) clamp(16px, 2.4vh, 26px); }
   .order-title { color: var(--p); font-weight: 400; max-width: 40ch; }
-  .o-step h3 { font-weight: 400; }
   .order-panel { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 0; }
-  .o-scene { position: relative; overflow: hidden; container-type: size; background: var(--p); border-radius: calc(var(--r) - 8px); margin: 8px; min-height: 360px; isolation: isolate; }
-  .o-lights { position: absolute; inset: 0; pointer-events: none; }
-  .o-lights i { position: absolute; top: -20%; height: 140%; width: 15%; transform: skewX(-16deg); background: rgba(255, 224, 172, 0.34); filter: blur(26px); }
-  .o-lights i:nth-child(1) { left: 6%; }
-  .o-lights i:nth-child(2) { left: 30%; width: 9%; opacity: 0.8; }
-  .o-lights i:nth-child(3) { left: 50%; width: 12%; opacity: 0.6; }
-  .o-stage { position: absolute; left: 50%; top: 50%; width: min(150cqw, 1200px, 178cqh); aspect-ratio: 1376 / 768; transform: translate(-50%, -50%); }
-  .o-photo { position: absolute; inset: 0; will-change: transform; }
+  .o-scene { position: relative; overflow: hidden; container-type: size; background: #e9e1d2; border-radius: calc(var(--r) - 8px); margin: 8px; min-height: 360px; isolation: isolate; }
+  .o-lights { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+  .o-lights i { position: absolute; inset: 0; background: rgba(40, 28, 16, 0.26); opacity: 0; }
+  .o-stage { position: absolute; left: 50%; top: 50%; width: max(150cqw, 180cqh); aspect-ratio: 1376 / 768; transform: translate(-50%, -50%); }
+  .o-photo { position: absolute; inset: 0; will-change: transform; transform-origin: 48% 60%; }
   .o-svg, .o-img { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-  .o-img { clip-path: polygon(21.95% 30.4%, 57.3% 18.8%, 77.8% 30.4%, 77.9% 66.2%, 77.1% 67.2%, 40.4% 84.6%, 22.3% 66.8%); }
-  .o-flap { opacity: 0; }
-  .o-flap .o-in { display: none; }
-  .o-side { display: flex; flex-direction: column; justify-content: center; gap: clamp(20px, 4vh, 44px); padding: clamp(24px, 3vw, 56px) clamp(24px, 3.6vw, 64px) clamp(24px, 3vh, 36px) clamp(12px, 1.6vw, 28px); min-width: 0; }
-  .o-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: clamp(22px, 4.4vh, 48px); }
-  .o-step .d35 { margin-bottom: 0.3em; }
-  .o-line { font-size: var(--f20); line-height: 1.38; color: rgba(22, 24, 27, 0.72); max-width: 26em; }
-  .o-note { font-size: var(--f16); line-height: 1.45; color: rgba(22, 24, 27, 0.62); max-width: 30em; }
+  .o-svg--pack { z-index: 4; }
+  .o-svg--front { z-index: 3; }
+  .o-side { display: flex; flex-direction: column; justify-content: center; gap: clamp(22px, 4vh, 44px); padding: clamp(24px, 3vw, 56px) clamp(24px, 3.4vw, 64px) clamp(24px, 3vh, 36px) clamp(20px, 2.6vw, 44px); min-width: 0; }
+  .o-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: clamp(26px, 5.4vh, 58px); }
+  .o-step h3 { font-size: var(--f48); line-height: 1.04; letter-spacing: -0.03em; font-weight: 400; color: var(--ink); margin-bottom: 0.28em; }
+  .o-line { font-size: var(--f20); line-height: 1.38; color: var(--ink); max-width: 24em; }
+  .o-note { font-size: var(--f16); line-height: 1.45; color: rgba(22, 24, 27, 0.7); max-width: 30em; }
 
   @media (max-width: 899px) {
     .order-pin { min-height: 0; padding-top: 96px; padding-bottom: 48px; gap: 22px; }
     .order-panel { grid-template-columns: 1fr; }
     .o-scene { min-height: 0; aspect-ratio: 1 / 0.86; }
-    .o-stage { width: min(138cqw, 780px); }
+    .o-stage { width: max(138cqw, 180cqh); }
     .o-side { padding: 20px 22px 30px; gap: 26px; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .order-pin { min-height: 0; }
-    .o-step.rv { opacity: 1; transform: none; }
+    .o-step h3 { font-size: var(--f35); }
   }
 </style>
