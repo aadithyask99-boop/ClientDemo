@@ -38,12 +38,12 @@ const img = `${base}media/${p.image}.webp`;
   .p-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .p-glow { position: absolute; pointer-events: none; mix-blend-mode: screen; border-radius: 50%; }
   /* the lamp bulb and shade */
-  .p-glow--bulb { left: 74.2%; top: 17%; width: 8.4%; aspect-ratio: 1; background: radial-gradient(circle, rgba(255, 196, 110, 0.95) 0%, rgba(255, 150, 60, 0.45) 38%, rgba(255, 120, 30, 0) 70%); opacity: calc(var(--lit) * 0.95); }
+  .p-glow--bulb { left: 74.2%; top: 17%; width: 8.4%; aspect-ratio: 1; background: radial-gradient(circle, rgba(255, 218, 178, 0.95) 0%, rgba(255, 176, 120, 0.45) 38%, rgba(255, 150, 90, 0) 70%); opacity: calc(var(--lit) * 0.95); }
   /* warm wash on the wall behind the lamp */
-  .p-glow--wall { left: 56%; top: -6%; width: 52%; aspect-ratio: 1.15; background: radial-gradient(closest-side, rgba(255, 168, 82, 0.42), rgba(255, 140, 60, 0.16) 55%, rgba(255, 120, 40, 0) 100%); opacity: calc(var(--lit) * 0.85); }
+  .p-glow--wall { left: 56%; top: -6%; width: 52%; aspect-ratio: 1.15; background: radial-gradient(closest-side, rgba(255, 192, 138, 0.42), rgba(255, 165, 110, 0.16) 55%, rgba(255, 150, 90, 0) 100%); opacity: calc(var(--lit) * 0.85); }
   /* the light spilling over the desk towards the tray */
-  .p-glow--desk { left: 40%; top: 55%; width: 50%; aspect-ratio: 3.2; background: radial-gradient(closest-side, rgba(255, 176, 92, 0.62), rgba(255, 150, 70, 0.22) 60%, rgba(255, 130, 50, 0) 100%); opacity: calc(var(--lit) * 0.8); }
-  .p-wash { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; background: rgba(255, 150, 60, 1); opacity: calc(var(--lit) * 0.06); }
+  .p-glow--desk { left: 40%; top: 55%; width: 50%; aspect-ratio: 3.2; background: radial-gradient(closest-side, rgba(255, 198, 146, 0.62), rgba(255, 170, 116, 0.22) 60%, rgba(255, 150, 90, 0) 100%); opacity: calc(var(--lit) * 0.8); }
+  .p-wash { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; background: rgba(255, 178, 120, 1); opacity: calc(var(--lit) * 0.06); }
 
   .p-tray { position: absolute; left: 14.2%; top: 64.5%; width: 38.5%; height: 30%; border-radius: 28px; display: block; cursor: pointer; }
   .p-file { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 0; }
@@ -62,7 +62,8 @@ const img = `${base}media/${p.image}.webp`;
 
   .p-copy { position: relative; padding-top: 6px; padding-bottom: clamp(26px, 4.5vh, 48px); }
   .p-line { font-weight: 400; max-width: 20em; }
-  .p-line span { display: block; }
+  .p-line > span { display: block; }
+  .p-line > .dim { opacity: 0.68; }
 
   @media (hover: none) { .p-tip { opacity: 1; transform: translate(-50%, 0); } }
   @media (max-width: 899px) {

@@ -4,7 +4,7 @@
 import { site } from '../data/site';
 const base = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
 const m = (n: string) => `${base}media/${n}.webp`;
-const { lead, scenes, interval, cta } = site.hero;
+const { lead, scenes, interval, toast } = site.hero;
 // Where each place sits in a portrait crop (the subject of each frame)
 const focus: Record<string, string> = { 'hero-school': '68% 50%', 'hero-ward': '62% 50%', 'hero-council': '42% 50%', 'hero-hotel': '55% 50%' };
 ---
@@ -38,7 +38,10 @@ const focus: Record<string, string> = { 'hero-school': '68% 50%', 'hero-ward': '
         ))}
       </div>
     </div>
-    <a class="btn hero-cta hero-in" href="#quote" data-open-quote>{cta}</a>
+    <a class="hero-toast hero-in" href="#promise">
+      <img src={m(toast.image + '-thumb')} alt="" width="360" height="203" loading="eager" decoding="async" />
+      <span class="hero-toast-text"><span class="hero-toast-title">{toast.title}</span><span class="hero-toast-line">{toast.line}</span></span>
+    </a>
   </div>
 </section>
 
@@ -87,7 +90,19 @@ const focus: Record<string, string> = { 'hero-school': '68% 50%', 'hero-ward': '
   /* Without JS the bar would never advance; show it full */
   html:not(.js) .hero-bar::after { transform: scaleX(1); }
 
-  .hero-cta { position: absolute; right: clamp(20px, 2.4vw, 34px); bottom: clamp(20px, 2.2vw, 32px); z-index: 3; font-size: clamp(20px, 1.9vw, 26px); padding: 0.95em 2em; }
+  /* A frosted card bottom-right, as on 108: it points at the 'send us the quote you hold' scene, so it never repeats the nav's button */
+  .hero-toast {
+    position: absolute; right: clamp(20px, 2.4vw, 34px); bottom: clamp(20px, 2.2vw, 32px); z-index: 3;
+    display: flex; align-items: center; gap: 14px; width: min(400px, 34vw); padding: 10px 22px 10px 10px;
+    border-radius: 22px; background: rgba(22,24,27,0.5); backdrop-filter: blur(18px) saturate(1.2); -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    transition: transform var(--t) var(--ease), background-color var(--t) var(--ease);
+  }
+  .hero-toast:hover { transform: translateY(-4px); background: rgba(22,24,27,0.66); }
+  .hero-toast img { width: 88px; height: 88px; border-radius: 14px; object-fit: cover; object-position: 28% 70%; flex: none; transition: transform 0.6s var(--ease); }
+  .hero-toast:hover img { transform: scale(1.06); }
+  .hero-toast-text { display: grid; gap: 4px; }
+  .hero-toast-title { font-size: var(--f20); line-height: 1.15; letter-spacing: -0.02em; color: var(--p); }
+  .hero-toast-line { font-size: 17px; line-height: 1.25; color: rgba(242,240,235,0.78); }
 
   /* The intro: pieces rise in after the loader. Without JS, or if the script fails, they show after 3.5 s at the latest. */
   .js .hero:not(.is-ready) .hero-in { opacity: 0; animation: hero-show 0.01s 3.5s forwards; }
@@ -97,7 +112,7 @@ const focus: Record<string, string> = { 'hero-school': '68% 50%', 'hero-ward': '
     .hero { min-height: 520px; }
     .hero-thumb { width: 72px; height: 50px; }
     .hero-thumbs { gap: 6px; }
-    .hero-cta { display: none; }
+    .hero-toast { display: none; }
     .hero-scene.is-active img { transition-duration: 8s; }
   }
   @media (prefers-reduced-motion: reduce) {

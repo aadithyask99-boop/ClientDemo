@@ -8,6 +8,7 @@ const ui = site.uiC;
 const tel = c.phone.replace(/[^\d+]/g, '');
 ---
 <footer class="stage stage--dark foot" data-footer>
+  <img class="foot-scene" src={`${site.hero.media('hero-ward-alt')}`} alt="" width="1376" height="768" loading="lazy" decoding="async" aria-hidden="true" />
   <div class="foot-glow" aria-hidden="true"></div>
   <div class="foot-top pad">
     <div class="foot-contact">
@@ -43,7 +44,10 @@ const tel = c.phone.replace(/[^\d+]/g, '');
 
 <style is:global>
   .foot { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: space-between; gap: clamp(28px, 5vh, 56px); overflow: clip; padding-top: clamp(72px, 12vh, 140px); --mx: 50%; --my: 60%; }
-  .foot-glow { position: absolute; inset: 0; pointer-events: none; z-index: 0; mix-blend-mode: screen;
+  /* The last scene: a reception desk lit for the night, fading up out of the footer's ground; the wordmark is lit over it */
+  .foot-scene { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 66%; object-fit: cover; object-position: 50% 62%; opacity: 0.55; z-index: 0; pointer-events: none;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 55%); mask-image: linear-gradient(to bottom, transparent 0%, #000 55%); }
+  .foot-glow { position: absolute; inset: 0; pointer-events: none; z-index: 0;
     background: radial-gradient(circle 560px at var(--mx) var(--my), rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0) 70%); opacity: 0; transition: opacity 0.8s var(--ease); }
   .foot.is-lit .foot-glow { opacity: 1; }
   .foot-top { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: start; }
@@ -59,7 +63,7 @@ const tel = c.phone.replace(/[^\d+]/g, '');
   @keyframes foot-ping { 0% { box-shadow: 0 0 0 0 rgba(70, 99, 255, 0.55); transform: scale(0.9); } 70% { box-shadow: 0 0 0 16px rgba(70, 99, 255, 0); transform: scale(1); } 100% { box-shadow: 0 0 0 0 rgba(70, 99, 255, 0); transform: scale(0.9); } }
   .foot-mail { margin-top: clamp(8px, 1.6vh, 18px); font-size: var(--f35); letter-spacing: -0.02em; line-height: 1.15; color: var(--bt); transition: color var(--t) var(--ease); }
   .foot-mail:hover { color: var(--w); }
-  .foot-ph { margin-top: 10px; font-size: var(--f20); color: rgba(242, 240, 235, 0.5); }
+  .foot-ph { margin-top: 10px; font-size: var(--f20); color: rgba(242, 240, 235, 0.82); }
   .foot-quote { margin-top: clamp(22px, 3.6vh, 40px); }
   .foot-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(20px, 3vw, 48px); padding-top: clamp(8px, 1.4vh, 20px); }
   .foot-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.2em; }
@@ -72,7 +76,7 @@ const tel = c.phone.replace(/[^\d+]/g, '');
   .fm-lit { position: absolute; left: 0; top: 0; color: var(--p);
     -webkit-mask-image: radial-gradient(circle var(--lr, 4000px) at var(--lx, 50%) var(--ly, 50%), #000 0%, rgba(0, 0, 0, 0) 100%);
     mask-image: radial-gradient(circle var(--lr, 4000px) at var(--lx, 50%) var(--ly, 50%), #000 0%, rgba(0, 0, 0, 0) 100%); }
-  .foot-meta { position: relative; z-index: 2; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 32px; padding-bottom: clamp(20px, 3.6vh, 36px); font-size: var(--f20); color: rgba(242, 240, 235, 0.72); }
+  .foot-meta { position: relative; z-index: 2; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 32px; padding-bottom: clamp(20px, 3.6vh, 36px); font-size: var(--f20); color: rgba(242, 240, 235, 0.94); text-shadow: 0 1px 14px rgba(22,24,27,0.7); }
   .foot-van { position: absolute; left: 0; right: 0; bottom: 0; height: clamp(120px, 16vw, 240px); z-index: 3; pointer-events: none; }
 
   @media (max-width: 899px) {

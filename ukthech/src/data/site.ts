@@ -31,6 +31,7 @@ export const site = {
     ],
     interval: 5300,
     cta: 'Get a quote',
+    toast: { title: 'Hold a quote already?', line: 'Send it over. We will try to beat it.', image: 'promise-desk-alt' },
     media: m,
   },
   statement: {
@@ -50,7 +51,7 @@ export const site = {
     whens: ['this month', 'next month', 'before September', 'later this year'],
     defaults: { product: 'Chromebooks', quantity: '30', when: 'before September' },
     confirm: 'Thank you. This is a concept, so nothing was sent, but this is the quote you asked for:',
-    objects: ['obj-chromebooks-b', 'obj-trolley-front', 'obj-tablets-b', 'obj-parcel-b', 'obj-van-b'],
+    objects: ['cut-chromebooks', 'cut-trolley', 'cut-tablets', 'cut-parcel'],
   },
   order: {
     title: 'Every order arrives with its paperwork',
