@@ -31,7 +31,7 @@ export const site = {
     ],
     interval: 5300,
     cta: 'Get a quote',
-    toast: { title: 'Hold a quote already?', line: 'Send it to us and we will take a look.', image: 'promise-desk-alt' },
+    toast: { title: 'Hold a quote already?', line: 'Send it over and we will look.', image: 'promise-desk-alt' },
     media: m,
   },
   statement: {

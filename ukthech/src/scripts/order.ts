@@ -219,13 +219,13 @@ export default function init() {
       .to([ground, contact], { opacity: 1, duration: 12, stagger: 3 }, 6);
     steps.forEach((st, i) => {
       const at = 5 + i * 4;
-      tl.to(st, { opacity: i === 0 ? 1 : 0.28, y: 0, duration: 7, ease: 'power2.out' }, at)
+      tl.to(st, { opacity: i === 0 ? 1 : 0.42, y: 0, duration: 7, ease: 'power2.out' }, at)
         .to(sTitles[i], { y: 0, duration: 8, ease: 'power2.out' }, at)
         .to(sLines[i], { y: 0, duration: 9, ease: 'power2.out' }, at + 1.5);
     });
 
     // Beat 2: the flaps hinge open, the light enters, the pack rises out (24 to 68)
-    tl.to(steps[0], { opacity: 0.28, duration: 4 }, 26)
+    tl.to(steps[0], { opacity: 0.42, duration: 4 }, 26)
       .to(steps[1], { opacity: 1, duration: 4 }, 28)
       .to(state, { back: FINAL.back, duration: 22, ease: 'power2.inOut', onUpdate: paint }, 28)
       .to(state, { front: FINAL.front, duration: 25, ease: 'power2.inOut', onUpdate: paint }, 30);
@@ -245,7 +245,7 @@ export default function init() {
     });
 
     // Beat 3: the pack settles at the front with its band and tag (68 to 100)
-    tl.to(steps[1], { opacity: 0.28, duration: 4 }, 68)
+    tl.to(steps[1], { opacity: 0.42, duration: 4 }, 68)
       .to(steps[2], { opacity: 1, duration: 4 }, 70)
       .to(pack, { x: 0, y: 0, scale: 1, duration: 22, ease: 'power2.inOut' }, 68)
       .to(pkFar, { opacity: 1, x: 0, y: 0, duration: 18, ease: 'power2.out' }, 76)

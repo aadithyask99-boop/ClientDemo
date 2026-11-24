@@ -31,7 +31,7 @@ const img = `${base}media/${p.image}.webp`;
 </section>
 
 <style is:global>
-  .promise { position: relative; background: var(--g); color: var(--p); overflow: clip; --lit: 0; }
+  .promise { position: relative; background: var(--g); color: var(--p); overflow: clip; --lit: 0; padding-top: 72px; }
   .p-scene { position: relative; height: clamp(420px, calc(100svh - 232px), 60vw); overflow: hidden; container-type: size;
     -webkit-mask-image: linear-gradient(#000 88%, transparent); mask-image: linear-gradient(#000 88%, transparent); }
   .p-wrap { --ww: max(102cqw, 190cqh); position: absolute; width: var(--ww); aspect-ratio: 1376 / 768; left: calc(50cqw - var(--ww) / 2); bottom: calc(var(--ww) * -0.0167); will-change: transform; }

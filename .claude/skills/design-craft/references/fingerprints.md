@@ -16,6 +16,7 @@ One row per approved site. Before building a new site, read this table and requi
 | Kerala 2, God's Own Country | Newsreader light, Albert Sans | paper, backwater green-black, vermilion | one composite fall from cloud to sea, altitude numeral and painted river | touchable mist over Munnar hills, headline bottom-left | pinned stations with image wipes, weather dial, water-filled word | inspiration (reddottours.com) |
 | Kerala 3, God's Own Country | Newsreader light, Albert Sans | paper, cocoa, Kerala green | one year in Kerala, seasons as weather inside photographs | three hero options: seasons cycle with cut-out foliage, rain on glass, through the leaves | pinned fan, pinned months scene, sideways dark headline, frame grows | replicate-and-extend (reddottours.com) |
 | Portfolio | Geist 600, Geist Mono | cream and black, orange accent | pixels, headline as loader | the headline itself | physics cards, easter eggs, scrubbed scenes | original |
+| UK Thech (concept) | Host Grotesk 400, one family | graphite, paper, blue #4663ff | the order sentence ("I need [Chromebooks] [30] by [September]") and a parcel that opens | inset film of four places with a dimmed sector word, thumbnails with a timer | cursor-lit scenes, word-level scroll reveals, one pinned scene | replicate-and-extend of 108.supply |
 
 ## Devices that already repeat (do not reuse by default)
 

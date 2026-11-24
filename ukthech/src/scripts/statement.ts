@@ -13,7 +13,7 @@ export default function init() {
   gsap.set(sectors, { yPercent: 16 });
   const tl = gsap.timeline({
     defaults: { ease: 'none' },
-    scrollTrigger: { trigger: root, start: 'top 66%', end: 'top -24%', scrub: 0.6 },
+    scrollTrigger: { trigger: root, start: 'top 66%', end: 'top -16%', scrub: 0.6 },
   });
   tl.to(words, { yPercent: 0, duration: 1, stagger: { each: 0.06 } }, 0);
   tl.to(plain, { opacity: 1, duration: 1, stagger: { each: 0.06 } }, 0);
